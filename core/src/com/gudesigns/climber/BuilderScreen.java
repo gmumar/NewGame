@@ -2,14 +2,11 @@ package com.gudesigns.climber;
 
 import java.util.ArrayList;
 
-import throwaway.FullCar;
-import wrapper.BaseActor;
 import wrapper.CameraManager;
 import wrapper.Globals;
 import wrapper.TouchUnit;
-import Assembly.AssembledObject;
-import Assembly.Assembler;
-import GroundWorks.GroundBuilder;
+import Component.ComponentBuilder;
+import Menu.Button;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -19,70 +16,62 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class GamePlayScreen implements Screen, InputProcessor {
+public class BuilderScreen implements Screen, InputProcessor {
 
 	GameLoader gameLoader;
 	SpriteBatch batch;
-	FullCar fcar;
-	AssembledObject builtCar;
-	World world;
 	CameraManager camera;
+	World world;
+	Stage stage;
+	Button but;
 
 	Box2DDebugRenderer debugRenderer;
-
-	GroundBuilder ground;
-	float aspectRatio;
-
 	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
-	public GamePlayScreen(GameLoader gameLoader) {
+	public BuilderScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-		Globals.updateScreenInfo(Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight());		
-
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
-		
+
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
 		}
 
 		debugRenderer = new Box2DDebugRenderer();
+		
+		but = new Button("Small bar"){
+			@Override
+			public void Clicked() {
+				ComponentBuilder.buildBar3(world);
+			}
+		};
+		but.setPosition(0, 0);
+		stage.addActor(but);
 
-		// fcar = new FullCar(world);
-		// fcar.carBody.setPosition(0, -120);
-		// fcar.frontTire.setPosition(0, -120);
-		// fcar.backTire.setPosition(0, -120);
+	}
 
-		Assembler asm = new Assembler();
-		builtCar = asm.assembleObject(world);
+	private void initStage() {
 
-		ground = new GroundBuilder(world, camera);
+		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
+		camera.zoom = 0.10f;
+		camera.update();
+		
+		stage = new Stage();
 
-		// ComponentBuilder cb = new ComponentBuilder(world);
+		Gdx.input.setInputProcessor(stage);
+	}
+
+	private void initWorld() {
+		world = (new World(new Vector2(0, 0), true));
 	}
 
 	@Override
 	public void render(float delta) {
-
 		renderWorld();
-		attachCameraTo(builtCar.getBasePart().getObject());
-
-		ground.draw(camera);
-
-		handleInput(touches);
-
-		batch.begin();
-		// fcar.draw(batch);
-		builtCar.draw(batch);
-		batch.end();
-
-	}
-
-	private void handleInput(ArrayList<TouchUnit> touchesIn) {
-		builtCar.handleInput(touchesIn);
 
 	}
 
@@ -95,33 +84,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 10, 10);
-	}
-
-	private void attachCameraTo(BaseActor actor) {
-
-		camera.position.set(actor.getPosition().x +10, actor.getPosition().y, 1);
-		camera.zoom = 8;
-		camera.update();
-	}
-
-	private void initWorld() {
-		world = (new World(new Vector2(0, -98f), true));
-	}
-
-	private void initStage() {
-
-		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
-		camera.zoom = 1.5f;
-		camera.update();
-
-		Gdx.input.setInputProcessor(this);
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		camera.viewportWidth = Globals.PixelToMeters(width);
-		camera.viewportHeight = Globals.PixelToMeters(height);
-		Globals.updateScreenInfo(width, height);
+		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+		stage.draw();
 	}
 
 	@Override
@@ -164,6 +128,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
 
 	}

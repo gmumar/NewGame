@@ -8,7 +8,6 @@ import Component.Component;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.Joint;
 
 public class AssembledObject {
 
@@ -64,36 +63,40 @@ public class AssembledObject {
 		if (driveList == null) {
 			driveList = new ArrayList<Component>();
 		}
+		c.getObject().getPhysicsBody().setAngularDamping(0.5f);
 		driveList.add(c);
 	}
 
 	public void handleInput(ArrayList<TouchUnit> touchesIn) {
 		if (driveList == null || touchesIn == null)
 			return;
-		
+
 		Iterator<TouchUnit> touchIter = touchesIn.iterator();
 		int direction = 0;
-		
-		while(touchIter.hasNext()){
+
+		while (touchIter.hasNext()) {
 			TouchUnit touch = touchIter.next();
-		
-			if(touch.screenX>Gdx.graphics.getWidth()/2){
+
+			if (touch.screenX > Gdx.graphics.getWidth() / 2) {
 				direction = 1;
-			}else{
+			} else {
 				direction = -1;
 			}
-			
-			if(touch.isTouched()){
+
+			if (touch.isTouched()) {
 				Iterator<Component> iter = driveList.iterator();
-	
+
 				while (iter.hasNext()) {
 					Component comp = iter.next();
-					comp.getObject().getPhysicsBody().applyAngularImpulse(-300 * direction, true);
+					if (Math.abs(comp.getObject().getPhysicsBody()
+							.getAngularVelocity()) < 30f) {
+						comp.getObject().getPhysicsBody()
+								.applyAngularImpulse(-200 * direction, true);
+					}
 				}
 			}
 		}
 
-		
 	}
 
 }

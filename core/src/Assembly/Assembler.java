@@ -1,14 +1,10 @@
 package Assembly;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import wrapper.BaseActor;
-import wrapper.Globals;
 import Component.Component;
 import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
@@ -18,9 +14,7 @@ import JSONifier.JSONParent;
 import JSONifier.Properties;
 
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
 public class Assembler {
 
@@ -58,48 +52,15 @@ public class Assembler {
 			BaseActor bodyB = parts.get(componentBName).getObject();
 			int componentBMountId = Integer.parseInt(parseName(join.mount2)[1]);
 
-			WeldJointDef wJoint = new WeldJointDef();
 			RevoluteJointDef rJoint = new RevoluteJointDef();
-			DistanceJointDef b2Joint = new DistanceJointDef();
 			
 			rJoint.initialize(bodyA.getPhysicsBody(), bodyB.getPhysicsBody(), bodyB.getMount(componentBMountId));
 			rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
 			rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 			rJoint.collideConnected = false;
 
-			
-			HashMap<String,String> properties = join.getProperties();
-			
-			
-			//rJoint.enableLimit = true;
-			
-			
-			wJoint.initialize(bodyA.getPhysicsBody(), bodyB.getPhysicsBody(), bodyA.getMount(componentAMountId));
-			wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
-			wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
-			wJoint.dampingRatio = 10f;
-			wJoint.frequencyHz = 5f;
-			wJoint.collideConnected = false;
-			
-			if (componentBName.compareTo(ComponentNames.tire.name()) == 0) {
-				
-				b2Joint.initialize(bodyA.getPhysicsBody(),
-						parts.get(componentBName).getObject().getJoint(0)
-								.getBodyB(), bodyA.getMount(componentAMountId),
-						bodyB.getMount(componentBMountId));
-			} else {
+			//HashMap<String,String> properties = join.getProperties();
 
-				b2Joint.initialize(bodyA.getPhysicsBody(),
-						bodyB.getPhysicsBody(),
-						bodyA.getMount(componentAMountId),
-						bodyB.getMount(componentBMountId));
-			}
-			b2Joint.length = Globals.PixelToMeters(0.1f);
-			b2Joint.frequencyHz = 50f;
-			b2Joint.collideConnected = false;
-			b2Joint.dampingRatio = 1f;
-			b2Joint.localAnchorA.set(bodyA.getMount(componentAMountId));
-			b2Joint.localAnchorB.set(bodyB.getMount(componentBMountId));
 			world.createJoint(rJoint);
 
 		}
@@ -107,36 +68,6 @@ public class Assembler {
 		obj.setPartList(new ArrayList<Component>(parts.values()));
 		obj.setBasePartbyIndex(0);
 		return obj;
-	}
-
-	private void addPartsToWorld(HashMap<String, Component> partsIn, World world) {
-		Collection<Component> parts = partsIn.values();
-		Iterator<Component> iter = parts.iterator();
-		Component part;
-
-		while (iter.hasNext()) {
-			part = iter.next();
-
-			BaseActor tmp = part.getObject();
-			part.destroyObject();
-			part.setObject(new BaseActor(tmp, world));
-
-			// FIX THIS HACK!
-			if (part.getObject().getName()
-					.compareTo(ComponentNames.tire.name()) == 0) {
-				// Body axle = ComponentBuilder.buildAxle(world);
-				Component axle = ComponentBuilder.buildAxle(world);
-				axle.getObject().setGroup(CAR);
-				RevoluteJointDef revolute = new RevoluteJointDef();
-				revolute.initialize(axle.getObject().getPhysicsBody(), part
-						.getObject().getPhysicsBody(), axle.getObject()
-						.getCenter());
-				world.createJoint(revolute);
-			}
-
-			part.getObject().setGroup(CAR);
-		}
-
 	}
 
 	private HashMap<String, Component> extractComponents(JSONParent source,

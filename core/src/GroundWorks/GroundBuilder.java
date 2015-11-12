@@ -30,8 +30,7 @@ public class GroundBuilder {
 
 	Integer lastDrawnPointer = 0;
 	Integer lastRemovedPointer = 1;
-	int removeGap = 1000;
-
+	
 	private class GroundUnitDescriptor {
 		Vector2 start, end;
 		Fixture fixture;
@@ -154,7 +153,7 @@ public class GroundBuilder {
 		edgeShape.set(v1, v2);
 		fixtureDef.shape = edgeShape;
 		fixtureDef.density = 1;
-		fixtureDef.friction = 10;
+		fixtureDef.friction = 5;
 		fixtureDef.restitution = 0;
 
 		Fixture f = floor.createFixture(fixtureDef);
