@@ -12,6 +12,7 @@ import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -38,8 +39,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	public GamePlayScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-		Globals.updateScreenInfo(Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight());		
+		Globals.updateScreenInfo();		
 
 		batch = new SpriteBatch();
 		initStage();
@@ -78,6 +78,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// fcar.draw(batch);
 		builtCar.draw(batch);
 		batch.end();
+		
+		System.out.println(touches.get(0).screenX);
 
 	}
 
@@ -114,23 +116,33 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.zoom = 1.5f;
 		camera.update();
 
-		Gdx.input.setInputProcessor(this);
+		//Gdx.input.setInputProcessor(this);
+	}
+	
+	private void initInputs(){
+		InputProcessor inputProcessorOne = this;
+		InputMultiplexer inputMultiplexer = new InputMultiplexer();
+		inputMultiplexer.addProcessor(inputProcessorOne);
+		Gdx.input.setInputProcessor(inputMultiplexer);
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		camera.viewportWidth = Globals.PixelToMeters(width);
 		camera.viewportHeight = Globals.PixelToMeters(height);
-		Globals.updateScreenInfo(width, height);
+		
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		System.out.println("touch");
+
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
 			touches.get(pointer).touched = true;
-
+			
+			
 			return true;
 		}
 		return false;
@@ -164,7 +176,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
+		initInputs();
+		Globals.updateScreenInfo();
 
 	}
 
@@ -182,7 +195,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
+		Gdx.input.setInputProcessor(null);
 
 	}
 

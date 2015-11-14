@@ -295,4 +295,12 @@ public class BaseActor {
 		this.density = density;
 		fixture.setDensity(density);
 	}
+	
+	public void setSensor(){
+		fixture.setSensor(true);
+	}
+	
+	public void unSetSensor(){
+		fixture.setSensor(false);
+	}
 }

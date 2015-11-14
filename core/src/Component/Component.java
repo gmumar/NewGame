@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import JSONifier.Properties;
 import wrapper.BaseActor;
+import JSONifier.Properties;
+
+import com.badlogic.gdx.physics.box2d.Body;
 
 public class Component {
 
@@ -98,6 +100,13 @@ public class Component {
 			System.out.println(property);
 		}
 
+	}
+
+	public void setUpForBuilder() {
+		Body body = this.getObject().getPhysicsBody();
+		body.setLinearDamping(10);
+		body.setAngularDamping(10);
+		this.getObject().setSensor();
 	}
 
 }

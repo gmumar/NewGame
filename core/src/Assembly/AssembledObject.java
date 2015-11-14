@@ -3,10 +3,10 @@ package Assembly;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import wrapper.Globals;
 import wrapper.TouchUnit;
 import Component.Component;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class AssembledObject {
@@ -77,7 +77,7 @@ public class AssembledObject {
 		while (touchIter.hasNext()) {
 			TouchUnit touch = touchIter.next();
 
-			if (touch.screenX > Gdx.graphics.getWidth() / 2) {
+			if (touch.screenX > Globals.GameWidth / 2) {
 				direction = 1;
 			} else {
 				direction = -1;
