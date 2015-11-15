@@ -40,6 +40,7 @@ public class BaseActor {
 	private Fixture fixture;
 	private Shape shapeBase;
 	private short groupIndex;
+	private float mountDistance;
 
 	// Physics properties
 	private float restitution = 0.6f;
@@ -64,7 +65,7 @@ public class BaseActor {
 		this.onlyPhysicBody = true;
 		this.name = name;
 		this.world = world;
-		
+
 		initBody();
 	}
 
@@ -92,6 +93,7 @@ public class BaseActor {
 		this.groupIndex = other.groupIndex;
 		this.onlyPhysicBody = other.onlyPhysicBody;
 		this.friction = other.friction;
+		this.mountDistance = other.mountDistance;
 
 		initSprite();
 		initBody();
@@ -119,6 +121,9 @@ public class BaseActor {
 		if (body != null && world != null) {
 			world.destroyBody(body);
 		}
+
+		if (world == null)
+			return;
 
 		bodyDef = new BodyDef();
 		fixtureDef = new FixtureDef();
@@ -152,7 +157,7 @@ public class BaseActor {
 	}
 
 	public void setBodyType(BodyType type) {
-		
+
 		body.setType(type);
 	}
 
@@ -173,9 +178,25 @@ public class BaseActor {
 
 		body.setTransform(new Vector2(x, y), body.getAngle());
 	}
-	
-	public void setRotation(float rotDegrees){
-		body.setTransform(getPosition(), rotDegrees*MathUtils.degreesToRadians);
+
+	public void setRotation(float rotDegrees) {
+		body.setTransform(getPosition(), rotDegrees
+				* MathUtils.degreesToRadians);
+	}
+
+	public float getRotation() {
+		float rot = body.getAngle();
+		if (rot >= 2 * Math.PI) {
+			System.out.println("resetting");
+			setRotation((float)(body.getAngle() - 2 * Math.PI)*MathUtils.radiansToDegrees);
+		}
+		
+		if (rot <= -2 * Math.PI) {
+			System.out.println("resetting");
+			setRotation((float)(body.getAngle() + 2 * Math.PI)*MathUtils.radiansToDegrees);
+		}
+
+		return body.getAngle();
 	}
 
 	public void setScale(float xy) {
@@ -215,8 +236,13 @@ public class BaseActor {
 		return body.getWorldCenter();
 	}
 
-	public void setMounts(ArrayList<Vector2> mounts) {
+	public void setMounts(ArrayList<Vector2> mounts, float f) {
 		this.mounts = mounts;
+		this.mountDistance = f;
+	}
+	
+	public float getMountDistance(){
+		return mountDistance;
 	}
 
 	public Vector2 getMount(int i) {
@@ -232,11 +258,15 @@ public class BaseActor {
 	}
 
 	public void disablePhysics() {
+		if (world == null)
+			return;
 		world.destroyBody(body);
 		body = null;
 	}
 
 	public void reenablePhysics() {
+		if (world == null)
+			return;
 		body = world.createBody(bodyDef);
 		fixture = body.createFixture(fixtureDef);
 
@@ -279,6 +309,8 @@ public class BaseActor {
 		}
 
 		if (body != null && world != null && world.getBodyCount() > 0) {
+			if (world == null)
+				return;
 			world.destroyBody(body);
 		}
 	}
@@ -290,17 +322,21 @@ public class BaseActor {
 		filter.groupIndex = i;
 		fixture.setFilterData(filter);
 	}
-	
-	public void setDensity(float density){
+
+	public void setDensity(float density) {
 		this.density = density;
 		fixture.setDensity(density);
 	}
-	
-	public void setSensor(){
+
+	public void setSensor() {
 		fixture.setSensor(true);
 	}
-	
-	public void unSetSensor(){
+
+	public void unSetSensor() {
 		fixture.setSensor(false);
+	}
+
+	public ArrayList<Vector2> getMounts() {
+		return mounts;
 	}
 }

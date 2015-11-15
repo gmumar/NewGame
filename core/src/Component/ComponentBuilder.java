@@ -7,6 +7,7 @@ import Component.Component.ComponentTypes;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class ComponentBuilder {
@@ -42,7 +43,7 @@ public class ComponentBuilder {
 		mounts.add(new Vector2(tmpActor.getCenter().x, mountHeight));
 		mounts.add(new Vector2(
 				tmpActor.getCenter().x + tmpActor.getWidth() / 2, mountHeight));
-		tmpActor.setMounts(mounts);
+		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				ComponentNames.bar3.name());
@@ -80,11 +81,24 @@ public class ComponentBuilder {
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 		mounts.add(tmpActor.getCenter());
-		tmpActor.setMounts(mounts);
+		tmpActor.setMounts(mounts, 0.0f);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				ComponentNames.tire.name());
 		return tmpComponent;
+	}
+	
+	public static FixtureDef buildMount(Vector2 mount){
+		FixtureDef fix = new FixtureDef();
+		
+		CircleShape shape = new CircleShape();
+		shape.setRadius(0.3f);
+		shape.setPosition(mount);
+		fix.isSensor = true;
+		fix.shape = shape;
+		
+		
+		return fix;
 	}
 
 }

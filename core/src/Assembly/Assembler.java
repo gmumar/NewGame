@@ -18,15 +18,17 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
 public class Assembler {
 
-	final public String NAME_MOUNT_SPLIT = ":";
-	final public String NAME_ID_SPLIT = "_";
+	final public static String NAME_MOUNT_SPLIT = ":";
+	final public static String NAME_ID_SPLIT = "_";
 
 	final private short CAR = -2;
 
 	public AssembledObject assembleObject(World world) {
 		AssembledObject obj = new AssembledObject();
 
-		String inputString = makeSomething();
+		String inputString = "{jointList:[{mount1:bar3_1:2,mount2:tire_2:0},{mount1:bar3_1:0,mount2:tire_1:0},{mount1:bar3_0:2,mount2:tire_1:0},{mount1:bar3_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:bar3_1:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:bar3_1,properties:{ROTATION:0.0,POSITION:\"2.3999996,0.0\"}},{componentName:tire_0,properties:{ROTATION:0.0,POSITION:\"-1.25,-0.049999952\"}},{componentName:tire_1,properties:{ROTATION:0.0,POSITION:\"1.2999992,0.0\"}},{componentName:tire_2,properties:{ROTATION:0.0,POSITION:\"3.6499996,-0.099999905\"}}]}";
+				
+				//makeSomething();
 
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);

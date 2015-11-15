@@ -25,11 +25,37 @@ public class Button extends TextButton {
 				super.clicked(event, x, y);
 				Clicked();
 			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
+				// TODO Auto-generated method stub
+				return super.touchDown(event, x, y, pointer, button);
+			}
 
+			@Override
+			public void touchUp(InputEvent event, float x, float y,
+					int pointer, int button) {
+				// TODO Auto-generated method stub
+				super.touchUp(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y,
+					int pointer) {
+				Pressed();
+				super.touchDragged(event, x, y, pointer);
+			}
+			
 		});
+		
 	}
 
 	public void Clicked() {
+		;
+	}
+	
+	public void Pressed() {
 		;
 	}
 

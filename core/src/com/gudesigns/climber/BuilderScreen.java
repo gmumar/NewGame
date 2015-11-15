@@ -82,7 +82,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	}
 
 	private void initWorld() {
-		world = (new World(new Vector2(0, 0), true));
+		world = (new World(new Vector2(0, 0), false));
 	}
 
 	@Override
@@ -151,8 +151,10 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		camera.position.x -= deltaX/40;
-		camera.position.y += deltaY/40;
+		if(menu.isJoined())
+			return false;
+		camera.position.x -= deltaX/(40+camera.zoom);
+		camera.position.y += deltaY/(40+camera.zoom);
 		camera.update();
 		return true;
 	}

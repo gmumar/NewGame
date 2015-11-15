@@ -11,7 +11,7 @@ public class GameLoader extends Game {
 	public void create() {
 		gamePlayScreen = new GamePlayScreen(this);
 		builderScreen = new BuilderScreen(this);
-		setScreen(builderScreen);
+		setScreen(gamePlayScreen);
 	}
 
 }

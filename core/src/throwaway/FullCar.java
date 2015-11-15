@@ -26,7 +26,7 @@ public class FullCar {
 
 	public FullCar(World world) {
 		carBody = new BaseActor("base", "temp_car.png", world);
-		carBody.setMounts(createCarMounts());
+		carBody.setMounts(createCarMounts(),0);
 
 		frontTire = createTire("front_tire", world);
 		backTire = createTire("back_tire", world);
