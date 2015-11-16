@@ -89,9 +89,9 @@ public class AssembledObject {
 				while (iter.hasNext()) {
 					Component comp = iter.next();
 					if (Math.abs(comp.getObject().getPhysicsBody()
-							.getAngularVelocity()) < 30f) {
+							.getAngularVelocity()) < 50f) {
 						comp.getObject().getPhysicsBody()
-								.applyAngularImpulse(-200 * direction, true);
+								.applyAngularImpulse(-300 * direction, true);
 					}
 				}
 			}

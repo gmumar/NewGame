@@ -14,6 +14,8 @@ import JSONifier.JSONJoint;
 import JSONifier.JSONParent;
 import JSONifier.Properties;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
@@ -26,8 +28,9 @@ public class Assembler {
 
 	public AssembledObject assembleObject(World world) {
 		AssembledObject obj = new AssembledObject();
+		Preferences prefs = Gdx.app.getPreferences(GamePreferences.CAR_PREF_STR);
 
-		String inputString = GamePreferences.getString(GamePreferences.CAR_PREF_STR,GamePreferences.CAR_MAP_STR);
+		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR, "Error");
 
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);
