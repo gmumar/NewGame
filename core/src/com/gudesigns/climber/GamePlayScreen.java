@@ -51,17 +51,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		debugRenderer = new Box2DDebugRenderer();
 
-		// fcar = new FullCar(world);
-		// fcar.carBody.setPosition(0, -120);
-		// fcar.frontTire.setPosition(0, -120);
-		// fcar.backTire.setPosition(0, -120);
-
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(world);
 
 		ground = new GroundBuilder(world, camera);
-
-		// ComponentBuilder cb = new ComponentBuilder(world);
+		
 	}
 
 	@Override
@@ -75,11 +69,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		handleInput(touches);
 
 		batch.begin();
-		// fcar.draw(batch);
 		builtCar.draw(batch);
 		batch.end();
-		
-		System.out.println(touches.get(0).screenX);
 
 	}
 

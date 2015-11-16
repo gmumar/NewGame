@@ -99,6 +99,11 @@ public class Component {
 						* MathUtils.radiansToDegrees));// In radians
 		prop.put(Properties.POSITION.name(), this.getObject().getPosition().x
 				+ "," + this.getObject().getPosition().y); // "-10,5"
+		
+		if(name.contains(ComponentNames.tire.name())){
+			System.out.println(name + ": motor");
+			prop.put(Properties.MOTOR.name(), "1");
+		}
 		jComponent.setProperties(prop);
 
 		return jComponent;

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import wrapper.BaseActor;
+import wrapper.GamePreferences;
 import Component.Component;
 import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
@@ -26,17 +27,12 @@ public class Assembler {
 	public AssembledObject assembleObject(World world) {
 		AssembledObject obj = new AssembledObject();
 
-		String inputString = "{jointList:[{mount1:bar3_1:2,mount2:tire_2:0},{mount1:bar3_1:0,mount2:tire_1:0},{mount1:bar3_0:2,mount2:tire_1:0},{mount1:bar3_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:bar3_1:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:bar3_1,properties:{ROTATION:0.0,POSITION:\"2.3999996,0.0\"}},{componentName:tire_0,properties:{ROTATION:0.0,POSITION:\"-1.25,-0.049999952\"}},{componentName:tire_1,properties:{ROTATION:0.0,POSITION:\"1.2999992,0.0\"}},{componentName:tire_2,properties:{ROTATION:0.0,POSITION:\"3.6499996,-0.099999905\"}}]}";
-				
-				//makeSomething();
+		String inputString = GamePreferences.getString(GamePreferences.CAR_PREF_STR,GamePreferences.CAR_MAP_STR);
 
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);
 
 		HashMap<String, Component> parts = extractComponents(source, world);
-
-		// Add the parts to the world
-		// addPartsToWorld(parts, world);
 
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
@@ -60,8 +56,13 @@ public class Assembler {
 			rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
 			rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 			rJoint.collideConnected = false;
-
-			//HashMap<String,String> properties = join.getProperties();
+			if(componentAName.contains(ComponentNames.tire.name()) || componentBName.contains(ComponentNames.tire.name())){
+				System.out.println("motor found");
+			}else{
+				rJoint.lowerAngle = 0.01f;
+				rJoint.enableLimit = true;
+				rJoint.upperAngle = 0.01f;
+			}
 
 			world.createJoint(rJoint);
 

@@ -46,7 +46,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 			touches.add(new TouchUnit());
 		}
 
-		menu = new MenuBuilder(world, stage, camera);
+		menu = new MenuBuilder(world, stage, camera, gameLoader);
 		debugRenderer = new Box2DDebugRenderer();
 
 	}
