@@ -43,8 +43,8 @@ public class BaseActor {
 	private float mountDistance;
 
 	// Physics properties
-	private float restitution = 0.6f;
-	private float density = 50;
+	private float restitution = 0.2f;
+	private float density = 25;
 	private float friction = 1f;
 	private final float DEFAULT_SIZE = 1f;
 

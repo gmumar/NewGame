@@ -75,7 +75,7 @@ public class ComponentBuilder {
 
 		// tmpActor.setRestitution(0.9f);
 		tmpActor.setScale(1f);
-		tmpActor.setDensity(170f);
+		//tmpActor.setDensity(10f);
 		shape.setRadius(tmpActor.getWidth() / 2);
 		tmpActor.setShapeBase(shape);
 

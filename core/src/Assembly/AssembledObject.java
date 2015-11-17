@@ -8,6 +8,7 @@ import wrapper.TouchUnit;
 import Component.Component;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public class AssembledObject {
 
@@ -50,6 +51,16 @@ public class AssembledObject {
 			}
 		}
 
+	}
+
+	public void setPosition(float x, float y) {
+		Iterator<Component> iter = partList.iterator();
+		while (iter.hasNext()) {
+			Component component = iter.next();
+			Vector2 currentPos = component.getObject().getPosition();
+			component.getObject().setPosition(currentPos.x + x,
+					currentPos.y + y);
+		}
 	}
 
 	public void draw(SpriteBatch batch) {
