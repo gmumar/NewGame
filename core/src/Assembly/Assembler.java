@@ -9,9 +9,12 @@ import wrapper.GamePreferences;
 import Component.Component;
 import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
+import Component.ComponentBuilder.ComponentSubNames;
 import JSONifier.JSONComponent;
 import JSONifier.JSONJoint;
 import JSONifier.JSONParent;
+import JSONifier.JointTypes;
+import JSONifier.Properties;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -22,14 +25,17 @@ public class Assembler {
 
 	final public static String NAME_MOUNT_SPLIT = ":";
 	final public static String NAME_ID_SPLIT = "_";
+	final public static String NAME_SUBNAME_SPLIT = "=";
 
 	final private short CAR = -2;
 
 	public AssembledObject assembleObject(World world) {
 		AssembledObject obj = new AssembledObject();
-		Preferences prefs = Gdx.app.getPreferences(GamePreferences.CAR_PREF_STR);
+		Preferences prefs = Gdx.app
+				.getPreferences(GamePreferences.CAR_PREF_STR);
 
-		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR, "Error");
+		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR,
+				"Error");
 
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);
@@ -52,21 +58,56 @@ public class Assembler {
 			BaseActor bodyB = parts.get(componentBName).getObject();
 			int componentBMountId = Integer.parseInt(parseName(join.mount2)[1]);
 
-			RevoluteJointDef rJoint = new RevoluteJointDef();
-			
-			rJoint.initialize(bodyA.getPhysicsBody(), bodyB.getPhysicsBody(), bodyB.getMount(componentBMountId));
-			rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
-			rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
-			rJoint.collideConnected = false;
-			if(componentAName.contains(ComponentNames.tire.name()) || componentBName.contains(ComponentNames.tire.name())){
-				System.out.println("motor found");
-			}else{
-				rJoint.lowerAngle = 0.01f;
-				rJoint.enableLimit = true;
-				rJoint.upperAngle = 0.01f;
+			System.out.println(componentBName);
+			System.out.println(componentBMountId);
+			HashMap<String, String> props = join.getProperties();
+
+			String jointType = JointTypes.REVOLUTE.name();
+			if (props != null) {
+				jointType = getJointType(props);
 			}
 
-			world.createJoint(rJoint);
+			if (jointType.compareTo(JointTypes.REVOLUTE.name()) == 0) {
+
+				RevoluteJointDef rJoint = new RevoluteJointDef();
+
+				rJoint.initialize(bodyA.getPhysicsBody(),
+						bodyB.getPhysicsBody(),
+						bodyB.getMount(componentBMountId));
+				rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+				rJoint.collideConnected = false;
+				if (componentAName.contains(ComponentNames.tire.name())
+						|| componentBName.contains(ComponentNames.tire.name())) {
+					;
+				} else {
+					rJoint.lowerAngle = 0.01f;
+					rJoint.enableLimit = true;
+					rJoint.upperAngle = 0.01f;
+				}
+
+				world.createJoint(rJoint);
+			} else if (jointType.compareTo(JointTypes.SPRING.name()) == 0) {
+
+				RevoluteJointDef rJoint = new RevoluteJointDef();
+
+				rJoint.initialize(bodyA.getPhysicsBody(),
+						bodyB.getPhysicsBody(),
+						bodyB.getMount(componentBMountId));
+				rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+				rJoint.collideConnected = false;
+				if (componentAName.contains(ComponentNames.tire.name())
+						|| componentBName.contains(ComponentNames.tire.name())) {
+					;
+				} else {
+					rJoint.lowerAngle = 0.01f;
+					rJoint.enableLimit = true;
+					rJoint.upperAngle = 0.01f;
+				}
+
+				world.createJoint(rJoint);
+			}
 
 		}
 
@@ -75,10 +116,19 @@ public class Assembler {
 		return obj;
 	}
 
+	private String getJointType(HashMap<String, String> props) {
+		if (props.containsKey(Properties.TYPE)) {
+			return props.get(Properties.TYPE);
+		}
+		return JointTypes.REVOLUTE.name();
+	}
+
 	private HashMap<String, Component> extractComponents(JSONParent source,
 			World world) {
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
+		String subnameIndex;
+		String[] componentNameList = new String[2];
 
 		Iterator<JSONComponent> iter = jcomponents.iterator();
 		JSONComponent sourceComponent;
@@ -88,11 +138,21 @@ public class Assembler {
 		while (iter.hasNext()) {
 			sourceComponent = iter.next();
 			componentName = getComponentName(sourceComponent.getComponentName());
-			component = ComponentBuilder.buildComponent(componentName, world);
-			if(sourceComponent.getProperties() != null){
-				component.applyProperties(sourceComponent.getProperties());
+			
+			if (componentName.contains(NAME_SUBNAME_SPLIT)) {
+				componentNameList = componentName.split(NAME_SUBNAME_SPLIT);
+				componentName = componentNameList[0];
+				subnameIndex = componentNameList[1];
+				if(subnameIndex.compareTo(ComponentSubNames.upper.name())==0){
+					component = ComponentBuilder.buildComponent(componentName, world);
+				} 
+			}else{
+				component = ComponentBuilder.buildComponent(componentName, world);
 			}
 			
+			if (sourceComponent.getProperties() != null) {
+				component.applyProperties(sourceComponent.getProperties());
+			}
 			component.getObject().setGroup(CAR);
 			ret.put(sourceComponent.getComponentName(), component);
 		}

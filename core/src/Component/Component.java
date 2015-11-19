@@ -28,11 +28,20 @@ public class Component {
 	ComponentTypes componentTypes;
 	String componentName;
 	boolean Motor = false;
+	ArrayList<BaseActor> jointBodies = null;
 
 	public Component(BaseActor obj, ComponentTypes type, String name) {
 		object = obj;
 		componentTypes = type;
 		componentName = name;
+	}
+
+	public ArrayList<BaseActor> getJointBodies() {
+		return jointBodies;
+	}
+
+	public void setJointBodies(ArrayList<BaseActor> jointBodies) {
+		this.jointBodies = jointBodies;
 	}
 
 	public void applyProperties(HashMap<String, String> propertiesIn) {
@@ -67,24 +76,46 @@ public class Component {
 				}
 			}
 
-			//System.out.println(property);
+			// System.out.println(property);
 		}
 
 	}
 
 	public void setUpForBuilder(String name) {
-		Body body = this.getObject().getPhysicsBody();
-		body.setUserData(name);
-		this.getObject().setSensor();
+		if (this.componentTypes == ComponentTypes.PART) {
+			System.out.println("setting up part");
+			Body body = this.getObject().getPhysicsBody();
+			body.setUserData(name);
+			this.getObject().setSensor();
 
-		int mountId = 0;
-		ArrayList<Vector2> mounts = this.getObject().getMounts();
-		Iterator<Vector2> iter = mounts.iterator();
-		while (iter.hasNext()) {
-			Vector2 mount = iter.next();
-			FixtureDef fixtureDef = ComponentBuilder.buildMount(mount);
-			Fixture fixture = body.createFixture(fixtureDef);
-			fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT + mountId++);
+			int mountId = 0;
+			ArrayList<Vector2> mounts = this.getObject().getMounts();
+			Iterator<Vector2> iter = mounts.iterator();
+			while (iter.hasNext()) {
+				Vector2 mount = iter.next();
+				FixtureDef fixtureDef = ComponentBuilder.buildMount(mount);
+				Fixture fixture = body.createFixture(fixtureDef);
+				fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT
+						+ mountId++);
+			}
+		} else if (this.componentTypes == ComponentTypes.JOINT) {
+			System.out.println("setting up joint");
+			int mountId = 0;
+			ArrayList<BaseActor> bodies = this.getJointBodies();
+			Iterator<BaseActor> iter = bodies.iterator();
+			while (iter.hasNext()) {
+				BaseActor body = iter.next();
+				// TODO: finalize this
+				body.setSensor();
+				FixtureDef fixtureDef = ComponentBuilder
+						.buildMount(new Vector2(0, 0));
+				Fixture fixture = body.getPhysicsBody().createFixture(
+						fixtureDef);
+				fixture.setUserData(body.getPhysicsBody().getUserData() + name
+						+ Assembler.NAME_MOUNT_SPLIT + mountId++);
+				body.getPhysicsBody().setUserData(
+						body.getPhysicsBody().getUserData() + name);
+			}
 		}
 	}
 
@@ -99,11 +130,36 @@ public class Component {
 						* MathUtils.radiansToDegrees));// In radians
 		prop.put(Properties.POSITION.name(), this.getObject().getPosition().x
 				+ "," + this.getObject().getPosition().y); // "-10,5"
-		
-		if(name.contains(ComponentNames.tire.name())){
-			System.out.println(name + ": motor");
+
+		if (name.contains(ComponentNames.tire.name())) {
 			prop.put(Properties.MOTOR.name(), "1");
+		} else if (name.contains(ComponentNames.springJoint.name())) {
+			prop.put(Properties.TYPE.name(), ComponentNames.springJoint.name());
 		}
+		jComponent.setProperties(prop);
+
+		return jComponent;
+	}
+
+	public JSONComponent toJSONComponent(String name, BaseActor body) {
+		JSONComponent jComponent = new JSONComponent();
+		jComponent.setComponentName(name);
+
+		HashMap<String, String> prop = new HashMap<String, String>();
+		prop.put(Properties.ROTATION.name(),
+				Float.toString(body.getRotation() * MathUtils.radiansToDegrees));// In
+																					// radians
+		prop.put(Properties.POSITION.name(),
+				body.getPosition().x + "," + body.getPosition().y); // "-10,5"
+
+		// TODO: get rid of this
+		/*
+		 * if (name.contains(ComponentNames.tire.name())) {
+		 * prop.put(Properties.MOTOR.name(), "1"); } else if
+		 * (name.contains(ComponentNames.springJoint.name())) {
+		 * prop.put(Properties.TYPE.name(), ComponentNames.springJoint.name());
+		 * }
+		 */
 		jComponent.setProperties(prop);
 
 		return jComponent;

@@ -53,7 +53,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(world);
-		builtCar.setPosition(100, -190);
+		builtCar.setPosition(100, -150);
 
 		ground = new GroundBuilder(world, camera);
 		

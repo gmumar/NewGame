@@ -2,7 +2,7 @@ package JSONifier;
 
 
 	public enum Properties {
-		ROTATION, POSITION, MOTOR
+		ROTATION, POSITION, MOTOR, TYPE
 	}
 	
 	
