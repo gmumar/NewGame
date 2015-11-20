@@ -93,7 +93,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void attachCameraTo(BaseActor actor) {
 
-		camera.position.set(actor.getPosition().x + camera.viewportWidth*2.5f, actor.getPosition().y, 1);
+		camera.position.set(actor.getPosition().x + camera.viewportWidth*2.5f, actor.getPosition().y, 1);//
 		camera.zoom = 8;
 		camera.update();
 	}

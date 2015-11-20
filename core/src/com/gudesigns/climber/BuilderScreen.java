@@ -96,7 +96,6 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
-		// batch.setProjectionMatrix(secondCamera.combined);
 
 		debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 10, 10);

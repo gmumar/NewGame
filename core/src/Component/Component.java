@@ -86,7 +86,9 @@ public class Component {
 			System.out.println("setting up part");
 			Body body = this.getObject().getPhysicsBody();
 			body.setUserData(name);
+
 			this.getObject().setSensor();
+			//this.getObject().setBodyType(BodyType.KinematicBody);
 
 			int mountId = 0;
 			ArrayList<Vector2> mounts = this.getObject().getMounts();
@@ -107,12 +109,13 @@ public class Component {
 				BaseActor body = iter.next();
 				// TODO: finalize this
 				body.setSensor();
+				//body.setBodyType(BodyType.KinematicBody);
 				FixtureDef fixtureDef = ComponentBuilder
 						.buildMount(new Vector2(0, 0));
 				Fixture fixture = body.getPhysicsBody().createFixture(
 						fixtureDef);
 				fixture.setUserData(body.getPhysicsBody().getUserData() + name
-						+ Assembler.NAME_MOUNT_SPLIT + mountId++);
+						+ Assembler.NAME_MOUNT_SPLIT + mountId);
 				body.getPhysicsBody().setUserData(
 						body.getPhysicsBody().getUserData() + name);
 			}
@@ -152,14 +155,6 @@ public class Component {
 		prop.put(Properties.POSITION.name(),
 				body.getPosition().x + "," + body.getPosition().y); // "-10,5"
 
-		// TODO: get rid of this
-		/*
-		 * if (name.contains(ComponentNames.tire.name())) {
-		 * prop.put(Properties.MOTOR.name(), "1"); } else if
-		 * (name.contains(ComponentNames.springJoint.name())) {
-		 * prop.put(Properties.TYPE.name(), ComponentNames.springJoint.name());
-		 * }
-		 */
 		jComponent.setProperties(prop);
 
 		return jComponent;

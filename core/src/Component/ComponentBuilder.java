@@ -31,6 +31,16 @@ public class ComponentBuilder {
 		} else if (name.compareTo(ComponentNames.tire.name()) == 0) {
 			return buildTire(world);
 		} else if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
+			return buildSpringJoint(world).get(0);
+		}
+
+		return null;
+	}
+
+	public static ArrayList<Component> buildJointComponent(String name,
+			World world) {
+
+		if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
 			return buildSpringJoint(world);
 		}
 
@@ -96,12 +106,11 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static Component buildSpringJoint(World world) {
+	public static ArrayList<Component> buildSpringJoint(World world) {
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames.springJoint.name(),
 				"temp_spring.png", world);
 
-		// tmpActor.setDensity(40);
 		tmpActor.setSensor();
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
@@ -109,7 +118,6 @@ public class ComponentBuilder {
 				- tmpActor.getHeight() / 2));
 		mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
 				+ tmpActor.getHeight() / 2));
-		tmpActor.setMounts(mounts, 0.0f);
 		tmpActor.destroy();
 
 		BaseActor topFixture = new BaseActor(
@@ -119,7 +127,7 @@ public class ComponentBuilder {
 				world);
 		topFixture.setPosition(mounts.get(0).x, mounts.get(0).y);
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
-		mountTop.add(mounts.get(0));
+		mountTop.add(new Vector2(0, 0));
 		topFixture.setMounts(mountTop, 0.0f);
 		topFixture.setSensor();
 
@@ -130,7 +138,7 @@ public class ComponentBuilder {
 				world);
 		botFixture.setPosition(mounts.get(1).x, mounts.get(1).y);
 		ArrayList<Vector2> mountBot = new ArrayList<Vector2>();
-		mountTop.add(mounts.get(1));
+		mountBot.add(new Vector2(0, 0));
 		botFixture.setMounts(mountBot, 0.0f);
 		botFixture.setSensor();
 
@@ -141,13 +149,24 @@ public class ComponentBuilder {
 		DistanceJointDef dJoint = new DistanceJointDef();
 		dJoint.initialize(topFixture.getPhysicsBody(),
 				botFixture.getPhysicsBody(), mounts.get(0), mounts.get(1));
+		//dJoint.collideConnected = false;
+		//dJoint.dampingRatio = 10f;
+		//dJoint.frequencyHz = 60;
 		world.createJoint(dJoint);
 
 		Component tmpComponent = new Component(topFixture,
 				ComponentTypes.JOINT, ComponentNames.springJoint.name());
 		tmpComponent.setJointBodies(bodies);
 
-		return tmpComponent;
+		Component tmpComponent1 = new Component(botFixture,
+				ComponentTypes.JOINT, ComponentNames.springJoint.name());
+		tmpComponent1.setJointBodies(bodies);
+
+		ArrayList<Component> retList = new ArrayList<Component>();
+		retList.add(tmpComponent);
+		retList.add(tmpComponent1);
+
+		return retList;
 	}
 
 	public static FixtureDef buildMount(Vector2 mount) {
