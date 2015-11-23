@@ -25,13 +25,13 @@ public class ComponentBuilder {
 	public static Component buildComponent(String name, World world) {
 
 		if (name.compareTo(ComponentNames.bar3.name()) == 0) {
-			return buildBar3(world);
+			return buildBar3(world, false);
 		} else if (name.compareTo(ComponentNames.solidJoint.name()) == 0) {
-			return buildSolidJoint(world);
+			return buildSolidJoint(world, false);
 		} else if (name.compareTo(ComponentNames.tire.name()) == 0) {
-			return buildTire(world);
+			return buildTire(world, false);
 		} else if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
-			return buildSpringJoint(world).get(0);
+			return buildSpringJoint(world, false).get(0);
 		}
 
 		return null;
@@ -41,14 +41,14 @@ public class ComponentBuilder {
 			World world) {
 
 		if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
-			return buildSpringJoint(world);
+			return buildSpringJoint(world, false);
 		}
 
 		return null;
 	}
 
 	// Builders
-	public static Component buildBar3(World world) {
+	public static Component buildBar3(World world, boolean forBuilder) {
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames.bar3.name(),
 				"bar3.png", world);
@@ -65,10 +65,15 @@ public class ComponentBuilder {
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				ComponentNames.bar3.name());
+		
+		if(forBuilder){
+			
+		}
+		
 		return tmpComponent;
 	}
 
-	public static Component buildSolidJoint(World world) {
+	public static Component buildSolidJoint(World world, boolean forBuilder) {
 		BaseActor tmpActor = new BaseActor(ComponentNames.solidJoint.name(),
 				"solid_joint.png", world);
 		// tmpActor.disablePhysics();
@@ -77,7 +82,7 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static Component buildAxle(World world) {
+	public static Component buildAxle(World world, boolean forBuilder) {
 		// Build axle
 		BaseActor tmpActor = new BaseActor(ComponentNames.axle.name(), world);
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.JOINT,
@@ -85,7 +90,7 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static Component buildTire(World world) {
+	public static Component buildTire(World world, boolean forBuilder) {
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames.tire.name(),
 				"temp_tire.png", world);
@@ -106,7 +111,7 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static ArrayList<Component> buildSpringJoint(World world) {
+	public static ArrayList<Component> buildSpringJoint(World world, boolean forBuilder) {		
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames.springJoint.name(),
 				"temp_spring.png", world);
@@ -129,7 +134,8 @@ public class ComponentBuilder {
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(new Vector2(0, 0));
 		topFixture.setMounts(mountTop, 0.0f);
-		topFixture.setSensor();
+		//topFixture.setSensor();
+		topFixture.setDensity(0);
 
 		BaseActor botFixture = new BaseActor(
 				ComponentNames.springJoint.name()
@@ -140,7 +146,8 @@ public class ComponentBuilder {
 		ArrayList<Vector2> mountBot = new ArrayList<Vector2>();
 		mountBot.add(new Vector2(0, 0));
 		botFixture.setMounts(mountBot, 0.0f);
-		botFixture.setSensor();
+		//botFixture.setSensor();
+		botFixture.setDensity(0);
 
 		ArrayList<BaseActor> bodies = new ArrayList<BaseActor>();
 		bodies.add(topFixture);
@@ -148,11 +155,11 @@ public class ComponentBuilder {
 
 		DistanceJointDef dJoint = new DistanceJointDef();
 		dJoint.initialize(topFixture.getPhysicsBody(),
-				botFixture.getPhysicsBody(), mounts.get(0), mounts.get(1));
-		//dJoint.collideConnected = false;
-		//dJoint.dampingRatio = 10f;
-		//dJoint.frequencyHz = 60;
-		world.createJoint(dJoint);
+				botFixture.getPhysicsBody(), topFixture.getCenter(),
+				botFixture.getCenter());
+		dJoint.length = 2f;
+		dJoint.collideConnected = false;
+		if(forBuilder) world.createJoint(dJoint);
 
 		Component tmpComponent = new Component(topFixture,
 				ComponentTypes.JOINT, ComponentNames.springJoint.name());
@@ -161,15 +168,15 @@ public class ComponentBuilder {
 		Component tmpComponent1 = new Component(botFixture,
 				ComponentTypes.JOINT, ComponentNames.springJoint.name());
 		tmpComponent1.setJointBodies(bodies);
-
+		
 		ArrayList<Component> retList = new ArrayList<Component>();
 		retList.add(tmpComponent);
 		retList.add(tmpComponent1);
-
+		
 		return retList;
 	}
 
-	public static FixtureDef buildMount(Vector2 mount) {
+	public static FixtureDef buildMount(Vector2 mount, boolean forBuilder) {
 		FixtureDef fix = new FixtureDef();
 
 		CircleShape shape = new CircleShape();
@@ -180,5 +187,4 @@ public class ComponentBuilder {
 
 		return fix;
 	}
-
 }

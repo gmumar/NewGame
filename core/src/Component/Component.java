@@ -83,7 +83,6 @@ public class Component {
 
 	public void setUpForBuilder(String name) {
 		if (this.componentTypes == ComponentTypes.PART) {
-			System.out.println("setting up part");
 			Body body = this.getObject().getPhysicsBody();
 			body.setUserData(name);
 
@@ -95,13 +94,12 @@ public class Component {
 			Iterator<Vector2> iter = mounts.iterator();
 			while (iter.hasNext()) {
 				Vector2 mount = iter.next();
-				FixtureDef fixtureDef = ComponentBuilder.buildMount(mount);
+				FixtureDef fixtureDef = ComponentBuilder.buildMount(mount, true);
 				Fixture fixture = body.createFixture(fixtureDef);
 				fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT
 						+ mountId++);
 			}
 		} else if (this.componentTypes == ComponentTypes.JOINT) {
-			System.out.println("setting up joint");
 			int mountId = 0;
 			ArrayList<BaseActor> bodies = this.getJointBodies();
 			Iterator<BaseActor> iter = bodies.iterator();
@@ -111,7 +109,7 @@ public class Component {
 				body.setSensor();
 				//body.setBodyType(BodyType.KinematicBody);
 				FixtureDef fixtureDef = ComponentBuilder
-						.buildMount(new Vector2(0, 0));
+						.buildMount(new Vector2(0, 0), true);
 				Fixture fixture = body.getPhysicsBody().createFixture(
 						fixtureDef);
 				fixture.setUserData(body.getPhysicsBody().getUserData() + name

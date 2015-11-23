@@ -304,14 +304,18 @@ public class BaseActor {
 	}
 
 	public void destroy() {
-		if (!onlyPhysicBody) {
-			texture.dispose();
-		}
+		destroyTexture();
 
 		if (body != null && world != null && world.getBodyCount() > 0) {
 			if (world == null)
 				return;
 			world.destroyBody(body);
+		}
+	}
+	
+	public void destroyTexture(){
+		if (!onlyPhysicBody) {
+			texture.dispose();
 		}
 	}
 
