@@ -59,10 +59,10 @@ public class ComponentBuilder {
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 		mounts.add(new Vector2(tmpActor.getCenter().x - tmpActor.getWidth() / 2
-				+ 0.1f, mountHeight));
+				, mountHeight));
 		mounts.add(new Vector2(tmpActor.getCenter().x, mountHeight));
 		mounts.add(new Vector2(tmpActor.getCenter().x + tmpActor.getWidth() / 2
-				- 0.1f, mountHeight));
+				, mountHeight));
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
@@ -98,7 +98,7 @@ public class ComponentBuilder {
 				"temp_tire.png", world);
 		CircleShape shape = new CircleShape();
 
-		tmpActor.setRestitution(0.1f);
+		tmpActor.setRestitution(0.9f);
 		// tmpActor.setScale(1.2f);
 		tmpActor.setPosition(0, 0);
 		tmpActor.setDensity(40);
@@ -167,7 +167,7 @@ public class ComponentBuilder {
 		topFixture.setMounts(mountTop, 0.0f);
 		topFixture.setScale(0.3f);
 		topFixture.setSensor();
-		topFixture.setDensity(10);
+		topFixture.setDensity(1);
 		// topFixture.setScaleY(0.5f);
 
 		BaseActor botFixture = new BaseActor(
@@ -180,7 +180,7 @@ public class ComponentBuilder {
 		botFixture.setMounts(mountBot, 0.0f);
 		botFixture.setScale(0.3f);
 		botFixture.setSensor();
-		botFixture.setDensity(10);
+		botFixture.setDensity(1);
 		// botFixture.setScaleY(0.5f);
 
 		ArrayList<BaseActor> bodies = new ArrayList<BaseActor>();
@@ -195,7 +195,7 @@ public class ComponentBuilder {
 		dJoint.collideConnected = true;
 		if (!forBuilder) {
 			dJoint.frequencyHz = 10;
-			dJoint.dampingRatio = 1;
+			dJoint.dampingRatio = 0.5f;
 		}
 		//
 		world.createJoint(dJoint);
@@ -209,8 +209,8 @@ public class ComponentBuilder {
 			rJoint.localAnchorB.set(botFixture.getCenter());
 			rJoint.enableMotor = true;
 			rJoint.collideConnected = false;
-			rJoint.lowerTranslation = 1.0f;
-			rJoint.upperTranslation = 1.5f;
+			rJoint.lowerTranslation = 0.5f;
+			rJoint.upperTranslation = 1.8f;
 			rJoint.enableLimit = true;
 			world.createJoint(rJoint);
 

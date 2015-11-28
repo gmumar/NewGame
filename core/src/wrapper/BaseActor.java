@@ -45,7 +45,7 @@ public class BaseActor {
 	// Physics properties
 	private float restitution = 0.2f;
 	private float density = 25;
-	private float friction = 1f;
+	private float friction = 0.1f;
 	private final float DEFAULT_SIZE = 1f;
 
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();

@@ -33,8 +33,8 @@ public class Assembler {
 		Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
 
-		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR,
-				"Error");
+		String inputString = 
+				prefs.getString(GamePreferences.CAR_MAP_STR,"Error");
 		// "{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}";
 		//
 
@@ -42,7 +42,6 @@ public class Assembler {
 		source = JSONParent.objectify(inputString);
 
 		HashMap<String, Component> parts = extractComponents(source, world);
-		ArrayList<JSONJoint> jointExclusionList = new ArrayList<JSONJoint>();
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
 		Iterator<JSONJoint> JointIter = jcomponents.iterator();
@@ -50,11 +49,7 @@ public class Assembler {
 
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
-			if (contains(jointExclusionList, join)) {
-				System.out.println("skipping");
-				continue;
-			}
-
+			
 			String componentAName = parseName(join.mount1)[0];
 			// System.out.println(componentAName);
 			BaseActor bodyA = parts.get(componentAName).getObject();
@@ -66,7 +61,6 @@ public class Assembler {
 			int componentBMountId = getMountId(join.mount2);
 
 			{
-				System.out.println("defaulting");
 				RevoluteJointDef rJoint = new RevoluteJointDef();
 
 				rJoint.initialize(bodyA.getPhysicsBody(),
@@ -75,19 +69,11 @@ public class Assembler {
 				rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
 				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				rJoint.collideConnected = false;
-				rJoint.lowerAngle = 0.0f;
-				rJoint.upperAngle = 0.0f;
+				//rJoint.lowerAngle = 0.00f;
+				//rJoint.upperAngle = 0.4f;
 				rJoint.enableLimit = true;
 				world.createJoint(rJoint);
 				
-				WeldJointDef wJoint = new WeldJointDef();
-				wJoint.bodyA = bodyA.getPhysicsBody();
-				wJoint.bodyB = bodyB.getPhysicsBody();
-				wJoint.collideConnected = false;
-				wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
-				wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
-				
-				world.createJoint(wJoint);
 				
 			}
 

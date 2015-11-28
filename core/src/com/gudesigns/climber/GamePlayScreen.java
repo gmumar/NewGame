@@ -88,7 +88,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch.setProjectionMatrix(camera.combined);
 
 		debugRenderer.render(world, camera.combined);
-		world.step(Gdx.graphics.getDeltaTime(), 300, 200);
+		world.step(Gdx.graphics.getDeltaTime(), 200, 100);
 		
 	}
 

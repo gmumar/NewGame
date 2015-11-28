@@ -60,8 +60,7 @@ public class AssembledObject {
 		while (iter.hasNext()) {
 			Component component = iter.next();
 			Vector2 currentPos = component.getObject().getPosition();
-			component.setPosition(currentPos.x + x,
-					currentPos.y + y);
+			component.setPosition(currentPos.x + x, currentPos.y + y);
 		}
 	}
 
@@ -77,13 +76,14 @@ public class AssembledObject {
 		if (driveList == null) {
 			driveList = new ArrayList<BaseActor>();
 		}
-		//c.getObject().getPhysicsBody().setAngularDamping(0.5f);
-		
-		if(c.getComponentName().compareTo(ComponentNames.axle.name())==0){
+		// c.getObject().getPhysicsBody().setAngularDamping(0.5f);
+
+		if (c.getComponentName().compareTo(ComponentNames.axle.name()) == 0) {
 			ArrayList<BaseActor> bodies = c.getJointBodies();
 			driveList.add(bodies.get(0));
-		} 		
-		
+			bodies.get(0).getPhysicsBody().setAngularDamping(1f);
+		}
+
 	}
 
 	public void handleInput(ArrayList<TouchUnit> touchesIn) {
@@ -107,10 +107,12 @@ public class AssembledObject {
 
 				while (iter.hasNext()) {
 					BaseActor comp = iter.next();
-					if (Math.abs(comp.getPhysicsBody()
-							.getAngularVelocity()) < 50f) {
-						comp.getPhysicsBody()
-								.applyAngularImpulse(-300 * direction, true);
+					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
+							true);
+					if (comp.getPhysicsBody().getAngularVelocity() > 50f) {
+						comp.getPhysicsBody().setAngularVelocity(50f);
+					} else if(comp.getPhysicsBody().getAngularVelocity() < -50f){
+						comp.getPhysicsBody().setAngularVelocity(-50f);
 					}
 				}
 			}
