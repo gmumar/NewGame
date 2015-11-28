@@ -3,9 +3,11 @@ package Assembly;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import wrapper.BaseActor;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import Component.Component;
+import Component.ComponentBuilder.ComponentNames;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -13,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 public class AssembledObject {
 
 	ArrayList<Component> partList;
-	ArrayList<Component> driveList;
+	ArrayList<BaseActor> driveList;
 	Component basePart;
 	int basePartIndex;
 
@@ -58,7 +60,7 @@ public class AssembledObject {
 		while (iter.hasNext()) {
 			Component component = iter.next();
 			Vector2 currentPos = component.getObject().getPosition();
-			component.getObject().setPosition(currentPos.x + x,
+			component.setPosition(currentPos.x + x,
 					currentPos.y + y);
 		}
 	}
@@ -71,11 +73,17 @@ public class AssembledObject {
 	}
 
 	public void addToDriveList(Component c) {
+		System.out.println("Adding to drive list");
 		if (driveList == null) {
-			driveList = new ArrayList<Component>();
+			driveList = new ArrayList<BaseActor>();
 		}
-		c.getObject().getPhysicsBody().setAngularDamping(0.5f);
-		driveList.add(c);
+		//c.getObject().getPhysicsBody().setAngularDamping(0.5f);
+		
+		if(c.getComponentName().compareTo(ComponentNames.axle.name())==0){
+			ArrayList<BaseActor> bodies = c.getJointBodies();
+			driveList.add(bodies.get(0));
+		} 		
+		
 	}
 
 	public void handleInput(ArrayList<TouchUnit> touchesIn) {
@@ -95,13 +103,13 @@ public class AssembledObject {
 			}
 
 			if (touch.isTouched()) {
-				Iterator<Component> iter = driveList.iterator();
+				Iterator<BaseActor> iter = driveList.iterator();
 
 				while (iter.hasNext()) {
-					Component comp = iter.next();
-					if (Math.abs(comp.getObject().getPhysicsBody()
+					BaseActor comp = iter.next();
+					if (Math.abs(comp.getPhysicsBody()
 							.getAngularVelocity()) < 50f) {
-						comp.getObject().getPhysicsBody()
+						comp.getPhysicsBody()
 								.applyAngularImpulse(-300 * direction, true);
 					}
 				}

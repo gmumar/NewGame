@@ -11,11 +11,12 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
 public class ComponentBuilder {
 
 	public enum ComponentNames {
-		bar3, tire, solidJoint, axle, springJoint
+		bar3, tire, solidJoint, axle, springJoint, wheel
 	}
 
 	public enum ComponentSubNames {
@@ -42,7 +43,7 @@ public class ComponentBuilder {
 
 		if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
 			return buildSpringJoint(world, false);
-		}
+		} 
 
 		return null;
 	}
@@ -57,10 +58,10 @@ public class ComponentBuilder {
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 		mounts.add(new Vector2(
-				tmpActor.getCenter().x - tmpActor.getWidth() / 2, mountHeight));
+				tmpActor.getCenter().x - tmpActor.getWidth() / 2 +0.1f, mountHeight));
 		mounts.add(new Vector2(tmpActor.getCenter().x, mountHeight));
 		mounts.add(new Vector2(
-				tmpActor.getCenter().x + tmpActor.getWidth() / 2, mountHeight));
+				tmpActor.getCenter().x + tmpActor.getWidth() / 2 -0.1f, mountHeight));
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
@@ -92,23 +93,49 @@ public class ComponentBuilder {
 
 	public static Component buildTire(World world, boolean forBuilder) {
 		// Setup mounts, shape
-		BaseActor tmpActor = new BaseActor(ComponentNames.tire.name(),
+		BaseActor tmpActor = new BaseActor(ComponentNames.wheel.name(),
 				"temp_tire.png", world);
 		CircleShape shape = new CircleShape();
 
-		// tmpActor.setRestitution(0.9f);
-		tmpActor.setScale(1f);
-		tmpActor.setDensity(40);
+		tmpActor.setRestitution(0.1f);
+		//tmpActor.setScale(1.2f);
+		tmpActor.setPosition(0, 0);
+		tmpActor.setDensity(30);
 		shape.setRadius(tmpActor.getWidth() / 2);
 		tmpActor.setShapeBase(shape);
-
+		
+		BaseActor fixture = new BaseActor(ComponentNames.axle.name(),
+				world);
+		fixture.setPosition(tmpActor.getCenter().x,tmpActor.getCenter().y);
+		//fixture.setMounts(mounts, 0.0f);
+		fixture.setScale(0.3f);
+		fixture.setDensity(0);
+		
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
-		mounts.add(tmpActor.getCenter());
-		tmpActor.setMounts(mounts, 0.0f);
+		mounts.add(fixture.getCenter());
+		fixture.setMounts(mounts, 0.0f);
+		
+		RevoluteJointDef revJoint = new RevoluteJointDef();
+		revJoint.initialize(fixture.getPhysicsBody(),
+				tmpActor.getPhysicsBody(), fixture.getCenter());
+		revJoint.collideConnected = false;
+		revJoint.enableLimit = false;
+		world.createJoint(revJoint);
+		
+		ArrayList<BaseActor> bodies = new ArrayList<BaseActor>();
+		bodies.add(tmpActor);
+		bodies.add(fixture);
 
-		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
-				ComponentNames.tire.name());
-		return tmpComponent;
+		Component tireComponent = new Component(tmpActor, ComponentTypes.PART,
+				ComponentNames.wheel.name());
+		tireComponent.setJointBodies(bodies);
+		
+		Component axleComponent = new Component(fixture, ComponentTypes.PART,
+				ComponentNames.axle.name());
+		axleComponent.setJointBodies(bodies);
+		
+		
+		return axleComponent;
 	}
 
 	public static ArrayList<Component> buildSpringJoint(World world, boolean forBuilder) {		
@@ -118,36 +145,42 @@ public class ComponentBuilder {
 
 		tmpActor.setSensor();
 
+		float height = 0;
+		if(forBuilder) height = tmpActor.getHeight() / 2;
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 		mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
-				- tmpActor.getHeight() / 2));
+				- height));
 		mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
-				+ tmpActor.getHeight() / 2));
+				+ height));
 		tmpActor.destroy();
 
 		BaseActor topFixture = new BaseActor(
 				ComponentNames.springJoint.name()
 						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.upper.name(), "solid_joint.png",
+						+ ComponentSubNames.upper.name(),
 				world);
 		topFixture.setPosition(mounts.get(0).x, mounts.get(0).y);
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(new Vector2(0, 0));
 		topFixture.setMounts(mountTop, 0.0f);
+		topFixture.setScale(0.3f);
 		//topFixture.setSensor();
-		topFixture.setDensity(0);
+		topFixture.setDensity(1);
+		//topFixture.setScaleY(0.5f);
 
 		BaseActor botFixture = new BaseActor(
 				ComponentNames.springJoint.name()
 						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.lower.name(), "solid_joint.png",
+						+ ComponentSubNames.lower.name(),
 				world);
 		botFixture.setPosition(mounts.get(1).x, mounts.get(1).y);
 		ArrayList<Vector2> mountBot = new ArrayList<Vector2>();
 		mountBot.add(new Vector2(0, 0));
 		botFixture.setMounts(mountBot, 0.0f);
+		botFixture.setScale(0.3f);
 		//botFixture.setSensor();
-		botFixture.setDensity(0);
+		botFixture.setDensity(1);
+		//botFixture.setScaleY(0.5f);
 
 		ArrayList<BaseActor> bodies = new ArrayList<BaseActor>();
 		bodies.add(topFixture);
@@ -159,7 +192,8 @@ public class ComponentBuilder {
 				botFixture.getCenter());
 		dJoint.length = 2f;
 		dJoint.collideConnected = false;
-		if(forBuilder) world.createJoint(dJoint);
+		if(forBuilder) 
+			world.createJoint(dJoint);
 
 		Component tmpComponent = new Component(topFixture,
 				ComponentTypes.JOINT, ComponentNames.springJoint.name());

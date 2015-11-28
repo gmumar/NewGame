@@ -137,6 +137,7 @@ public class BaseActor {
 
 		body = world.createBody(bodyDef);
 		fixture = body.createFixture(fixtureDef);
+		fixture.setSensor(false);
 
 		body.setUserData(name);
 	}
@@ -201,6 +202,16 @@ public class BaseActor {
 
 	public void setScale(float xy) {
 		scaleX = scaleY = xy;
+		if (!onlyPhysicBody) {
+			sprite.setSize(sprite.getWidth() * scaleX, sprite.getHeight()
+					* scaleY);
+			sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+		}
+		initBody();
+	}
+	
+	public void setScaleY(float y) {
+		scaleY = y;
 		if (!onlyPhysicBody) {
 			sprite.setSize(sprite.getWidth() * scaleX, sprite.getHeight()
 					* scaleY);

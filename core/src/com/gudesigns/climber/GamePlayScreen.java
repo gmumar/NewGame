@@ -70,7 +70,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		handleInput(touches);
 
 		batch.begin();
-		builtCar.draw(batch);
+		//builtCar.draw(batch);
 		batch.end();
 
 	}
@@ -89,17 +89,19 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 10, 10);
+		
 	}
 
 	private void attachCameraTo(BaseActor actor) {
 
-		camera.position.set(actor.getPosition().x, actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
+		camera.position.set(actor.getPosition().x , actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
 		camera.zoom = 4;
 		camera.update();
 	}
 
 	private void initWorld() {
 		world = (new World(new Vector2(0, -98f), true));
+		world.setWarmStarting(true);
 	}
 
 	private void initStage() {

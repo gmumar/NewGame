@@ -36,9 +36,8 @@ public class Assembler {
 		Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
 
-		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR,
-				"Error");
-		// "{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}";
+		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR,"Error");
+		 //"{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}";
 		//
 
 		JSONParent source = new JSONParent();
@@ -59,14 +58,16 @@ public class Assembler {
 			}
 
 			String componentAName = parseName(join.mount1)[0];
+			System.out.println(componentAName);
 			BaseActor bodyA = parts.get(componentAName).getObject();
 			int componentAMountId = getMountId(join.mount1);
 
 			String componentBName = parseName(join.mount2)[0];
+			System.out.println(componentBName);
 			BaseActor bodyB = parts.get(componentBName).getObject();
 			int componentBMountId = getMountId(join.mount2);
 
-			if (componentAName.contains(ComponentNames.tire.name())
+			/*if (componentAName.contains(ComponentNames.tire.name())
 					|| componentBName.contains(ComponentNames.tire.name())) {
 				RevoluteJointDef rJoint = new RevoluteJointDef();
 
@@ -77,18 +78,20 @@ public class Assembler {
 				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				rJoint.collideConnected = false;
 				world.createJoint(rJoint);
-			} else if (componentAName.contains(ComponentNames.springJoint
+			} else*/ 
+			if (componentAName.contains(ComponentNames.springJoint
 					.name())
 					|| componentBName.contains(ComponentNames.springJoint
 							.name())) {
 
 				JSONJoint secondJoint = findOtherJoint(join, jcomponents);
+				if(secondJoint==null) continue;
 				jointExclusionList.add(secondJoint);
 
 				String mountA = getOtherMount(join);
 				String mountB = getOtherMount(secondJoint);
 
-				if (componentAName.contains(ComponentNames.springJoint.name())) {
+				/*if (componentAName.contains(ComponentNames.springJoint.name())) {
 					world.destroyBody(bodyA.getPhysicsBody());
 					bodyA.destroyTexture();
 				}
@@ -96,8 +99,8 @@ public class Assembler {
 				if (componentBName.contains(ComponentNames.springJoint.name())) {
 					world.destroyBody(bodyB.getPhysicsBody());
 					bodyB.destroyTexture();
-				}
-
+				}*/
+				
 				String mountAName = parseName(mountA)[0];
 				BaseActor mountABody = parts.get(mountAName).getObject();
 				int mountAMountId = getMountId(mountA);
@@ -110,13 +113,11 @@ public class Assembler {
 						|| mountBName.contains(ComponentNames.tire.name())) {
 					WheelJointDef rJoint = new WheelJointDef();
 					rJoint.initialize(mountABody.getPhysicsBody(), mountBBody
-							.getPhysicsBody(), mountBBody
-							.getMount(mountBMountId), new Vector2(0, 1));
-					rJoint.localAnchorA.set(mountABody.getMount(mountAMountId));
+							.getPhysicsBody(), mountABody.getCenter(), new Vector2(0, 1));
+					rJoint.localAnchorA.set(mountABody.getMount(mountAMountId).x,mountABody.getMount(mountAMountId).y);
 					rJoint.localAnchorB.set(mountBBody.getMount(mountBMountId));
 					rJoint.collideConnected = false;
-					rJoint.frequencyHz = 1;
-					rJoint.dampingRatio = 0;
+					rJoint.enableMotor = false;
 					world.createJoint(rJoint);
 				} else {
 					PrismaticJointDef rJoint = new PrismaticJointDef();
@@ -125,10 +126,11 @@ public class Assembler {
 							.getMount(mountBMountId), new Vector2(0, 1));
 					rJoint.localAnchorA.set(mountABody.getMount(mountAMountId));
 					rJoint.localAnchorB.set(mountBBody.getMount(mountBMountId));
+					rJoint.enableMotor = false;
 					rJoint.collideConnected = false;
 					world.createJoint(rJoint);
 				}
-
+				
 				DistanceJointDef dJoint = new DistanceJointDef();
 
 				dJoint.initialize(mountABody.getPhysicsBody(),
@@ -137,14 +139,16 @@ public class Assembler {
 						mountBBody.getMount(mountBMountId));
 				dJoint.localAnchorA.set(mountABody.getMount(mountAMountId));
 				dJoint.localAnchorB.set(mountBBody.getMount(mountBMountId));
-				// dJoint.enableLimit = true;
-				dJoint.frequencyHz = 20;
+				dJoint.frequencyHz = 10;
 				dJoint.dampingRatio = 1f;
 				dJoint.collideConnected = false;
-				dJoint.length = 1f;
+				dJoint.length = 1.5f;
 
 				world.createJoint(dJoint);
+				
+				
 			} else {
+				System.out.println("defaulting");
 				RevoluteJointDef rJoint = new RevoluteJointDef();
 
 				rJoint.initialize(bodyA.getPhysicsBody(),
@@ -263,6 +267,8 @@ public class Assembler {
 			component = null;
 			sourceComponent = iter.next();
 			componentName = getComponentName(sourceComponent.getComponentName());
+			
+			System.out.println("extracting: " + componentName);
 
 			if (componentName.contains(ComponentNames.springJoint.name())) {
 				componentList = ComponentBuilder.buildJointComponent(
@@ -276,8 +282,8 @@ public class Assembler {
 				Component part1 = componentList.get(0);
 				Component part2 = componentList.get(1);
 
-				part1.getObject().setGroup(CAR);
-				part2.getObject().setGroup(CAR);
+				//part1.getObject().setGroup(CAR);
+				//part2.getObject().setGroup(CAR);
 				part1.applyProperties(sourceComponent.getProperties());
 
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
@@ -288,12 +294,14 @@ public class Assembler {
 						+ jointComponentId, part2);
 
 			} else {
+				
 				component = ComponentBuilder.buildComponent(componentName,
 						world);
+				System.out.println("building " + sourceComponent.getComponentName() );
 				if (sourceComponent.getProperties() != null) {
 					component.applyProperties(sourceComponent.getProperties());
 				}
-				component.getObject().setGroup(CAR);
+				component.setGroup(CAR);
 				ret.put(sourceComponent.getComponentName(), component);
 			}
 

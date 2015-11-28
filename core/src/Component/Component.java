@@ -194,4 +194,30 @@ public class Component {
 		object.destroy();
 	}
 
+	public void setPosition(float f, float g) {
+		if(getJointBodies()==null){
+			this.getObject().setPosition(f, g);
+		} else {
+			Iterator<BaseActor> iter = getJointBodies().iterator();
+			while(iter.hasNext()){
+				BaseActor body = iter.next();
+				body.setPosition(f, g);
+			}
+		}
+		
+	}
+
+	public void setGroup(short group) {
+		if(getJointBodies()==null){
+			this.getObject().setGroup(group);
+		} else {
+			Iterator<BaseActor> iter = getJointBodies().iterator();
+			while(iter.hasNext()){
+				BaseActor body = iter.next();
+				body.setGroup(group);
+			}
+		}
+		
+	}
+
 }
