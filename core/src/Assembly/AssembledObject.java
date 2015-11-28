@@ -68,7 +68,7 @@ public class AssembledObject {
 	public void draw(SpriteBatch batch) {
 		Iterator<Component> iter = partList.iterator();
 		while (iter.hasNext()) {
-			iter.next().getObject().draw(batch);
+			iter.next().draw(batch);
 		}
 	}
 

@@ -12,6 +12,7 @@ import Component.ComponentBuilder.ComponentNames;
 import JSONifier.JSONComponent;
 import JSONifier.Properties;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -62,7 +63,7 @@ public class Component {
 
 			if (property.getKey().compareTo(Properties.POSITION.name()) == 0) {
 				String[] values = property.getValue().split(",");
-				this.object.setPosition(Float.parseFloat(values[0]),
+				this.setPosition(Float.parseFloat(values[0]),
 						Float.parseFloat(values[1]));
 			}
 
@@ -76,7 +77,7 @@ public class Component {
 				}
 			}
 
-			// System.out.println(property);
+			 System.out.println(property);
 		}
 
 	}
@@ -196,13 +197,15 @@ public class Component {
 
 	public void setPosition(float f, float g) {
 		if(getJointBodies()==null){
-			this.getObject().setPosition(f, g);
+			this.getObject().setPosition(this.getObject().getPosition().x + f, this.getObject().getPosition().y + g);
 		} else {
 			Iterator<BaseActor> iter = getJointBodies().iterator();
 			while(iter.hasNext()){
 				BaseActor body = iter.next();
-				body.setPosition(f, g);
+				body.setPosition(body.getPosition().x + f, body.getPosition().y + g);
+				System.out.println(body.getName() + " Setting position " + body.getPosition());
 			}
+			this.getObject().setPosition(this.getObject().getPosition().x + f, this.getObject().getPosition().y + g);
 		}
 		
 	}
@@ -216,8 +219,22 @@ public class Component {
 				BaseActor body = iter.next();
 				body.setGroup(group);
 			}
+			this.getObject().setGroup(group);
 		}
 		
+	}
+
+	public void draw(SpriteBatch batch) {
+		if(getJointBodies()==null){
+			this.getObject().draw(batch);
+		} else {
+			Iterator<BaseActor> iter = getJointBodies().iterator();
+			while(iter.hasNext()){
+				BaseActor body = iter.next();
+				body.draw(batch);
+			}
+			this.getObject().draw(batch);
+		}
 	}
 
 }

@@ -53,7 +53,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(world);
-		builtCar.setPosition(100, -150);
+		//builtCar.setPosition(1, -1.50f);
 
 		ground = new GroundBuilder(world, camera);
 		
@@ -70,7 +70,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		handleInput(touches);
 
 		batch.begin();
-		//builtCar.draw(batch);
+		builtCar.draw(batch);
 		batch.end();
 
 	}
@@ -88,19 +88,19 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch.setProjectionMatrix(camera.combined);
 
 		debugRenderer.render(world, camera.combined);
-		world.step(Gdx.graphics.getDeltaTime(), 10, 10);
+		world.step(Gdx.graphics.getDeltaTime(), 300, 200);
 		
 	}
 
 	private void attachCameraTo(BaseActor actor) {
 
-		camera.position.set(actor.getPosition().x , actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 4;
+		camera.position.set(actor.getPosition().x + camera.viewportWidth*2.5f , actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
+		camera.zoom = 6;
 		camera.update();
 	}
 
 	private void initWorld() {
-		world = (new World(new Vector2(0, -98f), true));
+		world = (new World(new Vector2(0, -78f), true));
 		world.setWarmStarting(true);
 	}
 
