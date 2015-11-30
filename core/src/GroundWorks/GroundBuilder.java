@@ -1,11 +1,13 @@
 package GroundWorks;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import wrapper.CameraManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -18,7 +20,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class GroundBuilder {
 
-	final float UNIT_LENGTH = 10;
+	final float UNIT_LENGTH = 7f;
+	final float variation = 13;
 
 	World world;
 	Body floor;
@@ -27,34 +30,9 @@ public class GroundBuilder {
 	Vector2 lastPointDrawn = null;
 
 	ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
-
+	
 	Integer lastDrawnPointer = 0;
 	Integer lastRemovedPointer = 1;
-	
-	private class GroundUnitDescriptor {
-		Vector2 start, end;
-		Fixture fixture;
-		boolean fixtureDeleted = true;
-
-		public GroundUnitDescriptor(Vector2 start, Vector2 end) {
-			this.start = start;
-			this.end = end;
-		}
-
-		public void deleteFixture() {
-			floor.destroyFixture(fixture);
-			fixtureDeleted = true;
-		}
-
-		public void setFixture(Fixture drawEdge) {
-			this.fixture = drawEdge;
-			fixtureDeleted = false;
-		}
-
-		public boolean isFixtureDeleted() {
-			return fixtureDeleted;
-		}
-	}
 
 	public GroundBuilder(World world, CameraManager camera) {
 		this.world = world;
@@ -75,7 +53,7 @@ public class GroundBuilder {
 		floor = world.createBody(bodyDef2);
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-w / 2,
-				-h / 2), new Vector2(w / 2, -h / 2));
+				-h / 2), new Vector2(w / 2, -h / 2), "temp_ground.png");
 		mapList.add(gud);
 		gud.fixture = drawEdge(gud.start, gud.end);
 
@@ -96,7 +74,7 @@ public class GroundBuilder {
 	
 			if ( getBackEdge(cam) > gud.start.x) {
 				gud = mapList.get(lastRemovedPointer);
-				gud.deleteFixture();
+				gud.deleteUnit(floor);// drawList
 				lastRemovedPointer++;
 			}
 		}
@@ -113,21 +91,20 @@ public class GroundBuilder {
 			}
 		}
 		
-		
-
 	}
 
 	public void updateFloor(CameraManager cam) {
 
 		GroundUnitDescriptor lastObj = mapList.get(mapList.size() - 1);
 		Random r = new Random();
-		float randf = r.nextFloat() * 10 - 5;
+		float randf = r.nextFloat() * variation - variation/2;
 
 		if (getEdge(cam) > lastObj.end.x) {
 			GroundUnitDescriptor newObj = new GroundUnitDescriptor(lastObj.end,
 					new Vector2(lastObj.end.x + UNIT_LENGTH, lastObj.end.y
-							+ randf));
+							+ randf), "temp_ground.png");
 			mapList.add(newObj);
+			//drawList.add(newObj.getGraphic());
 		}
 
 	}
@@ -140,9 +117,17 @@ public class GroundBuilder {
 		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 8;
 	}
 
-	public void draw(CameraManager cam) {
+	public void draw(CameraManager cam, SpriteBatch batch) {
 		updateFloor(cam);
 		drawFloor(cam);
+		
+		Iterator<GroundUnitDescriptor> iter = mapList.iterator();
+		
+		while(iter.hasNext()){
+			GroundUnitDescriptor groundItem = iter.next();
+			if(!groundItem.isFixtureDeleted())
+				groundItem.draw(batch);
+		}
 
 	}
 

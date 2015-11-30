@@ -15,8 +15,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -29,6 +33,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	AssembledObject builtCar;
 	World world;
 	CameraManager camera;
+	BitmapFont font12;
 
 	Box2DDebugRenderer debugRenderer;
 
@@ -57,6 +62,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		ground = new GroundBuilder(world, camera);
 		
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/simpleFont.ttf"));
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = 10;
+		parameter.color = Color.GREEN;
+		font12 = generator.generateFont(parameter); // font size 12 pixels
+		generator.dispose(); 
+		
 	}
 
 	@Override
@@ -65,12 +77,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		renderWorld();
 		attachCameraTo(builtCar.getBasePart().getObject());
 
-		ground.draw(camera);
-
 		handleInput(touches);
 
 		batch.begin();
+		ground.draw(camera,batch);
 		builtCar.draw(batch);
+		font12.draw(batch, Integer.toString(Gdx.graphics.getFramesPerSecond()), camera.position.x, camera.position.y);
 		batch.end();
 
 	}
@@ -87,15 +99,15 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		debugRenderer.render(world, camera.combined);
-		world.step(Gdx.graphics.getDeltaTime(), 200, 100);
+		//debugRenderer.render(world, camera.combined);
+		world.step(Gdx.graphics.getDeltaTime(), 300, 200);
 		
 	}
 
 	private void attachCameraTo(BaseActor actor) {
 
 		camera.position.set(actor.getPosition().x + camera.viewportWidth*2.5f , actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 6;
+		camera.zoom = 8;
 		camera.update();
 	}
 

@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import wrapper.BaseActor;
 import wrapper.GamePreferences;
+import wrapper.Globals;
 import Component.Component;
 import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
@@ -18,7 +19,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
 public class Assembler {
 
@@ -50,15 +50,15 @@ public class Assembler {
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
 			
-			String componentAName = parseName(join.mount1)[0];
+			String componentAName = Globals.parseName(join.mount1)[0];
 			// System.out.println(componentAName);
 			BaseActor bodyA = parts.get(componentAName).getObject();
-			int componentAMountId = getMountId(join.mount1);
+			int componentAMountId = Globals.getMountId(join.mount1);
 
-			String componentBName = parseName(join.mount2)[0];
+			String componentBName = Globals.parseName(join.mount2)[0];
 			// System.out.println(componentBName);
 			BaseActor bodyB = parts.get(componentBName).getObject();
-			int componentBMountId = getMountId(join.mount2);
+			int componentBMountId = Globals.getMountId(join.mount2);
 
 			{
 				RevoluteJointDef rJoint = new RevoluteJointDef();
@@ -69,8 +69,6 @@ public class Assembler {
 				rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
 				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				rJoint.collideConnected = false;
-				//rJoint.lowerAngle = 0.00f;
-				//rJoint.upperAngle = 0.4f;
 				rJoint.enableLimit = true;
 				world.createJoint(rJoint);
 				
@@ -82,29 +80,6 @@ public class Assembler {
 		obj.setPartList(new ArrayList<Component>(parts.values()));
 		obj.setBasePartbyIndex(0);
 		return obj;
-	}
-
-	private boolean contains(ArrayList<JSONJoint> jointExclusionList,
-			JSONJoint joinIn) {
-
-		if (jointExclusionList.isEmpty())
-			return false;
-
-		Iterator<JSONJoint> JointIter = jointExclusionList.iterator();
-		JSONJoint join;
-
-		while (JointIter.hasNext()) {
-			join = JointIter.next();
-
-			if (joinIn.getMount1().compareTo(join.getMount1()) == 0
-					&& joinIn.getMount2().compareTo(join.getMount2()) == 0
-					&& joinIn.properties != null
-					&& joinIn.properties.size() == join.properties.size()) {
-				return true;
-			}
-
-		}
-		return false;
 	}
 
 	private HashMap<String, Component> extractComponents(JSONParent source,
@@ -122,7 +97,7 @@ public class Assembler {
 			componentList = null;
 			component = null;
 			sourceComponent = iter.next();
-			componentName = getComponentName(sourceComponent.getComponentName());
+			componentName = Globals.getComponentName(sourceComponent.getComponentName());
 
 			System.out.println("Extracting: " + componentName);
 
@@ -165,29 +140,6 @@ public class Assembler {
 		}
 
 		return ret;
-	}
-
-	private String getId(String name) {
-		return name.split(NAME_ID_SPLIT)[1];
-	}
-
-	private String getSubname(String name) {
-		String subpart = name.split(NAME_SUBNAME_SPLIT)[1];
-		return subpart.split(NAME_ID_SPLIT)[0];
-	}
-
-	private int getMountId(String name) {
-		return Integer.parseInt(parseName(name)[1]);
-	}
-
-	private String[] parseName(String name) {
-		// e.g. bar3_0 , 1
-		return name.split(NAME_MOUNT_SPLIT);
-	}
-
-	private String getComponentName(String name) {
-		// e.g. bar3
-		return name.split(NAME_ID_SPLIT)[0];
 	}
 
 }

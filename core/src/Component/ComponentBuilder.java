@@ -58,11 +58,11 @@ public class ComponentBuilder {
 		float mountHeight = tmpActor.getCenter().y;
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
-		mounts.add(new Vector2(tmpActor.getCenter().x - tmpActor.getWidth() / 2
-				, mountHeight));
+		mounts.add(new Vector2(
+				tmpActor.getCenter().x - tmpActor.getWidth() / 2, mountHeight));
 		mounts.add(new Vector2(tmpActor.getCenter().x, mountHeight));
-		mounts.add(new Vector2(tmpActor.getCenter().x + tmpActor.getWidth() / 2
-				, mountHeight));
+		mounts.add(new Vector2(
+				tmpActor.getCenter().x + tmpActor.getWidth() / 2, mountHeight));
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
@@ -140,6 +140,10 @@ public class ComponentBuilder {
 
 	public static ArrayList<Component> buildSpringJoint(World world,
 			boolean forBuilder) {
+		
+		float springHeight = 1.5f;
+		float springGive = 0.5f;
+		
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames.springJoint.name(),
 				"temp_spring.png", world);
@@ -191,7 +195,7 @@ public class ComponentBuilder {
 		dJoint.initialize(topFixture.getPhysicsBody(),
 				botFixture.getPhysicsBody(), topFixture.getCenter(),
 				botFixture.getCenter());
-		dJoint.length = 1.5f;
+		dJoint.length = springHeight;
 		dJoint.collideConnected = true;
 		if (!forBuilder) {
 			dJoint.frequencyHz = 10;
@@ -200,21 +204,25 @@ public class ComponentBuilder {
 		//
 		world.createJoint(dJoint);
 
+		//
+		PrismaticJointDef rJoint = new PrismaticJointDef();
+		rJoint.initialize(topFixture.getPhysicsBody(),
+				botFixture.getPhysicsBody(), botFixture.getCenter(),
+				new Vector2(0, 1));
+		rJoint.localAnchorA.set(topFixture.getCenter());
+		rJoint.localAnchorB.set(botFixture.getCenter());
+		rJoint.enableMotor = true;
+		rJoint.collideConnected = false;
 		if (!forBuilder) {
-			PrismaticJointDef rJoint = new PrismaticJointDef();
-			rJoint.initialize(topFixture.getPhysicsBody(),
-					botFixture.getPhysicsBody(), botFixture.getCenter(),
-					new Vector2(0, 1));
-			rJoint.localAnchorA.set(topFixture.getCenter());
-			rJoint.localAnchorB.set(botFixture.getCenter());
-			rJoint.enableMotor = true;
-			rJoint.collideConnected = false;
-			rJoint.lowerTranslation = 0.5f;
-			rJoint.upperTranslation = 1.8f;
-			rJoint.enableLimit = true;
-			world.createJoint(rJoint);
-
+			rJoint.lowerTranslation = springHeight - springGive;
+			rJoint.upperTranslation = springHeight + springGive;
+		} else{
+			rJoint.lowerTranslation = springHeight;
+			rJoint.upperTranslation = springHeight;
 		}
+		rJoint.enableLimit = true;
+		world.createJoint(rJoint);
+
 		Component topComponent = new Component(topFixture,
 				ComponentTypes.JOINT, ComponentNames.springJoint.name());
 		topComponent.setJointBodies(bodies);

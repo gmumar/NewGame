@@ -11,6 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
@@ -92,13 +93,24 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0.3f, 0.3f, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
 
 		debugRenderer.render(world, camera.combined);
-		world.step(Gdx.graphics.getDeltaTime(), 10, 10);
+		debugRenderer.AABB_COLOR.set( Color.WHITE);
+		debugRenderer.SHAPE_NOT_ACTIVE.set( Color.WHITE);
+		
+		debugRenderer.JOINT_COLOR.set( Color.WHITE );
+		debugRenderer.SHAPE_AWAKE.set( Color.WHITE);
+		debugRenderer.SHAPE_KINEMATIC.set( Color.WHITE);
+		
+		debugRenderer.SHAPE_NOT_AWAKE.set( Color.WHITE);
+		debugRenderer.VELOCITY_COLOR.set( Color.WHITE);
+		
+		
+		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		stage.draw();
 	}
