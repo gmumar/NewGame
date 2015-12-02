@@ -53,7 +53,7 @@ public class ComponentBuilder {
 	public static Component buildBar3(World world, boolean forBuilder) {
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames.bar3.name(),
-				"bar3.png", world);
+				"temp_bar.png", world);
 
 		float mountHeight = tmpActor.getCenter().y;
 
@@ -95,7 +95,7 @@ public class ComponentBuilder {
 	public static Component buildTire(World world, boolean forBuilder) {
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames.wheel.name(),
-				"temp_tire.png", world);
+				"temp_tire_2.png", world);
 		CircleShape shape = new CircleShape();
 
 		tmpActor.setRestitution(0.9f);

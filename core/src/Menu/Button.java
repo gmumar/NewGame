@@ -15,7 +15,7 @@ public class Button extends TextButton {
 	String name;
 
 	public Button(String name) {
-		super(name, buildDefaultButtonStyle());
+		super(name, buildDefaultButtonStyle(name));
 		this.name = name;
 
 		this.addListener(new ClickListener() {
@@ -59,7 +59,7 @@ public class Button extends TextButton {
 		;
 	}
 
-	private static TextButtonStyle buildDefaultButtonStyle() {
+	private static TextButtonStyle buildDefaultButtonStyle(String butName) {
 		TextButtonStyle tbs = new TextButtonStyle();
 		Skin skin = new Skin();
 
@@ -68,16 +68,30 @@ public class Button extends TextButton {
 		pixmap.fill();
 
 		skin.add("white", new Texture(pixmap));
-
+		
 		BitmapFont bfont = new BitmapFont();
 		skin.add("default", bfont);
 
-		tbs.up = skin.newDrawable("white", Color.DARK_GRAY);
-		tbs.down = skin.newDrawable("white", Color.DARK_GRAY);
-		// tbs.checked = skin.newDrawable("white", Color.BLUE);
-		tbs.over = skin.newDrawable("white", Color.LIGHT_GRAY);
-
-		tbs.font = skin.getFont("default");
+		if(butName.compareTo("build")==0){
+			Texture t = new Texture("button.png");
+			skin.add("forward", t);
+			tbs.up = skin.newDrawable("forward", Color.LIGHT_GRAY);
+			tbs.down = skin.newDrawable("forward", Color.LIGHT_GRAY);
+			// tbs.checked = skin.newDrawable("white", Color.BLUE);
+			tbs.over = skin.newDrawable("forward", Color.DARK_GRAY);
+	
+			tbs.font = skin.getFont("default");
+			
+		}else{
+			tbs.up = skin.newDrawable("white", Color.DARK_GRAY);
+			tbs.down = skin.newDrawable("white", Color.DARK_GRAY);
+			// tbs.checked = skin.newDrawable("white", Color.BLUE);
+			tbs.over = skin.newDrawable("white", Color.LIGHT_GRAY);
+			
+			tbs.font = skin.getFont("default");
+			
+			
+		}
 
 		return tbs;
 	}

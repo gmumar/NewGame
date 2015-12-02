@@ -20,8 +20,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class GroundBuilder {
 
-	final float UNIT_LENGTH = 7f;
-	final float variation = 13;
+	final float UNIT_LENGTH = 3;
+	final float variation = 1.5f;
 
 	World world;
 	Body floor;
@@ -75,11 +75,12 @@ public class GroundBuilder {
 			if ( getBackEdge(cam) > gud.start.x) {
 				gud = mapList.get(lastRemovedPointer);
 				gud.deleteUnit(floor);// drawList
+				//mapList.remove(lastRemovedPointer);
 				lastRemovedPointer++;
 			}
 		}
 		
-		if (mapList.size() <= lastRemovedPointer)
+		/*if (mapList.size() <= lastRemovedPointer)
 			return;
 
 		gud = mapList.get(lastRemovedPointer);
@@ -89,7 +90,7 @@ public class GroundBuilder {
 				gud.setFixture(drawEdge(gud.start, gud.end));
 				lastRemovedPointer--;
 			}
-		}
+		}*/
 		
 	}
 
@@ -110,11 +111,11 @@ public class GroundBuilder {
 	}
 
 	private float getEdge(CameraManager cam) {
-		return cam.getViewPortRightEdge() + UNIT_LENGTH * 3;
+		return cam.getViewPortRightEdge() + UNIT_LENGTH * 10;
 	}
 	
 	private float getBackEdge(CameraManager cam) {
-		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 8;
+		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 20;
 	}
 
 	public void draw(CameraManager cam, SpriteBatch batch) {

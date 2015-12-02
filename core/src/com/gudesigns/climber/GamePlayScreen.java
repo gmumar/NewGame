@@ -41,6 +41,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	float aspectRatio;
 
 	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
+	
+	final int SKIP_COUNT = 10;
+	int skip_count;
 
 	public GamePlayScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
@@ -73,11 +76,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
+		
+		handleInput(touches);
+		
+		/*skip_count++;
+		if(skip_count >= SKIP_COUNT){
+			skip_count = 0;
+			return;
+		}*/
 
 		renderWorld();
 		attachCameraTo(builtCar.getBasePart().getObject());
-
-		handleInput(touches);
 
 		batch.begin();
 		ground.draw(camera,batch);
@@ -100,19 +109,19 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch.setProjectionMatrix(camera.combined);
 
 		//debugRenderer.render(world, camera.combined);
-		world.step(Gdx.graphics.getDeltaTime(), 300, 200);
+		world.step(Gdx.graphics.getDeltaTime(), 250, 125);
 		
 	}
 
 	private void attachCameraTo(BaseActor actor) {
 
 		camera.position.set(actor.getPosition().x + camera.viewportWidth*2.5f , actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 8;
+		camera.zoom = 7;
 		camera.update();
 	}
 
 	private void initWorld() {
-		world = (new World(new Vector2(0, -78f), true));
+		world = (new World(new Vector2(0, -58f), true));
 		world.setWarmStarting(true);
 	}
 

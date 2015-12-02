@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -110,6 +111,7 @@ public class BaseActor {
 
 	private void initSprite() {
 		if (!onlyPhysicBody) {
+			texture.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
 			sprite = new Sprite(texture);
 			sprite.setSize(Globals.PixelToMeters(texture.getWidth()),
 					Globals.PixelToMeters(texture.getHeight()));

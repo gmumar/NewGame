@@ -205,7 +205,6 @@ public class Component {
 				body.setPosition(body.getPosition().x + f, body.getPosition().y + g);
 				System.out.println(body.getName() + " Setting position " + body.getPosition());
 			}
-			this.getObject().setPosition(this.getObject().getPosition().x + f, this.getObject().getPosition().y + g);
 		}
 		
 	}
@@ -219,7 +218,6 @@ public class Component {
 				BaseActor body = iter.next();
 				body.setGroup(group);
 			}
-			this.getObject().setGroup(group);
 		}
 		
 	}
@@ -233,7 +231,6 @@ public class Component {
 				BaseActor body = iter.next();
 				body.draw(batch);
 			}
-			this.getObject().draw(batch);
 		}
 	}
 
