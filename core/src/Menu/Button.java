@@ -72,7 +72,7 @@ public class Button extends TextButton {
 		BitmapFont bfont = new BitmapFont();
 		skin.add("default", bfont);
 
-		if(butName.compareTo("build")==0){
+		if(butName.compareTo("")==0){
 			Texture t = new Texture("button.png");
 			skin.add("forward", t);
 			tbs.up = skin.newDrawable("forward", Color.LIGHT_GRAY);

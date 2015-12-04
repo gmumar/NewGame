@@ -1,6 +1,7 @@
 package com.gudesigns.climber;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import throwaway.FullCar;
 import wrapper.BaseActor;
@@ -9,6 +10,7 @@ import wrapper.Globals;
 import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
+import Component.ComponentBuilder.ComponentNames;
 import GroundWorks.GroundBuilder;
 
 import com.badlogic.gdx.Gdx;
@@ -23,7 +25,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 public class GamePlayScreen implements Screen, InputProcessor {
 
@@ -41,18 +45,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	float aspectRatio;
 
 	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
-	
+
 	final int SKIP_COUNT = 10;
 	int skip_count;
 
+	float timePassed = 0;
+
 	public GamePlayScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-		Globals.updateScreenInfo();		
+		Globals.updateScreenInfo();
 
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
-		
+
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
 		}
@@ -61,38 +67,66 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(world);
-		//builtCar.setPosition(1, -1.50f);
+		// builtCar.setPosition(1, -1.50f);
 
 		ground = new GroundBuilder(world, camera);
-		
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/simpleFont.ttf"));
+
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
+				Gdx.files.internal("fonts/simpleFont.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = 10;
 		parameter.color = Color.GREEN;
 		font12 = generator.generateFont(parameter); // font size 12 pixels
-		generator.dispose(); 
-		
+		generator.dispose();
+
 	}
 
 	@Override
 	public void render(float delta) {
-		
+
 		handleInput(touches);
-		
-		/*skip_count++;
-		if(skip_count >= SKIP_COUNT){
-			skip_count = 0;
-			return;
-		}*/
+
+		/*
+		 * skip_count++; if(skip_count >= SKIP_COUNT){ skip_count = 0; return; }
+		 */
 
 		renderWorld();
 		attachCameraTo(builtCar.getBasePart().getObject());
 
 		batch.begin();
-		ground.draw(camera,batch);
+		ground.draw(camera, batch);
 		builtCar.draw(batch);
-		font12.draw(batch, Integer.toString(Gdx.graphics.getFramesPerSecond()), camera.position.x, camera.position.y);
+		font12.draw(batch, Integer.toString(Gdx.graphics.getFramesPerSecond()),
+				camera.position.x, camera.position.y);
 		batch.end();
+
+	}
+
+	private void enableJointLimits(World worldIn, float step) {
+
+		double forceFactor = 1e9;
+
+		Array<Joint> joints = new Array<Joint>();
+		worldIn.getJoints(joints);
+
+		Iterator<Joint> iter = joints.iterator();
+		while (iter.hasNext()) {
+			Joint joint = iter.next();
+			float force = joint.getReactionForce(1 / step).len2();
+			if (force > 12 * forceFactor) {
+				
+				if (((String) joint.getBodyA().getUserData())
+						.contains(ComponentNames.axle.name())
+						|| ((String) joint.getBodyB().getUserData())
+								.contains(ComponentNames.axle.name())){
+					;
+				}else{
+					world.destroyJoint(joint);
+					System.out.println("break " + joint.getBodyA().getUserData()
+							+ " " + joint.getBodyB().getUserData() + " " + force);
+				}
+			}
+		}
 
 	}
 
@@ -108,14 +142,21 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		//debugRenderer.render(world, camera.combined);
+		debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 250, 125);
-		
+
+		timePassed += Gdx.graphics.getDeltaTime();
+
+		if (timePassed > 10) {
+			enableJointLimits(world, Gdx.graphics.getDeltaTime());
+		}
 	}
 
 	private void attachCameraTo(BaseActor actor) {
 
-		camera.position.set(actor.getPosition().x + camera.viewportWidth*2.5f , actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
+		camera.position.set(
+				actor.getPosition().x + camera.viewportWidth * 2.5f,
+				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
 		camera.zoom = 7;
 		camera.update();
 	}
@@ -131,10 +172,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.zoom = 1f;
 		camera.update();
 
-		//Gdx.input.setInputProcessor(this);
+		// Gdx.input.setInputProcessor(this);
 	}
-	
-	private void initInputs(){
+
+	private void initInputs() {
 		InputProcessor inputProcessorOne = this;
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(inputProcessorOne);
@@ -145,7 +186,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void resize(int width, int height) {
 		camera.viewportWidth = Globals.PixelToMeters(width);
 		camera.viewportHeight = Globals.PixelToMeters(height);
-		
+
 	}
 
 	@Override
@@ -156,8 +197,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
 			touches.get(pointer).touched = true;
-			
-			
+
 			return true;
 		}
 		return false;
@@ -211,6 +251,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void hide() {
 		Gdx.input.setInputProcessor(null);
+		ground.destory();
 
 	}
 

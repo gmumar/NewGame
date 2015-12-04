@@ -21,7 +21,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class GroundBuilder {
 
 	final float UNIT_LENGTH = 3;
-	final float variation = 1.5f;
+	final float variation = 3f;
 
 	World world;
 	Body floor;
@@ -156,6 +156,10 @@ public class GroundBuilder {
 
 		return shape;
 
+	}
+	
+	public void destory(){
+		GroundUnitDescriptor.textureMap = null;
 	}
 
 }

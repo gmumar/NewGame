@@ -17,7 +17,7 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class ComponentBuilder {
 
 	public enum ComponentNames {
-		bar3, tire, solidJoint, axle, springJoint, wheel
+		bar3, tire, solidJoint, axle, springJoint, wheel, life
 	}
 
 	public enum ComponentSubNames {
@@ -34,6 +34,8 @@ public class ComponentBuilder {
 			return buildTire(world, false);
 		} else if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
 			return buildSpringJoint(world, false).get(0);
+		} else if (name.compareTo(ComponentNames.life.name()) == 0) {
+			return buildLife(world, false);
 		}
 
 		return null;
@@ -110,7 +112,7 @@ public class ComponentBuilder {
 		// fixture.setMounts(mounts, 0.0f);
 		fixture.setScale(0.3f);
 		fixture.setDensity(0);
-		fixture.setSensor();
+		//fixture.setSensor();
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 		mounts.add(fixture.getCenter());
@@ -140,26 +142,27 @@ public class ComponentBuilder {
 
 	public static ArrayList<Component> buildSpringJoint(World world,
 			boolean forBuilder) {
-		
-		float springHeight = 1.5f;
-		float springGive = 0.5f;
-		
-		// Setup mounts, shape
-		BaseActor tmpActor = new BaseActor(ComponentNames.springJoint.name(),
-				"temp_spring.png", world);
 
-		tmpActor.setPosition(0, 0);
-		tmpActor.setSensor();
+		float springHeight = 1.5f;
+		float springTravel = 0.5f;
 
 		float height = 0;
 		if (forBuilder)
-			height = tmpActor.getHeight() / 2;
-		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
-		mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
-				- height));
-		mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
-				+ height));
-		tmpActor.destroy();
+			height = (float) (1.5 / 2);
+
+		// Setup mounts, shape
+		/*
+		 * BaseActor tmpActor = new BaseActor(ComponentNames.springJoint.name(),
+		 * "temp_spring.png", world);
+		 * 
+		 * tmpActor.setPosition(0, 0); tmpActor.setSensor();
+		 * 
+		 * 
+		 * ArrayList<Vector2> mounts = new ArrayList<Vector2>(); mounts.add(new
+		 * Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y - height));
+		 * mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
+		 * + height)); tmpActor.destroy();
+		 */
 
 		BaseActor topFixture = new BaseActor(
 				ComponentNames.springJoint.name()
@@ -170,7 +173,7 @@ public class ComponentBuilder {
 		mountTop.add(topFixture.getCenter());
 		topFixture.setMounts(mountTop, 0.0f);
 		topFixture.setScale(0.3f);
-		topFixture.setSensor();
+		//topFixture.setSensor();
 		topFixture.setDensity(1);
 		// topFixture.setScaleY(0.5f);
 
@@ -183,7 +186,7 @@ public class ComponentBuilder {
 		mountBot.add(botFixture.getCenter());
 		botFixture.setMounts(mountBot, 0.0f);
 		botFixture.setScale(0.3f);
-		botFixture.setSensor();
+		//botFixture.setSensor();
 		botFixture.setDensity(1);
 		// botFixture.setScaleY(0.5f);
 
@@ -212,15 +215,18 @@ public class ComponentBuilder {
 		rJoint.localAnchorA.set(topFixture.getCenter());
 		rJoint.localAnchorB.set(botFixture.getCenter());
 		rJoint.enableMotor = true;
-		rJoint.collideConnected = false;
+		rJoint.collideConnected = true;
 		if (!forBuilder) {
-			rJoint.lowerTranslation = springHeight - springGive;
-			rJoint.upperTranslation = springHeight + springGive;
-		} else{
+			rJoint.lowerTranslation = springHeight - springTravel;
+			rJoint.upperTranslation = springHeight + springTravel;
+			rJoint.enableLimit = true;
+		} else {
 			rJoint.lowerTranslation = springHeight;
 			rJoint.upperTranslation = springHeight;
+			rJoint.enableLimit = false;
 		}
-		rJoint.enableLimit = true;
+
+		// if(!forBuilder)
 		world.createJoint(rJoint);
 
 		Component topComponent = new Component(topFixture,
@@ -236,6 +242,30 @@ public class ComponentBuilder {
 		retList.add(topComponent);
 
 		return retList;
+	}
+
+	public static Component buildLife(World world, boolean forBuilder) {
+		// Setup mounts, shape
+		BaseActor tmpActor = new BaseActor(ComponentNames.life.name(),
+				"life.png", world);
+
+		tmpActor.setDensity(5);
+		tmpActor.setScale(0.6f);
+
+		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
+		mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
+				- tmpActor.getHeight() / 2));
+
+		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
+
+		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
+				ComponentNames.life.name());
+
+		if (forBuilder) {
+			//nothing
+		}
+
+		return tmpComponent;
 	}
 
 	public static FixtureDef buildMount(Vector2 mount, boolean forBuilder) {

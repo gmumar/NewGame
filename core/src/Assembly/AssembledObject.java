@@ -19,16 +19,8 @@ public class AssembledObject {
 	Component basePart;
 	int basePartIndex;
 
-	public void addPart(Component part) {
-		partList.add(part);
-	}
-
 	public Component getBasePart() {
 		return basePart;
-	}
-
-	public void setBasePart(Component basePart) {
-		this.basePart = basePart;
 	}
 
 	public void setBasePartbyIndex(int i) {

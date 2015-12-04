@@ -27,6 +27,8 @@ public class Assembler {
 	final public static String NAME_SUBNAME_SPLIT = "=";
 
 	final private short CAR = -2;
+	
+	int basePartId ;
 
 	public AssembledObject assembleObject(World world) {
 		AssembledObject obj = new AssembledObject();
@@ -78,7 +80,7 @@ public class Assembler {
 		}
 
 		obj.setPartList(new ArrayList<Component>(parts.values()));
-		obj.setBasePartbyIndex(0);
+		obj.setBasePartbyIndex(basePartId);
 		return obj;
 	}
 
@@ -93,6 +95,8 @@ public class Assembler {
 		ArrayList<Component> componentList = null;
 		String componentName;
 
+		int id = 0;
+		
 		while (iter.hasNext()) {
 			componentList = null;
 			component = null;
@@ -126,6 +130,10 @@ public class Assembler {
 						+ jointComponentId, part2);
 
 			} else {
+				
+				if(componentName.contains(ComponentNames.life.name())){
+					basePartId = id;
+				}
 
 				component = ComponentBuilder.buildComponent(componentName,
 						world);
@@ -136,6 +144,8 @@ public class Assembler {
 				component.setGroup(CAR);
 				ret.put(sourceComponent.getComponentName(), component);
 			}
+			
+			id++;
 
 		}
 
