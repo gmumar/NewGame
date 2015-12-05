@@ -1,5 +1,7 @@
 package com.gudesigns.climber;
 
+import wrapper.Globals;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
@@ -11,6 +13,8 @@ public class GameLoader extends Game {
 	
 	@Override
 	public void create() {
+		Globals.updateScreenInfo();
+		
 		//gamePlayScreen = new GamePlayScreen(this);
 		//builderScreen = new BuilderScreen(this);
 		menuScreen = new MainMenuScreen(this);

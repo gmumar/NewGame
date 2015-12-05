@@ -43,7 +43,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	BitmapFont font12;
 	HUDBuilder hud;
 	Stage stage;
-	
+	FitViewport vp;
 
 	Box2DDebugRenderer debugRenderer;
 
@@ -89,9 +89,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	private void initHud() {
-		
-		hud = new HUDBuilder( stage, secondCamera, gameLoader);
-		
+
+		hud = new HUDBuilder(stage, secondCamera, gameLoader);
+
 	}
 
 	@Override
@@ -128,36 +128,37 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			Joint joint = iter.next();
 			float force = joint.getReactionForce(1 / step).len2();
 			float torque = joint.getReactionTorque(1 / step);
-			
-			if(torque > 45000){
+
+			if (torque > 45000) {
 				world.destroyJoint(joint);
-				System.out.println("Torque break " + joint.getBodyA().getUserData()
-						+ " " + joint.getBodyB().getUserData() + " " + torque);
-				
+				System.out.println("Torque break "
+						+ joint.getBodyA().getUserData() + " "
+						+ joint.getBodyB().getUserData() + " " + torque);
+
 				continue;
 			}
-			
+
 			if (force > 20 * forceFactor) {
-				
-				if ( ((String) joint.getBodyA().getUserData())
+
+				if (((String) joint.getBodyA().getUserData())
 						.contains(ComponentNames.axle.name())
 						&& ((String) joint.getBodyB().getUserData())
 								.contains(ComponentNames.tire.name())
-								
+
 						||
-						
+
 						((String) joint.getBodyA().getUserData())
-						.contains(ComponentNames.tire.name())
+								.contains(ComponentNames.tire.name())
 						&& ((String) joint.getBodyB().getUserData())
 								.contains(ComponentNames.axle.name())
-								
-						
-						){
+
+				) {
 					;
-				}else{
+				} else {
 					world.destroyJoint(joint);
-					System.out.println("break " + joint.getBodyA().getUserData()
-							+ " " + joint.getBodyB().getUserData() + " " + force);
+					System.out.println("break "
+							+ joint.getBodyA().getUserData() + " "
+							+ joint.getBodyB().getUserData() + " " + force);
 				}
 			}
 		}
@@ -189,14 +190,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private void attachCameraTo(BaseActor actor) {
 
 		camera.position.set(
-				actor.getPosition().x + camera.viewportWidth * 2.5f,
+				actor.getPosition().x + camera.viewportWidth * 1.5f,
 				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 7;
+		camera.zoom = 5;
 		camera.update();
 	}
 
 	private void initWorld() {
-		world = (new World(new Vector2(0, -58f), true));
+		world = (new World(new Vector2(0, -48f), true));
 		world.setWarmStarting(true);
 	}
 
@@ -205,19 +206,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.zoom = 1f;
 		camera.update();
-		
+
 		secondCamera = new CameraManager(Globals.ScreenWidth,
 				Globals.ScreenHeight);
 		secondCamera.setToOrtho(false, Globals.ScreenWidth,
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		FitViewport vp = new FitViewport(Globals.ScreenWidth,
+		vp = new FitViewport(Globals.ScreenWidth,
 				Globals.ScreenHeight, secondCamera);
 
 		stage = new Stage(vp);
-
-		// Gdx.input.setInputProcessor(this);
 	}
 
 	private void initInputs() {
@@ -233,12 +232,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void resize(int width, int height) {
 		camera.viewportWidth = Globals.PixelToMeters(width);
 		camera.viewportHeight = Globals.PixelToMeters(height);
+		vp.update(width, height);
 
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		System.out.println("touch");
 
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
@@ -272,14 +271,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void show() {
 		initInputs();
 		Globals.updateScreenInfo();
 
 	}
-	
+
 	@Override
 	public void hide() {
 		Gdx.input.setInputProcessor(null);

@@ -30,7 +30,8 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	World world;
 	Stage stage;
 	MenuBuilder menu;
-
+	FitViewport vp;
+	
 	Box2DDebugRenderer debugRenderer;
 	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
@@ -65,7 +66,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		FitViewport vp = new FitViewport(Globals.ScreenWidth,
+		vp = new FitViewport(Globals.ScreenWidth,
 				Globals.ScreenHeight, secondCamera);
 
 		stage = new Stage(vp);
@@ -157,6 +158,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	@Override
 	public void resize(int width, int height) {
 		Globals.updateScreenInfo();
+		vp.update(width, height);
 
 	}
 
@@ -173,7 +175,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	@Override
 	public void show() {
 		initInputs();
-
+		Globals.updateScreenInfo();
 	}
 
 	@Override

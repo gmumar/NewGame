@@ -170,6 +170,12 @@ public class BaseActor {
 
 		initBody();
 	}
+	
+	public void setOrigin(Vector2 vec){
+		if (!onlyPhysicBody) {
+			sprite.setOrigin(vec.x, vec.y);
+		}
+	}
 
 	public Vector2 getPosition() {
 		return body.getPosition();

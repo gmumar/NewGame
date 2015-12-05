@@ -19,6 +19,8 @@ public class AssembledObject {
 	Component basePart;
 	int basePartIndex;
 
+	final float ANGULAR_DAMPING = 1f;
+
 	public Component getBasePart() {
 		return basePart;
 	}
@@ -26,6 +28,21 @@ public class AssembledObject {
 	public void setBasePartbyIndex(int i) {
 		this.basePart = partList.get(i);
 		basePartIndex = i;
+
+	}
+
+	public void setLifeBasePart() {
+		Iterator<Component> iter = partList.iterator();
+
+		while (iter.hasNext()) {
+			Component part = iter.next();
+			if (part.getComponentName().contains(ComponentNames.life.name())) {
+				this.basePart = part;
+			}
+		}
+
+		this.basePart.getObject().getPhysicsBody()
+				.setAngularDamping(ANGULAR_DAMPING);
 	}
 
 	public ArrayList<Component> getPartList() {
@@ -44,7 +61,22 @@ public class AssembledObject {
 				addToDriveList(component);
 			}
 		}
+	}
 
+	public Vector2 getCenter() {
+		float sumX = 0, sumY = 0;
+		float count = 0;
+
+		Iterator<Component> iter = partList.iterator();
+
+		while (iter.hasNext()) {
+			Component component = iter.next();
+			count++;
+			sumX += component.getObject().getPosition().x;
+			sumY += component.getObject().getPosition().y;
+		}
+
+		return new Vector2(sumX / count, sumY / count);
 	}
 
 	public void setPosition(float x, float y) {
@@ -73,7 +105,7 @@ public class AssembledObject {
 		if (c.getComponentName().compareTo(ComponentNames.axle.name()) == 0) {
 			ArrayList<BaseActor> bodies = c.getJointBodies();
 			driveList.add(bodies.get(0));
-			bodies.get(0).getPhysicsBody().setAngularDamping(1f);
+			bodies.get(0).getPhysicsBody().setAngularDamping(ANGULAR_DAMPING);
 		}
 
 	}
@@ -82,34 +114,40 @@ public class AssembledObject {
 		if (driveList == null || touchesIn == null)
 			return;
 
+		System.out.println(basePart.getObject().getPhysicsBody()
+				.getAngularVelocity());
+
 		Iterator<TouchUnit> touchIter = touchesIn.iterator();
 		int direction = 0;
 
 		while (touchIter.hasNext()) {
 			TouchUnit touch = touchIter.next();
 
-			if (touch.screenX > Globals.GameWidth / 2) {
-				direction = 1;
-			} else {
-				direction = -1;
-			}
-
 			if (touch.isTouched()) {
+
+				if (touch.screenX > Globals.GameWidth / 2) {
+					direction = 1;
+				} else {
+					direction = -1;
+
+				}
+
 				Iterator<BaseActor> iter = driveList.iterator();
 
 				while (iter.hasNext()) {
 					BaseActor comp = iter.next();
 					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
 							true);
+					basePart.getObject().getPhysicsBody()
+							.applyAngularImpulse(50f * direction, false);
+
 					if (comp.getPhysicsBody().getAngularVelocity() > 50f) {
 						comp.getPhysicsBody().setAngularVelocity(50f);
-					} else if(comp.getPhysicsBody().getAngularVelocity() < -50f){
+					} else if (comp.getPhysicsBody().getAngularVelocity() < -50f) {
 						comp.getPhysicsBody().setAngularVelocity(-50f);
 					}
 				}
 			}
 		}
-
 	}
-
 }

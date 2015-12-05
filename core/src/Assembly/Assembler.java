@@ -27,18 +27,18 @@ public class Assembler {
 	final public static String NAME_SUBNAME_SPLIT = "=";
 
 	final private short CAR = -2;
-	
-	int basePartId ;
+
+	int basePartId;
 
 	public AssembledObject assembleObject(World world) {
 		AssembledObject obj = new AssembledObject();
 		Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
 
-		String inputString = 
-				prefs.getString(GamePreferences.CAR_MAP_STR,"Error");
-		// "{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}";
-		//
+		String inputString = prefs
+				.getString(
+						GamePreferences.CAR_MAP_STR,
+						"{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}");//
 
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);
@@ -51,7 +51,7 @@ public class Assembler {
 
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
-			
+
 			String componentAName = Globals.parseName(join.mount1)[0];
 			// System.out.println(componentAName);
 			BaseActor bodyA = parts.get(componentAName).getObject();
@@ -73,14 +73,13 @@ public class Assembler {
 				rJoint.collideConnected = false;
 				rJoint.enableLimit = true;
 				world.createJoint(rJoint);
-				
-				
+
 			}
 
 		}
 
 		obj.setPartList(new ArrayList<Component>(parts.values()));
-		obj.setBasePartbyIndex(basePartId);
+		obj.setLifeBasePart();
 		return obj;
 	}
 
@@ -95,13 +94,12 @@ public class Assembler {
 		ArrayList<Component> componentList = null;
 		String componentName;
 
-		int id = 0;
-		
 		while (iter.hasNext()) {
 			componentList = null;
 			component = null;
 			sourceComponent = iter.next();
-			componentName = Globals.getComponentName(sourceComponent.getComponentName());
+			componentName = Globals.getComponentName(sourceComponent
+					.getComponentName());
 
 			System.out.println("Extracting: " + componentName);
 
@@ -130,10 +128,6 @@ public class Assembler {
 						+ jointComponentId, part2);
 
 			} else {
-				
-				if(componentName.contains(ComponentNames.life.name())){
-					basePartId = id;
-				}
 
 				component = ComponentBuilder.buildComponent(componentName,
 						world);
@@ -144,8 +138,6 @@ public class Assembler {
 				component.setGroup(CAR);
 				ret.put(sourceComponent.getComponentName(), component);
 			}
-			
-			id++;
 
 		}
 
