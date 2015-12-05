@@ -7,12 +7,14 @@ public class GameLoader extends Game {
 
 	GamePlayScreen gamePlayScreen;
 	BuilderScreen builderScreen;
+	MainMenuScreen menuScreen;
 	
 	@Override
 	public void create() {
 		//gamePlayScreen = new GamePlayScreen(this);
-		builderScreen = new BuilderScreen(this);
-		setScreen(builderScreen);
+		//builderScreen = new BuilderScreen(this);
+		menuScreen = new MainMenuScreen(this);
+		setScreen(menuScreen);
 	}
 	
 	public void gameSetScreen(Screen s){

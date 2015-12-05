@@ -12,6 +12,7 @@ import Assembly.AssembledObject;
 import Assembly.Assembler;
 import Component.ComponentBuilder.ComponentNames;
 import GroundWorks.GroundBuilder;
+import Menu.HUDBuilder;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -27,7 +28,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GamePlayScreen implements Screen, InputProcessor {
 
@@ -36,8 +39,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	FullCar fcar;
 	AssembledObject builtCar;
 	World world;
-	CameraManager camera;
+	CameraManager camera, secondCamera;
 	BitmapFont font12;
+	HUDBuilder hud;
+	Stage stage;
+	
 
 	Box2DDebugRenderer debugRenderer;
 
@@ -58,6 +64,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
+		initHud();
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
@@ -81,6 +88,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	}
 
+	private void initHud() {
+		
+		hud = new HUDBuilder( stage, secondCamera, gameLoader);
+		
+	}
+
 	@Override
 	public void render(float delta) {
 
@@ -100,6 +113,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				camera.position.x, camera.position.y);
 		batch.end();
 
+		stage.draw();
 	}
 
 	private void enableJointLimits(World worldIn, float step) {
@@ -113,12 +127,32 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		while (iter.hasNext()) {
 			Joint joint = iter.next();
 			float force = joint.getReactionForce(1 / step).len2();
-			if (force > 12 * forceFactor) {
+			float torque = joint.getReactionTorque(1 / step);
+			
+			if(torque > 45000){
+				world.destroyJoint(joint);
+				System.out.println("Torque break " + joint.getBodyA().getUserData()
+						+ " " + joint.getBodyB().getUserData() + " " + torque);
 				
-				if (((String) joint.getBodyA().getUserData())
+				continue;
+			}
+			
+			if (force > 20 * forceFactor) {
+				
+				if ( ((String) joint.getBodyA().getUserData())
 						.contains(ComponentNames.axle.name())
-						|| ((String) joint.getBodyB().getUserData())
-								.contains(ComponentNames.axle.name())){
+						&& ((String) joint.getBodyB().getUserData())
+								.contains(ComponentNames.tire.name())
+								
+						||
+						
+						((String) joint.getBodyA().getUserData())
+						.contains(ComponentNames.tire.name())
+						&& ((String) joint.getBodyB().getUserData())
+								.contains(ComponentNames.axle.name())
+								
+						
+						){
 					;
 				}else{
 					world.destroyJoint(joint);
@@ -171,14 +205,27 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.zoom = 1f;
 		camera.update();
+		
+		secondCamera = new CameraManager(Globals.ScreenWidth,
+				Globals.ScreenHeight);
+		secondCamera.setToOrtho(false, Globals.ScreenWidth,
+				Globals.ScreenHeight);
+		secondCamera.update();
+
+		FitViewport vp = new FitViewport(Globals.ScreenWidth,
+				Globals.ScreenHeight, secondCamera);
+
+		stage = new Stage(vp);
 
 		// Gdx.input.setInputProcessor(this);
 	}
 
 	private void initInputs() {
 		InputProcessor inputProcessorOne = this;
+		InputProcessor inputProcessorTwo = stage;
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(inputProcessorOne);
+		inputMultiplexer.addProcessor(inputProcessorTwo);
 		Gdx.input.setInputProcessor(inputMultiplexer);
 	}
 
@@ -198,7 +245,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.get(pointer).screenY = screenY;
 			touches.get(pointer).touched = true;
 
-			return true;
+			return false;
 		}
 		return false;
 	}
@@ -210,7 +257,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.get(pointer).screenY = 0;
 			touches.get(pointer).touched = false;
 
-			return true;
+			return false;
 		}
 		return false;
 	}
@@ -221,20 +268,28 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
 
-			return true;
+			return false;
 		}
 		return false;
 	}
-
-	// ------------------------------------------------------UNUSED------------------------------------------------
-	// //
-
+	
 	@Override
 	public void show() {
 		initInputs();
 		Globals.updateScreenInfo();
 
 	}
+	
+	@Override
+	public void hide() {
+		Gdx.input.setInputProcessor(null);
+		ground.destory();
+		stage.dispose();
+
+	}
+
+	// ------------------------------------------------------UNUSED------------------------------------------------
+	// //
 
 	@Override
 	public void pause() {
@@ -245,13 +300,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void hide() {
-		Gdx.input.setInputProcessor(null);
-		ground.destory();
 
 	}
 
