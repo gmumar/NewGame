@@ -23,7 +23,7 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class Assembler {
 
 	final public static String NAME_MOUNT_SPLIT = ":";
-	final public static String NAME_ID_SPLIT = "_";
+	final public static String NAME_ID_SPLIT = "-";
 	final public static String NAME_SUBNAME_SPLIT = "=";
 
 	final private short CAR = -2;
@@ -103,7 +103,7 @@ public class Assembler {
 
 			System.out.println("Extracting: " + componentName);
 
-			if (componentName.contains(ComponentNames.springJoint.name())) {
+			if (componentName.contains(ComponentNames._SPRINGJOINT_.name())) {
 				componentList = ComponentBuilder.buildJointComponent(
 						componentName, world);
 
@@ -121,10 +121,10 @@ public class Assembler {
 				// part2.applyProperties(sourceComponent.getProperties());
 
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.upper.name() + NAME_ID_SPLIT
+						+ ComponentSubNames._UPPER_.name() + NAME_ID_SPLIT
 						+ jointComponentId, part1);
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.lower.name() + NAME_ID_SPLIT
+						+ ComponentSubNames._LOWER_.name() + NAME_ID_SPLIT
 						+ jointComponentId, part2);
 
 			} else {

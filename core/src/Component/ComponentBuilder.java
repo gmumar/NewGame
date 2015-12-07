@@ -17,24 +17,24 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class ComponentBuilder {
 
 	public enum ComponentNames {
-		bar3, tire, solidJoint, axle, springJoint, wheel, life
+		_BAR3_, _TIRE_, _SOLIDJOINT_, _AXLE_, _SPRINGJOINT_, _WHEEL_, _LIFE_
 	}
 
 	public enum ComponentSubNames {
-		upper, lower
+		_UPPER_, _LOWER_
 	}
 
 	public static Component buildComponent(String name, World world) {
 
-		if (name.compareTo(ComponentNames.bar3.name()) == 0) {
+		if (name.compareTo(ComponentNames._BAR3_.name()) == 0) {
 			return buildBar3(world, false);
-		} else if (name.compareTo(ComponentNames.solidJoint.name()) == 0) {
+		} else if (name.compareTo(ComponentNames._SOLIDJOINT_.name()) == 0) {
 			return buildSolidJoint(world, false);
-		} else if (name.compareTo(ComponentNames.tire.name()) == 0) {
+		} else if (name.compareTo(ComponentNames._TIRE_.name()) == 0) {
 			return buildTire(world, false);
-		} else if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
+		} else if (name.compareTo(ComponentNames._SPRINGJOINT_.name()) == 0) {
 			return buildSpringJoint(world, false).get(0);
-		} else if (name.compareTo(ComponentNames.life.name()) == 0) {
+		} else if (name.compareTo(ComponentNames._LIFE_.name()) == 0) {
 			return buildLife(world, false);
 		}
 
@@ -44,7 +44,7 @@ public class ComponentBuilder {
 	public static ArrayList<Component> buildJointComponent(String name,
 			World world) {
 
-		if (name.compareTo(ComponentNames.springJoint.name()) == 0) {
+		if (name.compareTo(ComponentNames._SPRINGJOINT_.name()) == 0) {
 			return buildSpringJoint(world, false);
 		}
 
@@ -54,7 +54,7 @@ public class ComponentBuilder {
 	// Builders
 	public static Component buildBar3(World world, boolean forBuilder) {
 		// Setup mounts, shape
-		BaseActor tmpActor = new BaseActor(ComponentNames.bar3.name(),
+		BaseActor tmpActor = new BaseActor(ComponentNames._BAR3_.name(),
 				"temp_bar.png", world);
 
 		float mountHeight = tmpActor.getCenter().y;
@@ -68,7 +68,7 @@ public class ComponentBuilder {
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
-				ComponentNames.bar3.name());
+				ComponentNames._BAR3_.name());
 
 		if (forBuilder) {
 
@@ -78,25 +78,25 @@ public class ComponentBuilder {
 	}
 
 	public static Component buildSolidJoint(World world, boolean forBuilder) {
-		BaseActor tmpActor = new BaseActor(ComponentNames.solidJoint.name(),
+		BaseActor tmpActor = new BaseActor(ComponentNames._SOLIDJOINT_.name(),
 				"solid_joint.png", world);
 		// tmpActor.disablePhysics();
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.JOINT,
-				ComponentNames.solidJoint.name());
+				ComponentNames._SOLIDJOINT_.name());
 		return tmpComponent;
 	}
 
 	public static Component buildAxle(World world, boolean forBuilder) {
 		// Build axle
-		BaseActor tmpActor = new BaseActor(ComponentNames.axle.name(), world);
+		BaseActor tmpActor = new BaseActor(ComponentNames._AXLE_.name(), world);
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.JOINT,
-				ComponentNames.solidJoint.name());
+				ComponentNames._SOLIDJOINT_.name());
 		return tmpComponent;
 	}
 
 	public static Component buildTire(World world, boolean forBuilder) {
 		// Setup mounts, shape
-		BaseActor tmpActor = new BaseActor(ComponentNames.wheel.name(),
+		BaseActor tmpActor = new BaseActor(ComponentNames._WHEEL_.name(),
 				"temp_tire_2.png", world);
 		CircleShape shape = new CircleShape();
 
@@ -107,7 +107,7 @@ public class ComponentBuilder {
 		shape.setRadius(tmpActor.getWidth() / 2);
 		tmpActor.setShapeBase(shape);
 
-		BaseActor fixture = new BaseActor(ComponentNames.axle.name(), world);
+		BaseActor fixture = new BaseActor(ComponentNames._AXLE_.name(), world);
 		fixture.setPosition(tmpActor.getCenter().x, tmpActor.getCenter().y);
 		// fixture.setMounts(mounts, 0.0f);
 		fixture.setScale(0.3f);
@@ -130,11 +130,11 @@ public class ComponentBuilder {
 		bodies.add(fixture);
 
 		Component tireComponent = new Component(tmpActor, ComponentTypes.PART,
-				ComponentNames.wheel.name());
+				ComponentNames._WHEEL_.name());
 		tireComponent.setJointBodies(bodies);
 
 		Component axleComponent = new Component(fixture, ComponentTypes.PART,
-				ComponentNames.axle.name());
+				ComponentNames._AXLE_.name());
 		axleComponent.setJointBodies(bodies);
 
 		return axleComponent;
@@ -165,9 +165,9 @@ public class ComponentBuilder {
 		 */
 
 		BaseActor topFixture = new BaseActor(
-				ComponentNames.springJoint.name()
+				ComponentNames._SPRINGJOINT_.name()
 						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.upper.name(), world);
+						+ ComponentSubNames._UPPER_.name(), world);
 		topFixture.setPosition(0, height);
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(topFixture.getCenter());
@@ -178,9 +178,9 @@ public class ComponentBuilder {
 		// topFixture.setScaleY(0.5f);
 
 		BaseActor botFixture = new BaseActor(
-				ComponentNames.springJoint.name()
+				ComponentNames._SPRINGJOINT_.name()
 						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.lower.name(), world);
+						+ ComponentSubNames._LOWER_.name(), world);
 		botFixture.setPosition(0, -height);
 		ArrayList<Vector2> mountBot = new ArrayList<Vector2>();
 		mountBot.add(botFixture.getCenter());
@@ -230,11 +230,11 @@ public class ComponentBuilder {
 		world.createJoint(rJoint);
 
 		Component topComponent = new Component(topFixture,
-				ComponentTypes.JOINT, ComponentNames.springJoint.name());
+				ComponentTypes.JOINT, ComponentNames._SPRINGJOINT_.name());
 		topComponent.setJointBodies(bodies);
 
 		Component botComponent = new Component(botFixture,
-				ComponentTypes.JOINT, ComponentNames.springJoint.name());
+				ComponentTypes.JOINT, ComponentNames._SPRINGJOINT_.name());
 		botComponent.setJointBodies(bodies);
 
 		ArrayList<Component> retList = new ArrayList<Component>();
@@ -246,7 +246,7 @@ public class ComponentBuilder {
 
 	public static Component buildLife(World world, boolean forBuilder) {
 		// Setup mounts, shape
-		BaseActor tmpActor = new BaseActor(ComponentNames.life.name(),
+		BaseActor tmpActor = new BaseActor(ComponentNames._LIFE_.name(),
 				"life.png", world);
 
 		tmpActor.setDensity(5);
@@ -259,7 +259,7 @@ public class ComponentBuilder {
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
-				ComponentNames.life.name());
+				ComponentNames._LIFE_.name());
 
 		if (forBuilder) {
 			//nothing

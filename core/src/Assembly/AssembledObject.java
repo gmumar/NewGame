@@ -17,9 +17,11 @@ public class AssembledObject {
 	ArrayList<Component> partList;
 	ArrayList<BaseActor> driveList;
 	Component basePart;
+	Component leftMost, rightMost; 
 	int basePartIndex;
 
 	final float ANGULAR_DAMPING = 1f;
+	final float ROTATION_FORCE = 4000;
 
 	public Component getBasePart() {
 		return basePart;
@@ -36,13 +38,16 @@ public class AssembledObject {
 
 		while (iter.hasNext()) {
 			Component part = iter.next();
-			if (part.getComponentName().contains(ComponentNames.life.name())) {
+			if (part.getComponentName().contains(ComponentNames._LIFE_.name())) {
 				this.basePart = part;
 			}
 		}
 
 		this.basePart.getObject().getPhysicsBody()
 				.setAngularDamping(ANGULAR_DAMPING);
+		
+		this.setLeftMost();
+		this.setRightMost();
 	}
 
 	public ArrayList<Component> getPartList() {
@@ -61,6 +66,35 @@ public class AssembledObject {
 				addToDriveList(component);
 			}
 		}
+	}
+	
+	public void setLeftMost(){
+		Iterator<Component> iter = partList.iterator();
+		float minY = Float.POSITIVE_INFINITY;
+		
+		while (iter.hasNext()) {
+			Component component = iter.next();
+			if(component.getObject().getPosition().x<minY){
+				leftMost = component;
+				minY = component.getObject().getPosition().x;
+			}
+		}
+		
+		System.out.println("left Most: " + leftMost.getComponentName());
+	}
+	
+	public void setRightMost(){
+		Iterator<Component> iter = partList.iterator();
+		float maxY = Float.NEGATIVE_INFINITY;
+		
+		while (iter.hasNext()) {
+			Component component = iter.next();
+			if(component.getObject().getPosition().x>maxY){
+				rightMost = component;
+				maxY = component.getObject().getPosition().x;
+			}
+		}
+		System.out.println("right Most: " + rightMost.getComponentName());
 	}
 
 	public Vector2 getCenter() {
@@ -102,7 +136,7 @@ public class AssembledObject {
 		}
 		// c.getObject().getPhysicsBody().setAngularDamping(0.5f);
 
-		if (c.getComponentName().compareTo(ComponentNames.axle.name()) == 0) {
+		if (c.getComponentName().compareTo(ComponentNames._AXLE_.name()) == 0) {
 			ArrayList<BaseActor> bodies = c.getJointBodies();
 			driveList.add(bodies.get(0));
 			bodies.get(0).getPhysicsBody().setAngularDamping(ANGULAR_DAMPING);
@@ -114,12 +148,11 @@ public class AssembledObject {
 		if (driveList == null || touchesIn == null)
 			return;
 
-		System.out.println(basePart.getObject().getPhysicsBody()
-				.getAngularVelocity());
-
 		Iterator<TouchUnit> touchIter = touchesIn.iterator();
 		int direction = 0;
 
+		//System.out.println(rightMost.getObject().getRotation());
+		
 		while (touchIter.hasNext()) {
 			TouchUnit touch = touchIter.next();
 
@@ -127,8 +160,24 @@ public class AssembledObject {
 
 				if (touch.screenX > Globals.GameWidth / 2) {
 					direction = 1;
+					/*float rotation = rightMost.getObject().getRotation();
+					rightMost.getObject().getPhysicsBody().applyForceToCenter(
+							(float)(ROTATION_FORCE*Math.cos(rotation)),
+							(float) (ROTATION_FORCE*Math.sin(rotation)), 
+							true);
+					rightMost.getObject().getPhysicsBody().applyForceToCenter(1000,
+							ROTATION_FORCE, 
+							true);*/
 				} else {
 					direction = -1;
+					/*float rotation = leftMost.getObject().getRotation();
+					leftMost.getObject().getPhysicsBody().applyForceToCenter(
+							(float)(ROTATION_FORCE*Math.cos(rotation)),
+							(float) (ROTATION_FORCE*Math.sin(rotation)), 
+							true);
+					leftMost.getObject().getPhysicsBody().applyForceToCenter(1000,
+							ROTATION_FORCE, 
+							true);*/
 
 				}
 
@@ -138,9 +187,7 @@ public class AssembledObject {
 					BaseActor comp = iter.next();
 					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
 							true);
-					basePart.getObject().getPhysicsBody()
-							.applyAngularImpulse(50f * direction, false);
-
+					
 					if (comp.getPhysicsBody().getAngularVelocity() > 50f) {
 						comp.getPhysicsBody().setAngularVelocity(50f);
 					} else if (comp.getPhysicsBody().getAngularVelocity() < -50f) {

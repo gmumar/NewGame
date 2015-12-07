@@ -50,13 +50,23 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 		menu = new MenuBuilder(world, stage, camera, gameLoader);
 		debugRenderer = new Box2DDebugRenderer();
+		
+		debugRenderer.AABB_COLOR.set( Color.WHITE);
+		debugRenderer.SHAPE_NOT_ACTIVE.set( Color.WHITE);
+		
+		debugRenderer.JOINT_COLOR.set( Color.WHITE );
+		debugRenderer.SHAPE_AWAKE.set( Color.WHITE);
+		debugRenderer.SHAPE_KINEMATIC.set( Color.WHITE);
+		
+		debugRenderer.SHAPE_NOT_AWAKE.set( Color.WHITE);
+		debugRenderer.VELOCITY_COLOR.set( Color.WHITE);
 
 	}
 
 	private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
-		// camera.setToOrtho(false,Globals.ScreenWidth, Globals.ScreenHeight);
+		
 		camera.zoom = zoom;
 		camera.update();
 
@@ -98,19 +108,8 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
-
+		
 		debugRenderer.render(world, camera.combined);
-		debugRenderer.AABB_COLOR.set( Color.WHITE);
-		debugRenderer.SHAPE_NOT_ACTIVE.set( Color.WHITE);
-		
-		debugRenderer.JOINT_COLOR.set( Color.WHITE );
-		debugRenderer.SHAPE_AWAKE.set( Color.WHITE);
-		debugRenderer.SHAPE_KINEMATIC.set( Color.WHITE);
-		
-		debugRenderer.SHAPE_NOT_AWAKE.set( Color.WHITE);
-		debugRenderer.VELOCITY_COLOR.set( Color.WHITE);
-		
-		
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		stage.draw();

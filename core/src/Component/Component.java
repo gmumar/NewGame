@@ -133,10 +133,10 @@ public class Component {
 		prop.put(Properties.POSITION.name(), this.getObject().getPosition().x
 				+ "," + this.getObject().getPosition().y); // "-10,5"
 
-		if (name.contains(ComponentNames.tire.name())) {
+		if (name.contains(ComponentNames._TIRE_.name())) {
 			prop.put(Properties.MOTOR.name(), "1");
-		} else if (name.contains(ComponentNames.springJoint.name())) {
-			prop.put(Properties.TYPE.name(), ComponentNames.springJoint.name());
+		} else if (name.contains(ComponentNames._SPRINGJOINT_.name())) {
+			prop.put(Properties.TYPE.name(), ComponentNames._SPRINGJOINT_.name());
 		}
 		jComponent.setProperties(prop);
 
