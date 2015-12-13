@@ -111,7 +111,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		//shader.setUniformMatrix("u_projTrans", batch.getProjectionMatrix());
 		//shader.setUniformi("u_texture", 0);
 		ground.drawShapes(camera,shader);
-		GameMesh.flush(camera, shader);
 		//shader.end();
 		attachCameraTo(builtCar.getBasePart().getObject());
 
@@ -133,7 +132,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor((float)118/256, (float)211/256, (float)222/256, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
         Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
@@ -164,7 +163,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.position.set(
 				actor.getPosition().x + camera.viewportWidth * 1.5f,
 				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 20;
+		camera.zoom = 4;
 		camera.update();
 	}
 

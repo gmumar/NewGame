@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import wrapper.CameraManager;
+import wrapper.TextureLibrary;
 import Shader.GameMesh;
 
 import com.badlogic.gdx.Gdx;
@@ -173,7 +174,7 @@ public class GroundBuilder {
 			if (!groundItem.isFixtureDeleted())
 				groundItem.drawShapes(cam,shader);
 		}*/
-		GameMesh.flush(cam, shader,shaderStart,shaderEnd,GroundUnitDescriptor.textureMap.get("temp_ground_filler.png"));
+		GameMesh.flush(cam, shader,shaderStart,shaderEnd,TextureLibrary.getTexture("temp_ground_filler.png"));
 	}
 
 	public Fixture drawEdge(Vector2 v1, Vector2 v2) {
@@ -200,7 +201,7 @@ public class GroundBuilder {
 	}
 
 	public void destory() {
-		GroundUnitDescriptor.textureMap = null;
+		TextureLibrary.destroyMap();
 		edgeShape.dispose();
 	}
 
