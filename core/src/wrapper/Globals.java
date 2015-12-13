@@ -15,13 +15,16 @@ public class Globals {
 	static public int ScreenWidth;
 	static public float AspectRatio;
 
-	static public int GameHeight = 480;
-	static public int GameWidth = 640;
+	final static public int GameHeight = 480;
+	final static public int GameWidth = 710;
 	
-	static public Color BLUE = new Color(0.3f, 0.3f, 1, 1);
+	final static public Color BLUE = new Color(0.3f, 0.3f, 1, 1);
+	final static public Color BROWN = new Color(0.86f, 0.67f, 0.52f, 1);
+	final static public Color BROWN1 =new Color(0.73f, 0.40f, 0.31f, 1);	
 
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
+	final public static int VERSION = 2;
 
 	static public float convertToDegrees(float radians) {
 		return (float) (radians * (180 / Math.PI));

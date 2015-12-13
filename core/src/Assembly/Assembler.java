@@ -26,7 +26,7 @@ public class Assembler {
 	final public static String NAME_ID_SPLIT = "-";
 	final public static String NAME_SUBNAME_SPLIT = "=";
 
-	final private short CAR = -2;
+	final private static short CAR = -2;
 
 	int basePartId;
 

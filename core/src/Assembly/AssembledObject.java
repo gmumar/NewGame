@@ -22,6 +22,7 @@ public class AssembledObject {
 
 	final float ANGULAR_DAMPING = 1f;
 	final float ROTATION_FORCE = 4000;
+	final float MAX_VELOCITY = 45f;
 
 	public Component getBasePart() {
 		return basePart;
@@ -188,10 +189,10 @@ public class AssembledObject {
 					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
 							true);
 					
-					if (comp.getPhysicsBody().getAngularVelocity() > 50f) {
-						comp.getPhysicsBody().setAngularVelocity(50f);
-					} else if (comp.getPhysicsBody().getAngularVelocity() < -50f) {
-						comp.getPhysicsBody().setAngularVelocity(-50f);
+					if (comp.getPhysicsBody().getAngularVelocity() > MAX_VELOCITY) {
+						comp.getPhysicsBody().setAngularVelocity(MAX_VELOCITY);
+					} else if (comp.getPhysicsBody().getAngularVelocity() < -MAX_VELOCITY) {
+						comp.getPhysicsBody().setAngularVelocity(-MAX_VELOCITY);
 					}
 				}
 			}

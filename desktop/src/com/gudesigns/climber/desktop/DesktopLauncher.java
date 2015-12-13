@@ -7,7 +7,9 @@ import com.gudesigns.climber.GameLoader;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.samples = 10;
+		config.samples = 2;
+		config.width = 1280;
+		config.height = 768;
 		new LwjglApplication(new GameLoader(), config);
 	}
 }

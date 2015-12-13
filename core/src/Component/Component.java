@@ -203,7 +203,7 @@ public class Component {
 			while(iter.hasNext()){
 				BaseActor body = iter.next();
 				body.setPosition(body.getPosition().x + f, body.getPosition().y + g);
-				System.out.println(body.getName() + " Setting position " + body.getPosition());
+				//System.out.println(body.getName() + " Setting position " + body.getPosition());
 			}
 		}
 		
