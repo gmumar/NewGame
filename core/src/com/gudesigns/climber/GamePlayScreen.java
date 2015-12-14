@@ -6,6 +6,7 @@ import throwaway.FullCar;
 import wrapper.BaseActor;
 import wrapper.CameraManager;
 import wrapper.Globals;
+import wrapper.JointLimits;
 import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
@@ -142,19 +143,18 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch.setProjectionMatrix(camera.combined);
 
 		// debugRenderer.render(world, camera.combined);
-		world.step(Gdx.graphics.getDeltaTime()/1.2f, 200, 100);
+		world.step(Gdx.graphics.getDeltaTime()/1.1f, 200, 100);
 
 		if (timePassed > 5) {
 			// enable joint checking
 			skip_count++;
 			if (skip_count >= SKIP_COUNT) {
 				skip_count = 0;
-				//JointLimits
-				//		.enableJointLimits(world, Gdx.graphics.getDeltaTime()/1.2f);
+				JointLimits.enableJointLimits(world, Gdx.graphics.getDeltaTime()/1.1f);
 			}
 
 		} else {
-			timePassed += Gdx.graphics.getDeltaTime()/1.2f;
+			timePassed += Gdx.graphics.getDeltaTime()/1.1f;
 		}
 	}
 

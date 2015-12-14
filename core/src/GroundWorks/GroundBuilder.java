@@ -140,11 +140,11 @@ public class GroundBuilder {
 	}
 
 	private float getEdge(CameraManager cam) {
-		return cam.getViewPortRightEdge() + UNIT_LENGTH * 10;
+		return cam.getViewPortRightEdge() + UNIT_LENGTH * 17;
 	}
 
 	private float getBackEdge(CameraManager cam) {
-		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 20;
+		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 13;
 	}
 
 	public void draw(CameraManager cam, SpriteBatch batch) {
