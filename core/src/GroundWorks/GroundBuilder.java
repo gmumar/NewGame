@@ -26,6 +26,8 @@ public class GroundBuilder {
 	final static float UNIT_LENGTH = 3;
 	final static float VARIATION = 2f;
 	final static float BIASING = 3f;
+	
+	float variation = 0.5f, baising = 0.1f;
 
 	World world;
 	Body floor;
@@ -40,6 +42,10 @@ public class GroundBuilder {
 	
 	int addFloorCount;
 	final int ADD_FLOOR_COUNT = 5;
+	int flatFloorCount;
+	final int FLAT_FLOOR_COUNT = 20;
+	
+	Fixture verticalEdge;
 
 	ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
 
@@ -63,8 +69,8 @@ public class GroundBuilder {
 		float h = Gdx.graphics.getHeight() - 300;
 		floor = world.createBody(bodyDef2);
 
-		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-3
-				* UNIT_LENGTH, -h / 2), new Vector2(3 * UNIT_LENGTH, -h / 2),
+		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-10
+				* UNIT_LENGTH, -h / 2), new Vector2(-5 * UNIT_LENGTH, -h / 2),
 				"temp_ground.png", "temp_ground_filler.png");
 		mapList.add(gud);
 		gud.fixture = drawEdge(gud.start, gud.end);
@@ -83,8 +89,14 @@ public class GroundBuilder {
 				return;
 
 			gud = mapList.get(lastRemovedPointer);
+			
+			verticalEdge = drawEdge(gud.start, new Vector2(gud.start.x,gud.start.y+150));
 
 			if (getBackEdge(cam) > gud.start.x) {
+				floor.destroyFixture(verticalEdge);
+				verticalEdge = drawEdge(gud.end, new Vector2(gud.end.x,gud.end.y+150));
+				
+				
 				gud = mapList.get(lastRemovedPointer);
 				shaderStart = gud.vertexId;
 				gud.deleteUnit(floor);// drawList
@@ -112,7 +124,7 @@ public class GroundBuilder {
 
 		generateBias(r);
 
-		randf = (float) (r.nextFloat() * VARIATION - VARIATION / 2 + bias);
+		randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
 
 		if (getEdge(cam) > lastObj.end.x) {
 			GroundUnitDescriptor newObj = new GroundUnitDescriptor(lastObj.end,
@@ -121,12 +133,20 @@ public class GroundBuilder {
 			mapList.add(newObj);
 			shaderEnd = newObj.vertexId;
 		}
+		
+		
+		if(flatFloorCount >= FLAT_FLOOR_COUNT){
+			variation = VARIATION;
+			baising = BIASING;
+		}else{
+			flatFloorCount++;
+		}
 
 	}
 
 	private void generateBias(Random r) {
 		float randf = (float) (r.nextFloat());
-		bias = Math.sin(angle) * BIASING;
+		bias = Math.sin(angle) * baising;
 
 		if (randf > 0.55f) {
 			bias = 0;
@@ -140,11 +160,11 @@ public class GroundBuilder {
 	}
 
 	private float getEdge(CameraManager cam) {
-		return cam.getViewPortRightEdge() + UNIT_LENGTH * 17;
+		return cam.getViewPortRightEdge() + UNIT_LENGTH * 24;
 	}
 
 	private float getBackEdge(CameraManager cam) {
-		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 13;
+		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 20;
 	}
 
 	public void draw(CameraManager cam, SpriteBatch batch) {

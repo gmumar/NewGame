@@ -147,11 +147,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		if (timePassed > 5) {
 			// enable joint checking
-			skip_count++;
-			if (skip_count >= SKIP_COUNT) {
-				skip_count = 0;
+			//skip_count++;
+			//if (skip_count >= SKIP_COUNT) {
+			//	skip_count = 0;
 				JointLimits.enableJointLimits(world, Gdx.graphics.getDeltaTime()/1.1f);
-			}
+			//}
 
 		} else {
 			timePassed += Gdx.graphics.getDeltaTime()/1.1f;
@@ -163,7 +163,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.position.set(
 				actor.getPosition().x + camera.viewportWidth * 1.5f,
 				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 4;
+		camera.zoom = 4.5f;
 		camera.update();
 	}
 
