@@ -24,9 +24,10 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class GroundBuilder {
 
-	final static float UNIT_LENGTH = 3;
-	final static float VARIATION = 2f;
-	final static float BIASING = 3f;
+	final static float UNIT_LENGTH = 2;
+	final static float VARIATION = 1f;
+	final static float BIASING = 2f;
+	final static float PERIOD = 0.3f;
 	
 	float variation = 0.5f, baising = 0.1f;
 
@@ -42,7 +43,7 @@ public class GroundBuilder {
 	Random r = new Random();
 	
 	int addFloorCount;
-	final int ADD_FLOOR_COUNT = 5;
+	final int ADD_FLOOR_COUNT = 3;
 	int flatFloorCount;
 	final int FLAT_FLOOR_COUNT = 20;
 	
@@ -61,6 +62,7 @@ public class GroundBuilder {
 		lastRightEdge = camera.getViewPortRightEdge();
 
 		createFloor();
+		System.gc();
 	}
 
 	private void createFloor() {
@@ -153,7 +155,7 @@ public class GroundBuilder {
 			bias = 0;
 		}
 
-		angle += 0.5;
+		angle += PERIOD;
 		if (angle > Math.PI * 2) {
 			angle = 0;
 		}
@@ -161,11 +163,11 @@ public class GroundBuilder {
 	}
 
 	private float getEdge(CameraManager cam) {
-		return cam.getViewPortRightEdge() + UNIT_LENGTH * 24;
+		return cam.getViewPortRightEdge() + UNIT_LENGTH * 40;
 	}
 
 	private float getBackEdge(CameraManager cam) {
-		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 20;
+		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 35;
 	}
 
 	public void draw(CameraManager cam, SpriteBatch batch) {
@@ -206,7 +208,7 @@ public class GroundBuilder {
 		shader.begin();
 		GameMesh.flush(cam, shader,shaderStart,shaderEnd,TextureLibrary.getTexture("temp_ground_filler.png"), 30, Color.WHITE, 0f);
 		
-		GameMesh.flush(cam, shader,shaderStart,shaderEnd, null, 0.5f, Globals.TRANSPERENT_BLACK, 0.0f);
+		GameMesh.flush(cam, shader,shaderStart,shaderEnd, null, 0.8f, Globals.TRANSPERENT_BLACK, 0.0f);
 		GameMesh.flush(cam, shader,shaderStart,shaderEnd, null, 0.6f, Globals.GREEN, 0.5f);
 		GameMesh.flush(cam, shader,shaderStart,shaderEnd, null, 0.1f, Globals.GREEN1, 0.6f);
 		shader.end();
