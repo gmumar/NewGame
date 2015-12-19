@@ -1,14 +1,15 @@
 package GroundWorks;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 import wrapper.CameraManager;
+import wrapper.Globals;
 import wrapper.TextureLibrary;
 import Shader.GameMesh;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
@@ -71,7 +72,7 @@ public class GroundBuilder {
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-10
 				* UNIT_LENGTH, -h / 2), new Vector2(-5 * UNIT_LENGTH, -h / 2),
-				"temp_ground.png", "temp_ground_filler.png");
+				"temp_ground.png", "temp_ground_filler_premade.png");
 		mapList.add(gud);
 		gud.fixture = drawEdge(gud.start, gud.end);
 
@@ -129,7 +130,7 @@ public class GroundBuilder {
 		if (getEdge(cam) > lastObj.end.x) {
 			GroundUnitDescriptor newObj = new GroundUnitDescriptor(lastObj.end,
 					new Vector2(lastObj.end.x + UNIT_LENGTH, lastObj.end.y
-							+ randf), "temp_ground.png", "temp_ground_filler.png");
+							+ randf), "temp_ground.png", "temp_ground_filler_premade.png");
 			mapList.add(newObj);
 			shaderEnd = newObj.vertexId;
 		}
@@ -176,13 +177,21 @@ public class GroundBuilder {
 		
 		++addFloorCount;
 
-		Iterator<GroundUnitDescriptor> iter = mapList.iterator();
+		/*Iterator<GroundUnitDescriptor> iter = mapList.iterator();
+		
+		while (iter.hasNext()) {
+			GroundUnitDescriptor groundItem = iter.next();
+			if (!groundItem.isFixtureDeleted())
+				groundItem.drawShadow(batch);
+		}
+		
+		iter = mapList.iterator();
 
 		while (iter.hasNext()) {
 			GroundUnitDescriptor groundItem = iter.next();
 			if (!groundItem.isFixtureDeleted())
 				groundItem.draw(batch);
-		}
+		}*/
 
 	}
 	
@@ -194,7 +203,13 @@ public class GroundBuilder {
 			if (!groundItem.isFixtureDeleted())
 				groundItem.drawShapes(cam,shader);
 		}*/
-		GameMesh.flush(cam, shader,shaderStart,shaderEnd,TextureLibrary.getTexture("temp_ground_filler.png"));
+		shader.begin();
+		GameMesh.flush(cam, shader,shaderStart,shaderEnd,TextureLibrary.getTexture("temp_ground_filler.png"), 30, Color.WHITE, 0f);
+		
+		GameMesh.flush(cam, shader,shaderStart,shaderEnd, null, 0.5f, Globals.TRANSPERENT_BLACK, 0.0f);
+		GameMesh.flush(cam, shader,shaderStart,shaderEnd, null, 0.6f, Globals.GREEN, 0.5f);
+		GameMesh.flush(cam, shader,shaderStart,shaderEnd, null, 0.1f, Globals.GREEN1, 0.6f);
+		shader.end();
 	}
 
 	public Fixture drawEdge(Vector2 v1, Vector2 v2) {

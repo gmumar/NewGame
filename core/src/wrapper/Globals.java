@@ -19,8 +19,11 @@ public class Globals {
 	final static public int GameWidth = 710;
 	
 	final static public Color BLUE = new Color(0.3f, 0.3f, 1, 1);
-	final static public Color BROWN = new Color(0.86f, 0.67f, 0.52f, 1);
+	final static public Color GREEN = new Color((float)13/256,(float)142/256,(float)0/256, 1.0f);
+	final static public Color GREEN1 = new Color((float)20/256,(float)213/256,(float)0/256, 1.0f);
+	
 	final static public Color BROWN1 =new Color(0.73f, 0.40f, 0.31f, 1);	
+	final static public Color TRANSPERENT_BLACK = new Color(0,0,0, 0.3f);
 
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
