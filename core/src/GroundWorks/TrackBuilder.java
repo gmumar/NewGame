@@ -36,6 +36,10 @@ public class TrackBuilder {
 
 		createFloor();
 	}
+	
+	public ArrayList<GroundUnitDescriptor> getMapList(){
+		return mapList;
+	}
 
 	private void createFloor() {
 		BodyDef bodyDef2 = new BodyDef();
@@ -130,8 +134,8 @@ public class TrackBuilder {
 						&& point.x < lastObj.end.x + SQUARE) {
 
 					GroundUnitDescriptor newObj = new GroundUnitDescriptor(
-							lastObj.end, new Vector2(point.x, point.y),
-							"temp_ground.png");
+							lastObj.end, new Vector2(lastObj.end.x + GroundBuilder.UNIT_LENGTH/3, point.y),
+							"temp_ground.png");//lastObj.end.x + GroundBuilder.UNIT_LENGTH
 
 					Fixture fixture = drawEdge(newObj.start, newObj.end);
 					newObj.setFixture(fixture);

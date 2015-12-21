@@ -1,10 +1,13 @@
 package Menu;
 
 import wrapper.CameraManager;
+import GroundWorks.TrackBuilder;
+import JSONifier.JSONCompiler;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gudesigns.climber.BuilderScreen;
 import com.gudesigns.climber.GameLoader;
+import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.MainMenuScreen;
 
 public class TrackMenuBuilder {
@@ -18,13 +21,18 @@ public class TrackMenuBuilder {
 
 	CameraManager camera;
 	GameLoader gameLoader;
+	TrackBuilder builder;
+	JSONCompiler compiler;
 
 	public TrackMenuBuilder(Stage stage, CameraManager secondCamera,
-			final GameLoader gameLoader) {
+			final GameLoader gameLoader, final TrackBuilder trackBuilder) {
 
 		this.stage = stage;
 		this.camera = secondCamera;
 		this.gameLoader = gameLoader;
+		this.builder = trackBuilder;
+		
+		compiler = new JSONCompiler();
 
 		zoomIn = new Button("+") {
 			@Override
@@ -51,8 +59,10 @@ public class TrackMenuBuilder {
 		build = new Button("build") {
 			@Override
 			public void Clicked() {
-				// compiler.compile(world, parts);
-				gameLoader.gameSetScreen(new BuilderScreen(gameLoader));
+				compiler
+				.compile(
+						trackBuilder.getMapList());
+				gameLoader.gameSetScreen(new GamePlayScreen(gameLoader));
 				Destroy();
 			}
 
@@ -98,6 +108,6 @@ public class TrackMenuBuilder {
 
 	private void Destroy() {
 		// this.world.dispose();
-		stage.dispose();
+		//stage.dispose();
 	}
 }

@@ -67,7 +67,7 @@ public class MenuBuilder {
 
 		componentCounts = new HashMap<String, Integer>();
 		
-		drawBox(-5, -5, 20, 20);
+		drawBox(-5, -3, 20, 20);
 		
 		// Add life regardless 
 		
@@ -76,6 +76,7 @@ public class MenuBuilder {
 		c.setUpForBuilder(ComponentNames._LIFE_.name()
 				+ Assembler.NAME_ID_SPLIT
 				+ componentCounts.get(ComponentNames._LIFE_.name()));
+		c.setPosition(0, 5);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
 		

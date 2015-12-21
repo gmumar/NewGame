@@ -118,8 +118,7 @@ public class AssembledObject {
 		Iterator<Component> iter = partList.iterator();
 		while (iter.hasNext()) {
 			Component component = iter.next();
-			Vector2 currentPos = component.getObject().getPosition();
-			component.setPosition(currentPos.x + x, currentPos.y + y);
+			component.setPosition(x, y);
 		}
 	}
 

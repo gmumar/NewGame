@@ -11,12 +11,16 @@ import Component.Component;
 import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
 import Component.ComponentBuilder.ComponentSubNames;
+import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONComponent;
 import JSONifier.JSONJoint;
 import JSONifier.JSONParent;
+import JSONifier.JSONTrack;
+import JSONifier.Properties;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
@@ -42,7 +46,7 @@ public class Assembler {
 
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);
-
+		
 		HashMap<String, Component> parts = extractComponents(source, world);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
@@ -118,7 +122,7 @@ public class Assembler {
 				part1.setGroup(CAR);
 				part2.setGroup(CAR);
 				part1.applyProperties(sourceComponent.getProperties());
-				// part2.applyProperties(sourceComponent.getProperties());
+				part2.applyProperties(sourceComponent.getProperties());
 
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
 						+ ComponentSubNames._UPPER_.name() + NAME_ID_SPLIT
@@ -142,6 +146,38 @@ public class Assembler {
 		}
 
 		return ret;
+	}
+
+	public ArrayList<GroundUnitDescriptor> assembleTrack(String mapString, Vector2 offset) {
+		JSONTrack jsonTrack = JSONTrack.objectify(mapString);
+		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
+		
+		System.out.println(mapPoints.size());
+		
+		ArrayList <GroundUnitDescriptor> retList = new ArrayList<GroundUnitDescriptor>();
+		
+		Iterator<Vector2> iter = mapPoints.iterator();
+		Vector2 lastPoint, point = null;
+		boolean first = true;
+		
+		while(iter.hasNext()){
+			if(first){
+				point = iter.next();
+				point.x += offset.x;
+				point.y += offset.y;
+				first = !first;
+				continue;
+			}
+			lastPoint = point;
+			point = iter.next();
+			point.x += offset.x;
+			point.y += offset.y;
+			GroundUnitDescriptor gud = new GroundUnitDescriptor(lastPoint, point, "texture.png");
+			retList.add(gud);
+			
+		}
+		
+		return retList;
 	}
 
 }

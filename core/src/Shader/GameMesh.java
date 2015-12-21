@@ -38,7 +38,7 @@ public class GameMesh {
 	public static final int MAX_TRIS = 1;
 
 	// The maximum number of vertices our mesh will hold
-	public static final int MAX_VERTS = 2000;//MAX_TRIS * 3;
+	public static final int MAX_VERTS = 5000;//MAX_TRIS * 3;
 
 	// The array which holds all the data, interleaved like so:
 	// x, y, r, g, b, a

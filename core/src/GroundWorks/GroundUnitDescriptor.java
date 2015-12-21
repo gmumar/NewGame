@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
-class GroundUnitDescriptor {
+public class GroundUnitDescriptor {
 	Vector2 start, end;
 	Fixture fixture;
 	boolean fixtureDeleted = true;
@@ -28,6 +28,7 @@ class GroundUnitDescriptor {
 		this.fillerName = null;
 
 		initGraphic();
+		//initGraphicFiller();
 	}
 
 	public GroundUnitDescriptor(Vector2 start, Vector2 end, String image,
@@ -39,6 +40,16 @@ class GroundUnitDescriptor {
 
 		initGraphic();
 		initGraphicFiller();
+	}
+	
+	
+
+	public Vector2 getStart() {
+		return start;
+	}
+
+	public Vector2 getEnd() {
+		return end;
 	}
 
 	private void initGraphic() {
@@ -141,4 +152,6 @@ class GroundUnitDescriptor {
 	public Sprite getGraphic() {
 		return graphic;
 	}
+	
+	
 }

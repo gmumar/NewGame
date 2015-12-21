@@ -108,7 +108,7 @@ public class ComponentBuilder {
 		tmpActor.setShapeBase(shape);
 
 		BaseActor fixture = new BaseActor(ComponentNames._AXLE_.name(), world);
-		fixture.setPosition(tmpActor.getCenter().x, tmpActor.getCenter().y);
+		//fixture.setPosition(tmpActor.getCenter().x, tmpActor.getCenter().y);
 		// fixture.setMounts(mounts, 0.0f);
 		fixture.setScale(0.3f);
 		fixture.setDensity(0);
@@ -168,7 +168,7 @@ public class ComponentBuilder {
 				ComponentNames._SPRINGJOINT_.name()
 						+ Assembler.NAME_SUBNAME_SPLIT
 						+ ComponentSubNames._UPPER_.name(), world);
-		topFixture.setPosition(0, height);
+		
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(topFixture.getCenter());
 		topFixture.setMounts(mountTop, 0.0f);
@@ -176,6 +176,7 @@ public class ComponentBuilder {
 		//topFixture.setSensor();
 		topFixture.setDensity(1);
 		// topFixture.setScaleY(0.5f);
+		topFixture.setPosition(0, height);
 
 		BaseActor botFixture = new BaseActor(
 				ComponentNames._SPRINGJOINT_.name()

@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.JointEdge;
 
 public class Component {
 
@@ -63,7 +64,7 @@ public class Component {
 
 			if (property.getKey().compareTo(Properties.POSITION.name()) == 0) {
 				String[] values = property.getValue().split(",");
-				this.setPosition(Float.parseFloat(values[0]),
+				this.setPosition(Float.parseFloat(values[0]) ,
 						Float.parseFloat(values[1]));
 			}
 
@@ -196,8 +197,11 @@ public class Component {
 	}
 
 	public void setPosition(float f, float g) {
+		
+		
+		this.getObject().setPosition(this.getObject().getPosition().x + f, this.getObject().getPosition().y + g);
 		if(getJointBodies()==null){
-			this.getObject().setPosition(this.getObject().getPosition().x + f, this.getObject().getPosition().y + g);
+			;
 		} else {
 			Iterator<BaseActor> iter = getJointBodies().iterator();
 			while(iter.hasNext()){

@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -39,9 +40,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	FitViewport vp;
 	ShaderProgram shader;
 	
+	boolean paused = false;
+	
 	//GameMesh mesh;
 
-	// Box2DDebugRenderer debugRenderer;
+	//Box2DDebugRenderer debugRenderer;
 
 	GroundBuilder ground;
 	float aspectRatio;
@@ -66,11 +69,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.add(new TouchUnit());
 		}
 
-		// debugRenderer = new Box2DDebugRenderer();
+		//debugRenderer = new Box2DDebugRenderer();
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(world);
-		// builtCar.setPosition(1, -1.50f);
+		//builtCar.setPosition(0, 5);
 
 		ground = new GroundBuilder(world, camera);
 		
@@ -133,7 +136,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor((float)118/256, (float)211/256, (float)222/256, 1);
+		//Gdx.gl.glClearColor((float)118/256, (float)211/256, (float)222/256, 1);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
         Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
@@ -142,8 +146,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		// debugRenderer.render(world, camera.combined);
-		world.step(Gdx.graphics.getDeltaTime()/1.1f, 200, 100);
+		//debugRenderer.render(world, camera.combined);
+		if(!paused){
+			world.step(Gdx.graphics.getDeltaTime()/1.1f, 200, 100);
+		}
 
 		if (timePassed > 5) {
 			// enable joint checking
@@ -163,7 +169,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.position.set(
 				actor.getPosition().x + camera.viewportWidth * 1.5f,
 				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 4.5f;
+		camera.zoom = 5;//4.5f;
 		camera.update();
 	}
 
@@ -175,7 +181,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
-		camera.zoom = 4;
+		camera.zoom = 5;
 		camera.update();
 
 		secondCamera = new CameraManager(Globals.ScreenWidth,
@@ -248,6 +254,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		initInputs();
 		Globals.updateScreenInfo();
 		GameMesh.create(camera,shader);
+		paused = false;
 
 	}
 
@@ -257,6 +264,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		ground.destory();
 		stage.dispose();
 		GameMesh.destroy();
+		paused = true;
 	}
 
 	// ------------------------------------------------------UNUSED------------------------------------------------

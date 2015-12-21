@@ -8,9 +8,12 @@ import wrapper.GamePreferences;
 import Assembly.Assembler;
 import Component.Component;
 import Component.Component.ComponentTypes;
+import GroundWorks.GroundUnitDescriptor;
+import JSONifier.JSONTrack.TrackType;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -74,5 +77,31 @@ public class JSONCompiler {
 
 		System.out.println(prefs
 				.getString(GamePreferences.CAR_MAP_STR, "Error"));
+	}
+	
+	public void compile(ArrayList<GroundUnitDescriptor> mapList){
+		Preferences prefs = Gdx.app
+				.getPreferences(GamePreferences.CAR_PREF_STR);
+		
+		Iterator<GroundUnitDescriptor> iter = mapList.iterator();
+		ArrayList<Vector2> trackArray = new ArrayList<Vector2>();
+		
+		while(iter.hasNext()){
+			GroundUnitDescriptor unit = iter.next();
+			
+			trackArray.add(unit.getStart());
+			
+		}
+		
+		JSONTrack track = new JSONTrack();
+		track.setPoints(trackArray);
+		track.setType(TrackType.NORMAL);
+		
+		prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
+		prefs.flush();
+		
+		System.out.println(prefs
+				.getString(GamePreferences.TRACK_MAP_STR, "Error"));
+		
 	}
 }

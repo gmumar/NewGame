@@ -50,10 +50,11 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 			touches.add(new TouchUnit());
 		}
 
-		menu = new TrackMenuBuilder( stage, camera, gameLoader);
+		trackBuilder = new TrackBuilder(world, camera);
+		menu = new TrackMenuBuilder( stage, camera, gameLoader, trackBuilder);
 		debugRenderer = new Box2DDebugRenderer();
 	
-		trackBuilder = new TrackBuilder(world, camera);
+		
 
 	}
 
