@@ -48,9 +48,10 @@ public class TrackBuilder {
 		// float h = Gdx.graphics.getHeight() - 300;
 		floor = world.createBody(bodyDef2);
 
-		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-2
-				* GroundBuilder.UNIT_LENGTH, 0), new Vector2(
-				2 * GroundBuilder.UNIT_LENGTH, 0), "temp_ground.png");
+		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2( GroundBuilder.UNIT_LENGTH, 0), new Vector2(
+				  GroundBuilder.UNIT_LENGTH, 0), "temp_ground.png");
+		mapList.add(gud);
+		gud.fixture = drawEdge(gud.start, gud.end);
 		mapList.add(gud);
 		gud.fixture = drawEdge(gud.start, gud.end);
 
@@ -134,7 +135,7 @@ public class TrackBuilder {
 						&& point.x < lastObj.end.x + SQUARE) {
 
 					GroundUnitDescriptor newObj = new GroundUnitDescriptor(
-							lastObj.end, new Vector2(lastObj.end.x + GroundBuilder.UNIT_LENGTH/3, point.y),
+							lastObj.end, new Vector2(lastObj.end.x + GroundBuilder.UNIT_LENGTH, point.y),
 							"temp_ground.png");//lastObj.end.x + GroundBuilder.UNIT_LENGTH
 
 					Fixture fixture = drawEdge(newObj.start, newObj.end);

@@ -9,6 +9,7 @@ import Component.Component.ComponentTypes;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
@@ -177,6 +178,17 @@ public class ComponentBuilder {
 		topFixture.setDensity(1);
 		// topFixture.setScaleY(0.5f);
 		topFixture.setPosition(0, height);
+		
+		if(forBuilder){
+			FixtureDef fixtureDef = new FixtureDef();
+			PolygonShape shape = new PolygonShape();
+			shape.setAsBox(0.3f, 0.5f,new Vector2(0,-0.2f),0);
+			fixtureDef.shape = shape;
+			fixtureDef.density = 0;
+			fixtureDef.isSensor = true;
+			
+			topFixture.getPhysicsBody().createFixture(fixtureDef);
+		}
 
 		BaseActor botFixture = new BaseActor(
 				ComponentNames._SPRINGJOINT_.name()
@@ -190,6 +202,18 @@ public class ComponentBuilder {
 		//botFixture.setSensor();
 		botFixture.setDensity(1);
 		// botFixture.setScaleY(0.5f);
+		
+		if(forBuilder){
+			FixtureDef fixtureDef = new FixtureDef();
+			PolygonShape shape = new PolygonShape();
+			shape.setAsBox(0.3f, 0.5f,new Vector2(0,0.2f),0);
+			fixtureDef.shape = shape;
+			fixtureDef.density = 0;
+			fixtureDef.isSensor = true;
+			
+			botFixture.getPhysicsBody().createFixture(fixtureDef);
+		}
+
 
 		ArrayList<BaseActor> bodies = new ArrayList<BaseActor>();
 		bodies.add(topFixture);

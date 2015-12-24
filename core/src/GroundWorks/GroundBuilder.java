@@ -32,8 +32,9 @@ public class GroundBuilder {
 	final static float VARIATION = 1f;
 	final static float BIASING = 2f;
 	final static float PERIOD = 0.3f;
-	
-	final static int TRACK_HEIGHT = 1;
+	public final static int BACK_EDGE_UNITS = 30;
+
+	final static int TRACK_HEIGHT = 0;
 
 	float variation = 0.5f, baising = 0.1f;
 
@@ -56,6 +57,8 @@ public class GroundBuilder {
 
 	boolean infinate = true;
 	int mapListCounter = 0;
+	int progressCounter = BACK_EDGE_UNITS;
+	
 	ArrayList<GroundUnitDescriptor> preMadeMapList;
 
 	Fixture verticalEdge;
@@ -86,8 +89,8 @@ public class GroundBuilder {
 		} else {
 			infinate = false;
 			mapListCounter = 0;
-			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(
-					0, TRACK_HEIGHT));
+			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(0,
+					TRACK_HEIGHT));
 			// mapList.addAll(assembler.assembleTrack(mapString, new
 			// Vector2(-10,-50)));
 			// shaderEnd = 8*15;//= mapList.get(mapList.size()-1).vertexId;
@@ -103,23 +106,24 @@ public class GroundBuilder {
 		BodyDef bodyDef2 = new BodyDef();
 		bodyDef2.type = BodyDef.BodyType.StaticBody;
 		// float w = Gdx.graphics.getWidth();
-	//	float h = Gdx.graphics.getHeight() - 300;
+		// float h = Gdx.graphics.getHeight() - 300;
 		floor = world.createBody(bodyDef2);
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-50
-				* UNIT_LENGTH, TRACK_HEIGHT), new Vector2(-5 * UNIT_LENGTH, TRACK_HEIGHT),
-				"temp_ground.png", "temp_ground_filler_premade.png");
+				* UNIT_LENGTH, TRACK_HEIGHT), new Vector2(-5 * UNIT_LENGTH,
+				TRACK_HEIGHT), "temp_ground.png",
+				"temp_ground_filler_premade.png");
 		mapList.add(gud);
 		gud.fixture = drawEdge(gud.start, gud.end);
 
 	}
 
 	public void drawFloor(CameraManager cam) {
-		
+
 		GroundUnitDescriptor gud = mapList.get(lastDrawnPointer);
 
 		if (getEdge(cam) > gud.end.x) {
-			
+
 			lastDrawnPointer++;
 			gud = mapList.get(lastDrawnPointer);
 			gud.setFixture(drawEdge(gud.start, gud.end));
@@ -143,6 +147,7 @@ public class GroundBuilder {
 				gud.deleteUnit(floor);// drawList
 				// mapList.remove(lastRemovedPointer);
 				lastRemovedPointer++;
+				++progressCounter;
 			}
 		}
 
@@ -174,8 +179,8 @@ public class GroundBuilder {
 				addGroundUnitDescriptor(lastObj,
 						preMadeMapList.get(mapListCounter).getStart());
 				++mapListCounter;
-				
-				if(mapListCounter>=preMadeMapList.size()){
+
+				if (mapListCounter >= preMadeMapList.size()) {
 					infinate = true;
 				}
 			}
@@ -204,8 +209,8 @@ public class GroundBuilder {
 	private void addGroundUnitDescriptor(GroundUnitDescriptor lastObj,
 			Vector2 point) {
 		GroundUnitDescriptor newObj = new GroundUnitDescriptor(lastObj.end,
-				new Vector2(point.x , point.y),
-				"temp_ground.png", "temp_ground_filler_premade.png");
+				new Vector2(point.x, point.y), "temp_ground.png",
+				"temp_ground_filler_premade.png");
 		mapList.add(newObj);
 		shaderEnd = newObj.vertexId;
 		// return newObj;
@@ -231,7 +236,7 @@ public class GroundBuilder {
 	}
 
 	private float getBackEdge(CameraManager cam) {
-		return cam.getViewPortLeftEdge() - UNIT_LENGTH * 35;
+		return cam.getViewPortLeftEdge() - UNIT_LENGTH * BACK_EDGE_UNITS;
 	}
 
 	public void draw(CameraManager cam, SpriteBatch batch) {
@@ -259,7 +264,8 @@ public class GroundBuilder {
 
 	}
 
-	public void drawShapes(CameraManager cam, ShaderProgram shader) {
+	public void drawShapes(CameraManager cam, ShaderProgram shader,
+			ShaderProgram colorShader) {
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
 		 * 
@@ -271,14 +277,17 @@ public class GroundBuilder {
 		GameMesh.flush(cam, shader, shaderStart, shaderEnd,
 				TextureLibrary.getTexture("temp_ground_filler.png"), 30,
 				Color.WHITE, 0f);
-
-		GameMesh.flush(cam, shader, shaderStart, shaderEnd, null, 0.8f,
-				Globals.TRANSPERENT_BLACK, 0.0f);
-		GameMesh.flush(cam, shader, shaderStart, shaderEnd, null, 0.6f,
-				Globals.GREEN, 0.5f);
-		GameMesh.flush(cam, shader, shaderStart, shaderEnd, null, 0.1f,
-				Globals.GREEN1, 0.6f);
 		shader.end();
+
+		colorShader.begin();
+		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.8f,
+				Globals.TRANSPERENT_BLACK, 0.0f);
+		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.6f,
+				Globals.GREEN, 0.5f);
+		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.1f,
+				Globals.GREEN1, 0.6f);
+		colorShader.end();
+
 	}
 
 	public Fixture drawEdge(Vector2 v1, Vector2 v2) {
@@ -307,6 +316,14 @@ public class GroundBuilder {
 	public void destory() {
 		TextureLibrary.destroyMap();
 		edgeShape.dispose();
+	}
+
+	public float getProgress() {
+		
+		float progress = ((float) progressCounter / preMadeMapList.size()) * 100;
+		System.out.println(progress);
+		return progress;
+
 	}
 
 }

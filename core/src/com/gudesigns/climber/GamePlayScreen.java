@@ -22,7 +22,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -38,9 +37,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	HUDBuilder hud;
 	Stage stage;
 	FitViewport vp;
-	ShaderProgram shader;
+	ShaderProgram shader,colorShader;
 	
-	boolean paused = false;
+	boolean paused = true;
 	
 	//GameMesh mesh;
 
@@ -63,7 +62,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
-		initHud();
+		
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
@@ -78,6 +77,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		ground = new GroundBuilder(world, camera);
 		
 		initShader();
+		initHud();
 
 	}
 
@@ -90,6 +90,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	         System.exit(0);
 	      }
 		 
+		 fragmentShader =  Gdx.files.internal("shaders/colorfragment.glsl").readString();
+		 colorShader = new ShaderProgram(vertexShader, fragmentShader);
+		 if (shader.isCompiled() == false) {
+	         Gdx.app.log("ShaderError", shader.getLog());
+	         System.exit(0);
+	      }
+		 
 		 //mesh = new GameMesh();
 		// GameMesh.create();	
 		 
@@ -97,7 +104,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void initHud() {
 
-		hud = new HUDBuilder(stage, secondCamera, gameLoader);
+		hud = new HUDBuilder(stage, secondCamera, ground, gameLoader);
 
 	}
 
@@ -114,7 +121,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		//shader.begin();
 		//shader.setUniformMatrix("u_projTrans", batch.getProjectionMatrix());
 		//shader.setUniformi("u_texture", 0);
-		ground.drawShapes(camera,shader);
+		ground.drawShapes(camera,shader,colorShader);
 		//shader.end();
 		attachCameraTo(builtCar.getBasePart().getObject());
 
@@ -123,7 +130,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		builtCar.draw(batch);
 		batch.end();
 
-		hud.update();
+		hud.update(delta);
 		// stage.act(Gdx.graphics.getFramesPerSecond());
 		stage.draw();
 
@@ -151,6 +158,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			world.step(Gdx.graphics.getDeltaTime()/1.1f, 200, 100);
 		}
 
+		if (timePassed > 0.2f) {
+			paused = false;
+		}
+		
+		
 		if (timePassed > 5) {
 			// enable joint checking
 			//skip_count++;
@@ -254,7 +266,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		initInputs();
 		Globals.updateScreenInfo();
 		GameMesh.create(camera,shader);
-		paused = false;
+		//
 
 	}
 
@@ -264,7 +276,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		ground.destory();
 		stage.dispose();
 		GameMesh.destroy();
-		paused = true;
+		
 	}
 
 	// ------------------------------------------------------UNUSED------------------------------------------------
@@ -273,13 +285,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-
+		paused = true;
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-
+		paused = false;
 	}
 
 	@Override
