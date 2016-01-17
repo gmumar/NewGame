@@ -1,75 +1,82 @@
 package com.gudesigns.climber;
 
+import java.util.ArrayList;
+
 import wrapper.CameraManager;
 import wrapper.Globals;
 import Menu.Button;
+import Menu.TableW;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class MainMenuScreen implements Screen {
+public class TrackSelectorScreen implements Screen {
 
 	GameLoader gameLoader;
 	CameraManager camera,secondCamera;
 	SpriteBatch batch;
 	Stage stage;
 	FitViewport vp;
+	
+	int buttonCount = 100;
+	ArrayList<Button> buttons = new ArrayList<Button>();
+	TableW tracksTable;
+	ScrollPane scrollPane;
 
-	Button builder, playGame, buildTrack, selectTrack;
-
-	public MainMenuScreen(GameLoader gameLoader) {
+	public TrackSelectorScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-		
-
 		initStage();
+		
+		initTrackSelector();
 		initButtons();
+		
+		tracksTable.invalidate();
+		scrollPane.invalidate();
+		
+	}
+	
+	private void initTrackSelector(){
+		tracksTable = new TableW();
+		tracksTable.setRotation(-20);
+		//tracksTable.setFillParent(true);
+		//tracksTable.align(Align.center);
+		
+		
+		scrollPane = new ScrollPane(tracksTable);
+		//scrollPane.setHeight(Globals.ScreenHeight);
+		//scrollPane.setWidth(Globals.ScreenWidth);
+		//scrollPane.setOrigin(0, 0);
+		scrollPane.setSmoothScrolling(true);
+		scrollPane.setFillParent(true);
+		scrollPane.setLayoutEnabled(true);
+		
+		stage.addActor(scrollPane);
 	}
 
 	private void initButtons() {
-
-		builder = new Button("builder") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new BuilderScreen(gameLoader));
-			}
-		};
-
-		builder.setPosition(0, 0);
-		stage.addActor(builder);
-
-		playGame = new Button("playGame") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
-			}
-		};
-
-		playGame.setPosition(100, 0);
-		stage.addActor(playGame);
 		
-		buildTrack = new Button("build track") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new TrackBuilderScreen(gameLoader));
-			}
-		};
+		Button b;
 
-		buildTrack.setPosition(200, 0);
-		stage.addActor(buildTrack);
+		for(int i=0;i<buttonCount;i++){
+			b = new Button("button " + i);
+			b.setRotation(-20);
+			b.setWidth(1000);
+			b.invalidate();
+			
+
+			buttons.add(b);
+
+			
+			tracksTable.add(b);
+			tracksTable.row();
+			
+		}
 		
-		selectTrack = new Button("select track"){
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new TrackSelectorScreen(gameLoader));
-			}
-		};
-
-		selectTrack.setPosition(0, 100);
-		stage.addActor(selectTrack);
 	}
 
 	private void initStage() {
@@ -106,7 +113,7 @@ public class MainMenuScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-
+		
 	}
 
 	private void renderWorld() {
@@ -117,7 +124,6 @@ public class MainMenuScreen implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
-
 	}
 
 	@Override

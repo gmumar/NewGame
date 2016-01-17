@@ -76,7 +76,7 @@ public class Button extends TextButton {
 			Texture t = new Texture("button.png");
 			skin.add("forward", t);
 			tbs.up = skin.newDrawable("forward", Color.LIGHT_GRAY);
-			tbs.down = skin.newDrawable("forward", Color.LIGHT_GRAY);
+			tbs.down = skin.newDrawable("forward", Color.GREEN);
 			// tbs.checked = skin.newDrawable("white", Color.BLUE);
 			tbs.over = skin.newDrawable("forward", Color.DARK_GRAY);
 	
@@ -84,7 +84,7 @@ public class Button extends TextButton {
 			
 		}else{
 			tbs.up = skin.newDrawable("white", Color.DARK_GRAY);
-			tbs.down = skin.newDrawable("white", Color.DARK_GRAY);
+			tbs.down = skin.newDrawable("white", Color.GREEN);
 			// tbs.checked = skin.newDrawable("white", Color.BLUE);
 			tbs.over = skin.newDrawable("white", Color.LIGHT_GRAY);
 			

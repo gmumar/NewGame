@@ -41,6 +41,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	
 	boolean paused = true;
 	
+	public static final float CAMERA_OFFSET =  15;
 	//GameMesh mesh;
 
 	//Box2DDebugRenderer debugRenderer;
@@ -133,6 +134,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		hud.update(delta);
 		// stage.act(Gdx.graphics.getFramesPerSecond());
 		stage.draw();
+		stage.act(Gdx.graphics.getDeltaTime());
 
 	}
 
@@ -179,7 +181,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private void attachCameraTo(BaseActor actor) {
 
 		camera.position.set(
-				actor.getPosition().x + camera.viewportWidth * 1.5f,
+				actor.getPosition().x + CAMERA_OFFSET,
 				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
 		camera.zoom = 5;//4.5f;
 		camera.update();

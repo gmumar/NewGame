@@ -16,7 +16,6 @@ import JSONifier.JSONComponent;
 import JSONifier.JSONJoint;
 import JSONifier.JSONParent;
 import JSONifier.JSONTrack;
-import JSONifier.Properties;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -152,7 +151,7 @@ public class Assembler {
 		JSONTrack jsonTrack = JSONTrack.objectify(mapString);
 		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
 		
-		System.out.println(mapPoints.size());
+		//System.out.println(mapPoints.size());
 		
 		ArrayList <GroundUnitDescriptor> retList = new ArrayList<GroundUnitDescriptor>();
 		

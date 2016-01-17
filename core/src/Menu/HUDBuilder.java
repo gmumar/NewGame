@@ -65,10 +65,9 @@ public class HUDBuilder {
 		stage.addActor(version);
 		
 		//Progress Bars
-		mapProgress = new ProgressBarW(GroundBuilder.BACK_EDGE_UNITS, 100, 0.01f, false,  "mapProgress");
+		mapProgress = new ProgressBarW(0, 100, 0.01f, false,  "mapProgress");
 		mapProgress.setPosition(Globals.ScreenWidth/4, Globals.ScreenHeight - Globals.ScreenHeight/12);
 		mapProgress.setSize(Globals.ScreenWidth/2, 0.1f);
-		mapProgress.setScale(0.1f);
 		mapProgress.setAnimateDuration(0.5f);
 			
 		stage.addActor(mapProgress);

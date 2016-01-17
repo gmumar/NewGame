@@ -24,6 +24,7 @@ public class GameLoader extends Game {
 	public void gameSetScreen(Screen s){
 		this.getScreen().dispose();
 		setScreen(s);
+		System.gc();
 	}
 
 }

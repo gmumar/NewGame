@@ -18,7 +18,7 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class ComponentBuilder {
 
 	public enum ComponentNames {
-		_BAR3_, _TIRE_, _SOLIDJOINT_, _AXLE_, _SPRINGJOINT_, _WHEEL_, _LIFE_
+		_BAR3_, _TIRE_, _SOLIDJOINT_, _AXLE_, _SPRINGJOINT_, _WHEEL_, _LIFE_, _CEQUEREDFLAG_
 	}
 
 	public enum ComponentSubNames {
@@ -272,14 +272,14 @@ public class ComponentBuilder {
 	public static Component buildLife(World world, boolean forBuilder) {
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(ComponentNames._LIFE_.name(),
-				"life.png", world);
+				"life_small.png", world);
 
 		tmpActor.setDensity(5);
 		tmpActor.setScale(0.6f);
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 		mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
-				- tmpActor.getHeight() / 2));
+				- tmpActor.getHeight() ));
 
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 

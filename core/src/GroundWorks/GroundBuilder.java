@@ -25,6 +25,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.gudesigns.climber.GamePlayScreen;
 
 public class GroundBuilder {
 
@@ -48,6 +49,7 @@ public class GroundBuilder {
 	double angle = 0, bias = 0;
 	int shaderStart = 0, shaderEnd = 0;
 	Random r = new Random();
+	GroundDecor decor;
 
 	static final int ADD_FLOOR_COUNT_FINAL = 3;
 	int addFloorCount;
@@ -57,7 +59,7 @@ public class GroundBuilder {
 
 	boolean infinate = true;
 	int mapListCounter = 0;
-	int progressCounter = BACK_EDGE_UNITS;
+	int progressCounter = 0;
 	
 	ArrayList<GroundUnitDescriptor> preMadeMapList;
 
@@ -81,6 +83,7 @@ public class GroundBuilder {
 		lastRightEdge = camera.getViewPortRightEdge();
 
 		createFloor();
+		decor = new GroundDecor(world);
 
 		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, null);
 		System.out.println(mapString);
@@ -91,6 +94,8 @@ public class GroundBuilder {
 			mapListCounter = 0;
 			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(0,
 					TRACK_HEIGHT));
+			
+			decor.addChequeredFlag(preMadeMapList);
 			// mapList.addAll(assembler.assembleTrack(mapString, new
 			// Vector2(-10,-50)));
 			// shaderEnd = 8*15;//= mapList.get(mapList.size()-1).vertexId;
@@ -98,8 +103,8 @@ public class GroundBuilder {
 			// System.out.println("point on map " + mapList.size() + " vertex: "
 			// + shaderEnd);
 		}
-
-		System.gc();
+		
+		
 	}
 
 	private void createFloor() {
@@ -147,7 +152,7 @@ public class GroundBuilder {
 				gud.deleteUnit(floor);// drawList
 				// mapList.remove(lastRemovedPointer);
 				lastRemovedPointer++;
-				++progressCounter;
+				
 			}
 		}
 
@@ -184,6 +189,10 @@ public class GroundBuilder {
 					infinate = true;
 				}
 			}
+			if(camera.position.x - GamePlayScreen.CAMERA_OFFSET>preMadeMapList.get(0).end.x){
+				++progressCounter;
+			}
+			
 		}
 
 		if (flatFloorCount >= FLAT_FLOOR_COUNT) {
@@ -247,6 +256,8 @@ public class GroundBuilder {
 		}
 
 		++addFloorCount;
+		
+		decor.draw(batch);
 
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
@@ -320,8 +331,9 @@ public class GroundBuilder {
 
 	public float getProgress() {
 		
-		float progress = ((float) progressCounter / preMadeMapList.size()) * 100;
-		System.out.println(progress);
+		float progress = ((float) progressCounter / (preMadeMapList.size())) * (100-0);
+		progress = progress > 100 ? 100 : progress; 
+		
 		return progress;
 
 	}
