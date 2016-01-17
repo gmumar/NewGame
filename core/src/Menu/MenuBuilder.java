@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import wrapper.BaseActor;
 import wrapper.CameraManager;
 import Assembly.Assembler;
 import Component.Component;
@@ -11,25 +12,38 @@ import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
 import JSONifier.JSONCompiler;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.physics.box2d.Shape.Type;
+import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.MainMenuScreen;
 
 public class MenuBuilder {
 
-	final float BOX_SIZE = 0.0001f;
-	final float ROTATION_SIZE = 30;
+	final static float BOX_SIZE = 0.0001f;
+	final static float ROTATION_SIZE = 30;
+	final static int LIMIT_BOX_X = -5, LIMIT_BOX_Y = -3, LIMIT_BOX_X_LEN = 20,
+			LIMIT_BOX_Y_LEN = 20;
+
+	final static Color GREEN = new Color(0, 1, 0, 1);
+	final static Color RED = new Color(1, 0, 0, 1);
 
 	Stage stage;
 	World world;
@@ -53,24 +67,28 @@ public class MenuBuilder {
 
 	Vector2 relativeVector = new Vector2();
 
+	ShapeRenderer fixtureRenderer;
+
 	public MenuBuilder(final World world, Stage stage,
-			CameraManager secondCamera, final GameLoader gameLoader) {
+			CameraManager secondCamera, final GameLoader gameLoader,
+			ShapeRenderer shapeRenderer) {
 
 		this.world = world;
 		this.stage = stage;
 		this.camera = secondCamera;
 		this.mouseJoined = false;
 		this.gameLoader = gameLoader;
+		this.fixtureRenderer = shapeRenderer;
 
 		BodyDef bodyDef = new BodyDef();
 		groundBody = world.createBody(bodyDef);
 
 		componentCounts = new HashMap<String, Integer>();
-		
-		drawBox(-5, -3, 20, 20);
-		
-		// Add life regardless 
-		
+
+		drawBox(LIMIT_BOX_X, LIMIT_BOX_Y, LIMIT_BOX_X_LEN, LIMIT_BOX_Y_LEN);
+
+		// Add life regardless
+
 		incrementCount(ComponentNames._LIFE_.name());
 		Component c = ComponentBuilder.buildLife(world, true);
 		c.setUpForBuilder(ComponentNames._LIFE_.name()
@@ -79,7 +97,7 @@ public class MenuBuilder {
 		c.setPosition(0, 5);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
-		
+
 		//
 
 		but = new Button("Small bar") {
@@ -118,9 +136,11 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames._SPRINGJOINT_.name());
-				Component c = ComponentBuilder.buildSpringJoint(world, true).get(0);
-				c.setUpForBuilder( Assembler.NAME_ID_SPLIT
-						+ componentCounts.get(ComponentNames._SPRINGJOINT_.name()));
+				Component c = ComponentBuilder.buildSpringJoint(world, true)
+						.get(0);
+				c.setUpForBuilder(Assembler.NAME_ID_SPLIT
+						+ componentCounts.get(ComponentNames._SPRINGJOINT_
+								.name()));
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
 			}
@@ -192,7 +212,7 @@ public class MenuBuilder {
 
 		rotateRight.setPosition(0, 200);
 		stage.addActor(rotateRight);
-		
+
 		exit = new Button("exit") {
 			@Override
 			public void Clicked() {
@@ -204,6 +224,114 @@ public class MenuBuilder {
 		stage.addActor(exit);
 
 	}
+
+	public void draw(SpriteBatch batch) {
+		Iterator<Component> iter = parts.iterator();
+
+		while (iter.hasNext()) {
+			Component part = iter.next();
+			part.draw(batch);
+		}
+
+	}
+
+	public void drawShapes(SpriteBatch batch) {
+
+		// world.QueryAABB(fixtureCallback, -20,-20, 20, 20);
+
+		Array<Contact> contacts = world.getContactList();
+		Iterator<Contact> contactIter = contacts.iterator();
+
+		Iterator<Component> iter = parts.iterator();
+
+		while (iter.hasNext()) {
+			Component part = iter.next();
+			ArrayList<BaseActor> bodies = part.getJointBodies();
+
+			if (bodies == null) {
+				Body body = part.getObject().getPhysicsBody();
+				Array<Fixture> fixtures = body.getFixtureList();
+
+				Iterator<Fixture> fixtureIter = fixtures.iterator();
+
+				while (fixtureIter.hasNext()) {
+					drawFixture(fixtureIter.next(), RED);
+				}
+			} else {
+
+				Iterator<BaseActor> bodiesIter = bodies.iterator();
+
+				while (bodiesIter.hasNext()) {
+					BaseActor base = bodiesIter.next();
+					Body body = base.getPhysicsBody();
+					Array<Fixture> fixtures = body.getFixtureList();
+
+					Iterator<Fixture> fixtureIter = fixtures.iterator();
+
+					while (fixtureIter.hasNext()) {
+						 drawFixture(fixtureIter.next(), RED);
+					}
+				}
+			}
+			// 
+
+		}
+		while (contactIter.hasNext()) {
+			Contact contact = contactIter.next();
+			Fixture fixtureA = contact.getFixtureA();
+			Fixture fixtureB = contact.getFixtureB();
+			if (contact.isTouching()
+					&& isFixtureName((String) fixtureA.getUserData())
+					&& isFixtureName((String) fixtureB.getUserData())) {
+				drawFixture(fixtureA, GREEN);
+				drawFixture(fixtureB, GREEN);
+			}
+		}
+	}
+
+	private boolean isFixtureName(String name) {
+
+		if (name == null) {
+			return false;
+		}
+
+		if (name.contains(Assembler.NAME_ID_SPLIT)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private void drawFixture(Fixture fix, Color c) {
+		if(!isFixtureName((String) fix.getUserData())){
+			return;
+		}
+			
+		Transform transform = fix.getBody().getTransform();
+		if (fix.getShape().getType() == Type.Circle) {
+
+			CircleShape shape = (CircleShape) fix.getShape();
+			Vector2 vec = new Vector2();
+			vec.set(shape.getPosition());
+			transform.mul(vec);
+			// Gdx.gl.glLineWidth(20 / camera.zoom);
+			fixtureRenderer.setColor(c);
+			fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 25);
+
+		}
+	}
+
+	QueryCallback fixtureCallback = new QueryCallback() {
+		@Override
+		public boolean reportFixture(Fixture fixture) {
+
+			if (fixture.getShape().getType() == Type.Circle) {
+				System.out.println(fixture.getUserData());
+			}
+
+			return true;
+		}
+	};
 
 	private void Destroy() {
 		// this.world.dispose();
@@ -230,25 +358,28 @@ public class MenuBuilder {
 	public void handleClick(float f, float g) {
 		camera.unproject(mousePoint.set(f, g, 0));
 
-		world.QueryAABB(callback, mousePoint.x - BOX_SIZE, mousePoint.y
-				- BOX_SIZE, mousePoint.x + BOX_SIZE, mousePoint.y + BOX_SIZE);
+		world.QueryAABB(mouseClickCallback, mousePoint.x - BOX_SIZE,
+				mousePoint.y - BOX_SIZE, mousePoint.x + BOX_SIZE, mousePoint.y
+						+ BOX_SIZE);
 
 	}
-	
-	public void drawBox(float x, float y, float sizex,float sizey){
+
+	public void drawBox(float x, float y, float sizex, float sizey) {
 		BodyDef box = new BodyDef();
-		
+
 		box.type = BodyDef.BodyType.KinematicBody;
 		box.position.set(x, y);
 		Body boxBody = world.createBody(box);
-		
-		drawEdge(new Vector2(x,y), new Vector2(x,sizey+y), boxBody);
-		drawEdge(new Vector2(x,sizey+y),new Vector2(x+sizex,y+sizey), boxBody);
-		drawEdge(new Vector2(x+sizex,y+sizey),new Vector2(x+sizex,y), boxBody);
-		drawEdge(new Vector2(x+sizex,y),new Vector2(x,y), boxBody);
-		
+
+		drawEdge(new Vector2(x, y), new Vector2(x, sizey + y), boxBody);
+		drawEdge(new Vector2(x, sizey + y), new Vector2(x + sizex, y + sizey),
+				boxBody);
+		drawEdge(new Vector2(x + sizex, y + sizey), new Vector2(x + sizex, y),
+				boxBody);
+		drawEdge(new Vector2(x + sizex, y), new Vector2(x, y), boxBody);
+
 	}
-	
+
 	public Fixture drawEdge(Vector2 v1, Vector2 v2, Body body) {
 		FixtureDef fixtureDef = new FixtureDef();
 
@@ -283,7 +414,7 @@ public class MenuBuilder {
 		mouseJoined = false;
 	}
 
-	QueryCallback callback = new QueryCallback() {
+	QueryCallback mouseClickCallback = new QueryCallback() {
 		@Override
 		public boolean reportFixture(Fixture fixture) {
 

@@ -14,6 +14,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
@@ -31,6 +33,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	Stage stage;
 	MenuBuilder menu;
 	FitViewport vp;
+	ShapeRenderer shapeRenderer;
 	
 	Box2DDebugRenderer debugRenderer;
 	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
@@ -41,6 +44,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		this.gameLoader = gameLoader;
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
 		initStage();
 		initWorld();
 
@@ -48,7 +52,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 			touches.add(new TouchUnit());
 		}
 
-		menu = new MenuBuilder(world, stage, camera, gameLoader);
+		menu = new MenuBuilder(world, stage, camera, gameLoader,shapeRenderer);
 		debugRenderer = new Box2DDebugRenderer();
 		
 		debugRenderer.AABB_COLOR.set( Color.WHITE);
@@ -100,6 +104,13 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	@Override
 	public void render(float delta) {
 		renderWorld();
+		batch.begin();
+		//menu.draw(batch);
+		batch.end();
+		
+		shapeRenderer.begin(ShapeType.Line);
+		menu.drawShapes(batch);
+		shapeRenderer.end();
 	}
 
 	private void renderWorld() {
@@ -108,6 +119,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
+		shapeRenderer.setProjectionMatrix(camera.combined);
 		
 		debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);

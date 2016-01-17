@@ -297,7 +297,7 @@ public class ComponentBuilder {
 		FixtureDef fix = new FixtureDef();
 
 		CircleShape shape = new CircleShape();
-		shape.setRadius(0.3f);
+		shape.setRadius(0.1f);
 		shape.setPosition(mount);
 		fix.isSensor = true;
 		fix.shape = shape;
