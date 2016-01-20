@@ -73,7 +73,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(world);
-		//builtCar.setPosition(0, 5);
+		builtCar.setPosition(0, 10);
 
 		ground = new GroundBuilder(world, camera);
 		
@@ -183,7 +183,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.position.set(
 				actor.getPosition().x + CAMERA_OFFSET,
 				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 5;//4.5f;
+		camera.zoom = 4.5f;//4.5f;
 		camera.update();
 	}
 

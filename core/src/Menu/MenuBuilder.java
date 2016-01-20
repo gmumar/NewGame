@@ -39,7 +39,7 @@ public class MenuBuilder {
 
 	final static float BOX_SIZE = 0.0001f;
 	final static float ROTATION_SIZE = 30;
-	final static int LIMIT_BOX_X = -5, LIMIT_BOX_Y = -3, LIMIT_BOX_X_LEN = 20,
+	final static int LIMIT_BOX_X = -5, LIMIT_BOX_Y = -5, LIMIT_BOX_X_LEN = 20,
 			LIMIT_BOX_Y_LEN = 20;
 
 	final static Color GREEN = new Color(0, 1, 0, 1);
@@ -94,7 +94,7 @@ public class MenuBuilder {
 		c.setUpForBuilder(ComponentNames._LIFE_.name()
 				+ Assembler.NAME_ID_SPLIT
 				+ componentCounts.get(ComponentNames._LIFE_.name()));
-		c.setPosition(0, 5);
+
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
 

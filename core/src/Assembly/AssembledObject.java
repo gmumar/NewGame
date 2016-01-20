@@ -115,10 +115,17 @@ public class AssembledObject {
 	}
 
 	public void setPosition(float x, float y) {
+		String componentName = "";
+		ArrayList<String> componentsSet = new ArrayList<String>();
+		
 		Iterator<Component> iter = partList.iterator();
 		while (iter.hasNext()) {
 			Component component = iter.next();
+			componentName = Globals.getComponentName(component.getComponentName()).split(Assembler.NAME_SUBNAME_SPLIT)[0] + Globals.getId(component.getComponentName());
+			System.out.println(componentName);
+			if(componentsSet.contains(componentName)) continue;
 			component.setPosition(x, y);
+			componentsSet.add(componentName);
 		}
 	}
 
@@ -136,7 +143,8 @@ public class AssembledObject {
 		}
 		// c.getObject().getPhysicsBody().setAngularDamping(0.5f);
 
-		if (c.getComponentName().compareTo(ComponentNames._AXLE_.name()) == 0) {
+		System.out.println(c.getComponentName());
+		if (c.getComponentName().contains(ComponentNames._TIRE_.name())) {
 			ArrayList<BaseActor> bodies = c.getJointBodies();
 			driveList.add(bodies.get(0));
 			bodies.get(0).getPhysicsBody().setAngularDamping(ANGULAR_DAMPING);
@@ -180,10 +188,11 @@ public class AssembledObject {
 							true);*/
 
 				}
+			
 
 				Iterator<BaseActor> iter = driveList.iterator();
-
 				while (iter.hasNext()) {
+					
 					BaseActor comp = iter.next();
 					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
 							true);

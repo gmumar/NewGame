@@ -40,12 +40,12 @@ public class Component {
 	public ArrayList<BaseActor> getJointBodies() {
 		return jointBodies;
 	}
-
+	
 	public void setJointBodies(ArrayList<BaseActor> jointBodies) {
 		this.jointBodies = jointBodies;
 	}
 
-	public void applyProperties(HashMap<String, String> propertiesIn) {
+	public void applyAbsoluteProperties(HashMap<String, String> propertiesIn) {
 		if (propertiesIn.isEmpty())
 			return;
 
@@ -58,13 +58,6 @@ public class Component {
 			if (property.getKey().compareTo(Properties.ROTATION.name()) == 0) {
 				String value = property.getValue();
 				this.object.setRotation(Float.parseFloat(value));
-
-			}
-
-			if (property.getKey().compareTo(Properties.POSITION.name()) == 0) {
-				String[] values = property.getValue().split(",");
-				this.setPosition(Float.parseFloat(values[0]) ,
-						Float.parseFloat(values[1]));
 			}
 
 			if (property.getKey().compareTo(Properties.MOTOR.name()) == 0) {
@@ -77,7 +70,28 @@ public class Component {
 				}
 			}
 
-			 System.out.println(property);
+			 System.out.println(this + " "+property);
+		}
+
+	}
+	
+	public void applyRelativeProperties(HashMap<String, String> propertiesIn) {
+		if (propertiesIn.isEmpty())
+			return;
+
+		Set<Entry<String, String>> properties = propertiesIn.entrySet();
+
+		Iterator<Entry<String, String>> iter = properties.iterator();
+		while (iter.hasNext()) {
+			Entry<String, String> property = iter.next();
+
+			if (property.getKey().compareTo(Properties.POSITION.name()) == 0) {
+				String[] values = property.getValue().split(",");
+				this.setPosition(Float.parseFloat(values[0]) ,
+						Float.parseFloat(values[1]));
+			}
+
+			 System.out.println(this + " "+property);
 		}
 
 	}
@@ -196,20 +210,30 @@ public class Component {
 	}
 
 	public void setPosition(float f, float g) {
-		
+
+		ArrayList<Body> positionSetBodies = new ArrayList<Body>();
 		
 		this.getObject().setPosition(this.getObject().getPosition().x + f, this.getObject().getPosition().y + g);
+		positionSetBodies.add(this.getObject().getPhysicsBody());
 		if(getJointBodies()==null){
 			;
 		} else {
 			Iterator<BaseActor> iter = getJointBodies().iterator();
+			
 			while(iter.hasNext()){
 				BaseActor body = iter.next();
-				body.setPosition(body.getPosition().x + f, body.getPosition().y + g);
-				//System.out.println(body.getName() + " Setting position " + body.getPosition());
+				if(positionSetBodies.contains(body.getPhysicsBody())){
+					continue;
+				}
+				body.setPosition(body.getPosition().x + f, body.getPosition().y + g); // This line is the TODO
+				System.out.println(body + " " + body.getName() + " Setting position " + body.getPosition());
 			}
 		}
 		
+	}
+	
+	public void setAbsolutePosition(float f, float g) {
+		this.getObject().setPosition( f,  g);
 	}
 
 	public void setGroup(short group) {
@@ -236,5 +260,7 @@ public class Component {
 			}
 		}
 	}
+
+
 
 }

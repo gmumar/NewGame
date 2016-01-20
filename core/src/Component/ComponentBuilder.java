@@ -101,9 +101,9 @@ public class ComponentBuilder {
 				"temp_tire_2.png", world);
 		CircleShape shape = new CircleShape();
 
-		tmpActor.setRestitution(0.9f);
+		tmpActor.setRestitution(2f);
 		// tmpActor.setScale(1.2f);
-		tmpActor.setPosition(0, 0);
+		//tmpActor.setPosition(0, 0);
 		tmpActor.setDensity(40);
 		shape.setRadius(tmpActor.getWidth() / 2);
 		tmpActor.setShapeBase(shape);
@@ -168,51 +168,62 @@ public class ComponentBuilder {
 		BaseActor topFixture = new BaseActor(
 				ComponentNames._SPRINGJOINT_.name()
 						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames._UPPER_.name(), world);
+						+ ComponentSubNames._UPPER_.name(),"suspension_lower.png", world);
 		
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(topFixture.getCenter());
 		topFixture.setMounts(mountTop, 0.0f);
-		topFixture.setScale(0.3f);
+		topFixture.setScaleY(1.2f);
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(0.3f, 0.5f,new Vector2(0,-0.2f),0);
+		topFixture.setShapeBase(shape);
 		//topFixture.setSensor();
 		topFixture.setDensity(1);
 		// topFixture.setScaleY(0.5f);
-		topFixture.setPosition(0, height);
+		//
 		
 		if(forBuilder){
-			FixtureDef fixtureDef = new FixtureDef();
+			topFixture.setPosition(0, height);
+			/*FixtureDef fixtureDef = new FixtureDef();
 			PolygonShape shape = new PolygonShape();
 			shape.setAsBox(0.3f, 0.5f,new Vector2(0,-0.2f),0);
 			fixtureDef.shape = shape;
 			fixtureDef.density = 0;
 			fixtureDef.isSensor = true;
 			
-			topFixture.getPhysicsBody().createFixture(fixtureDef);
+			topFixture.getPhysicsBody().createFixture(fixtureDef);*/
 		}
 
 		BaseActor botFixture = new BaseActor(
 				ComponentNames._SPRINGJOINT_.name()
 						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames._LOWER_.name(), world);
-		botFixture.setPosition(0, -height);
+						+ ComponentSubNames._LOWER_.name(),"suspension_upper.png", world);
+		//
 		ArrayList<Vector2> mountBot = new ArrayList<Vector2>();
 		mountBot.add(botFixture.getCenter());
 		botFixture.setMounts(mountBot, 0.0f);
-		botFixture.setScale(0.3f);
+		botFixture.setScaleY(1.5f);
+		shape.setAsBox(0.3f, 0.5f,new Vector2(0,0.2f),0);
+		botFixture.setShapeBase(shape);
+		//botFixture.setScale(0.3f);
 		//botFixture.setSensor();
 		botFixture.setDensity(1);
 		// botFixture.setScaleY(0.5f);
 		
 		if(forBuilder){
-			FixtureDef fixtureDef = new FixtureDef();
+			botFixture.setPosition(0, -height);
+			/*FixtureDef fixtureDef = new FixtureDef();
 			PolygonShape shape = new PolygonShape();
 			shape.setAsBox(0.3f, 0.5f,new Vector2(0,0.2f),0);
 			fixtureDef.shape = shape;
 			fixtureDef.density = 0;
 			fixtureDef.isSensor = true;
 			
-			botFixture.getPhysicsBody().createFixture(fixtureDef);
+			botFixture.getPhysicsBody().createFixture(fixtureDef);*/
 		}
+	
+		
+		//botFixture.setOrigin(new Vector2(botFixture.getWidth()/2,botFixture.getHeight()/2));
 
 
 		ArrayList<BaseActor> bodies = new ArrayList<BaseActor>();

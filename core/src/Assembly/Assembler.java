@@ -105,8 +105,8 @@ public class Assembler {
 					.getComponentName());
 
 			System.out.println("Extracting: " + componentName);
-
-			if (componentName.contains(ComponentNames._SPRINGJOINT_.name())) {
+			
+			if (componentName.contains(ComponentNames._SPRINGJOINT_.name()) ) {
 				componentList = ComponentBuilder.buildJointComponent(
 						componentName, world);
 
@@ -114,21 +114,32 @@ public class Assembler {
 						NAME_ID_SPLIT);
 				String jointComponentName = nameList[0];
 				String jointComponentId = nameList[1];
-
-				Component part1 = componentList.get(0);
-				Component part2 = componentList.get(1);
-
-				part1.setGroup(CAR);
-				part2.setGroup(CAR);
-				part1.applyProperties(sourceComponent.getProperties());
-				part2.applyProperties(sourceComponent.getProperties());
-
-				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
+				
+				Iterator<Component> it = componentList.iterator();
+				while(it.hasNext()){
+					Component localComponent = it.next();
+					localComponent.setGroup(CAR);
+					//localComponent.applyProperties(sourceComponent.getProperties());
+					
+				}
+				
+				componentList.get(0).applyRelativeProperties(sourceComponent.getProperties());
+				
+				componentList.get(1).applyAbsoluteProperties(sourceComponent.getProperties());
+				componentList.get(0).applyAbsoluteProperties(sourceComponent.getProperties());
+				
+				componentList.get(0).setComponentName(jointComponentName + NAME_SUBNAME_SPLIT
 						+ ComponentSubNames._UPPER_.name() + NAME_ID_SPLIT
-						+ jointComponentId, part1);
+						+ jointComponentId);
+				
+				componentList.get(1).setComponentName(jointComponentName + NAME_SUBNAME_SPLIT
+						+ ComponentSubNames._LOWER_.name() + NAME_ID_SPLIT
+						+ jointComponentId);
+				
+				ret.put(componentList.get(0).getComponentName(), componentList.get(0));
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
 						+ ComponentSubNames._LOWER_.name() + NAME_ID_SPLIT
-						+ jointComponentId, part2);
+						+ jointComponentId, componentList.get(1));
 
 			} else {
 
@@ -136,9 +147,11 @@ public class Assembler {
 						world);
 
 				if (sourceComponent.getProperties() != null) {
-					component.applyProperties(sourceComponent.getProperties());
+					component.applyRelativeProperties(sourceComponent.getProperties());
+					component.applyAbsoluteProperties(sourceComponent.getProperties());
 				}
 				component.setGroup(CAR);
+				component.setComponentName(sourceComponent.getComponentName());
 				ret.put(sourceComponent.getComponentName(), component);
 			}
 
