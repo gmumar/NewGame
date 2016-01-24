@@ -25,6 +25,10 @@ public class Component {
 		PART, JOINT
 	}
 
+	public enum PropertyTypes {
+		RELATIVE, ABSOLUTE, BOTH
+	}
+
 	BaseActor object;
 	ComponentTypes componentTypes;
 	String componentName;
@@ -40,12 +44,13 @@ public class Component {
 	public ArrayList<BaseActor> getJointBodies() {
 		return jointBodies;
 	}
-	
+
 	public void setJointBodies(ArrayList<BaseActor> jointBodies) {
 		this.jointBodies = jointBodies;
 	}
 
-	public void applyAbsoluteProperties(HashMap<String, String> propertiesIn) {
+	public void applyProperties(HashMap<String, String> propertiesIn,
+			PropertyTypes type) {
 		if (propertiesIn.isEmpty())
 			return;
 
@@ -55,43 +60,33 @@ public class Component {
 		while (iter.hasNext()) {
 			Entry<String, String> property = iter.next();
 
-			if (property.getKey().compareTo(Properties.ROTATION.name()) == 0) {
-				String value = property.getValue();
-				this.object.setRotation(Float.parseFloat(value));
-			}
+			if (type == PropertyTypes.ABSOLUTE || type == PropertyTypes.BOTH) {
+				if (property.getKey().compareTo(Properties.ROTATION.name()) == 0) {
+					String value = property.getValue();
+					this.object.setRotation(Float.parseFloat(value));
+				}
 
-			if (property.getKey().compareTo(Properties.MOTOR.name()) == 0) {
-				String value = property.getValue();
+				if (property.getKey().compareTo(Properties.MOTOR.name()) == 0) {
+					String value = property.getValue();
 
-				if (value.compareTo("1") == 0) {
-					Motor = true;
-				} else {
-					Motor = false;
+					if (value.compareTo("1") == 0) {
+						Motor = true;
+					} else {
+						Motor = false;
+					}
+				}
+			} 
+			
+			if (type == PropertyTypes.RELATIVE || type == PropertyTypes.BOTH) {
+
+				if (property.getKey().compareTo(Properties.POSITION.name()) == 0) {
+					String[] values = property.getValue().split(",");
+					this.setPosition(Float.parseFloat(values[0]),
+							Float.parseFloat(values[1]));
 				}
 			}
 
-			 System.out.println(this + " "+property);
-		}
-
-	}
-	
-	public void applyRelativeProperties(HashMap<String, String> propertiesIn) {
-		if (propertiesIn.isEmpty())
-			return;
-
-		Set<Entry<String, String>> properties = propertiesIn.entrySet();
-
-		Iterator<Entry<String, String>> iter = properties.iterator();
-		while (iter.hasNext()) {
-			Entry<String, String> property = iter.next();
-
-			if (property.getKey().compareTo(Properties.POSITION.name()) == 0) {
-				String[] values = property.getValue().split(",");
-				this.setPosition(Float.parseFloat(values[0]) ,
-						Float.parseFloat(values[1]));
-			}
-
-			 System.out.println(this + " "+property);
+			System.out.println(this + " " + property);
 		}
 
 	}
@@ -102,14 +97,15 @@ public class Component {
 			body.setUserData(name);
 
 			this.getObject().setSensor();
-			//this.getObject().setBodyType(BodyType.KinematicBody);
+			// this.getObject().setBodyType(BodyType.KinematicBody);
 
 			int mountId = 0;
 			ArrayList<Vector2> mounts = this.getObject().getMounts();
 			Iterator<Vector2> iter = mounts.iterator();
 			while (iter.hasNext()) {
 				Vector2 mount = iter.next();
-				FixtureDef fixtureDef = ComponentBuilder.buildMount(mount, true);
+				FixtureDef fixtureDef = ComponentBuilder
+						.buildMount(mount, true);
 				Fixture fixture = body.createFixture(fixtureDef);
 				fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT
 						+ mountId++);
@@ -122,9 +118,9 @@ public class Component {
 				BaseActor body = iter.next();
 				// TODO: finalize this
 				body.setSensor();
-				//body.setBodyType(BodyType.KinematicBody);
-				FixtureDef fixtureDef = ComponentBuilder
-						.buildMount(new Vector2(0, 0), true);
+				// body.setBodyType(BodyType.KinematicBody);
+				FixtureDef fixtureDef = ComponentBuilder.buildMount(
+						new Vector2(0, 0), true);
 				Fixture fixture = body.getPhysicsBody().createFixture(
 						fixtureDef);
 				fixture.setUserData(body.getPhysicsBody().getUserData() + name
@@ -150,7 +146,8 @@ public class Component {
 		if (name.contains(ComponentNames._TIRE_.name())) {
 			prop.put(Properties.MOTOR.name(), "1");
 		} else if (name.contains(ComponentNames._SPRINGJOINT_.name())) {
-			prop.put(Properties.TYPE.name(), ComponentNames._SPRINGJOINT_.name());
+			prop.put(Properties.TYPE.name(),
+					ComponentNames._SPRINGJOINT_.name());
 		}
 		jComponent.setProperties(prop);
 
@@ -212,55 +209,56 @@ public class Component {
 	public void setPosition(float f, float g) {
 
 		ArrayList<Body> positionSetBodies = new ArrayList<Body>();
-		
-		this.getObject().setPosition(this.getObject().getPosition().x + f, this.getObject().getPosition().y + g);
+
+		this.getObject().setPosition(this.getObject().getPosition().x + f,
+				this.getObject().getPosition().y + g);
 		positionSetBodies.add(this.getObject().getPhysicsBody());
-		if(getJointBodies()==null){
+		if (getJointBodies() == null) {
 			;
 		} else {
 			Iterator<BaseActor> iter = getJointBodies().iterator();
-			
-			while(iter.hasNext()){
+
+			while (iter.hasNext()) {
 				BaseActor body = iter.next();
-				if(positionSetBodies.contains(body.getPhysicsBody())){
+				if (positionSetBodies.contains(body.getPhysicsBody())) {
 					continue;
 				}
-				body.setPosition(body.getPosition().x + f, body.getPosition().y + g); // This line is the TODO
-				System.out.println(body + " " + body.getName() + " Setting position " + body.getPosition());
+				body.setPosition(body.getPosition().x + f, body.getPosition().y
+						+ g); // This line is the TODO
+				System.out.println(body + " " + body.getName()
+						+ " Setting position " + body.getPosition());
 			}
 		}
-		
+
 	}
-	
+
 	public void setAbsolutePosition(float f, float g) {
-		this.getObject().setPosition( f,  g);
+		this.getObject().setPosition(f, g);
 	}
 
 	public void setGroup(short group) {
-		if(getJointBodies()==null){
+		if (getJointBodies() == null) {
 			this.getObject().setGroup(group);
 		} else {
 			Iterator<BaseActor> iter = getJointBodies().iterator();
-			while(iter.hasNext()){
+			while (iter.hasNext()) {
 				BaseActor body = iter.next();
 				body.setGroup(group);
 			}
 		}
-		
+
 	}
 
 	public void draw(SpriteBatch batch) {
-		if(getJointBodies()==null){
+		if (getJointBodies() == null) {
 			this.getObject().draw(batch);
 		} else {
 			Iterator<BaseActor> iter = getJointBodies().iterator();
-			while(iter.hasNext()){
+			while (iter.hasNext()) {
 				BaseActor body = iter.next();
 				body.draw(batch);
 			}
 		}
 	}
-
-
 
 }

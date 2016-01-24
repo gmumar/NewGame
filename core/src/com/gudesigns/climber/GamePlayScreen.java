@@ -42,9 +42,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	boolean paused = true;
 	
 	public static final float CAMERA_OFFSET =  15;
-	//GameMesh mesh;
-
-	//Box2DDebugRenderer debugRenderer;
 
 	GroundBuilder ground;
 	float aspectRatio;
@@ -73,7 +70,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(world);
-		builtCar.setPosition(0, 10);
+		builtCar.setPosition(0, 100);
 
 		ground = new GroundBuilder(world, camera);
 		
@@ -145,8 +142,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void renderWorld() {
 
-		//Gdx.gl.glClearColor((float)118/256, (float)211/256, (float)222/256, 1);
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor((float)118/256, (float)211/256, (float)222/256, 1);
+		//Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
         Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);

@@ -111,7 +111,7 @@ public class BaseActor {
 
 	private void initSprite() {
 		if (!onlyPhysicBody) {
-			texture.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
+			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			sprite = new Sprite(texture);
 			sprite.setSize(Globals.PixelToMeters(texture.getWidth()),
 					Globals.PixelToMeters(texture.getHeight()));

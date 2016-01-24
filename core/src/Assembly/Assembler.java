@@ -9,6 +9,7 @@ import wrapper.GamePreferences;
 import wrapper.Globals;
 import Component.Component;
 import Component.ComponentBuilder;
+import Component.Component.PropertyTypes;
 import Component.ComponentBuilder.ComponentNames;
 import Component.ComponentBuilder.ComponentSubNames;
 import GroundWorks.GroundUnitDescriptor;
@@ -21,7 +22,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
+import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
 public class Assembler {
 
@@ -66,7 +67,7 @@ public class Assembler {
 			int componentBMountId = Globals.getMountId(join.mount2);
 
 			{
-				RevoluteJointDef rJoint = new RevoluteJointDef();
+				/*RevoluteJointDef rJoint = new RevoluteJointDef();
 
 				rJoint.initialize(bodyA.getPhysicsBody(),
 						bodyB.getPhysicsBody(),
@@ -75,7 +76,18 @@ public class Assembler {
 				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				rJoint.collideConnected = false;
 				rJoint.enableLimit = true;
-				world.createJoint(rJoint);
+				world.createJoint(rJoint);*/
+
+				
+				WeldJointDef wJoint = new WeldJointDef();
+
+				wJoint.initialize(bodyA.getPhysicsBody(),
+						bodyB.getPhysicsBody(),
+						bodyB.getMount(componentBMountId));
+				wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+				wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+				wJoint.collideConnected = false;
+				world.createJoint(wJoint);
 
 			}
 
@@ -123,10 +135,8 @@ public class Assembler {
 					
 				}
 				
-				componentList.get(0).applyRelativeProperties(sourceComponent.getProperties());
-				
-				componentList.get(1).applyAbsoluteProperties(sourceComponent.getProperties());
-				componentList.get(0).applyAbsoluteProperties(sourceComponent.getProperties());
+				componentList.get(0).applyProperties(sourceComponent.getProperties(),PropertyTypes.BOTH);
+				componentList.get(1).applyProperties(sourceComponent.getProperties(),PropertyTypes.ABSOLUTE);
 				
 				componentList.get(0).setComponentName(jointComponentName + NAME_SUBNAME_SPLIT
 						+ ComponentSubNames._UPPER_.name() + NAME_ID_SPLIT
@@ -147,8 +157,7 @@ public class Assembler {
 						world);
 
 				if (sourceComponent.getProperties() != null) {
-					component.applyRelativeProperties(sourceComponent.getProperties());
-					component.applyAbsoluteProperties(sourceComponent.getProperties());
+					component.applyProperties(sourceComponent.getProperties(), PropertyTypes.BOTH);
 				}
 				component.setGroup(CAR);
 				component.setComponentName(sourceComponent.getComponentName());

@@ -68,8 +68,9 @@ public class Button extends TextButton {
 		pixmap.fill();
 
 		skin.add("white", new Texture(pixmap));
+
+		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4);
 		
-		BitmapFont bfont = new BitmapFont();
 		skin.add("default", bfont);
 
 		if(butName.compareTo("")==0){
@@ -92,6 +93,7 @@ public class Button extends TextButton {
 			
 			
 		}
+		
 
 		return tbs;
 	}

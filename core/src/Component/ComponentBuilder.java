@@ -101,7 +101,7 @@ public class ComponentBuilder {
 				"temp_tire_2.png", world);
 		CircleShape shape = new CircleShape();
 
-		tmpActor.setRestitution(2f);
+		tmpActor.setRestitution(20f);
 		// tmpActor.setScale(1.2f);
 		//tmpActor.setPosition(0, 0);
 		tmpActor.setDensity(40);
@@ -209,6 +209,7 @@ public class ComponentBuilder {
 		//botFixture.setSensor();
 		botFixture.setDensity(1);
 		// botFixture.setScaleY(0.5f);
+		
 		
 		if(forBuilder){
 			botFixture.setPosition(0, -height);

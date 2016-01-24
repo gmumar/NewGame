@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import wrapper.CameraManager;
 import wrapper.Globals;
 import Menu.Button;
+import Menu.GameDialog;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -20,13 +21,28 @@ public class MainMenuScreen implements Screen {
 	FitViewport vp;
 
 	Button builder, playGame, buildTrack, selectTrack;
+	
+	GameDialog testDia;
 
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-		
 
 		initStage();
 		initButtons();
+		
+		/*Skin skin = new Skin();//Gdx.files.internal("skins/dialogSkin.json")
+		BitmapFont font;
+		
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/simpleFont.ttf"));
+		font = generator.generateFont(15);
+		skin.add("default", font);
+				
+		testDia = new GameDialog("test", skin,"default");
+		testDia.setHeight(10);
+		testDia.setWidth(15);
+		testDia.show(stage);*/
+		
+		
 	}
 
 	private void initButtons() {
