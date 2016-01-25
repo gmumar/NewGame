@@ -53,7 +53,7 @@ public class BaseActor {
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
 
 	public BaseActor(String name, String texture, World world) {
-		this.texture = new Texture(texture);
+		this.texture = Globals.Assets.get(texture,Texture.class);
 		this.name = name;
 		this.world = world;
 		this.textureStr = texture;

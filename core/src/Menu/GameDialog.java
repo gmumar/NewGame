@@ -10,8 +10,8 @@ public class GameDialog extends Dialog {
 	}
 
 	{
-		text("hello");
-		button("done");
+		text("hello, this is the text");
+		
 	}
 
 	

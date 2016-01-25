@@ -15,10 +15,12 @@ public class FontManager {
 	
 	private static HashMap<String,BitmapFont> fonts = new HashMap<String,BitmapFont>();
 	
-	public static BitmapFont GenerateFont(String fontFile, int size){
+	public static BitmapFont GenerateFont(String fontFile, int size, Color color){
 		
-		if(fonts.containsKey(fontFile)){
-			return fonts.get(fontFile);
+		String key = color + "_" + fontFile;
+		
+		if(fonts.containsKey(key)){
+			return fonts.get(key);
 		}else{
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontFile));
 	
@@ -30,10 +32,11 @@ public class FontManager {
 			parameters.magFilter = TextureFilter.Linear;
 			parameters.minFilter = TextureFilter.Linear;
 			parameters.borderWidth = 1f;
-			parameters.borderColor = Color.WHITE;
+			parameters.borderColor = color;
+			parameters.color = color;
 			BitmapFont bfont = generator.generateFont(parameters);// new BitmapFont();
 			bfont.getData().setScale((float)size/SCALE);
-			fonts.put(fontFile, bfont);
+			fonts.put(key, bfont);
 			return bfont;
 		}
 	}

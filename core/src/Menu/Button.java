@@ -1,5 +1,7 @@
 package Menu;
 
+import wrapper.Globals;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -69,12 +71,12 @@ public class Button extends TextButton {
 
 		skin.add("white", new Texture(pixmap));
 
-		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4);
+		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4, Color.WHITE);
 		
 		skin.add("default", bfont);
 
 		if(butName.compareTo("")==0){
-			Texture t = new Texture("button.png");
+			Texture t = Globals.Assets.get("button.png");
 			skin.add("forward", t);
 			tbs.up = skin.newDrawable("forward", Color.LIGHT_GRAY);
 			tbs.down = skin.newDrawable("forward", Color.GREEN);

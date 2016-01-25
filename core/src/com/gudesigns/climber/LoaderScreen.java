@@ -2,78 +2,56 @@ package com.gudesigns.climber;
 
 import wrapper.CameraManager;
 import wrapper.Globals;
-import Menu.Button;
-import Menu.PopQueManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class MainMenuScreen implements Screen {
+public class LoaderScreen implements Screen {
 
+	private static final float LOADER_X = 0;
+	private static final float LOADER_Y = 0;
+	private static final float LOADER_LENGTH = Globals.GameWidth ;
+	
 	GameLoader gameLoader;
 	CameraManager camera, secondCamera;
 	SpriteBatch batch;
 	Stage stage;
 	FitViewport vp;
-	PopQueManager popQueManager;
-
-	Button builder, playGame, buildTrack, selectTrack;
+	ShapeRenderer loaderBar;
+	
+	float progress = 0f;
 
 	float time=0;
 
-	public MainMenuScreen(GameLoader gameLoader) {
+	public LoaderScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 
 		initStage();
-		initButtons();
+		loadAssets();
+
+		loaderBar = new ShapeRenderer();
 
 	}
-
-	private void initButtons() {
-
-		builder = new Button("builder") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new BuilderScreen(gameLoader));
-			}
-		};
-
-		builder.setPosition(0, 0);
-		stage.addActor(builder);
-
-		playGame = new Button("playGame") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
-			}
-		};
-
-		playGame.setPosition(100, 0);
-		stage.addActor(playGame);
-
-		buildTrack = new Button("build track") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new TrackBuilderScreen(gameLoader));
-			}
-		};
-
-		buildTrack.setPosition(200, 0);
-		stage.addActor(buildTrack);
-
-		selectTrack = new Button("select track") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new TrackSelectorScreen(gameLoader));
-			}
-		};
-
-		selectTrack.setPosition(0, 100);
-		stage.addActor(selectTrack);
+	
+	private void loadAssets(){
+		//Textures
+		Globals.Assets.load("temp_bar.png", Texture.class);
+		Globals.Assets.load("solid_joint.png", Texture.class);
+		Globals.Assets.load("temp_tire_2.png", Texture.class);
+		Globals.Assets.load("suspension_lower.png", Texture.class);
+		Globals.Assets.load("suspension_upper.png", Texture.class);
+		Globals.Assets.load("life_small.png", Texture.class);
+		Globals.Assets.load("chequered_flag.png", Texture.class);
+		Globals.Assets.load("button.png", Texture.class);
+		Globals.Assets.load("temp_ground_filler.png", Texture.class);
+		Globals.Assets.load("colooorsssxcf.png", Texture.class);
 	}
 
 	private void initStage() {
@@ -87,7 +65,6 @@ public class MainMenuScreen implements Screen {
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 		
-		popQueManager = new PopQueManager(stage);
 
 	}
 
@@ -110,10 +87,21 @@ public class MainMenuScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-
-		popQueManager.update(delta);
+		progress = Globals.Assets.getProgress();
 		
-		time += delta;
+		loaderBar.begin(ShapeRenderer.ShapeType.Line);
+		loaderBar.setColor(Color.BLACK);
+		loaderBar.rect(LOADER_X, LOADER_Y, LOADER_LENGTH, 100);
+		loaderBar.end();
+		
+		loaderBar.begin(ShapeRenderer.ShapeType.Filled);
+		loaderBar.setColor(Color.GRAY);
+		loaderBar.rect(LOADER_X, LOADER_Y, LOADER_LENGTH * progress , 100);
+		loaderBar.end();
+		
+		if(Globals.Assets.update()){
+			gameLoader.setScreen(new SplashScreen(gameLoader));
+		}
 		
 	}
 

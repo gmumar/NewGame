@@ -28,6 +28,8 @@ public class Globals {
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
 	final public static int VERSION = 3;
+	
+	public static GameAssetManager Assets;
 
 	static public float convertToDegrees(float radians) {
 		return (float) (radians * (180 / Math.PI));

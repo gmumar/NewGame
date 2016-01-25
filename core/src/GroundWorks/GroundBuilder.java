@@ -6,7 +6,6 @@ import java.util.Random;
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
 import wrapper.Globals;
-import wrapper.TextureLibrary;
 import Assembly.Assembler;
 import JSONifier.JSONTrack;
 import Shader.GameMesh;
@@ -14,6 +13,7 @@ import Shader.GameMesh;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
@@ -286,7 +286,7 @@ public class GroundBuilder {
 		 */
 		shader.begin();
 		GameMesh.flush(cam, shader, shaderStart, shaderEnd,
-				TextureLibrary.getTexture("temp_ground_filler.png"), 30,
+				Globals.Assets.get("temp_ground_filler.png",Texture.class), 30,
 				Color.WHITE, 0f);
 		shader.end();
 
@@ -325,7 +325,6 @@ public class GroundBuilder {
 	}
 
 	public void destory() {
-		TextureLibrary.destroyMap();
 		edgeShape.dispose();
 	}
 

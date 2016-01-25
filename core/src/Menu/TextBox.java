@@ -32,7 +32,7 @@ public class TextBox extends TextField {
 	
 	private static Skin defaultSkin() {
 		Skin skin = new Skin();
-		BitmapFont bfont =FontManager.GenerateFont("fonts/simpleFont.ttf", 4);
+		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4, Color.GREEN);
 		skin.add("font", bfont);
 		return skin;
 	}
@@ -41,7 +41,6 @@ public class TextBox extends TextField {
 		Skin skin = defaultSkin();
 		
 		TextFieldStyle textfieldstyle = new TextFieldStyle();
-		textfieldstyle.disabledFontColor = Color.BLACK;
 		textfieldstyle.font = skin.getFont("font");
 		textfieldstyle.fontColor = Color.GREEN;
 		

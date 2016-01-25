@@ -2,78 +2,64 @@ package com.gudesigns.climber;
 
 import wrapper.CameraManager;
 import wrapper.Globals;
-import Menu.Button;
-import Menu.PopQueManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class MainMenuScreen implements Screen {
+public class SplashScreen implements Screen {
 
 	GameLoader gameLoader;
 	CameraManager camera, secondCamera;
 	SpriteBatch batch;
 	Stage stage;
 	FitViewport vp;
-	PopQueManager popQueManager;
+	
+	
+	float time = 0;
+	
+	public class SplashActor extends Actor {
+        Texture texture = Globals.Assets.get("colooorsssxcf.png", Texture.class);
+        public boolean started = false;
 
-	Button builder, playGame, buildTrack, selectTrack;
+        public SplashActor(){
+            setBounds(getX(),getY(),texture.getWidth(),texture.getHeight());
+        }
+        
+        @Override
+        public void draw(Batch batch, float alpha){
+            batch.draw(texture,this.getX(),getY(),getWidth(),getHeight());
+        }
+    }
 
-	float time=0;
-
-	public MainMenuScreen(GameLoader gameLoader) {
+	public SplashScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 
 		initStage();
-		initButtons();
+		
+		SplashActor splashActor = new SplashActor();
+		splashActor.setSize(Globals.ScreenWidth*1/6, Globals.ScreenWidth*1/6);
+		splashActor.setX(Globals.ScreenWidth*5/12);
+		splashActor.setY(Globals.ScreenHeight*2/5 - 20);
 
-	}
+		
+	    MoveToAction moveAction = new MoveToAction();
+        moveAction.setPosition(Globals.ScreenWidth*5/12, Globals.ScreenHeight*2/5);
+        moveAction.setDuration(0.5f);
+        
+        
+        splashActor.addAction(Actions.sequence(Actions.fadeOut(0.1f),moveAction , Actions.fadeIn(1.5f)));
+		
+		stage.addActor(splashActor);
 
-	private void initButtons() {
-
-		builder = new Button("builder") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new BuilderScreen(gameLoader));
-			}
-		};
-
-		builder.setPosition(0, 0);
-		stage.addActor(builder);
-
-		playGame = new Button("playGame") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
-			}
-		};
-
-		playGame.setPosition(100, 0);
-		stage.addActor(playGame);
-
-		buildTrack = new Button("build track") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new TrackBuilderScreen(gameLoader));
-			}
-		};
-
-		buildTrack.setPosition(200, 0);
-		stage.addActor(buildTrack);
-
-		selectTrack = new Button("select track") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new TrackSelectorScreen(gameLoader));
-			}
-		};
-
-		selectTrack.setPosition(0, 100);
-		stage.addActor(selectTrack);
 	}
 
 	private void initStage() {
@@ -86,8 +72,6 @@ public class MainMenuScreen implements Screen {
 		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
-		
-		popQueManager = new PopQueManager(stage);
 
 	}
 
@@ -110,10 +94,11 @@ public class MainMenuScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-
-		popQueManager.update(delta);
 		
 		time += delta;
+		if(time > 3){
+			gameLoader.setScreen(new MainMenuScreen(gameLoader));
+		}
 		
 	}
 
@@ -121,6 +106,7 @@ public class MainMenuScreen implements Screen {
 
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL20.GL_ALPHA_BITS);
 
 		batch.setProjectionMatrix(camera.combined);
 		stage.draw();
