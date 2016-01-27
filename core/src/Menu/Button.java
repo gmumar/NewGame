@@ -1,7 +1,5 @@
 package Menu;
 
-import wrapper.Globals;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -16,6 +14,7 @@ public class Button extends TextButton {
 
 	String name;
 	Skin skin;
+
 	public Button(String name) {
 		super(name, buildDefaultButtonStyle(name));
 		this.name = name;
@@ -27,7 +26,7 @@ public class Button extends TextButton {
 				super.clicked(event, x, y);
 				Clicked();
 			}
-			
+
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
@@ -48,15 +47,15 @@ public class Button extends TextButton {
 				Pressed();
 				super.touchDragged(event, x, y, pointer);
 			}
-			
+
 		});
-		
+
 	}
 
 	public void Clicked() {
 		;
 	}
-	
+
 	public void Pressed() {
 		;
 	}
@@ -71,31 +70,17 @@ public class Button extends TextButton {
 
 		skin.add("white", new Texture(pixmap));
 
-		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4, Color.WHITE);
-		
+		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
+				Color.WHITE);
+
 		skin.add("default", bfont);
 
-		if(butName.compareTo("")==0){
-			Texture t = Globals.Assets.get("button.png");
-			skin.add("forward", t);
-			tbs.up = skin.newDrawable("forward", Color.LIGHT_GRAY);
-			tbs.down = skin.newDrawable("forward", Color.GREEN);
-			// tbs.checked = skin.newDrawable("white", Color.BLUE);
-			tbs.over = skin.newDrawable("forward", Color.DARK_GRAY);
-	
-			tbs.font = skin.getFont("default");
-			
-		}else{
-			tbs.up = skin.newDrawable("white", Color.DARK_GRAY);
-			tbs.down = skin.newDrawable("white", Color.GREEN);
-			// tbs.checked = skin.newDrawable("white", Color.BLUE);
-			tbs.over = skin.newDrawable("white", Color.LIGHT_GRAY);
-			
-			tbs.font = skin.getFont("default");
-			
-			
-		}
-		
+		tbs.up = skin.newDrawable("white", Color.DARK_GRAY);
+		tbs.down = skin.newDrawable("white", Color.GREEN);
+		// tbs.checked = skin.newDrawable("white", Color.BLUE);
+		tbs.over = skin.newDrawable("white", Color.LIGHT_GRAY);
+
+		tbs.font = skin.getFont("default");
 
 		return tbs;
 	}

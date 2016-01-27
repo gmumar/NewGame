@@ -11,12 +11,13 @@ import Component.ComponentBuilder.ComponentNames;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 
 public class AssembledObject {
 
 	ArrayList<Component> partList;
 	ArrayList<BaseActor> driveList;
-	Component basePart;
+	Body basePart;
 	Component leftMost, rightMost; 
 	int basePartIndex;
 
@@ -24,12 +25,12 @@ public class AssembledObject {
 	final float ROTATION_FORCE = 4000;
 	final float MAX_VELOCITY = 45f;
 
-	public Component getBasePart() {
+	public Body getBasePart() {
 		return basePart;
 	}
 
 	public void setBasePartbyIndex(int i) {
-		this.basePart = partList.get(i);
+		this.basePart = partList.get(i).getJointBodies().get(1).getPhysicsBody();
 		basePartIndex = i;
 
 	}
@@ -40,12 +41,12 @@ public class AssembledObject {
 		while (iter.hasNext()) {
 			Component part = iter.next();
 			if (part.getComponentName().contains(ComponentNames._LIFE_.name())) {
-				this.basePart = part;
+				this.basePart = part.getJointBodies().get(1).getPhysicsBody();//.getObject().getPhysicsBody();
 			}
 		}
 
-		this.basePart.getObject().getPhysicsBody()
-				.setAngularDamping(ANGULAR_DAMPING);
+		//this.basePart.getObject().getPhysicsBody()
+		//		.setAngularDamping(ANGULAR_DAMPING);
 		
 		this.setLeftMost();
 		this.setRightMost();

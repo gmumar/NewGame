@@ -52,20 +52,21 @@ public class BaseActor {
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
 
-	public BaseActor(String name, String texture, World world) {
-		this.texture = Globals.Assets.get(texture,Texture.class);
+	public BaseActor(String name, String texture, GameState gameState) {
+
+		this.texture = gameState.getGameLoader().Assets.get(texture,Texture.class);
 		this.name = name;
-		this.world = world;
+		this.world = gameState.getWorld();
 		this.textureStr = texture;
 
 		initSprite();
 		initBody();
 	}
 
-	public BaseActor(String name, World world) {
+	public BaseActor(String name, GameState gameState) {
 		this.onlyPhysicBody = true;
 		this.name = name;
-		this.world = world;
+		this.world = gameState.getWorld();
 
 		initBody();
 	}
@@ -323,7 +324,7 @@ public class BaseActor {
 	}
 
 	public void destroy() {
-		destroyTexture();
+		//destroyTexture();
 
 		if (body != null && world != null && world.getBodyCount() > 0) {
 			if (world == null)

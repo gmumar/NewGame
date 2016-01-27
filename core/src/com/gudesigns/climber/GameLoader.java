@@ -5,6 +5,7 @@ import wrapper.Globals;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 
 public class GameLoader extends Game {
 
@@ -13,11 +14,12 @@ public class GameLoader extends Game {
 	MainMenuScreen menuScreen;
 	LoaderScreen loadScreen;
 	
+	public AssetManager Assets;
 	
 	@Override
 	public void create() {
 		Globals.updateScreenInfo();
-		Globals.Assets = new GameAssetManager();
+		Assets = new GameAssetManager();
 		
 		//gamePlayScreen = new GamePlayScreen(this);
 		//builderScreen = new BuilderScreen(this);

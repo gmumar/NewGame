@@ -42,16 +42,16 @@ public class LoaderScreen implements Screen {
 	
 	private void loadAssets(){
 		//Textures
-		Globals.Assets.load("temp_bar.png", Texture.class);
-		Globals.Assets.load("solid_joint.png", Texture.class);
-		Globals.Assets.load("temp_tire_2.png", Texture.class);
-		Globals.Assets.load("suspension_lower.png", Texture.class);
-		Globals.Assets.load("suspension_upper.png", Texture.class);
-		Globals.Assets.load("life_small.png", Texture.class);
-		Globals.Assets.load("chequered_flag.png", Texture.class);
-		Globals.Assets.load("button.png", Texture.class);
-		Globals.Assets.load("temp_ground_filler.png", Texture.class);
-		Globals.Assets.load("colooorsssxcf.png", Texture.class);
+		gameLoader.Assets.load("temp_bar.png", Texture.class);
+		gameLoader.Assets.load("solid_joint.png", Texture.class);
+		gameLoader.Assets.load("temp_tire_2.png", Texture.class);
+		gameLoader.Assets.load("suspension_lower.png", Texture.class);
+		gameLoader.Assets.load("suspension_upper.png", Texture.class);
+		gameLoader.Assets.load("life_small.png", Texture.class);
+		gameLoader.Assets.load("chequered_flag.png", Texture.class);
+		gameLoader.Assets.load("button.png", Texture.class);
+		gameLoader.Assets.load("temp_ground_filler.png", Texture.class);
+		gameLoader.Assets.load("colooorsssxcf.png", Texture.class);
 	}
 
 	private void initStage() {
@@ -87,7 +87,7 @@ public class LoaderScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		progress = Globals.Assets.getProgress();
+		progress = gameLoader.Assets.getProgress();
 		
 		loaderBar.begin(ShapeRenderer.ShapeType.Line);
 		loaderBar.setColor(Color.BLACK);
@@ -99,7 +99,7 @@ public class LoaderScreen implements Screen {
 		loaderBar.rect(LOADER_X, LOADER_Y, LOADER_LENGTH * progress , 100);
 		loaderBar.end();
 		
-		if(Globals.Assets.update()){
+		if(gameLoader.Assets.update()){
 			gameLoader.setScreen(new SplashScreen(gameLoader));
 		}
 		

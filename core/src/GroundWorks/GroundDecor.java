@@ -4,27 +4,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import wrapper.BaseActor;
+import wrapper.GameState;
 import Component.ComponentBuilder.ComponentNames;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.World;
 
 public class GroundDecor {
 	
-	World world;
+	GameState gameState;
 	ArrayList<BaseActor> decorations;
 
-	public GroundDecor(World world) {
-		this.world = world;
+	public GroundDecor( GameState gameState) {
 		decorations = new ArrayList<BaseActor>();
+		this.gameState = gameState;
 	}
 
 	public void addChequeredFlag(ArrayList<GroundUnitDescriptor> preMadeMapList) {
 		
 		GroundUnitDescriptor lastPos = preMadeMapList.get(preMadeMapList.size()-1);
 		
-		BaseActor flag = new BaseActor(ComponentNames._CEQUEREDFLAG_.name(), "chequered_flag.png", world);
+		BaseActor flag = new BaseActor(ComponentNames._CEQUEREDFLAG_.name(), "chequered_flag.png", gameState);
 		flag.setSensor();
 		flag.setBodyType(BodyType.StaticBody);
 		flag.setPosition(lastPos.end.x, (lastPos.end.y + lastPos.start.y)/2 + 3);

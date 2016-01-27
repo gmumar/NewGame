@@ -6,10 +6,11 @@ import java.util.Iterator;
 
 import wrapper.BaseActor;
 import wrapper.GamePreferences;
+import wrapper.GameState;
 import wrapper.Globals;
 import Component.Component;
-import Component.ComponentBuilder;
 import Component.Component.PropertyTypes;
+import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
 import Component.ComponentBuilder.ComponentSubNames;
 import GroundWorks.GroundUnitDescriptor;
@@ -21,7 +22,6 @@ import JSONifier.JSONTrack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
 public class Assembler {
@@ -34,7 +34,7 @@ public class Assembler {
 
 	int basePartId;
 
-	public AssembledObject assembleObject(World world) {
+	public AssembledObject assembleObject(GameState gameState) {
 		AssembledObject obj = new AssembledObject();
 		Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
@@ -47,7 +47,7 @@ public class Assembler {
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);
 		
-		HashMap<String, Component> parts = extractComponents(source, world);
+		HashMap<String, Component> parts = extractComponents(source, gameState);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
 		Iterator<JSONJoint> JointIter = jcomponents.iterator();
@@ -87,7 +87,7 @@ public class Assembler {
 				wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
 				wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				wJoint.collideConnected = false;
-				world.createJoint(wJoint);
+				gameState.getWorld().createJoint(wJoint);
 
 			}
 
@@ -99,7 +99,7 @@ public class Assembler {
 	}
 
 	private HashMap<String, Component> extractComponents(JSONParent source,
-			World world) {
+			GameState gameState) {
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
 
@@ -120,7 +120,7 @@ public class Assembler {
 			
 			if (componentName.contains(ComponentNames._SPRINGJOINT_.name()) ) {
 				componentList = ComponentBuilder.buildJointComponent(
-						componentName, world);
+						componentName, gameState);
 
 				String[] nameList = sourceComponent.getComponentName().split(
 						NAME_ID_SPLIT);
@@ -154,7 +154,7 @@ public class Assembler {
 			} else {
 
 				component = ComponentBuilder.buildComponent(componentName,
-						world);
+						gameState);
 
 				if (sourceComponent.getProperties() != null) {
 					component.applyProperties(sourceComponent.getProperties(), PropertyTypes.BOTH);

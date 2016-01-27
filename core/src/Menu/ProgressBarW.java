@@ -1,7 +1,5 @@
 package Menu;
 
-import wrapper.Globals;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -12,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class ProgressBarW extends ProgressBar {
-
+	
 	public ProgressBarW(float min, float max, float stepSize, boolean vertical,
 			String name) {
 		super(min, max, stepSize, vertical, buildDefaultButtonStyle(name));
@@ -20,7 +18,7 @@ public class ProgressBarW extends ProgressBar {
 
 	private static ProgressBarStyle buildDefaultButtonStyle(String butName) {
 		TextureRegionDrawable textureBar = new TextureRegionDrawable(
-				new TextureRegion(Globals.Assets.get("life_small.png", Texture.class)));
+				new TextureRegion(new Texture("life_small.png")));
 	
 		Skin skin = new Skin();
 

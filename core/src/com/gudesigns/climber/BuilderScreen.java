@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 
 import wrapper.CameraManager;
+import wrapper.GameState;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import Menu.MenuBuilder;
@@ -52,7 +53,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 			touches.add(new TouchUnit());
 		}
 
-		menu = new MenuBuilder(world, stage, camera, gameLoader,shapeRenderer);
+		menu = new MenuBuilder(new GameState(world, gameLoader), stage, camera,shapeRenderer);
 		debugRenderer = new Box2DDebugRenderer();
 		
 		debugRenderer.AABB_COLOR.set( Color.WHITE);
@@ -104,9 +105,9 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		batch.begin();
+		//batch.begin();
 		//menu.draw(batch);
-		batch.end();
+		//batch.end();
 		
 		shapeRenderer.begin(ShapeType.Line);
 		menu.drawShapes(batch);

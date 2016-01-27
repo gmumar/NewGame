@@ -5,6 +5,7 @@ import java.util.Random;
 
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
+import wrapper.GameState;
 import wrapper.Globals;
 import Assembly.Assembler;
 import JSONifier.JSONTrack;
@@ -25,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 
 public class GroundBuilder {
@@ -40,6 +42,7 @@ public class GroundBuilder {
 	float variation = 0.5f, baising = 0.1f;
 
 	World world;
+	GameLoader gameLoader;
 	Body floor;
 	CameraManager camera;
 	float lastRightEdge, lastLeftEdge;
@@ -75,15 +78,16 @@ public class GroundBuilder {
 	Integer lastDrawnPointer = 0;
 	Integer lastRemovedPointer = 1;
 
-	public GroundBuilder(World world, CameraManager camera) {
-		this.world = world;
+	public GroundBuilder(GameState gameState, CameraManager camera) {
+		this.world = gameState.getWorld();
+		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
 
 		lastLeftEdge = camera.getViewPortLeftEdge();
 		lastRightEdge = camera.getViewPortRightEdge();
 
 		createFloor();
-		decor = new GroundDecor(world);
+		decor = new GroundDecor(gameState);
 
 		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, null);
 		System.out.println(mapString);
@@ -286,7 +290,7 @@ public class GroundBuilder {
 		 */
 		shader.begin();
 		GameMesh.flush(cam, shader, shaderStart, shaderEnd,
-				Globals.Assets.get("temp_ground_filler.png",Texture.class), 30,
+				gameLoader.Assets.get("temp_ground_filler.png",Texture.class), 30,
 				Color.WHITE, 0f);
 		shader.end();
 

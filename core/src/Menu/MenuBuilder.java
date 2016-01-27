@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import wrapper.BaseActor;
 import wrapper.CameraManager;
+import wrapper.GameState;
 import Assembly.Assembler;
 import Component.Component;
 import Component.ComponentBuilder;
@@ -69,15 +70,14 @@ public class MenuBuilder {
 
 	ShapeRenderer fixtureRenderer;
 
-	public MenuBuilder(final World world, Stage stage,
-			CameraManager secondCamera, final GameLoader gameLoader,
-			ShapeRenderer shapeRenderer) {
+	public MenuBuilder(final GameState gameState, Stage stage,
+			CameraManager secondCamera,	ShapeRenderer shapeRenderer) {
 
-		this.world = world;
+		this.world = gameState.getWorld();
 		this.stage = stage;
 		this.camera = secondCamera;
 		this.mouseJoined = false;
-		this.gameLoader = gameLoader;
+		this.gameLoader = gameState.getGameLoader();
 		this.fixtureRenderer = shapeRenderer;
 
 		BodyDef bodyDef = new BodyDef();
@@ -90,7 +90,7 @@ public class MenuBuilder {
 		// Add life regardless
 
 		incrementCount(ComponentNames._LIFE_.name());
-		Component c = ComponentBuilder.buildLife(world, true);
+		Component c = ComponentBuilder.buildLife(new GameState(world, gameLoader), true);
 		c.setUpForBuilder(ComponentNames._LIFE_.name()
 				+ Assembler.NAME_ID_SPLIT
 				+ componentCounts.get(ComponentNames._LIFE_.name()));
@@ -104,7 +104,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames._BAR3_.name());
-				Component c = ComponentBuilder.buildBar3(world, true);
+				Component c = ComponentBuilder.buildBar3(new GameState(world, gameLoader), true);
 				c.setUpForBuilder(ComponentNames._BAR3_.name()
 						+ Assembler.NAME_ID_SPLIT
 						+ componentCounts.get(ComponentNames._BAR3_.name()));
@@ -120,7 +120,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames._TIRE_.name());
-				Component c = ComponentBuilder.buildTire(world, true);
+				Component c = ComponentBuilder.buildTire(new GameState(world, gameLoader), true);
 				c.setUpForBuilder(ComponentNames._TIRE_.name()
 						+ Assembler.NAME_ID_SPLIT
 						+ componentCounts.get(ComponentNames._TIRE_.name()));
@@ -136,7 +136,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames._SPRINGJOINT_.name());
-				Component c = ComponentBuilder.buildSpringJoint(world, true)
+				Component c = ComponentBuilder.buildSpringJoint(new GameState(world, gameLoader), true)
 						.get(0);
 				c.setUpForBuilder(Assembler.NAME_ID_SPLIT
 						+ componentCounts.get(ComponentNames._SPRINGJOINT_
@@ -316,7 +316,7 @@ public class MenuBuilder {
 			transform.mul(vec);
 			// Gdx.gl.glLineWidth(20 / camera.zoom);
 			fixtureRenderer.setColor(c);
-			fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 25);
+			fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 45);
 
 		}
 	}

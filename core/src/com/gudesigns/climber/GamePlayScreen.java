@@ -3,8 +3,8 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 
 import throwaway.FullCar;
-import wrapper.BaseActor;
 import wrapper.CameraManager;
+import wrapper.GameState;
 import wrapper.Globals;
 import wrapper.JointLimits;
 import wrapper.TouchUnit;
@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -45,6 +46,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	GroundBuilder ground;
 	float aspectRatio;
+	//Box2DDebugRenderer debugRenderer ;
 
 	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
@@ -69,10 +71,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		//debugRenderer = new Box2DDebugRenderer();
 
 		Assembler asm = new Assembler();
-		builtCar = asm.assembleObject(world);
-		builtCar.setPosition(0, 100);
+		builtCar = asm.assembleObject(new GameState(world, gameLoader));
+		builtCar.setPosition(0, 30);
 
-		ground = new GroundBuilder(world, camera);
+		ground = new GroundBuilder(new GameState(world, gameLoader), camera);
 		
 		initShader();
 		initHud();
@@ -121,7 +123,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		//shader.setUniformi("u_texture", 0);
 		ground.drawShapes(camera,shader,colorShader);
 		//shader.end();
-		attachCameraTo(builtCar.getBasePart().getObject());
+		attachCameraTo(builtCar.getBasePart());
 
 		batch.begin();
 		ground.draw(camera, batch);
@@ -154,7 +156,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		//debugRenderer.render(world, camera.combined);
 		if(!paused){
-			world.step(Gdx.graphics.getDeltaTime()/1.1f, 200, 100);
+			world.step(Gdx.graphics.getDeltaTime()/1.1f, 75, 40);
 		}
 
 		if (timePassed > 0.2f) {
@@ -175,7 +177,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 	}
 
-	private void attachCameraTo(BaseActor actor) {
+	private void attachCameraTo(Body actor) {
 
 		camera.position.set(
 				actor.getPosition().x + CAMERA_OFFSET,

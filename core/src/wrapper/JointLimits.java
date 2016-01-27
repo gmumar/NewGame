@@ -11,8 +11,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class JointLimits {
 
-	final static double TORQUE_FACTOR = 5e5;
-	final static double FORCE_FACTOR = 3e4;
+	final static double TORQUE_FACTOR = 2e5;
+	final static double FORCE_FACTOR = 7e3;
 	final static double FORCE_DEVIDER = 5e5;
 
 	final static int DEFAULT_BREAKING_TORQUE = (int) (3 * TORQUE_FACTOR);

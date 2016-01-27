@@ -3,6 +3,7 @@ package throwaway;
 import java.util.ArrayList;
 
 import wrapper.BaseActor;
+import wrapper.GameState;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -17,19 +18,22 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
+import com.gudesigns.climber.GameLoader;
 
 public class FullCar {
 
 	public BaseActor carBody, frontTire, backTire;
 	PrismaticJointDef frontSpring, backSpring;
 	DistanceJointDef frontDamper, backDamper;
+	GameLoader gameLoader;
 
-	public FullCar(World world) {
-		carBody = new BaseActor("base", "temp_car.png", world);
+	public FullCar(GameState gameState) {
+		gameLoader = gameState.getGameLoader();
+		carBody = new BaseActor("base", "temp_car.png", gameState);
 		carBody.setMounts(createCarMounts(),0);
 
-		frontTire = createTire("front_tire", world);
-		backTire = createTire("back_tire", world);
+		frontTire = createTire("front_tire", gameState.getWorld());
+		backTire = createTire("back_tire", gameState.getWorld());
 
 		frontSpring = new PrismaticJointDef();
 		frontSpring.initialize(carBody.getPhysicsBody(), frontTire.getJoint(0)
@@ -39,7 +43,7 @@ public class FullCar {
 		frontSpring.upperTranslation = 0.0f;
 		frontSpring.enableLimit = true;
 		frontSpring.localAnchorB.set(new Vector2(0, 0));
-		world.createJoint(frontSpring);
+		gameState.getWorld().createJoint(frontSpring);
 
 		frontDamper = new DistanceJointDef();
 		frontDamper.initialize(carBody.getPhysicsBody(),
@@ -48,7 +52,7 @@ public class FullCar {
 		frontDamper.length = 1.5f;
 		frontDamper.dampingRatio = 5f;
 		frontDamper.frequencyHz = 125;
-		world.createJoint(frontDamper);
+		gameState.getWorld().createJoint(frontDamper);
 
 		
 		// suspension
@@ -62,7 +66,7 @@ public class FullCar {
 		backSpring.upperTranslation = 0.0f;
 		backSpring.enableLimit = true;
 		backSpring.localAnchorB.set(new Vector2(0, 0));
-		world.createJoint(backSpring);
+		gameState.getWorld().createJoint(backSpring);
 
 		backDamper = new DistanceJointDef();
 		backDamper.initialize(carBody.getPhysicsBody(),
@@ -71,7 +75,7 @@ public class FullCar {
 		backDamper.length = 1.5f;
 		backDamper.dampingRatio = 5f;
 		backDamper.frequencyHz = 125;
-		world.createJoint(backDamper);
+		gameState.getWorld().createJoint(backDamper);
 	}
 
 	public void draw(SpriteBatch batch) {
@@ -105,7 +109,7 @@ public class FullCar {
 		Body body = world.createBody(bodyDef);
 		body.createFixture(fixtureDef);
 
-		BaseActor tmp = new BaseActor(name, "temp_tire.png", world);
+		BaseActor tmp = new BaseActor(name, "temp_tire.png", new GameState(world, gameLoader));
 		CircleShape shape = new CircleShape();
 
 		tmp.setRestitution(0.9f);

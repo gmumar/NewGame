@@ -27,7 +27,7 @@ public class SplashScreen implements Screen {
 	float time = 0;
 	
 	public class SplashActor extends Actor {
-        Texture texture = Globals.Assets.get("colooorsssxcf.png", Texture.class);
+        Texture texture = gameLoader.Assets.get("colooorsssxcf.png", Texture.class);
         public boolean started = false;
 
         public SplashActor(){
@@ -96,7 +96,7 @@ public class SplashScreen implements Screen {
 		renderWorld();
 		
 		time += delta;
-		if(time > 3){
+		if(time > 0.5f){
 			gameLoader.setScreen(new MainMenuScreen(gameLoader));
 		}
 		
@@ -106,7 +106,8 @@ public class SplashScreen implements Screen {
 
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClear(GL20.GL_ALPHA_BITS);
+		  Gdx.gl20.glEnable(GL20.GL_BLEND);
+	        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		batch.setProjectionMatrix(camera.combined);
 		stage.draw();

@@ -1,13 +1,12 @@
 package throwaway;
 
 import wrapper.BaseActor;
-
-import com.badlogic.gdx.physics.box2d.World;
+import wrapper.GameState;
 
 public class Car extends BaseActor {
 
-	protected Car(String name, String texture, World world) {
-		super(name, texture, world);
+	protected Car(String name, String texture, GameState gameState) {
+		super(name, texture, gameState);
 		
 		this.setPosition(100, -100);
 		//this.setScale(5);
