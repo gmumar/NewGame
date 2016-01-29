@@ -17,14 +17,15 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 
 public class ComponentBuilder {
+	public enum ComponentSubNames {
+		_UPPER_, _LOWER_
+	}
 
 	public enum ComponentNames {
 		_BAR3_, _TIRE_, _SOLIDJOINT_, _AXLE_, _SPRINGJOINT_, _WHEEL_, _LIFE_, _CEQUEREDFLAG_, _CAMERAFOCUS_
 	}
 
-	public enum ComponentSubNames {
-		_UPPER_, _LOWER_
-	}
+
 
 	public static Component buildComponent(String name, GameState gameState) {
 
@@ -318,7 +319,7 @@ public class ComponentBuilder {
 		dJoint.bodyB = cameraActor.getPhysicsBody();
 		dJoint.localAnchorA.set(tmpActor.getCenter());
 		dJoint.localAnchorB.set(cameraActor.getCenter());
-		dJoint.maxLength = 0.5f;
+		dJoint.maxLength = 1f;
 
 		/*DistanceJointDef dJoint = new DistanceJointDef();
 		dJoint.initialize(tmpActor.getPhysicsBody(),
@@ -335,7 +336,7 @@ public class ComponentBuilder {
 		PrismaticJointDef rJoint = new PrismaticJointDef();
 		rJoint.initialize(tmpActor.getPhysicsBody(),
 				cameraActor.getPhysicsBody(), cameraActor.getCenter(),
-				new Vector2(1, 2));
+				new Vector2(0, 1));
 		rJoint.localAnchorA.set(tmpActor.getCenter());
 		rJoint.localAnchorB.set(cameraActor.getCenter());
 		rJoint.enableMotor = true;

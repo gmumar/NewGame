@@ -7,6 +7,7 @@ import wrapper.CameraManager;
 import wrapper.GameState;
 import wrapper.Globals;
 import wrapper.JointLimits;
+import wrapper.Rolling;
 import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
@@ -38,11 +39,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	HUDBuilder hud;
 	Stage stage;
 	FitViewport vp;
-	ShaderProgram shader,colorShader;
-	
+	ShaderProgram shader, colorShader;
+
+	Rolling rollingAvg;
+	float speedZoom = 0;
+
 	boolean paused = true;
-	
-	public static final float CAMERA_OFFSET =  15;
+
+	public static final float CAMERA_OFFSET = 16;
 
 	GroundBuilder ground;
 	float aspectRatio;
@@ -62,7 +66,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
-		
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
@@ -75,31 +78,36 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		builtCar.setPosition(0, 30);
 
 		ground = new GroundBuilder(new GameState(world, gameLoader), camera);
-		
+
 		initShader();
 		initHud();
+
+		rollingAvg = new Rolling(60);
 
 	}
 
 	private void initShader() {
-		String vertexShader =  Gdx.files.internal("shaders/vertex.glsl").readString();
-		String fragmentShader =  Gdx.files.internal("shaders/fragment.glsl").readString();
+		String vertexShader = Gdx.files.internal("shaders/vertex.glsl")
+				.readString();
+		String fragmentShader = Gdx.files.internal("shaders/fragment.glsl")
+				.readString();
 		shader = new ShaderProgram(vertexShader, fragmentShader);
-		 if (shader.isCompiled() == false) {
-	         Gdx.app.log("ShaderError", shader.getLog());
-	         System.exit(0);
-	      }
-		 
-		 fragmentShader =  Gdx.files.internal("shaders/colorfragment.glsl").readString();
-		 colorShader = new ShaderProgram(vertexShader, fragmentShader);
-		 if (shader.isCompiled() == false) {
-	         Gdx.app.log("ShaderError", shader.getLog());
-	         System.exit(0);
-	      }
-		 
-		 //mesh = new GameMesh();
-		// GameMesh.create();	
-		 
+		if (shader.isCompiled() == false) {
+			Gdx.app.log("ShaderError", shader.getLog());
+			System.exit(0);
+		}
+
+		fragmentShader = Gdx.files.internal("shaders/colorfragment.glsl")
+				.readString();
+		colorShader = new ShaderProgram(vertexShader, fragmentShader);
+		if (shader.isCompiled() == false) {
+			Gdx.app.log("ShaderError", shader.getLog());
+			System.exit(0);
+		}
+
+		// mesh = new GameMesh();
+		// GameMesh.create();
+
 	}
 
 	private void initHud() {
@@ -118,11 +126,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		 */
 
 		renderWorld();
-		//shader.begin();
-		//shader.setUniformMatrix("u_projTrans", batch.getProjectionMatrix());
-		//shader.setUniformi("u_texture", 0);
-		ground.drawShapes(camera,shader,colorShader);
-		//shader.end();
+		// shader.begin();
+		// shader.setUniformMatrix("u_projTrans", batch.getProjectionMatrix());
+		// shader.setUniformi("u_texture", 0);
+		ground.drawShapes(camera, shader, colorShader);
+		// shader.end();
 		attachCameraTo(builtCar.getBasePart());
 
 		batch.begin();
@@ -144,45 +152,52 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor((float)118/256, (float)211/256, (float)222/256, 1);
-		//Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor((float) 118 / 256, (float) 211 / 256,
+				(float) 222 / 256, 1);
+		// Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-        Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
-        Gdx.gl20.glEnable(GL20.GL_BLEND);
-        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+		Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
+		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		batch.setProjectionMatrix(camera.combined);
 
 		//debugRenderer.render(world, camera.combined);
-		if(!paused){
-			world.step(Gdx.graphics.getDeltaTime()/1.1f, 75, 40);
+		if (!paused) {
+			world.step(Gdx.graphics.getDeltaTime() / 1.1f, 75, 40);
 		}
 
 		if (timePassed > 0.2f) {
 			paused = false;
 		}
-		
-		
+
 		if (timePassed > 5) {
 			// enable joint checking
-			//skip_count++;
-			//if (skip_count >= SKIP_COUNT) {
-			//	skip_count = 0;
-				JointLimits.enableJointLimits(world, Gdx.graphics.getDeltaTime()/1.1f);
-			//}
+			// skip_count++;
+			// if (skip_count >= SKIP_COUNT) {
+			// skip_count = 0;
+			if (!paused) {
+			JointLimits.enableJointLimits(world,
+					Gdx.graphics.getDeltaTime() / 1.1f);
+			}
+			// }
 
 		} else {
-			timePassed += Gdx.graphics.getDeltaTime()/1.1f;
+			timePassed += Gdx.graphics.getDeltaTime() / 1.1f;
 		}
 	}
 
 	private void attachCameraTo(Body actor) {
-
-		camera.position.set(
-				actor.getPosition().x + CAMERA_OFFSET,
+		// System.out.println();
+		rollingAvg.add(actor.getLinearVelocity().x);
+		speedZoom = (float) rollingAvg.getAverage() * 0.025f;
+		if (speedZoom < 0) {
+			speedZoom = 0;
+		}
+		camera.position.set(actor.getPosition().x + CAMERA_OFFSET - (0.4f - speedZoom * 4),
 				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
-		camera.zoom = 4.5f;//4.5f;
+		camera.zoom = 4.2f + speedZoom;// 4.5f;
 		camera.update();
 	}
 
@@ -266,7 +281,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void show() {
 		initInputs();
 		Globals.updateScreenInfo();
-		GameMesh.create(camera,shader);
+		GameMesh.create(camera, shader);
 		//
 
 	}
@@ -277,7 +292,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		ground.destory();
 		stage.dispose();
 		GameMesh.destroy();
-		
+
 	}
 
 	// ------------------------------------------------------UNUSED------------------------------------------------

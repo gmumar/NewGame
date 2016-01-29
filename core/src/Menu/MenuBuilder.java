@@ -8,6 +8,7 @@ import wrapper.BaseActor;
 import wrapper.CameraManager;
 import wrapper.GameState;
 import Assembly.Assembler;
+import Assembly.AssemblyRules;
 import Component.Component;
 import Component.ComponentBuilder;
 import Component.ComponentBuilder.ComponentNames;
@@ -53,7 +54,7 @@ public class MenuBuilder {
 			build, exit;
 
 	Vector3 mousePoint = new Vector3();
-	Body groundBody, hitBody, lastSelected = null;
+	Body groundBody, hitBody, lastSelected = null, baseObject;
 
 	CameraManager camera;
 
@@ -61,6 +62,7 @@ public class MenuBuilder {
 
 	ArrayList<Component> parts = new ArrayList<Component>();
 	JSONCompiler compiler = new JSONCompiler();
+	AssemblyRules assemblyRules = new AssemblyRules();
 
 	HashMap<String, Integer> componentCounts;
 
@@ -71,7 +73,7 @@ public class MenuBuilder {
 	ShapeRenderer fixtureRenderer;
 
 	public MenuBuilder(final GameState gameState, Stage stage,
-			CameraManager secondCamera,	ShapeRenderer shapeRenderer) {
+			CameraManager secondCamera, ShapeRenderer shapeRenderer) {
 
 		this.world = gameState.getWorld();
 		this.stage = stage;
@@ -90,12 +92,13 @@ public class MenuBuilder {
 		// Add life regardless
 
 		incrementCount(ComponentNames._LIFE_.name());
-		Component c = ComponentBuilder.buildLife(new GameState(world, gameLoader), true);
+		Component c = ComponentBuilder.buildLife(new GameState(world,
+				gameLoader), true);
 		c.setUpForBuilder(ComponentNames._LIFE_.name()
 				+ Assembler.NAME_ID_SPLIT
 				+ componentCounts.get(ComponentNames._LIFE_.name()));
 
-		lastSelected = c.getObject().getPhysicsBody();
+		lastSelected = baseObject = c.getObject().getPhysicsBody();
 		parts.add(c);
 
 		//
@@ -104,7 +107,8 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames._BAR3_.name());
-				Component c = ComponentBuilder.buildBar3(new GameState(world, gameLoader), true);
+				Component c = ComponentBuilder.buildBar3(new GameState(world,
+						gameLoader), true);
 				c.setUpForBuilder(ComponentNames._BAR3_.name()
 						+ Assembler.NAME_ID_SPLIT
 						+ componentCounts.get(ComponentNames._BAR3_.name()));
@@ -120,7 +124,8 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames._TIRE_.name());
-				Component c = ComponentBuilder.buildTire(new GameState(world, gameLoader), true);
+				Component c = ComponentBuilder.buildTire(new GameState(world,
+						gameLoader), true);
 				c.setUpForBuilder(ComponentNames._TIRE_.name()
 						+ Assembler.NAME_ID_SPLIT
 						+ componentCounts.get(ComponentNames._TIRE_.name()));
@@ -136,8 +141,8 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames._SPRINGJOINT_.name());
-				Component c = ComponentBuilder.buildSpringJoint(new GameState(world, gameLoader), true)
-						.get(0);
+				Component c = ComponentBuilder.buildSpringJoint(
+						new GameState(world, gameLoader), true).get(0);
 				c.setUpForBuilder(Assembler.NAME_ID_SPLIT
 						+ componentCounts.get(ComponentNames._SPRINGJOINT_
 								.name()));
@@ -174,9 +179,14 @@ public class MenuBuilder {
 		build = new Button("build") {
 			@Override
 			public void Clicked() {
-				compiler.compile(world, parts);
-				gameLoader.gameSetScreen(new GamePlayScreen(gameLoader));
-				Destroy();
+				if (assemblyRules.checkBuild(world, baseObject, parts)) {
+					compiler.compile(world, parts);
+
+					gameLoader.gameSetScreen(new GamePlayScreen(gameLoader));
+					Destroy();
+				} else {
+					;
+				}
 			}
 
 		};
@@ -269,11 +279,11 @@ public class MenuBuilder {
 					Iterator<Fixture> fixtureIter = fixtures.iterator();
 
 					while (fixtureIter.hasNext()) {
-						 drawFixture(fixtureIter.next(), RED);
+						drawFixture(fixtureIter.next(), RED);
 					}
 				}
 			}
-			// 
+			//
 
 		}
 		while (contactIter.hasNext()) {
@@ -303,10 +313,10 @@ public class MenuBuilder {
 	}
 
 	private void drawFixture(Fixture fix, Color c) {
-		if(!isFixtureName((String) fix.getUserData())){
+		if (!isFixtureName((String) fix.getUserData())) {
 			return;
 		}
-			
+
 		Transform transform = fix.getBody().getTransform();
 		if (fix.getShape().getType() == Type.Circle) {
 

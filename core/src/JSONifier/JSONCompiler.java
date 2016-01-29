@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class JSONCompiler {
 
-	public void compile(World world, ArrayList<Component> parts) {
+	public String compile(World world, ArrayList<Component> parts) {
 
 		JSONParent car = new JSONParent();
 		Preferences prefs = Gdx.app
@@ -77,6 +77,8 @@ public class JSONCompiler {
 
 		System.out.println(prefs
 				.getString(GamePreferences.CAR_MAP_STR, "Error"));
+		
+		return car.jsonify();
 	}
 	
 	public void compile(ArrayList<GroundUnitDescriptor> mapList){
