@@ -7,14 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 public class TextBox extends TextField {
 
-	String name;
-	String text;
-	Skin skin;
+	private String text;
 
 	public TextBox(String name) {
 		super(name, buildDefaultTextStyle());
 
-		this.name = name;
 		setText(text);
 
 		initDefualt();
@@ -23,7 +20,6 @@ public class TextBox extends TextField {
 	public TextBox(int name) {
 		super(Integer.toString(name), buildDefaultTextStyle());
 
-		this.name = Integer.toString(name);
 		setText(text);
 
 		initDefualt();

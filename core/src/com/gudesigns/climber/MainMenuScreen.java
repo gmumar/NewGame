@@ -8,22 +8,18 @@ import Menu.PopQueManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class MainMenuScreen implements Screen {
 
-	GameLoader gameLoader;
-	CameraManager camera, secondCamera;
-	SpriteBatch batch;
-	Stage stage;
-	FitViewport vp;
-	PopQueManager popQueManager;
+	private GameLoader gameLoader;
+	private CameraManager camera;
+	private Stage stage;
+	private FitViewport vp;
+	private PopQueManager popQueManager;
 
-	Button builder, playGame, buildTrack, selectTrack;
-
-	float time=0;
+	private Button builder, playGame, buildTrack, selectTrack;
 
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
@@ -84,7 +80,7 @@ public class MainMenuScreen implements Screen {
 		camera.update();
 
 		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
-		batch = new SpriteBatch();
+		//batch = new SpriteBatch();
 		stage = new Stage(vp);
 		
 		popQueManager = new PopQueManager(stage);
@@ -113,8 +109,6 @@ public class MainMenuScreen implements Screen {
 
 		popQueManager.update(delta);
 		
-		time += delta;
-		
 	}
 
 	private void renderWorld() {
@@ -122,7 +116,7 @@ public class MainMenuScreen implements Screen {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		batch.setProjectionMatrix(camera.combined);
+		//batch.setProjectionMatrix(camera.combined);
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
 

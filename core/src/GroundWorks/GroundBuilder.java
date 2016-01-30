@@ -8,7 +8,6 @@ import wrapper.GamePreferences;
 import wrapper.GameState;
 import wrapper.Globals;
 import Assembly.Assembler;
-import JSONifier.JSONTrack;
 import Shader.GameMesh;
 
 import com.badlogic.gdx.Gdx;
@@ -37,54 +36,55 @@ public class GroundBuilder {
 	final static float PERIOD = 0.3f;
 	public final static int BACK_EDGE_UNITS = 30;
 
-	final static int TRACK_HEIGHT = 0;
+	private final static int TRACK_HEIGHT = 30;
+	private final static int TRACK_WIDTH = 0;
 
-	float variation = 0.5f, baising = 0.1f;
+	private float variation = 0.5f, baising = 0.1f;
 
-	World world;
-	GameLoader gameLoader;
-	Body floor;
-	CameraManager camera;
-	float lastRightEdge, lastLeftEdge;
-	Vector2 lastPointDrawn = null;
-	EdgeShape edgeShape = new EdgeShape();
-	FixtureDef fixtureDef = new FixtureDef();
-	double angle = 0, bias = 0;
-	int shaderStart = 0, shaderEnd = 0;
-	Random r = new Random();
-	GroundDecor decor;
+	private World world;
+	private GameLoader gameLoader;
+	private Body floor;
+	private CameraManager camera;
+	private EdgeShape edgeShape = new EdgeShape();
+	private FixtureDef fixtureDef = new FixtureDef();
+	private double angle = 0, bias = 0;
+	private int shaderStart = 0, shaderEnd = 0;
+	private Random r = new Random();
+	private GroundDecor decor;
 
-	static final int ADD_FLOOR_COUNT_FINAL = 3;
-	int addFloorCount;
-	int ADD_FLOOR_COUNT = 0;
-	int flatFloorCount;
-	static final int FLAT_FLOOR_COUNT = 60;
+	private static final int ADD_FLOOR_COUNT_FINAL = 3;
+	private int addFloorCount;
+	private int ADD_FLOOR_COUNT = 0;
+	private int flatFloorCount;
+	private static final int FLAT_FLOOR_COUNT = 60;
 
-	boolean infinate = true;
-	int mapListCounter = 0;
-	int progressCounter = 0;
+	private boolean infinate = true;
+	private int mapListCounter = 0;
+	private int progressCounter = 0;
+
+	private ArrayList<GroundUnitDescriptor> preMadeMapList;
+
+	private Fixture verticalEdge;
+
+	private ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
+
+	private Preferences prefs = Gdx.app
+			.getPreferences(GamePreferences.CAR_PREF_STR);
+
+	private Assembler assembler = new Assembler();
+
+	private Integer lastDrawnPointer = 0;
+	private Integer lastRemovedPointer = 1;
+
+	private GroundUnitDescriptor lastObj;
+	private GroundUnitDescriptor gud;
 	
-	ArrayList<GroundUnitDescriptor> preMadeMapList;
-
-	Fixture verticalEdge;
-
-	ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
-
-	Preferences prefs = Gdx.app.getPreferences(GamePreferences.CAR_PREF_STR);
-
-	Assembler assembler = new Assembler();
-	JSONTrack jsonTrack = new JSONTrack();
-
-	Integer lastDrawnPointer = 0;
-	Integer lastRemovedPointer = 1;
+	private static Texture groundFiller ;
 
 	public GroundBuilder(GameState gameState, CameraManager camera) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
-
-		lastLeftEdge = camera.getViewPortLeftEdge();
-		lastRightEdge = camera.getViewPortRightEdge();
 
 		createFloor();
 		decor = new GroundDecor(gameState);
@@ -96,9 +96,9 @@ public class GroundBuilder {
 		} else {
 			infinate = false;
 			mapListCounter = 0;
-			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(0,
-					TRACK_HEIGHT));
-			
+			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(
+					TRACK_WIDTH, TRACK_HEIGHT));
+
 			decor.addChequeredFlag(preMadeMapList);
 			// mapList.addAll(assembler.assembleTrack(mapString, new
 			// Vector2(-10,-50)));
@@ -108,7 +108,8 @@ public class GroundBuilder {
 			// + shaderEnd);
 		}
 		
-		
+		groundFiller = gameLoader.Assets.get("temp_ground_filler.png", Texture.class);
+
 	}
 
 	private void createFloor() {
@@ -120,43 +121,43 @@ public class GroundBuilder {
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-50
 				* UNIT_LENGTH, TRACK_HEIGHT), new Vector2(-5 * UNIT_LENGTH,
-				TRACK_HEIGHT), "temp_ground.png",
-				"temp_ground_filler_premade.png");
+				TRACK_HEIGHT), true);// ,
+								// "temp_ground.png","temp_ground_filler_premade.png");
 		mapList.add(gud);
-		gud.fixture = drawEdge(gud.start, gud.end);
-
+		// gud.fixture = drawEdge(gud.start, gud.end);
+		gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
 	}
 
 	public void drawFloor(CameraManager cam) {
 
-		GroundUnitDescriptor gud = mapList.get(lastDrawnPointer);
+		gud = mapList.get(lastDrawnPointer);
 
-		if (getEdge(cam) > gud.end.x) {
+		if (getEdge(cam) > gud.getEnd().x) {
 
 			lastDrawnPointer++;
 			gud = mapList.get(lastDrawnPointer);
-			gud.setFixture(drawEdge(gud.start, gud.end));
+			gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
 
 			if (mapList.size() <= lastRemovedPointer)
 				return;
 
 			gud = mapList.get(lastRemovedPointer);
 
-			verticalEdge = drawEdge(gud.start, new Vector2(gud.start.x,
-					gud.start.y + 150));
+			verticalEdge = drawEdge(gud.getStart(), new Vector2(
+					gud.getStart().x, gud.getStart().y + 150));
 
-			if (getBackEdge(cam) > gud.start.x) {
+			if (getBackEdge(cam) > gud.getStart().x) {
 				ADD_FLOOR_COUNT = ADD_FLOOR_COUNT_FINAL;
 				floor.destroyFixture(verticalEdge);
-				verticalEdge = drawEdge(gud.end, new Vector2(gud.end.x,
-						gud.end.y + 150));
+				verticalEdge = drawEdge(gud.getEnd(), new Vector2(
+						gud.getEnd().x, gud.getEnd().y + 150));
 
 				gud = mapList.get(lastRemovedPointer);
-				shaderStart = gud.vertexId;
+				shaderStart = gud.getVertexId();
 				gud.deleteUnit(floor);// drawList
 				// mapList.remove(lastRemovedPointer);
 				lastRemovedPointer++;
-				
+
 			}
 		}
 
@@ -175,13 +176,13 @@ public class GroundBuilder {
 	public void updateFloor(CameraManager cam) {
 
 		float randf = (float) (r.nextFloat());
-		GroundUnitDescriptor lastObj = mapList.get(mapList.size() - 1);
+		lastObj = mapList.get(mapList.size() - 1);
 
 		generateBias(r);
 
 		randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
 
-		if (getEdge(cam) > lastObj.end.x) {
+		if (getEdge(cam) > lastObj.getEnd().x) {
 			if (infinate) {
 				addGroundUnitDescriptor(lastObj, randf);
 			} else {
@@ -193,10 +194,11 @@ public class GroundBuilder {
 					infinate = true;
 				}
 			}
-			if(camera.position.x - GamePlayScreen.CAMERA_OFFSET>preMadeMapList.get(0).end.x){
+			if (camera.position.x - GamePlayScreen.CAMERA_OFFSET > preMadeMapList
+					.get(0).getEnd().x) {
 				++progressCounter;
 			}
-			
+
 		}
 
 		if (flatFloorCount >= FLAT_FLOOR_COUNT) {
@@ -208,24 +210,25 @@ public class GroundBuilder {
 
 	}
 
+	private GroundUnitDescriptor newObj;
+
 	private void addGroundUnitDescriptor(GroundUnitDescriptor lastObj,
 			float randf) {
-		GroundUnitDescriptor newObj = new GroundUnitDescriptor(
-				lastObj.end,
-				new Vector2(lastObj.end.x + UNIT_LENGTH, lastObj.end.y + randf),
-				"temp_ground.png", "temp_ground_filler_premade.png");
+		newObj = new GroundUnitDescriptor(lastObj.getEnd(), new Vector2(
+				lastObj.getEnd().x + UNIT_LENGTH, lastObj.getEnd().y + randf), true);
+		// ,"temp_ground.png", "temp_ground_filler_premade.png");
 		mapList.add(newObj);
-		shaderEnd = newObj.vertexId;
+		shaderEnd = newObj.getVertexId();
 		// return newObj;
 	}
 
 	private void addGroundUnitDescriptor(GroundUnitDescriptor lastObj,
 			Vector2 point) {
-		GroundUnitDescriptor newObj = new GroundUnitDescriptor(lastObj.end,
-				new Vector2(point.x, point.y), "temp_ground.png",
-				"temp_ground_filler_premade.png");
+		newObj = new GroundUnitDescriptor(lastObj.getEnd(), new Vector2(
+				point.x, point.y), true);
+		// , "temp_ground.png","temp_ground_filler_premade.png");
 		mapList.add(newObj);
-		shaderEnd = newObj.vertexId;
+		shaderEnd = newObj.getVertexId();
 		// return newObj;
 	}
 
@@ -260,7 +263,7 @@ public class GroundBuilder {
 		}
 
 		++addFloorCount;
-		
+
 		decor.draw(batch);
 
 		/*
@@ -290,8 +293,8 @@ public class GroundBuilder {
 		 */
 		shader.begin();
 		GameMesh.flush(cam, shader, shaderStart, shaderEnd,
-				gameLoader.Assets.get("temp_ground_filler.png",Texture.class), 30,
-				Color.WHITE, 0f);
+				groundFiller,
+				30, Color.WHITE, 0f);
 		shader.end();
 
 		colorShader.begin();
@@ -333,10 +336,11 @@ public class GroundBuilder {
 	}
 
 	public float getProgress() {
-		
-		float progress = ((float) progressCounter / (preMadeMapList.size())) * (100-0);
-		progress = progress > 100 ? 100 : progress; 
-		
+
+		float progress = ((float) progressCounter / (preMadeMapList.size()))
+				* (100 - 0);
+		progress = progress > 100 ? 100 : progress;
+
 		return progress;
 
 	}

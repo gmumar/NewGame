@@ -15,25 +15,31 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 public class AssembledObject {
 
-	ArrayList<Component> partList;
-	ArrayList<BaseActor> driveList;
-	Body basePart;
-	Component leftMost, rightMost; 
-	int basePartIndex;
+	private ArrayList<Component> partList;
+	private ArrayList<BaseActor> driveList;
+	private Body basePart;
+	private Component leftMost, rightMost; 
+	//private int basePartIndex;
 
-	final float ANGULAR_DAMPING = 1f;
-	final float ROTATION_FORCE = 4000;
-	final float MAX_VELOCITY = 45f;
+	private final float ANGULAR_DAMPING = 1f;
+	//private final float ROTATION_FORCE = 4000;
+	private final float MAX_VELOCITY = 45f;
+	
+	private Iterator<TouchUnit> touchIter ;
+	private int direction;
+	private TouchUnit touch;
+	private Iterator<BaseActor> driveListIter;
+	private BaseActor comp;
 
 	public Body getBasePart() {
 		return basePart;
 	}
 
-	public void setBasePartbyIndex(int i) {
+	/*public void setBasePartbyIndex(int i) {
 		this.basePart = partList.get(i).getJointBodies().get(1).getPhysicsBody();
 		basePartIndex = i;
 
-	}
+	}*/
 
 	public void setLifeBasePart() {
 		Iterator<Component> iter = partList.iterator();
@@ -157,13 +163,13 @@ public class AssembledObject {
 		if (driveList == null || touchesIn == null)
 			return;
 
-		Iterator<TouchUnit> touchIter = touchesIn.iterator();
-		int direction = 0;
+		touchIter = touchesIn.iterator();
+		direction = 0;
 
 		//System.out.println(rightMost.getObject().getRotation());
 		
 		while (touchIter.hasNext()) {
-			TouchUnit touch = touchIter.next();
+			touch = touchIter.next();
 
 			if (touch.isTouched()) {
 
@@ -191,10 +197,10 @@ public class AssembledObject {
 				}
 			
 
-				Iterator<BaseActor> iter = driveList.iterator();
-				while (iter.hasNext()) {
+				driveListIter = driveList.iterator();
+				while (driveListIter.hasNext()) {
 					
-					BaseActor comp = iter.next();
+					comp = driveListIter.next();
 					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
 							true);
 					
@@ -206,5 +212,9 @@ public class AssembledObject {
 				}
 			}
 		}
+	}
+
+	public void dispose() {
+		//comp.destroy();
 	}
 }

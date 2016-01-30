@@ -39,38 +39,38 @@ import com.gudesigns.climber.MainMenuScreen;
 
 public class MenuBuilder {
 
-	final static float BOX_SIZE = 0.0001f;
-	final static float ROTATION_SIZE = 30;
-	final static int LIMIT_BOX_X = -5, LIMIT_BOX_Y = -5, LIMIT_BOX_X_LEN = 20,
+	private final static float BOX_SIZE = 0.0001f;
+	private final static float ROTATION_SIZE = 30;
+	private final static int LIMIT_BOX_X = -5, LIMIT_BOX_Y = -5, LIMIT_BOX_X_LEN = 20,
 			LIMIT_BOX_Y_LEN = 20;
 
-	final static Color GREEN = new Color(0, 1, 0, 1);
-	final static Color RED = new Color(1, 0, 0, 1);
+	private final static Color GREEN = new Color(0, 1, 0, 1);
+	private final static Color RED = new Color(1, 0, 0, 1);
 
-	Stage stage;
-	World world;
+	private Stage stage;
+	private World world;
 
-	Button but, tire_but, spring_but, zoomIn, zoomOut, rotateLeft, rotateRight,
+	private Button but, tire_but, spring_but, zoomIn, zoomOut, rotateLeft, rotateRight,
 			build, exit;
 
-	Vector3 mousePoint = new Vector3();
-	Body groundBody, hitBody, lastSelected = null, baseObject;
+	private Vector3 mousePoint = new Vector3();
+	private Body hitBody, lastSelected = null, baseObject;
 
-	CameraManager camera;
+	private CameraManager camera;
 
-	boolean mouseJoined = false;
+	private boolean mouseJoined = false;
 
-	ArrayList<Component> parts = new ArrayList<Component>();
-	JSONCompiler compiler = new JSONCompiler();
-	AssemblyRules assemblyRules = new AssemblyRules();
+	private ArrayList<Component> parts = new ArrayList<Component>();
+	private JSONCompiler compiler = new JSONCompiler();
+	private AssemblyRules assemblyRules = new AssemblyRules();
 
-	HashMap<String, Integer> componentCounts;
+	private HashMap<String, Integer> componentCounts;
 
-	GameLoader gameLoader;
+	private GameLoader gameLoader;
 
-	Vector2 relativeVector = new Vector2();
+	private Vector2 relativeVector = new Vector2();
 
-	ShapeRenderer fixtureRenderer;
+	private ShapeRenderer fixtureRenderer;
 
 	public MenuBuilder(final GameState gameState, Stage stage,
 			CameraManager secondCamera, ShapeRenderer shapeRenderer) {
@@ -83,7 +83,7 @@ public class MenuBuilder {
 		this.fixtureRenderer = shapeRenderer;
 
 		BodyDef bodyDef = new BodyDef();
-		groundBody = world.createBody(bodyDef);
+		world.createBody(bodyDef);
 
 		componentCounts = new HashMap<String, Integer>();
 
@@ -182,7 +182,7 @@ public class MenuBuilder {
 				if (assemblyRules.checkBuild(world, baseObject, parts)) {
 					compiler.compile(world, parts);
 
-					gameLoader.gameSetScreen(new GamePlayScreen(gameLoader));
+					gameLoader.setScreen(new GamePlayScreen(gameLoader));
 					Destroy();
 				} else {
 					;
@@ -449,5 +449,10 @@ public class MenuBuilder {
 
 	private float relativeY(float p) {
 		return p - relativeVector.y;
+	}
+
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -17,14 +17,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SplashScreen implements Screen {
 
-	GameLoader gameLoader;
-	CameraManager camera, secondCamera;
-	SpriteBatch batch;
-	Stage stage;
-	FitViewport vp;
+	private GameLoader gameLoader;
+	private CameraManager camera;
+	private SpriteBatch batch;
+	private Stage stage;
+	private FitViewport vp;
 	
-	
-	float time = 0;
+	private float time = 0;
 	
 	public class SplashActor extends Actor {
         Texture texture = gameLoader.Assets.get("colooorsssxcf.png", Texture.class);

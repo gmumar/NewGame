@@ -29,11 +29,11 @@ public class Component {
 		RELATIVE, ABSOLUTE, BOTH
 	}
 
-	BaseActor object;
-	ComponentTypes componentTypes;
-	String componentName;
-	boolean Motor = false;
-	ArrayList<BaseActor> jointBodies = null;
+	private BaseActor object;
+	private ComponentTypes componentTypes;
+	private String componentName;
+	private boolean Motor = false;
+	private ArrayList<BaseActor> jointBodies = null;
 
 	public Component(BaseActor obj, ComponentTypes type, String name) {
 		object = obj;

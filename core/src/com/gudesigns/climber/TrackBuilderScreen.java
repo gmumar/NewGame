@@ -24,23 +24,20 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class TrackBuilderScreen implements Screen, InputProcessor, GestureListener {
 
-	GameLoader gameLoader;
-	SpriteBatch batch;
-	CameraManager camera, secondCamera;
-	World world;
-	Stage stage;
-	TrackMenuBuilder menu;
-	FitViewport vp;
+	private SpriteBatch batch;
+	private CameraManager camera, secondCamera;
+	private World world;
+	private Stage stage;
+	private FitViewport vp;
 	
-	Box2DDebugRenderer debugRenderer;
-	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
+	private Box2DDebugRenderer debugRenderer;
+	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 	
-	TrackBuilder trackBuilder;
+	private TrackBuilder trackBuilder;
 
-	float zoom = 0.1f;
+	private float zoom = 0.1f;
 
 	public TrackBuilderScreen(GameLoader gameLoader) {
-		this.gameLoader = gameLoader;
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
 		initStage();
@@ -51,10 +48,8 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 		}
 
 		trackBuilder = new TrackBuilder(world, camera);
-		menu = new TrackMenuBuilder( stage, camera, gameLoader, trackBuilder);
+		new TrackMenuBuilder( stage, camera, gameLoader, trackBuilder);
 		debugRenderer = new Box2DDebugRenderer();
-	
-		
 
 	}
 

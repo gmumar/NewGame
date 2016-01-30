@@ -17,19 +17,17 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class TrackSelectorScreen implements Screen {
 
-	GameLoader gameLoader;
-	CameraManager camera,secondCamera;
-	SpriteBatch batch;
-	Stage stage;
-	FitViewport vp;
+	private CameraManager camera;
+	private SpriteBatch batch;
+	private Stage stage;
+	private FitViewport vp;
 	
-	int buttonCount = 100;
-	ArrayList<Button> buttons = new ArrayList<Button>();
-	TableW tracksTable;
-	ScrollPane scrollPane;
+	private int buttonCount = 100;
+	private ArrayList<Button> buttons = new ArrayList<Button>();
+	private TableW tracksTable;
+	private ScrollPane scrollPane;
 
 	public TrackSelectorScreen(GameLoader gameLoader) {
-		this.gameLoader = gameLoader;
 		initStage();
 		
 		initTrackSelector();

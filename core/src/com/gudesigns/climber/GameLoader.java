@@ -9,10 +9,10 @@ import com.badlogic.gdx.assets.AssetManager;
 
 public class GameLoader extends Game {
 
-	GamePlayScreen gamePlayScreen;
-	BuilderScreen builderScreen;
-	MainMenuScreen menuScreen;
-	LoaderScreen loadScreen;
+	//private GamePlayScreen gamePlayScreen;
+	//private BuilderScreen builderScreen;
+	//private MainMenuScreen menuScreen;
+	private LoaderScreen loadScreen;
 	
 	public AssetManager Assets;
 	
@@ -28,10 +28,17 @@ public class GameLoader extends Game {
 		setScreen(loadScreen);
 	}
 	
-	public void gameSetScreen(Screen s){
-		this.getScreen().dispose();
-		setScreen(s);
+	
+	
+	@Override
+	public void setScreen(Screen screen) {
+		//System.out.println("switching screen");
+		Screen curScreen = this.getScreen();
+		if(curScreen!=null){
+			this.getScreen().dispose();
+		}
 		System.gc();
+		super.setScreen(screen);
 	}
 
 }

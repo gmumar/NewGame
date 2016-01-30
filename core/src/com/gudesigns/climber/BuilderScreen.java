@@ -27,22 +27,22 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
-	GameLoader gameLoader;
-	SpriteBatch batch;
-	CameraManager camera, secondCamera;
-	World world;
-	Stage stage;
-	MenuBuilder menu;
-	FitViewport vp;
-	ShapeRenderer shapeRenderer;
+	//private GameLoader gameLoader;
+	private SpriteBatch batch;
+	private CameraManager camera, secondCamera;
+	private World world;
+	private Stage stage;
+	private MenuBuilder menu;
+	private FitViewport vp;
+	private ShapeRenderer shapeRenderer;
 	
-	Box2DDebugRenderer debugRenderer;
-	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
+	private Box2DDebugRenderer debugRenderer;
+	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
-	float zoom = 0.05f;
+	private float zoom = 0.05f;
 
 	public BuilderScreen(GameLoader gameLoader) {
-		this.gameLoader = gameLoader;
+		//this.gameLoader = gameLoader;
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
@@ -195,6 +195,20 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		Gdx.input.setInputProcessor(null);
 
 	}
+	
+	@Override
+	public void dispose() {
+		batch.dispose();
+		camera = null;
+		secondCamera = null;
+		// these two self destroyed by menu
+		//world.dispose();
+		//stage.dispose();
+		shapeRenderer.dispose();
+		debugRenderer.dispose();
+		touches.clear();
+		touches = null;
+	}
 
 	// ------------------------------------------------------UNUSED------------------------------------------------
 	// //
@@ -207,12 +221,6 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void dispose() {
 		// TODO Auto-generated method stub
 
 	}

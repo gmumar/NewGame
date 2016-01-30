@@ -3,7 +3,6 @@ package GroundWorks;
 import wrapper.CameraManager;
 import Shader.GameMesh;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -12,37 +11,35 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
 public class GroundUnitDescriptor {
-	Vector2 start, end;
-	Fixture fixture;
-	boolean fixtureDeleted = true;
-	Sprite graphic = null, fillerGraphic = null, shadowGraphic;
-	Texture texture = null, filler = null, shadowTexture;
-	String textureName, fillerName;
+	private Vector2 start, end;
+	private Fixture fixture;
+	private boolean fixtureDeleted = true;
+	private Sprite graphic = null, shadowGraphic;
+
 	// ShapeRenderer renderer = new ShapeRenderer();
-	int vertexId = 0;
+	private int vertexId = 0;
 	
-	public GroundUnitDescriptor(Vector2 start, Vector2 end, String image) {
+	/*public GroundUnitDescriptor(Vector2 start, Vector2 end, String image) {
 		this.start = start;
 		this.end = end;
-		this.textureName = image;
-		this.fillerName = null;
+
 
 		initGraphic();
 		//initGraphicFiller();
-	}
+	}*/
 
-	public GroundUnitDescriptor(Vector2 start, Vector2 end, String image,
-			String filler) {
+	public GroundUnitDescriptor(Vector2 start, Vector2 end, boolean initFiller) {
 		this.start = start;
 		this.end = end;
-		this.textureName = image;
-		this.fillerName = filler;
-
-		initGraphic();
-		initGraphicFiller();
+		
+		//initGraphic();
+		if(initFiller)
+			initGraphicFiller();
 	}
 	
-	
+	public int getVertexId(){
+		return vertexId;
+	}
 
 	public Vector2 getStart() {
 		return start;
@@ -52,7 +49,7 @@ public class GroundUnitDescriptor {
 		return end;
 	}
 
-	private void initGraphic() {
+	//private void initGraphic() {
 
 		//this.texture = TextureLibrary.getTexture(textureName);
 		//this.graphic = new Sprite(texture);
@@ -89,7 +86,7 @@ public class GroundUnitDescriptor {
 		this.shadowGraphic
 				.setRotation((float) (baseRadians * MathUtils.radiansToDegrees));
 		this.shadowGraphic.setScale(start.dst(end) / 3.2f, -2);*/
-	}
+	//}
 
 	private void initGraphicFiller() {
 

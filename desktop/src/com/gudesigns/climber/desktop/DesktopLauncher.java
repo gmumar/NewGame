@@ -2,6 +2,7 @@ package com.gudesigns.climber.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Mesh;
 import com.gudesigns.climber.GameLoader;
 
 public class DesktopLauncher {
@@ -10,6 +11,6 @@ public class DesktopLauncher {
 		config.samples = 2;
 		config.width = 1280;
 		config.height = 768;
-		new LwjglApplication(new GameLoader(), config);
+		Mesh.clearAllMeshes(new LwjglApplication(new GameLoader(), config));
 	}
 }

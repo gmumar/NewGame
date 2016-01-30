@@ -12,8 +12,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class GroundDecor {
 	
-	GameState gameState;
-	ArrayList<BaseActor> decorations;
+	private GameState gameState;
+	private ArrayList<BaseActor> decorations;
+	
+	private BaseActor decoration ;
+	private Iterator<BaseActor> iter;
 
 	public GroundDecor( GameState gameState) {
 		decorations = new ArrayList<BaseActor>();
@@ -27,17 +30,17 @@ public class GroundDecor {
 		BaseActor flag = new BaseActor(ComponentNames._CEQUEREDFLAG_.name(), "chequered_flag.png", gameState);
 		flag.setSensor();
 		flag.setBodyType(BodyType.StaticBody);
-		flag.setPosition(lastPos.end.x, (lastPos.end.y + lastPos.start.y)/2 + 3);
+		flag.setPosition(lastPos.getEnd().x, (lastPos.getEnd().y + lastPos.getStart().y)/2 + 3);
 		
 		decorations.add(flag);
 	}
 
 	public void draw(SpriteBatch batch) {
 		
-		Iterator<BaseActor> iter = decorations.iterator();
+		iter = decorations.iterator();
 		
 		while(iter.hasNext()){
-			BaseActor decoration = iter.next();
+			decoration = iter.next();
 			decoration.draw(batch);
 		}
 		

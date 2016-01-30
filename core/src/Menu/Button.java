@@ -12,12 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class Button extends TextButton {
 
-	String name;
-	Skin skin;
-
 	public Button(String name) {
 		super(name, buildDefaultButtonStyle(name));
-		this.name = name;
 
 		this.addListener(new ClickListener() {
 

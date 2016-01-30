@@ -18,17 +18,17 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class TrackBuilder {
 
-	World world;
-	Body floor;
-	EdgeShape edgeShape = new EdgeShape();
-	FixtureDef fixtureDef = new FixtureDef();
-	Body box = null;
+	private World world;
+	private Body floor;
+	private EdgeShape edgeShape = new EdgeShape();
+	private FixtureDef fixtureDef = new FixtureDef();
+	private Body box = null;
 
-	CameraManager camera;
+	private CameraManager camera;
 
-	int SQUARE = 10;
+	private int SQUARE = 10;
 
-	ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
+	private ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
 
 	public TrackBuilder(World world, CameraManager cam) {
 		this.world = world;
@@ -49,11 +49,11 @@ public class TrackBuilder {
 		floor = world.createBody(bodyDef2);
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2( GroundBuilder.UNIT_LENGTH, 0), new Vector2(
-				  GroundBuilder.UNIT_LENGTH, 0), "temp_ground.png");
+				  GroundBuilder.UNIT_LENGTH, 0), false);//, "temp_ground.png");
 		mapList.add(gud);
-		gud.fixture = drawEdge(gud.start, gud.end);
+		gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
 		mapList.add(gud);
-		gud.fixture = drawEdge(gud.start, gud.end);
+		gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
 
 	}
 
@@ -129,16 +129,16 @@ public class TrackBuilder {
 				camera.unproject(point.set(touch.screenX, touch.screenY, 0));
 				GroundUnitDescriptor lastObj = mapList.get(mapList.size() - 1);
 
-				if (point.y < lastObj.end.y + SQUARE
-						&& point.y > lastObj.end.y - SQUARE
-						&& point.x > lastObj.end.x
-						&& point.x < lastObj.end.x + SQUARE) {
+				if (point.y < lastObj.getEnd().y + SQUARE
+						&& point.y > lastObj.getEnd().y - SQUARE
+						&& point.x > lastObj.getEnd().x
+						&& point.x < lastObj.getEnd().x + SQUARE) {
 
 					GroundUnitDescriptor newObj = new GroundUnitDescriptor(
-							lastObj.end, new Vector2(lastObj.end.x + GroundBuilder.UNIT_LENGTH, point.y),
-							"temp_ground.png");//lastObj.end.x + GroundBuilder.UNIT_LENGTH
+							lastObj.getEnd(), new Vector2(lastObj.getEnd().x + GroundBuilder.UNIT_LENGTH, point.y), false);
+							//,"temp_ground.png");//lastObj.end.x + GroundBuilder.UNIT_LENGTH
 
-					Fixture fixture = drawEdge(newObj.start, newObj.end);
+					Fixture fixture = drawEdge(newObj.getStart(), newObj.getEnd());
 					newObj.setFixture(fixture);
 					mapList.add(newObj);
 					
@@ -150,8 +150,8 @@ public class TrackBuilder {
 					}
 				} else {
 					if (box == null) {
-						box = drawBox(lastObj.end.x,
-								lastObj.end.y - SQUARE / 2, (float) SQUARE / 2,
+						box = drawBox(lastObj.getEnd().x,
+								lastObj.getEnd().y - SQUARE / 2, (float) SQUARE / 2,
 								(float) SQUARE);
 					}
 				}

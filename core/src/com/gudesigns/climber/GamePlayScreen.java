@@ -2,7 +2,6 @@ package com.gudesigns.climber;
 
 import java.util.ArrayList;
 
-import throwaway.FullCar;
 import wrapper.CameraManager;
 import wrapper.GameState;
 import wrapper.Globals;
@@ -30,34 +29,45 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GamePlayScreen implements Screen, InputProcessor {
 
-	GameLoader gameLoader;
-	SpriteBatch batch;
-	FullCar fcar;
-	AssembledObject builtCar;
-	World world;
-	CameraManager camera, secondCamera;
-	HUDBuilder hud;
-	Stage stage;
-	FitViewport vp;
-	ShaderProgram shader, colorShader;
+	private GameLoader gameLoader;
+	private SpriteBatch batch;
+	private AssembledObject builtCar;
+	private World world;
+	private CameraManager camera, secondCamera;
+	private HUDBuilder hud;
+	private Stage stage;
+	private FitViewport vp;
+	private ShaderProgram shader, colorShader;
 
-	Rolling rollingAvg;
-	float speedZoom = 0;
+	private Rolling rollingAvg;
+	private float speedZoom = 0;
+	
+	/*Thread calculationThread = new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			while (true ){
+				if(!world.isLocked()){
+					Thread.yield();
+				}
+				world.step(Gdx.graphics.getDeltaTime() / 1.1f, 75, 40);
+			}
+			
+		}
+		
+		
+	});*/
 
-	boolean paused = true;
+	private volatile boolean paused = true;
 
 	public static final float CAMERA_OFFSET = 16;
 
-	GroundBuilder ground;
-	float aspectRatio;
+	private GroundBuilder ground;
 	//Box2DDebugRenderer debugRenderer ;
 
-	ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
+	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
-	final int SKIP_COUNT = 10;
-	int skip_count;
-
-	float timePassed = 0;
+	private float timePassed = 0;
 
 	public GamePlayScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
@@ -75,7 +85,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(new GameState(world, gameLoader));
-		builtCar.setPosition(0, 30);
+		builtCar.setPosition(0, 50);
 
 		ground = new GroundBuilder(new GameState(world, gameLoader), camera);
 
@@ -112,7 +122,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void initHud() {
 
-		hud = new HUDBuilder(stage, secondCamera, ground, gameLoader);
+		hud = new HUDBuilder(stage, ground, gameLoader);
 
 	}
 
@@ -158,8 +168,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
-		Gdx.gl20.glEnable(GL20.GL_BLEND);
-		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		//Gdx.gl20.glEnable(GL20.GL_BLEND);
+		//Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		batch.setProjectionMatrix(camera.combined);
 
@@ -294,6 +304,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		GameMesh.destroy();
 
 	}
+	
+	@Override
+	public void dispose() {
+		batch.dispose();
+		builtCar.dispose();
+		world.dispose();
+		camera = null;
+		hud.dispose();
+		shader.dispose();
+		colorShader.dispose();
+		touches.clear();
+		touches = null;
+	}
+
 
 	// ------------------------------------------------------UNUSED------------------------------------------------
 	// //
@@ -309,13 +333,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// TODO Auto-generated method stub
 		paused = false;
 	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	@Override
 	public boolean keyDown(int keycode) {
 		// TODO Auto-generated method stub

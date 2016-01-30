@@ -11,18 +11,18 @@ import com.badlogic.gdx.utils.Array;
 
 public class JointLimits {
 
-	final static double TORQUE_FACTOR = 9e4;
-	final static double FORCE_FACTOR = 5e3;
-	final static double FORCE_DEVIDER = 5e5;
+	private final static double TORQUE_FACTOR = 9e4;
+	private final static double FORCE_FACTOR = 5e3;
+	private final static double FORCE_DEVIDER = 5e5;
 
-	final static int DEFAULT_BREAKING_TORQUE = (int) (3 * TORQUE_FACTOR);
-	final static int DEFAULT_BREAKING_FORCE = (int) (25 * FORCE_FACTOR);
+	private final static int DEFAULT_BREAKING_TORQUE = (int) (3 * TORQUE_FACTOR);
+	private final static int DEFAULT_BREAKING_FORCE = (int) (25 * FORCE_FACTOR);
 
-	final static int BAR_BAR_BREAKING_TORQUE = (int) (1 * TORQUE_FACTOR);
-	final static int BAR_BAR_BREAKING_FORCE = (int) (20 * FORCE_FACTOR);
+	private final static int BAR_BAR_BREAKING_TORQUE = (int) (1 * TORQUE_FACTOR);
+	private final static int BAR_BAR_BREAKING_FORCE = (int) (20 * FORCE_FACTOR);
 
-	final static int LIFE_BAR_BREAKING_TORQUE = (int) (1 * TORQUE_FACTOR);
-	final static int LIFE_BAR_BREAKING_FORCE = (int) (1 * FORCE_FACTOR);
+	private final static int LIFE_BAR_BREAKING_TORQUE = (int) (1 * TORQUE_FACTOR);
+	private final static int LIFE_BAR_BREAKING_FORCE = (int) (1 * FORCE_FACTOR);
 
 	public static void enableJointLimits(World world, float step) {
 

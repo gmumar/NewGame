@@ -19,16 +19,14 @@ public class LoaderScreen implements Screen {
 	private static final float LOADER_Y = 0;
 	private static final float LOADER_LENGTH = Globals.GameWidth ;
 	
-	GameLoader gameLoader;
-	CameraManager camera, secondCamera;
-	SpriteBatch batch;
-	Stage stage;
-	FitViewport vp;
-	ShapeRenderer loaderBar;
+	private GameLoader gameLoader;
+	private CameraManager camera;
+	private SpriteBatch batch;
+	private Stage stage;
+	private FitViewport vp;
+	private ShapeRenderer loaderBar;
 	
-	float progress = 0f;
-
-	float time=0;
+	private float progress = 0f;
 
 	public LoaderScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;

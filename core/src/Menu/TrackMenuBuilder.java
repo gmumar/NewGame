@@ -11,25 +11,21 @@ import com.gudesigns.climber.MainMenuScreen;
 
 public class TrackMenuBuilder {
 
-	final float BOX_SIZE = 0.0001f;
-	final float ROTATION_SIZE = 30;
+	//private final float BOX_SIZE = 0.0001f;
+	//private final float ROTATION_SIZE = 30;
 
-	Stage stage;
+	private Button zoomIn, zoomOut, panLeft, panRight, build, exit;
 
-	Button zoomIn, zoomOut, panLeft, panRight, build, exit;
-
-	CameraManager camera;
-	GameLoader gameLoader;
-	TrackBuilder builder;
-	JSONCompiler compiler;
+	private CameraManager camera;
+	private JSONCompiler compiler;
 
 	public TrackMenuBuilder(Stage stage, CameraManager secondCamera,
 			final GameLoader gameLoader, final TrackBuilder trackBuilder) {
 
-		this.stage = stage;
+		//this.stage = stage;
 		this.camera = secondCamera;
-		this.gameLoader = gameLoader;
-		this.builder = trackBuilder;
+		//this.gameLoader = gameLoader;
+		//this.builder = trackBuilder;
 		
 		compiler = new JSONCompiler();
 
@@ -61,7 +57,7 @@ public class TrackMenuBuilder {
 				compiler
 				.compile(
 						trackBuilder.getMapList());
-				gameLoader.gameSetScreen(new GamePlayScreen(gameLoader));
+				gameLoader.setScreen(new GamePlayScreen(gameLoader));
 				Destroy();
 			}
 

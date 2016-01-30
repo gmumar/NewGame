@@ -1,6 +1,5 @@
 package Menu;
 
-import wrapper.CameraManager;
 import wrapper.Globals;
 import GroundWorks.GroundBuilder;
 
@@ -12,26 +11,19 @@ import com.gudesigns.climber.MainMenuScreen;
 
 public class HUDBuilder {
 
-	Stage stage;
+	private Button exit, restart;
+	private TextBox fps, version;
+	private ProgressBarW mapProgress;
 
-	Button exit, restart;
-	TextBox fps, version;
-	ProgressBarW mapProgress;
-
-	CameraManager camera;
-	GameLoader gameLoader;
-	GroundBuilder ground;
+	private GroundBuilder ground;
 	
-	float progress;
+	private float progress;
 
-	boolean init = false;
+	private boolean init = false;
 
-	public HUDBuilder(Stage stage, CameraManager secondCamera,
+	public HUDBuilder(Stage stage,
 			GroundBuilder ground, final GameLoader gameLoader) {
 
-		this.stage = stage;
-		this.camera = secondCamera;
-		this.gameLoader = gameLoader;
 		this.ground = ground;
 
 		//Buttons
@@ -48,6 +40,7 @@ public class HUDBuilder {
 		restart = new Button("restart") {
 			@Override
 			public void Clicked() {
+				System.out.println("restarting");
 				gameLoader.setScreen(new GamePlayScreen(gameLoader));
 			}
 		};
@@ -88,5 +81,11 @@ public class HUDBuilder {
 		mapProgress.act(delta);
 
 	}
+
+	public void dispose() {
+		
+	}
+
+
 
 }

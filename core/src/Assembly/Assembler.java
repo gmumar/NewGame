@@ -32,8 +32,6 @@ public class Assembler {
 
 	final private static short CAR = -2;
 
-	int basePartId;
-
 	public AssembledObject assembleObject(GameState gameState) {
 		AssembledObject obj = new AssembledObject();
 		Preferences prefs = Gdx.app
@@ -193,7 +191,7 @@ public class Assembler {
 			point = iter.next();
 			point.x += offset.x;
 			point.y += offset.y;
-			GroundUnitDescriptor gud = new GroundUnitDescriptor(lastPoint, point, "texture.png");
+			GroundUnitDescriptor gud = new GroundUnitDescriptor(lastPoint, point, false);//, "texture.png");
 			retList.add(gud);
 			
 		}

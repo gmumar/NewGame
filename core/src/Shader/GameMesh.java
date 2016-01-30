@@ -19,7 +19,9 @@ class MeshDescriptor {
 };
 
 public class GameMesh {
-	static Mesh mesh;
+	private static Mesh mesh;
+	private static MeshDescriptor layer;
+	private static MeshDescriptor ret ;
 
 	// Position attribute - (x, y)
 	public static final int POSITION_COMPONENTS = 2;
@@ -38,7 +40,7 @@ public class GameMesh {
 	public static final int MAX_TRIS = 1;
 
 	// The maximum number of vertices our mesh will hold
-	public static final int MAX_VERTS = 5000;//MAX_TRIS * 3;
+	public static final int MAX_VERTS = 7000;//MAX_TRIS * 3;
 
 	// The array which holds all the data, interleaved like so:
 	// x, y, r, g, b, a
@@ -54,14 +56,13 @@ public class GameMesh {
 
 	static public void create(CameraManager cam, ShaderProgram shader) {
 		initArrays();
-		Gdx.gl.glClear(GL20.GL_ATTACHED_SHADERS);
 		mesh = new Mesh(false, MAX_VERTS, MAX_VERTS, 
 				new VertexAttribute(Usage.Position,	POSITION_COMPONENTS, "a_position"), 
 				new VertexAttribute(Usage.ColorUnpacked, COLOR_COMPONENTS, "a_color"), 
 				new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord0"));
 		
 		
-		//for(int i=0;i<10;i++)
+		//for(int i=0;i<150;i++) addPoint(0,0);
 		//addTriangle(0, 0, 0, 0, 0, 0, Globals.BLUE);
 
 	}
@@ -104,7 +105,7 @@ public class GameMesh {
 	
 	
 	static private MeshDescriptor setUpLayer(int start, int end, float depth, boolean drawTexture, Color color, float offset){
-		MeshDescriptor ret = new MeshDescriptor();
+		ret = new MeshDescriptor();
 		int vertexCount = (end - start)*2;
 		
 		ret.vertices  = new float[vertexCount];
@@ -173,14 +174,18 @@ public class GameMesh {
 	static public void flush(CameraManager cam, ShaderProgram shader,
 			int start, int end, Texture texture, float depth, Color color, float offset) {
 		
-		MeshDescriptor layer = setUpLayer(start, end, depth, texture==null?true:false, color, offset);
+		layer = setUpLayer(start, end, depth, texture==null?true:false, color, offset);
 		
 		mesh.setVertices(layer.vertices);
 		mesh.setIndices(layer.indices);
+		
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
+		
+		
 		if(texture == null){
-			Gdx.gl.glEnable(GL20.GL_BLEND);
-			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			
 			// update the projection matrix so our triangles are rendered in 2D
 			shader.setUniformMatrix("u_projTrans", cam.combined);
 			// render the mesh
@@ -188,19 +193,17 @@ public class GameMesh {
 	
 		}else{
 			// no need for depth...
-			//Gdx.gl.glDepthMask(false);
+			Gdx.gl.glDepthMask(false);
 	
 			// enable blending, for alpha
-			Gdx.gl.glEnable(GL20.GL_BLEND);
 			Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
-			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	
 			// update the camera with our Y-up coordiantes
 			// cam.setToOrtho(false, Gdx.graphics.getWidth(),
 			// Gdx.graphics.getHeight());
 	
 			// start the shader before setting any uniforms
-			texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+			texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.Repeat);
 			texture.bind(0);
 			
 			// update the projection matrix so our triangles are rendered in 2D
@@ -213,7 +216,7 @@ public class GameMesh {
 	
 	
 			// re-enable depth to reset states to their default
-			//Gdx.gl.glDepthMask(true);
+			Gdx.gl.glDepthMask(true);
 		}
 
 	}

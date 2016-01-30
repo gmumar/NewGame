@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class CameraManager extends OrthographicCamera {
 	
-	float max_length = 0;
+	private float max_length = 0;
 
 	public CameraManager(int screenWidth, int screenHeight) {
 		super(screenWidth,screenHeight);

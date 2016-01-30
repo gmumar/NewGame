@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class PopQueManager {
 
-	ArrayList<PopQueObject> que = new ArrayList<PopQueObject>();
+	private ArrayList<PopQueObject> que = new ArrayList<PopQueObject>();
 	private static float timePassed = 0;
 	private Stage stage;
 	
