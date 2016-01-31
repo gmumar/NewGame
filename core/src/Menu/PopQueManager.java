@@ -51,14 +51,33 @@ public class PopQueManager {
 
 	private void handlePop(PopQueObject popQueObject){
 		
-		if (popQueObject.getType() == PopQueObjectType.TEST){
+		if (popQueObject.getType() == PopQueObjectType.TEST)
+		{
 			 createDialog();
-		} else if(popQueObject.getType() == PopQueObjectType.DELETE){
+		}
+		else if(popQueObject.getType() == PopQueObjectType.LOADING)
+		{
+			createLoadingDialog();
+		}
+		else if(popQueObject.getType() == PopQueObjectType.DELETE)
+		{
 			dialog.hide();
 		}
 		
 	}
 	
+	private void createLoadingDialog() {
+		Skin skin = new Skin();
+		BitmapFont font = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
+				Color.BLACK);
+		skin.add("default-font", font);
+		skin.load(Gdx.files.internal("skins/dialogSkin.json"));
+
+		dialog = new GameDialog("Loading", skin, "default");
+		dialog.show(stage);
+		
+	}
+
 	private void createDialog(){
 		
 		Skin skin = new Skin();
@@ -67,7 +86,7 @@ public class PopQueManager {
 		skin.add("default-font", font);
 		skin.load(Gdx.files.internal("skins/dialogSkin.json"));
 
-		dialog = new GameDialog("", skin, "default");
+		dialog = new GameDialog("blaa", skin, "default");
 		dialog.show(stage);
 	}
 }

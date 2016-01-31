@@ -42,21 +42,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private Rolling rollingAvg;
 	private float speedZoom = 0;
 	
-	/*Thread calculationThread = new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			while (true ){
-				if(!world.isLocked()){
-					Thread.yield();
-				}
-				world.step(Gdx.graphics.getDeltaTime() / 1.1f, 75, 40);
-			}
-			
-		}
-		
-		
-	});*/
 
 	private volatile boolean paused = true;
 
@@ -151,7 +136,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		hud.update(delta);
 		// stage.act(Gdx.graphics.getFramesPerSecond());
 		stage.draw();
-		stage.act(Gdx.graphics.getDeltaTime());
+		//stage.act(Gdx.graphics.getDeltaTime());
 
 	}
 

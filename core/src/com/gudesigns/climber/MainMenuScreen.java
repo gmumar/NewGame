@@ -4,8 +4,14 @@ import wrapper.CameraManager;
 import wrapper.Globals;
 import Menu.Button;
 import Menu.PopQueManager;
+import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
+import RESTWrapper.REST;
+import RESTWrapper.REST.REST_PATHS;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -27,6 +33,33 @@ public class MainMenuScreen implements Screen {
 		initStage();
 		initButtons();
 
+		PopQueObject obj = new PopQueObject();
+		obj.setType(PopQueObjectType.LOADING);
+		popQueManager.push(obj);
+
+		REST.getData(REST_PATHS.cars.name(), new HttpResponseListener() {
+			
+			@Override
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				System.out.println(httpResponse.getResultAsString());
+				
+				PopQueObject obj = new PopQueObject();
+				obj.setType(PopQueObjectType.DELETE);
+				popQueManager.push(obj);
+			}
+			
+			@Override
+			public void failed(Throwable t) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void cancelled() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 
 	private void initButtons() {
