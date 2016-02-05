@@ -2,7 +2,7 @@ package wrapper;
 
 import java.util.Iterator;
 
-import Component.ComponentBuilder.ComponentNames;
+import Component.ComponentNames;
 
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointDef.JointType;
@@ -24,106 +24,90 @@ public class JointLimits {
 	private final static int LIFE_BAR_BREAKING_TORQUE = (int) (1 * TORQUE_FACTOR);
 	private final static int LIFE_BAR_BREAKING_FORCE = (int) (1 * FORCE_FACTOR);
 
+	private static final Array<Joint> joints = new Array<Joint>();
+	private static Iterator<Joint> iter;
+	private static Joint joint;
+	private static float force ;
+	private static float torque;
+
 	public static void enableJointLimits(World world, float step) {
 
-		Array<Joint> joints = new Array<Joint>();
 		world.getJoints(joints);
 
-		Iterator<Joint> iter = joints.iterator();
+		iter = joints.iterator();
 		while (iter.hasNext()) {
-			Joint joint = iter.next();
+			joint = iter.next();
 
 			if (joint.getType() == JointType.PrismaticJoint) {
 				continue;
 			}
 
-			float force = (float) ((joint.getReactionForce(1 / step).len2()) / FORCE_DEVIDER);
-			float torque = joint.getReactionTorque(1 / step);
+			force = (float) ((joint.getReactionForce(1 / step).len2()) / FORCE_DEVIDER);
+			torque = joint.getReactionTorque(1 / step);
 
-			if (jointBetween(joint, ComponentNames._AXLE_.name(),
-					ComponentNames._TIRE_.name())) {
+			if (jointBetween(joint, ComponentNames.AXLE, ComponentNames.TIRE)) {
 				continue;
-			} 
-			else if (jointHas(joint, ComponentNames._LIFE_.name())) {
+			} else if (jointHas(joint, ComponentNames.LIFE)) {
 				if (torque > LIFE_BAR_BREAKING_TORQUE) {
-					System.out.println("break 2 torque " + torque);
+					//System.out.println("break 2 torque " + torque);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > LIFE_BAR_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					System.out.println("break 2 force " + force);
+					//System.out.println("break 2 force " + force);
 					continue;
 				}
-			} else if (jointHas(joint, ComponentNames._BAR3_.name())) {
+			} else if (jointHas(joint, ComponentNames.BAR3)) {
 				if (torque > BAR_BAR_BREAKING_TORQUE) {
 					world.destroyJoint(joint);
-					System.out.println("break 1 torque " + torque);
+					//System.out.println("break 1 torque " + torque);
 					continue;
 				}
 
 				if (force > BAR_BAR_BREAKING_FORCE) {
 					world.destroyJoint(joint);
 					System.out.println("break 1 force " + force);
-					continue;
-				}
-			}  else {
-				if (torque > DEFAULT_BREAKING_TORQUE) {
-					System.out.println("break default torque " + torque);
-					world.destroyJoint(joint);
-					continue;
-				}
-
-				if (force > DEFAULT_BREAKING_FORCE) {
-					world.destroyJoint(joint);
-					System.out.println("break default force " + force);
-					continue;
-				}
-			}
-			
-			/*if (jointBetween(joint, ComponentNames._AXLE_.name(),
-					ComponentNames._TIRE_.name())) {
-				continue;
-			} else if (jointBetween(joint, ComponentNames._BAR3_.name(),
-					ComponentNames._BAR3_.name())) {
-				if (torque > BAR_BAR_BREAKING_TORQUE) {
-					world.destroyJoint(joint);
-					System.out.println("break 1 torque " + torque);
-					continue;
-				}
-
-				if (force > BAR_BAR_BREAKING_FORCE) {
-					world.destroyJoint(joint);
-					System.out.println("break 1 force " + force);
-					continue;
-				}
-			} else if (jointBetween(joint, ComponentNames._LIFE_.name(),
-					ComponentNames._BAR3_.name())) {
-				if (torque > LIFE_BAR_BREAKING_TORQUE) {
-					System.out.println("break 2 torque " + torque);
-					world.destroyJoint(joint);
-					continue;
-				}
-
-				if (force > LIFE_BAR_BREAKING_FORCE) {
-					world.destroyJoint(joint);
-					System.out.println("break 2 force " + force);
 					continue;
 				}
 			} else {
 				if (torque > DEFAULT_BREAKING_TORQUE) {
-					System.out.println("break default torque " + torque);
+					//System.out.println("break default torque " + torque);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > DEFAULT_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					System.out.println("break default force " + force);
+					//System.out.println("break default force " + force);
 					continue;
 				}
-			}*/
+			}
+
+			/*
+			 * if (jointBetween(joint, ComponentNames.AXLE,
+			 * ComponentNames.TIRE)) { continue; } else if (jointBetween(joint,
+			 * ComponentNames.BAR3, ComponentNames.BAR3)) { if (torque >
+			 * BAR_BAR_BREAKING_TORQUE) { world.destroyJoint(joint);
+			 * System.out.println("break 1 torque " + torque); continue; }
+			 * 
+			 * if (force > BAR_BAR_BREAKING_FORCE) { world.destroyJoint(joint);
+			 * System.out.println("break 1 force " + force); continue; } } else
+			 * if (jointBetween(joint, ComponentNames.LIFE,
+			 * ComponentNames.BAR3)) { if (torque > LIFE_BAR_BREAKING_TORQUE) {
+			 * System.out.println("break 2 torque " + torque);
+			 * world.destroyJoint(joint); continue; }
+			 * 
+			 * if (force > LIFE_BAR_BREAKING_FORCE) { world.destroyJoint(joint);
+			 * System.out.println("break 2 force " + force); continue; } } else
+			 * { if (torque > DEFAULT_BREAKING_TORQUE) {
+			 * System.out.println("break default torque " + torque);
+			 * world.destroyJoint(joint); continue; }
+			 * 
+			 * if (force > DEFAULT_BREAKING_FORCE) { world.destroyJoint(joint);
+			 * System.out.println("break default force " + force); continue; } }
+			 */
 		}
 	}
 

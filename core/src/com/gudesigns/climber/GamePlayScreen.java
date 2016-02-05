@@ -41,11 +41,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private Rolling rollingAvg;
 	private float speedZoom = 0;
+	private float dlTime;
 	
 
-	private volatile boolean paused = true;
+	//private volatile boolean paused = true;
 
-	public static final float CAMERA_OFFSET = 16;
+	public static final float CAMERA_OFFSET = 12;
 
 	private GroundBuilder ground;
 	//Box2DDebugRenderer debugRenderer ;
@@ -72,11 +73,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		builtCar = asm.assembleObject(new GameState(world, gameLoader));
 		builtCar.setPosition(0, 50);
 
-		ground = new GroundBuilder(new GameState(world, gameLoader), camera);
-
 		initShader();
+		ground = new GroundBuilder(new GameState(world, gameLoader), camera, shader, colorShader);
+		
 		initHud();
-
+		
 		rollingAvg = new Rolling(60);
 
 	}
@@ -113,8 +114,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
-
-		handleInput(touches);
+		if (timePassed > 3) {
+			handleInput(touches);
+		}
 
 		/*
 		 * 
@@ -124,13 +126,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// shader.begin();
 		// shader.setUniformMatrix("u_projTrans", batch.getProjectionMatrix());
 		// shader.setUniformi("u_texture", 0);
-		ground.drawShapes(camera, shader, colorShader);
+		ground.drawShapes(camera);
 		// shader.end();
 		attachCameraTo(builtCar.getBasePart());
 
 		batch.begin();
 		ground.draw(camera, batch);
-		builtCar.draw(batch);
+		if (timePassed > 2)  builtCar.draw(batch);
 		batch.end();
 
 		hud.update(delta);
@@ -147,8 +149,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor((float) 118 / 256, (float) 211 / 256,
-				(float) 222 / 256, 1);
+		dlTime = Gdx.graphics.getDeltaTime() / 1.1f;
+		
+		Gdx.gl.glClearColor(Globals.SKY_BLUE.r,Globals.SKY_BLUE.g,Globals.SKY_BLUE.b,Globals.SKY_BLUE.a);
 		// Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -159,27 +162,25 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch.setProjectionMatrix(camera.combined);
 
 		//debugRenderer.render(world, camera.combined);
-		if (!paused) {
-			world.step(Gdx.graphics.getDeltaTime() / 1.1f, 75, 40);
+		if (timePassed > 2) {
+			world.step(dlTime, 40, 40);
 		}
 
-		if (timePassed > 0.2f) {
-			paused = false;
-		}
+		//if (timePassed > 0.2f) {
+		//	paused = false;
+		//}
 
 		if (timePassed > 5) {
 			// enable joint checking
 			// skip_count++;
 			// if (skip_count >= SKIP_COUNT) {
 			// skip_count = 0;
-			if (!paused) {
-			JointLimits.enableJointLimits(world,
-					Gdx.graphics.getDeltaTime() / 1.1f);
-			}
+		
+			JointLimits.enableJointLimits(world, dlTime);
 			// }
 
 		} else {
-			timePassed += Gdx.graphics.getDeltaTime() / 1.1f;
+			timePassed +=dlTime;
 		}
 	}
 
@@ -263,13 +264,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		if (pointer < Globals.MAX_FINGERS) {
+		/*if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
 
-			return false;
-		}
-		return false;
+			return true;
+		}*/
+		return true;
 	}
 
 	@Override
@@ -310,13 +311,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		paused = true;
+		//paused = true;
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		paused = false;
+		//paused = false;
 	}
 	
 	@Override

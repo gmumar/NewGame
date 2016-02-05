@@ -80,11 +80,16 @@ public class GroundBuilder {
 	private GroundUnitDescriptor gud;
 	
 	private static Texture groundFiller ;
+	
+	private static ShaderProgram shader;
+	private static ShaderProgram colorShader;
 
-	public GroundBuilder(GameState gameState, CameraManager camera) {
+	public GroundBuilder(GameState gameState, CameraManager camera, ShaderProgram shader, ShaderProgram colorShader) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
+		GroundBuilder.shader = shader;
+		GroundBuilder.colorShader = colorShader;
 
 		createFloor();
 		decor = new GroundDecor(gameState);
@@ -282,8 +287,7 @@ public class GroundBuilder {
 
 	}
 
-	public void drawShapes(CameraManager cam, ShaderProgram shader,
-			ShaderProgram colorShader) {
+	public void drawShapes(CameraManager cam) {
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
 		 * 

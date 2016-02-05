@@ -1,20 +1,14 @@
 package throwaway;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import Assembly.Assembler;
-import Component.ComponentBuilder.ComponentNames;
-import JSONifier.JSONComponent;
-import JSONifier.JSONJoint;
-import JSONifier.JSONParent;
-import JSONifier.Properties;
 
 public class TriangleCar {
 	
 	public static String makeSomething() {
 
-		JSONParent car = new JSONParent();
+		System.out.println("trash");
+		
+		return null;
+		/*JSONParent car = new JSONParent();
 
 		// component list
 		ArrayList<JSONComponent> parts = new ArrayList<JSONComponent>();
@@ -107,7 +101,7 @@ public class TriangleCar {
 
 		car.setJointList(joints);
 
-		return car.jsonify();
+		return car.jsonify();*/
 	}
 
 }

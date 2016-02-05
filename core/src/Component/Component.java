@@ -8,7 +8,6 @@ import java.util.Set;
 
 import wrapper.BaseActor;
 import Assembly.Assembler;
-import Component.ComponentBuilder.ComponentNames;
 import JSONifier.JSONComponent;
 import JSONifier.Properties;
 
@@ -61,12 +60,12 @@ public class Component {
 			Entry<String, String> property = iter.next();
 
 			if (type == PropertyTypes.ABSOLUTE || type == PropertyTypes.BOTH) {
-				if (property.getKey().compareTo(Properties.ROTATION.name()) == 0) {
+				if (property.getKey().compareTo(Properties.ROTATION) == 0) {
 					String value = property.getValue();
 					this.object.setRotation(Float.parseFloat(value));
 				}
 
-				if (property.getKey().compareTo(Properties.MOTOR.name()) == 0) {
+				if (property.getKey().compareTo(Properties.MOTOR) == 0) {
 					String value = property.getValue();
 
 					if (value.compareTo("1") == 0) {
@@ -79,7 +78,7 @@ public class Component {
 			
 			if (type == PropertyTypes.RELATIVE || type == PropertyTypes.BOTH) {
 
-				if (property.getKey().compareTo(Properties.POSITION.name()) == 0) {
+				if (property.getKey().compareTo(Properties.POSITION) == 0) {
 					String[] values = property.getValue().split(",");
 					this.setPosition(Float.parseFloat(values[0]),
 							Float.parseFloat(values[1]));
@@ -137,17 +136,17 @@ public class Component {
 
 		HashMap<String, String> prop = new HashMap<String, String>();
 		prop.put(
-				Properties.ROTATION.name(),
+				Properties.ROTATION,
 				Float.toString(this.getObject().getRotation()
 						* MathUtils.radiansToDegrees));// In radians
-		prop.put(Properties.POSITION.name(), this.getObject().getPosition().x
+		prop.put(Properties.POSITION, this.getObject().getPosition().x
 				+ "," + this.getObject().getPosition().y); // "-10,5"
 
-		if (name.contains(ComponentNames._TIRE_.name())) {
-			prop.put(Properties.MOTOR.name(), "1");
-		} else if (name.contains(ComponentNames._SPRINGJOINT_.name())) {
-			prop.put(Properties.TYPE.name(),
-					ComponentNames._SPRINGJOINT_.name());
+		if (name.contains(ComponentNames.TIRE)) {
+			prop.put(Properties.MOTOR, "1");
+		} else if (name.contains(ComponentNames.SPRINGJOINT)) {
+			prop.put(Properties.TYPE,
+					ComponentNames.SPRINGJOINT);
 		}
 		jComponent.setProperties(prop);
 
@@ -159,10 +158,10 @@ public class Component {
 		jComponent.setComponentName(name);
 
 		HashMap<String, String> prop = new HashMap<String, String>();
-		prop.put(Properties.ROTATION.name(),
+		prop.put(Properties.ROTATION,
 				Float.toString(body.getRotation() * MathUtils.radiansToDegrees));// In
 																					// radians
-		prop.put(Properties.POSITION.name(),
+		prop.put(Properties.POSITION,
 				body.getPosition().x + "," + body.getPosition().y); // "-10,5"
 
 		jComponent.setProperties(prop);

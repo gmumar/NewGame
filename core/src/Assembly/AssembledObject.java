@@ -7,7 +7,7 @@ import wrapper.BaseActor;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import Component.Component;
-import Component.ComponentBuilder.ComponentNames;
+import Component.ComponentNames;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -31,6 +31,10 @@ public class AssembledObject {
 	private Iterator<BaseActor> driveListIter;
 	private BaseActor comp;
 
+	private Iterator<Component> iter;
+	//private ArrayList<Component> delayedDraw = new ArrayList<Component>();
+	private Component part;
+	
 	public Body getBasePart() {
 		return basePart;
 	}
@@ -46,7 +50,7 @@ public class AssembledObject {
 
 		while (iter.hasNext()) {
 			Component part = iter.next();
-			if (part.getComponentName().contains(ComponentNames._LIFE_.name())) {
+			if (part.getComponentName().contains(ComponentNames.LIFE)) {
 				this.basePart = part.getJointBodies().get(1).getPhysicsBody();//.getObject().getPhysicsBody();
 			}
 		}
@@ -137,10 +141,24 @@ public class AssembledObject {
 	}
 
 	public void draw(SpriteBatch batch) {
-		Iterator<Component> iter = partList.iterator();
+		iter = partList.iterator();
+		
+		while (iter.hasNext()) {
+			part = iter.next();
+			//if(part.getComponentName().contains(ComponentNames.SPRINGJOINT)){
+			//	delayedDraw.add(part);
+			//}else{
+				part.draw(batch);
+			//}
+		}
+		
+		/*iter = delayedDraw.iterator();
 		while (iter.hasNext()) {
 			iter.next().draw(batch);
 		}
+		
+		delayedDraw.clear();
+		*/
 	}
 
 	public void addToDriveList(Component c) {
@@ -151,7 +169,7 @@ public class AssembledObject {
 		// c.getObject().getPhysicsBody().setAngularDamping(0.5f);
 
 		System.out.println(c.getComponentName());
-		if (c.getComponentName().contains(ComponentNames._TIRE_.name())) {
+		if (c.getComponentName().contains(ComponentNames.TIRE)) {
 			ArrayList<BaseActor> bodies = c.getJointBodies();
 			driveList.add(bodies.get(0));
 			bodies.get(0).getPhysicsBody().setAngularDamping(ANGULAR_DAMPING);

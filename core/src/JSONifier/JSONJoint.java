@@ -6,9 +6,9 @@ import com.badlogic.gdx.utils.Json;
 
 public class JSONJoint {
 
-		public String mount1;
-		public String mount2;
-		public HashMap<String, String> properties;
+		public String m1;
+		public String m2;
+		public HashMap<String, String> props;
 		
 		public String jsonify(){
 			Json json = new Json();
@@ -24,27 +24,27 @@ public class JSONJoint {
 		}
 
 		public String getMount1() {
-			return mount1;
+			return m1;
 		}
 
 		public void setMount1(String mount1) {
-			this.mount1 = mount1;
+			this.m1 = mount1;
 		}
 
 		public String getMount2() {
-			return mount2;
+			return m2;
 		}
 
 		public void setMount2(String mount2) {
-			this.mount2 = mount2;
+			this.m2 = mount2;
 		}
 
 		public HashMap<String, String> getProperties() {
-			return properties;
+			return props;
 		}
 
 		public void setProperties(HashMap<String, String> properties) {
-			this.properties = properties;
+			this.props = properties;
 		}
 		
 		

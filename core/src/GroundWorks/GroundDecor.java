@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import wrapper.BaseActor;
 import wrapper.GameState;
-import Component.ComponentBuilder.ComponentNames;
+import Component.ComponentNames;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -27,7 +27,7 @@ public class GroundDecor {
 		
 		GroundUnitDescriptor lastPos = preMadeMapList.get(preMadeMapList.size()-1);
 		
-		BaseActor flag = new BaseActor(ComponentNames._CEQUEREDFLAG_.name(), "chequered_flag.png", gameState);
+		BaseActor flag = new BaseActor(ComponentNames.CEQUEREDFLAG, "chequered_flag.png", gameState);
 		flag.setSensor();
 		flag.setBodyType(BodyType.StaticBody);
 		flag.setPosition(lastPos.getEnd().x, (lastPos.getEnd().y + lastPos.getStart().y)/2 + 3);

@@ -19,6 +19,8 @@ public class Globals {
 	final static public int GameWidth = 710;
 	
 	final static public Color BLUE = new Color(0.3f, 0.3f, 1, 1);
+	final static public Color SKY_BLUE = new Color((float) 118 / 256, (float) 211 / 256,
+			(float) 222 / 256, 1);
 	final static public Color GREEN = new Color((float)13/256,(float)142/256,(float)0/256, 1.0f);
 	final static public Color GREEN1 = new Color((float)20/256,(float)213/256,(float)0/256, 1.0f);
 	
@@ -66,8 +68,8 @@ public class Globals {
 
 			if (joinIn.getMount1().compareTo(join.getMount1()) == 0
 					&& joinIn.getMount2().compareTo(join.getMount2()) == 0
-					&& joinIn.properties != null
-					&& joinIn.properties.size() == join.properties.size()) {
+					&& joinIn.props != null
+					&& joinIn.props.size() == join.props.size()) {
 				return true;
 			}
 

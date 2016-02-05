@@ -11,8 +11,8 @@ import wrapper.Globals;
 import Component.Component;
 import Component.Component.PropertyTypes;
 import Component.ComponentBuilder;
-import Component.ComponentBuilder.ComponentNames;
-import Component.ComponentBuilder.ComponentSubNames;
+import Component.ComponentNames;
+import Component.ComponentSubNames;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONComponent;
 import JSONifier.JSONJoint;
@@ -54,15 +54,15 @@ public class Assembler {
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
 
-			String componentAName = Globals.parseName(join.mount1)[0];
+			String componentAName = Globals.parseName(join.m1)[0];
 			// System.out.println(componentAName);
 			BaseActor bodyA = parts.get(componentAName).getObject();
-			int componentAMountId = Globals.getMountId(join.mount1);
+			int componentAMountId = Globals.getMountId(join.m1);
 
-			String componentBName = Globals.parseName(join.mount2)[0];
+			String componentBName = Globals.parseName(join.m2)[0];
 			// System.out.println(componentBName);
 			BaseActor bodyB = parts.get(componentBName).getObject();
-			int componentBMountId = Globals.getMountId(join.mount2);
+			int componentBMountId = Globals.getMountId(join.m2);
 
 			{
 				/*RevoluteJointDef rJoint = new RevoluteJointDef();
@@ -116,7 +116,7 @@ public class Assembler {
 
 			System.out.println("Extracting: " + componentName);
 			
-			if (componentName.contains(ComponentNames._SPRINGJOINT_.name()) ) {
+			if (componentName.contains(ComponentNames.SPRINGJOINT) ) {
 				componentList = ComponentBuilder.buildJointComponent(
 						componentName, gameState);
 
@@ -137,16 +137,16 @@ public class Assembler {
 				componentList.get(1).applyProperties(sourceComponent.getProperties(),PropertyTypes.ABSOLUTE);
 				
 				componentList.get(0).setComponentName(jointComponentName + NAME_SUBNAME_SPLIT
-						+ ComponentSubNames._UPPER_.name() + NAME_ID_SPLIT
+						+ ComponentSubNames.UPPER + NAME_ID_SPLIT
 						+ jointComponentId);
 				
 				componentList.get(1).setComponentName(jointComponentName + NAME_SUBNAME_SPLIT
-						+ ComponentSubNames._LOWER_.name() + NAME_ID_SPLIT
+						+ ComponentSubNames.LOWER + NAME_ID_SPLIT
 						+ jointComponentId);
 				
 				ret.put(componentList.get(0).getComponentName(), componentList.get(0));
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
-						+ ComponentSubNames._LOWER_.name() + NAME_ID_SPLIT
+						+ ComponentSubNames.LOWER + NAME_ID_SPLIT
 						+ jointComponentId, componentList.get(1));
 
 			} else {

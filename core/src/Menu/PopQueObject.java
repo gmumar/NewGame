@@ -6,6 +6,10 @@ public class PopQueObject {
 
 	private PopQueObjectType type;
 	
+	public PopQueObject(PopQueObjectType type){
+		this.type = type;
+	}
+	
 	public PopQueObjectType getType() {
 		return type;
 	}

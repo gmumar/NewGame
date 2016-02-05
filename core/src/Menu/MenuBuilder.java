@@ -7,12 +7,14 @@ import java.util.Iterator;
 import wrapper.BaseActor;
 import wrapper.CameraManager;
 import wrapper.GameState;
+import wrapper.Globals;
 import Assembly.Assembler;
 import Assembly.AssemblyRules;
 import Component.Component;
 import Component.ComponentBuilder;
-import Component.ComponentBuilder.ComponentNames;
+import Component.ComponentNames;
 import JSONifier.JSONCompiler;
+import RESTWrapper.BackendFunctions;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -51,7 +53,7 @@ public class MenuBuilder {
 	private World world;
 
 	private Button but, tire_but, spring_but, zoomIn, zoomOut, rotateLeft, rotateRight,
-			build, exit;
+			build, exit, upload;
 
 	private Vector3 mousePoint = new Vector3();
 	private Body hitBody, lastSelected = null, baseObject;
@@ -70,17 +72,20 @@ public class MenuBuilder {
 
 	private Vector2 relativeVector = new Vector2();
 
-	private ShapeRenderer fixtureRenderer;
+	private static ShapeRenderer fixtureRenderer;
+	
+	private BackendFunctions backend;
 
 	public MenuBuilder(final GameState gameState, Stage stage,
 			CameraManager secondCamera, ShapeRenderer shapeRenderer) {
 
+		this.backend = new BackendFunctions();
 		this.world = gameState.getWorld();
 		this.stage = stage;
 		this.camera = secondCamera;
 		this.mouseJoined = false;
 		this.gameLoader = gameState.getGameLoader();
-		this.fixtureRenderer = shapeRenderer;
+		MenuBuilder.fixtureRenderer = shapeRenderer;
 
 		BodyDef bodyDef = new BodyDef();
 		world.createBody(bodyDef);
@@ -91,14 +96,14 @@ public class MenuBuilder {
 
 		// Add life regardless
 
-		incrementCount(ComponentNames._LIFE_.name());
+		incrementCount(ComponentNames.LIFE);
 		Component c = ComponentBuilder.buildLife(new GameState(world,
 				gameLoader), true);
-		c.setUpForBuilder(ComponentNames._LIFE_.name()
+		c.setUpForBuilder(ComponentNames.LIFE
 				+ Assembler.NAME_ID_SPLIT
-				+ componentCounts.get(ComponentNames._LIFE_.name()));
+				+ componentCounts.get(ComponentNames.LIFE));
 
-		lastSelected = baseObject = c.getObject().getPhysicsBody();
+		baseObject = c.getObject().getPhysicsBody();//lastSelected = 
 		parts.add(c);
 
 		//
@@ -106,12 +111,12 @@ public class MenuBuilder {
 		but = new Button("Small bar") {
 			@Override
 			public void Clicked() {
-				incrementCount(ComponentNames._BAR3_.name());
+				incrementCount(ComponentNames.BAR3);
 				Component c = ComponentBuilder.buildBar3(new GameState(world,
 						gameLoader), true);
-				c.setUpForBuilder(ComponentNames._BAR3_.name()
+				c.setUpForBuilder(ComponentNames.BAR3
 						+ Assembler.NAME_ID_SPLIT
-						+ componentCounts.get(ComponentNames._BAR3_.name()));
+						+ componentCounts.get(ComponentNames.BAR3));
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
 			}
@@ -123,12 +128,12 @@ public class MenuBuilder {
 		tire_but = new Button("tire") {
 			@Override
 			public void Clicked() {
-				incrementCount(ComponentNames._TIRE_.name());
+				incrementCount(ComponentNames.TIRE);
 				Component c = ComponentBuilder.buildTire(new GameState(world,
 						gameLoader), true);
-				c.setUpForBuilder(ComponentNames._TIRE_.name()
+				c.setUpForBuilder(ComponentNames.TIRE
 						+ Assembler.NAME_ID_SPLIT
-						+ componentCounts.get(ComponentNames._TIRE_.name()));
+						+ componentCounts.get(ComponentNames.TIRE));
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
 			}
@@ -140,12 +145,11 @@ public class MenuBuilder {
 		spring_but = new Button("spring") {
 			@Override
 			public void Clicked() {
-				incrementCount(ComponentNames._SPRINGJOINT_.name());
+				incrementCount(ComponentNames.SPRINGJOINT);
 				Component c = ComponentBuilder.buildSpringJoint(
 						new GameState(world, gameLoader), true).get(0);
 				c.setUpForBuilder(Assembler.NAME_ID_SPLIT
-						+ componentCounts.get(ComponentNames._SPRINGJOINT_
-								.name()));
+						+ componentCounts.get(ComponentNames.SPRINGJOINT));
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
 			}
@@ -179,13 +183,9 @@ public class MenuBuilder {
 		build = new Button("build") {
 			@Override
 			public void Clicked() {
-				if (assemblyRules.checkBuild(world, baseObject, parts)) {
-					compiler.compile(world, parts);
-
+				if(buildCar()){
 					gameLoader.setScreen(new GamePlayScreen(gameLoader));
 					Destroy();
-				} else {
-					;
 				}
 			}
 
@@ -193,6 +193,19 @@ public class MenuBuilder {
 
 		build.setPosition(300, 0);
 		stage.addActor(build);
+		
+		upload = new Button("^") {
+			@Override
+			public void Clicked() {
+				if(buildCar()){
+					backend.uploadCar();
+				}
+			}
+
+		};
+
+		upload.setPosition(Globals.ScreenWidth - 100, Globals.ScreenHeight - 100);
+		stage.addActor(upload);
 
 		rotateLeft = new Button(">") {
 			@Override
@@ -297,6 +310,15 @@ public class MenuBuilder {
 				drawFixture(fixtureB, GREEN);
 			}
 		}
+	}
+	
+	private boolean buildCar(){
+		if (assemblyRules.checkBuild(world, baseObject, parts)) {
+			compiler.compile(world, parts);
+			return true;
+		} else {
+			return false;
+		}	
 	}
 
 	private boolean isFixtureName(String name) {
@@ -429,9 +451,15 @@ public class MenuBuilder {
 		public boolean reportFixture(Fixture fixture) {
 
 			if (fixture.testPoint(mousePoint.x, mousePoint.y)) {
+				
+				if(((String)fixture.getBody().getUserData()).contains(ComponentNames.LIFE) ||
+						((String)fixture.getBody().getUserData()).contains(ComponentNames.AXLE)){
+					return true;
+				}
+				
+				hitBody = fixture.getBody();
 				mouseJoined = true;
 
-				hitBody = fixture.getBody();
 				relativeVector.set(mousePoint.x - hitBody.getPosition().x,
 						mousePoint.y - hitBody.getPosition().y);
 				hitBody.setTransform(new Vector2(relativeX(mousePoint.x),

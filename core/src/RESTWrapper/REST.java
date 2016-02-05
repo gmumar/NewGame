@@ -1,9 +1,12 @@
 package RESTWrapper;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -25,24 +28,6 @@ public class REST {
 	private final static String CONTENT_TYPE_VALUE = "application/json";
 
 	private final static String URL = "https://api.backendless.com/v1/data";
-	
-	public enum REST_PATHS {
-		cars
-	}
-
-	public static void postData(String path,
-			HashMap<String, String> parameters, HttpResponseListener listener) {
-		HttpRequest request = getRequest(path, HttpMethods.POST);
-		request.setContent(JsonifyParameters(parameters));
-
-		Gdx.net.sendHttpRequest(request, listener);
-	}
-
-	public static void getData(String path, HttpResponseListener listener) {
-		HttpRequest request = getRequest(path, HttpMethods.GET);
-		
-		Gdx.net.sendHttpRequest(request, listener);
-	}
 
 	private static HttpRequest getRequest(String path, String method) {
 		HttpRequest request = new HttpRequest(method);
@@ -55,30 +40,59 @@ public class REST {
 
 		return request;
 	}
+	
+	public static void postData(String path,
+			HashMap<String, String> parameters, HttpResponseListener listener) {
+		HttpRequest request = getRequest(path, HttpMethods.POST);
+		request.setContent(Backendless_JsonifyParameters(parameters));
+		
+		System.out.println(request.getContent());
 
-	private static String JsonifyParameters(HashMap<String, String> parameters) {
+		Gdx.net.sendHttpRequest(request, listener);
+	}
+
+	public static void getData(String path, HttpResponseListener listener) {
+		HttpRequest request = getRequest(path, HttpMethods.GET);
+		
+		Gdx.net.sendHttpRequest(request, listener);
+	}
+
+	private static String Backendless_JsonifyParameters(HashMap<String, String> parameters) {
 
 		Set<Entry<String, String>> data = parameters.entrySet();
 
 		Iterator<Entry<String, String>> iter = data.iterator();
 
 		boolean skip = true;
-		String ret, key, value;
+		String ret="", key="", value="";
+		byte[] compressedValue = null;
 
 		ret = "{";
 		while (iter.hasNext()) {
 			Entry<String, String> item = iter.next();
+			
+			
 			if (!skip) {
 				ret += ",";
 				skip = false;
 			}
-			key = "\"" + item.getKey() + "\"";
-			value = "\"" + item.getValue() + "\"";
+			
+			try {
+				
+				compressedValue = Gzip.compress(item.getValue());
+				//compressedValue = DatatypeConverter.parseBase64Binary(URLEncoder.encode(item.getValue(), "UTF-8"));
+				key = "\"" + URLEncoder.encode(item.getKey(), "UTF-8") + "\"";
+				value = "\"" + new String(Base64.encodeBase64(compressedValue), "UTF-8") + "\"";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 
 			ret += key + ":" + value;
 		}
 		ret += "}";
 
+	
 		return ret;
 
 	}

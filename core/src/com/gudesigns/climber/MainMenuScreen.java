@@ -4,10 +4,8 @@ import wrapper.CameraManager;
 import wrapper.Globals;
 import Menu.Button;
 import Menu.PopQueManager;
-import Menu.PopQueObject;
-import Menu.PopQueObject.PopQueObjectType;
 import RESTWrapper.REST;
-import RESTWrapper.REST.REST_PATHS;
+import RESTWrapper.RESTPaths;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -25,41 +23,14 @@ public class MainMenuScreen implements Screen {
 	private FitViewport vp;
 	private PopQueManager popQueManager;
 
-	private Button builder, playGame, buildTrack, selectTrack;
+	private Button builder, playGame, buildTrack, selectTrack, selectCar;
 
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 
 		initStage();
 		initButtons();
-
-		PopQueObject obj = new PopQueObject();
-		obj.setType(PopQueObjectType.LOADING);
-		popQueManager.push(obj);
-
-		REST.getData(REST_PATHS.cars.name(), new HttpResponseListener() {
-			
-			@Override
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				System.out.println(httpResponse.getResultAsString());
-				
-				PopQueObject obj = new PopQueObject();
-				obj.setType(PopQueObjectType.DELETE);
-				popQueManager.push(obj);
-			}
-			
-			@Override
-			public void failed(Throwable t) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void cancelled() {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		
 	}
 
 	private void initButtons() {
@@ -103,6 +74,16 @@ public class MainMenuScreen implements Screen {
 
 		selectTrack.setPosition(0, 100);
 		stage.addActor(selectTrack);
+		
+		selectCar = new Button("select car") {
+			@Override
+			public void Clicked() {
+				gameLoader.setScreen(new CarSelectorScreen(gameLoader));
+			}
+		};
+
+		selectCar.setPosition(100, 100);
+		stage.addActor(selectCar);
 	}
 
 	private void initStage() {
