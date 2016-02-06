@@ -1,8 +1,10 @@
 package com.gudesigns.climber;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import wrapper.CameraManager;
+import wrapper.GamePreferences;
 import wrapper.Globals;
 import Menu.Button;
 import Menu.PopQueManager;
@@ -10,17 +12,20 @@ import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.TableW;
 import RESTWrapper.Backendless_JSONParser;
+import RESTWrapper.Backendless_Object;
 import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
 import RESTWrapper.RESTProperties;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -31,31 +36,44 @@ public class CarSelectorScreen implements Screen {
 	private Stage stage;
 	private FitViewport vp;
 	
-	private int buttonCount = 100;
 	private ArrayList<Button> buttons = new ArrayList<Button>();
 	private TableW tracksTable;
 	private ScrollPane scrollPane;
 	private PopQueManager popQueManager;
+	private GameLoader gameLoader;
+	
+	private Button exit;
+	private Preferences prefs = Gdx.app
+			.getPreferences(GamePreferences.CAR_PREF_STR);
 
 	public CarSelectorScreen(GameLoader gameLoader) {
+		this.gameLoader = gameLoader;
 		initStage();
 		
-		//initTrackSelector();
-		//initButtons();
-		
-		//tracksTable.invalidate();
-		//scrollPane.invalidate();
+		initNavigationButtons();
 		
 		popQueManager = new PopQueManager(stage);
 		popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
 		
 		downloadCars();
 		
-		popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
-		
 	}
 	
+	private void initNavigationButtons() {
+		exit = new Button("exit") {
+			@Override
+			public void Clicked() {
+				gameLoader.setScreen(new MainMenuScreen(gameLoader));
+			}
+		};
+
+		exit.setPosition(0, 0);
+		stage.addActor(exit);
+		
+	}
+
 	private void downloadCars() {
+
 		REST.getData(RESTPaths.CARS + 
 				RESTProperties.URL_ARG_SPLITTER + RESTProperties.PROPS + 
 				RESTProperties.CREATED + RESTProperties.ARG_ARG_SPLITTER +
@@ -64,9 +82,24 @@ public class CarSelectorScreen implements Screen {
 			
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				Backendless_JSONParser.processDownloadedCars(httpResponse.getResultAsString());
-				System.out.println(httpResponse.getResultAsString());
+				Backendless_Object obj = Backendless_JSONParser.processDownloadedCars(httpResponse.getResultAsString());
 				
+				Iterator<String> iter = obj.getData().iterator();
+				
+				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+				
+				while(iter.hasNext()){
+					final String car = iter.next();
+					Globals.runOnUIThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							addButton(car);
+							
+						}
+					});
+					
+				}				
 			}
 			
 			@Override
@@ -84,9 +117,9 @@ public class CarSelectorScreen implements Screen {
 		
 	}
 
-	private void initTrackSelector(){
+	private void initCarSelector(){
 		tracksTable = new TableW();
-		tracksTable.setRotation(-20);
+		//tracksTable.setRotation(-20);
 		//tracksTable.setFillParent(true);
 		//tracksTable.align(Align.center);
 		
@@ -98,6 +131,7 @@ public class CarSelectorScreen implements Screen {
 		scrollPane.setSmoothScrolling(true);
 		scrollPane.setFillParent(true);
 		scrollPane.setLayoutEnabled(true);
+		scrollPane.setTouchable(Touchable.enabled);
 		
 		stage.addActor(scrollPane);
 	}
@@ -105,22 +139,56 @@ public class CarSelectorScreen implements Screen {
 	private void initButtons() {
 		
 		Button b;
+		
+		Iterator<Button> iter = buttons.iterator();
+		
+		int count = 0;
 
-		for(int i=0;i<buttonCount;i++){
-			b = new Button("button " + i);
-			b.setRotation(-20);
-			b.setWidth(1000);
+		while(iter.hasNext()){
+			b = iter.next();
+			//b.setRotation(-20);
+			//b.setWidth(1000);
 			b.invalidate();
-			
 
-			buttons.add(b);
-
-			
 			tracksTable.add(b);
-			tracksTable.row();
+			
+			count++;
+			if(count >2){
+				tracksTable.row();
+				count = 0;
+			}
 			
 		}
 		
+	}
+	
+	private void refreshAllButtons(){
+		initCarSelector();
+		initButtons();
+		
+		tracksTable.invalidate();
+		scrollPane.invalidate();
+		
+		initNavigationButtons();
+	}
+	
+	
+	private void addButton(final String text){
+		Button b = new Button("bla"){
+
+			@Override
+			public void Clicked() {
+				prefs.putString(GamePreferences.CAR_MAP_STR, text);
+				prefs.flush();
+
+				super.Clicked();
+			}
+			
+		};
+
+		buttons.add(b);
+		
+		refreshAllButtons();
 	}
 
 	private void initStage() {
@@ -158,6 +226,17 @@ public class CarSelectorScreen implements Screen {
 	public void render(float delta) {
 		renderWorld();
 		popQueManager.update(delta);
+		
+		/*if(!buttonQue.isEmpty()){
+			while(!buttonQue.isEmpty()){
+				System.out.println("here");
+				tempButton = buttonQue.get(0);
+				buttonQue.remove(0);
+				buttons.add(tempButton);
+			}
+			
+			reinitScroll();
+		}*/
 		
 	}
 

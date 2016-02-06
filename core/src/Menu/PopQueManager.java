@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class PopQueManager {
@@ -74,6 +75,7 @@ public class PopQueManager {
 		skin.load(Gdx.files.internal("skins/dialogSkin.json"));
 
 		dialog = new GameDialog("Loading", skin, "default");
+		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 		
 	}
@@ -87,6 +89,7 @@ public class PopQueManager {
 		skin.load(Gdx.files.internal("skins/dialogSkin.json"));
 
 		dialog = new GameDialog("blaa", skin, "default");
+		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
 }

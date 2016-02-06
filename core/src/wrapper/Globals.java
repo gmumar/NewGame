@@ -32,6 +32,10 @@ public class Globals {
 	final public static int VERSION = 3;
 	
 
+	public static void  runOnUIThread(Runnable runnable){
+		Gdx.app.postRunnable(runnable);
+	}
+	
 	static public float convertToDegrees(float radians) {
 		return (float) (radians * (180 / Math.PI));
 	}
