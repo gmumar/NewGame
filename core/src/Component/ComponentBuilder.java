@@ -17,13 +17,6 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 
 public class ComponentBuilder {
-/*	public enum ComponentSubNames {
-		_UPPER_, _LOWER_
-	}
-
-	public enum ComponentNames {
-		_BAR3_, _TIRE_, _SOLIDJOINT_, _AXLE_, _SPRINGJOINT_, _WHEEL_, _LIFE_, _CEQUEREDFLAG_, _CAMERAFOCUS_
-	}*/
 
 	public static Component buildComponent(String name, GameState gameState) {
 

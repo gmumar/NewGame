@@ -82,14 +82,16 @@ public class CarSelectorScreen implements Screen {
 			
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				Backendless_Object obj = Backendless_JSONParser.processDownloadedCars(httpResponse.getResultAsString());
+				String response = httpResponse.getResultAsString();
+				
+				System.out.println("---results " + response);
+				Backendless_Object obj = Backendless_JSONParser.processDownloadedCars(response);
 				
 				Iterator<String> iter = obj.getData().iterator();
 				
-				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
-				
 				while(iter.hasNext()){
 					final String car = iter.next();
+					System.out.println(car);
 					Globals.runOnUIThread(new Runnable() {
 						
 						@Override
@@ -99,7 +101,9 @@ public class CarSelectorScreen implements Screen {
 						}
 					});
 					
-				}				
+				}
+				
+				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
 			}
 			
 			@Override

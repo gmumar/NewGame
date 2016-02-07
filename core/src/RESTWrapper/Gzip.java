@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.codec.binary.Base64;
+import com.badlogic.gdx.utils.Base64Coder;
 
 public class Gzip {
 
@@ -38,28 +38,7 @@ public class Gzip {
 	}
 	
 	public static String decompress(String zipText) throws IOException {
-	    byte[] compressed = Base64.decodeBase64(zipText);
-	    if (compressed.length > 4)
-	    {
-	        GZIPInputStream gzipInputStream = new GZIPInputStream(
-	                new ByteArrayInputStream(compressed, 4,
-	                        compressed.length - 4));
-
-	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	        for (int value = 0; value != -1;) {
-	            value = gzipInputStream.read();
-	            if (value != -1) {
-	                baos.write(value);
-	            }
-	        }
-	        gzipInputStream.close();
-	        baos.close();
-	        String sReturn = new String(baos.toByteArray(), "UTF-8");
-	        return sReturn;
-	    }
-	    else
-	    {
-	        return "";
-	    }
+	    byte[] compressed = Base64Coder.decode(zipText);
+	    return decompress(compressed);
 	}
 }

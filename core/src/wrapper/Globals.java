@@ -58,6 +58,10 @@ public class Globals {
 		return pixel / PIXEL_TO_METERS;
 	}
 
+	public static float MetersToPixel(float pixel) {
+		return pixel * PIXEL_TO_METERS;
+	}
+	
 	public static boolean contains(ArrayList<JSONJoint> jointExclusionList,
 			JSONJoint joinIn) {
 

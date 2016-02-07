@@ -109,6 +109,14 @@ public class BaseActor {
 			sprite.draw(batch);
 		}
 	}
+	
+	public Sprite getSprite() {
+		if (!onlyPhysicBody) {
+
+			return sprite;
+		}
+		return null;
+	}
 
 	private void initSprite() {
 		if (!onlyPhysicBody) {
@@ -176,6 +184,20 @@ public class BaseActor {
 		if (!onlyPhysicBody) {
 			sprite.setOrigin(vec.x, vec.y);
 		}
+	}
+	
+	public float getOriginX(){
+		if (!onlyPhysicBody) {
+			return sprite.getOriginX();
+		}
+		return 0;
+	}
+	
+	public float getOriginY(){
+		if (!onlyPhysicBody) {
+			return sprite.getOriginY();
+		}
+		return 0;
 	}
 
 	public Vector2 getPosition() {
@@ -319,6 +341,13 @@ public class BaseActor {
 	public String getTextureStr() {
 		if (!onlyPhysicBody) {
 			return textureStr;
+		}
+		return null;
+	}
+	
+	public Texture getTexture() {
+		if (!onlyPhysicBody) {
+			return texture;
 		}
 		return null;
 	}

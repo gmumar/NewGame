@@ -9,7 +9,7 @@ public class Backendless_JSONParser {
 		
 		Backendless_Object obj = json.fromJson(Backendless_Object.class, input);
 		
-		System.out.println(obj.getTotalObjects());
+		//System.out.println(obj.getTotalObjects());
 		
 		return obj;
 		

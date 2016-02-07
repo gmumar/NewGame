@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import wrapper.BaseActor;
+import wrapper.CameraManager;
 import wrapper.GamePreferences;
 import wrapper.GameState;
 import wrapper.Globals;
@@ -21,7 +22,13 @@ import JSONifier.JSONTrack;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
 public class Assembler {
@@ -44,7 +51,7 @@ public class Assembler {
 
 		JSONParent source = new JSONParent();
 		source = JSONParent.objectify(inputString);
-		
+
 		HashMap<String, Component> parts = extractComponents(source, gameState);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
@@ -65,18 +72,17 @@ public class Assembler {
 			int componentBMountId = Globals.getMountId(join.m2);
 
 			{
-				/*RevoluteJointDef rJoint = new RevoluteJointDef();
+				/*
+				 * RevoluteJointDef rJoint = new RevoluteJointDef();
+				 * 
+				 * rJoint.initialize(bodyA.getPhysicsBody(),
+				 * bodyB.getPhysicsBody(), bodyB.getMount(componentBMountId));
+				 * rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+				 * rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+				 * rJoint.collideConnected = false; rJoint.enableLimit = true;
+				 * world.createJoint(rJoint);
+				 */
 
-				rJoint.initialize(bodyA.getPhysicsBody(),
-						bodyB.getPhysicsBody(),
-						bodyB.getMount(componentBMountId));
-				rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
-				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
-				rJoint.collideConnected = false;
-				rJoint.enableLimit = true;
-				world.createJoint(rJoint);*/
-
-				
 				WeldJointDef wJoint = new WeldJointDef();
 
 				wJoint.initialize(bodyA.getPhysicsBody(),
@@ -96,8 +102,55 @@ public class Assembler {
 		return obj;
 	}
 
-	private HashMap<String, Component> extractComponents(JSONParent source,
-			GameState gameState) {
+	public TextureRegion assembleObjectImage(GameState gameState) {
+
+		World tempWorld = new World(new Vector2(0, 0f), false);
+		tempWorld.setWarmStarting(true);
+		gameState.setWorld(tempWorld);
+
+		CameraManager camera = new CameraManager(Globals.ScreenWidth,
+				Globals.ScreenHeight - 50);
+		camera.zoom = 0.02f;
+		camera.position.set(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2 - 1,
+				1);
+		camera.update();
+
+		AssembledObject object = assembleObject(gameState);
+		// object.setScale(120);
+		object.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
+		// object.setPosition(0, 45);
+
+		tempWorld.step(1000, 100, 100);
+
+		FrameBuffer frameBufferObject = new FrameBuffer(Format.RGBA8888,
+				Globals.ScreenWidth, Globals.ScreenHeight, false);
+	
+		SpriteBatch batch = new SpriteBatch();
+
+		batch.setProjectionMatrix(camera.combined);
+
+		frameBufferObject.begin();
+		Gdx.gl20.glClearColor(0f, 0f, 0f, 0.1f); // transparent black
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear the color buffer
+
+		batch.begin();
+		//object.draw(batch);
+		object.drawImage(batch);
+
+		batch.end();
+
+		frameBufferObject.end();
+
+		TextureRegion tr = new TextureRegion(
+				frameBufferObject.getColorBufferTexture());
+		tr.flip(false, true);
+
+		return tr;
+
+	}
+
+	static private HashMap<String, Component> extractComponents(
+			JSONParent source, GameState gameState) {
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
 
@@ -114,9 +167,9 @@ public class Assembler {
 			componentName = Globals.getComponentName(sourceComponent
 					.getComponentName());
 
-			System.out.println("Extracting: " + componentName);
-			
-			if (componentName.contains(ComponentNames.SPRINGJOINT) ) {
+			// System.out.println("Extracting: " + componentName);
+
+			if (componentName.contains(ComponentNames.SPRINGJOINT)) {
 				componentList = ComponentBuilder.buildJointComponent(
 						componentName, gameState);
 
@@ -124,27 +177,33 @@ public class Assembler {
 						NAME_ID_SPLIT);
 				String jointComponentName = nameList[0];
 				String jointComponentId = nameList[1];
-				
+
 				Iterator<Component> it = componentList.iterator();
-				while(it.hasNext()){
+				while (it.hasNext()) {
 					Component localComponent = it.next();
 					localComponent.setGroup(CAR);
-					//localComponent.applyProperties(sourceComponent.getProperties());
-					
+					// localComponent.applyProperties(sourceComponent.getProperties());
+
 				}
-				
-				componentList.get(0).applyProperties(sourceComponent.getProperties(),PropertyTypes.BOTH);
-				componentList.get(1).applyProperties(sourceComponent.getProperties(),PropertyTypes.ABSOLUTE);
-				
-				componentList.get(0).setComponentName(jointComponentName + NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.UPPER + NAME_ID_SPLIT
-						+ jointComponentId);
-				
-				componentList.get(1).setComponentName(jointComponentName + NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.LOWER + NAME_ID_SPLIT
-						+ jointComponentId);
-				
-				ret.put(componentList.get(0).getComponentName(), componentList.get(0));
+
+				componentList.get(0).applyProperties(
+						sourceComponent.getProperties(), PropertyTypes.BOTH);
+				componentList.get(1)
+						.applyProperties(sourceComponent.getProperties(),
+								PropertyTypes.ABSOLUTE);
+
+				componentList.get(0).setComponentName(
+						jointComponentName + NAME_SUBNAME_SPLIT
+								+ ComponentSubNames.UPPER + NAME_ID_SPLIT
+								+ jointComponentId);
+
+				componentList.get(1).setComponentName(
+						jointComponentName + NAME_SUBNAME_SPLIT
+								+ ComponentSubNames.LOWER + NAME_ID_SPLIT
+								+ jointComponentId);
+
+				ret.put(componentList.get(0).getComponentName(),
+						componentList.get(0));
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
 						+ ComponentSubNames.LOWER + NAME_ID_SPLIT
 						+ jointComponentId, componentList.get(1));
@@ -154,8 +213,12 @@ public class Assembler {
 				component = ComponentBuilder.buildComponent(componentName,
 						gameState);
 
+				// the heart will always be rotate by 90 cause its not the
+				// retunred obj
+
 				if (sourceComponent.getProperties() != null) {
-					component.applyProperties(sourceComponent.getProperties(), PropertyTypes.BOTH);
+					component.applyProperties(sourceComponent.getProperties(),
+							PropertyTypes.BOTH);
 				}
 				component.setGroup(CAR);
 				component.setComponentName(sourceComponent.getComponentName());
@@ -167,20 +230,21 @@ public class Assembler {
 		return ret;
 	}
 
-	public ArrayList<GroundUnitDescriptor> assembleTrack(String mapString, Vector2 offset) {
+	public ArrayList<GroundUnitDescriptor> assembleTrack(String mapString,
+			Vector2 offset) {
 		JSONTrack jsonTrack = JSONTrack.objectify(mapString);
 		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
-		
-		//System.out.println(mapPoints.size());
-		
-		ArrayList <GroundUnitDescriptor> retList = new ArrayList<GroundUnitDescriptor>();
-		
+
+		// System.out.println(mapPoints.size());
+
+		ArrayList<GroundUnitDescriptor> retList = new ArrayList<GroundUnitDescriptor>();
+
 		Iterator<Vector2> iter = mapPoints.iterator();
 		Vector2 lastPoint, point = null;
 		boolean first = true;
-		
-		while(iter.hasNext()){
-			if(first){
+
+		while (iter.hasNext()) {
+			if (first) {
 				point = iter.next();
 				point.x += offset.x;
 				point.y += offset.y;
@@ -191,11 +255,12 @@ public class Assembler {
 			point = iter.next();
 			point.x += offset.x;
 			point.y += offset.y;
-			GroundUnitDescriptor gud = new GroundUnitDescriptor(lastPoint, point, false);//, "texture.png");
+			GroundUnitDescriptor gud = new GroundUnitDescriptor(lastPoint,
+					point, false);// , "texture.png");
 			retList.add(gud);
-			
+
 		}
-		
+
 		return retList;
 	}
 

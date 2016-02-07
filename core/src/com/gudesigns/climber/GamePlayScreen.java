@@ -20,6 +20,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -42,18 +43,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private Rolling rollingAvg;
 	private float speedZoom = 0;
 	private float dlTime;
-	
 
-	//private volatile boolean paused = true;
+	// private volatile boolean paused = true;
 
 	public static final float CAMERA_OFFSET = 12;
 
 	private GroundBuilder ground;
-	//Box2DDebugRenderer debugRenderer ;
+
+	// Box2DDebugRenderer debugRenderer ;
 
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
 	private float timePassed = 0;
+
+	TextureRegion tr;
 
 	public GamePlayScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
@@ -67,18 +70,25 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.add(new TouchUnit());
 		}
 
-		//debugRenderer = new Box2DDebugRenderer();
+		// debugRenderer = new Box2DDebugRenderer();
 
 		Assembler asm = new Assembler();
 		builtCar = asm.assembleObject(new GameState(world, gameLoader));
 		builtCar.setPosition(0, 50);
 
 		initShader();
-		ground = new GroundBuilder(new GameState(world, gameLoader), camera, shader, colorShader);
-		
+		ground = new GroundBuilder(new GameState(world, gameLoader), camera,
+				shader, colorShader);
+
 		initHud();
-		
+
 		rollingAvg = new Rolling(60);
+
+		world.step(10, 100, 100);
+		
+		tr = asm.assembleObjectImage(new GameState(world,
+				gameLoader));
+
 
 	}
 
@@ -114,9 +124,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
-		if (timePassed > 3) {
+		//if (timePassed > 3) {
 			handleInput(touches);
-		}
+		//}
 
 		/*
 		 * 
@@ -131,14 +141,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		attachCameraTo(builtCar.getBasePart());
 
 		batch.begin();
+		//batch.enableBlending();
+		//batch.draw(t, 0, 30, 20, 10);
+		batch.draw(tr, 0, 30, 20,10);
+		
 		ground.draw(camera, batch);
-		if (timePassed > 2)  builtCar.draw(batch);
+		builtCar.draw(batch);
+		//batch.disableBlending();
 		batch.end();
 
 		hud.update(delta);
 		// stage.act(Gdx.graphics.getFramesPerSecond());
 		stage.draw();
-		//stage.act(Gdx.graphics.getDeltaTime());
+		// stage.act(Gdx.graphics.getDeltaTime());
+		//Gdx.gl20.glDisable(GL20.GL_BLEND);
 
 	}
 
@@ -149,11 +165,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void renderWorld() {
 
-		dlTime = Gdx.graphics.getDeltaTime() / 1.1f;
 		
-		Gdx.gl.glClearColor(Globals.SKY_BLUE.r,Globals.SKY_BLUE.g,Globals.SKY_BLUE.b,Globals.SKY_BLUE.a);
+		dlTime = Gdx.graphics.getDeltaTime() / 1.1f;
+
+		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
+				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
 		// Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
 		//Gdx.gl20.glEnable(GL20.GL_BLEND);
@@ -161,26 +179,26 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		//debugRenderer.render(world, camera.combined);
-		if (timePassed > 2) {
-			world.step(dlTime, 40, 40);
-		}
+		// debugRenderer.render(world, camera.combined);
+		// if (timePassed > 2) {
+		world.step(dlTime, 40, 40);
+		// }
 
-		//if (timePassed > 0.2f) {
-		//	paused = false;
-		//}
+		// if (timePassed > 0.2f) {
+		// paused = false;
+		// }
 
 		if (timePassed > 5) {
 			// enable joint checking
 			// skip_count++;
 			// if (skip_count >= SKIP_COUNT) {
 			// skip_count = 0;
-		
+
 			JointLimits.enableJointLimits(world, dlTime);
 			// }
 
 		} else {
-			timePassed +=dlTime;
+			timePassed += dlTime;
 		}
 	}
 
@@ -191,8 +209,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		if (speedZoom < 0) {
 			speedZoom = 0;
 		}
-		camera.position.set(actor.getPosition().x + CAMERA_OFFSET - (0.4f - speedZoom * 4),
-				actor.getPosition().y, 1);// + camera.viewportWidth*2.5f
+		camera.position.set(actor.getPosition().x + CAMERA_OFFSET
+				- (0.4f - speedZoom * 4), actor.getPosition().y, 1);// +
+																	// camera.viewportWidth*2.5f
 		camera.zoom = 4.2f + speedZoom;// 4.5f;
 		camera.update();
 	}
@@ -205,7 +224,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
-		camera.zoom = 5;
+		camera.zoom = 0.5f;
 		camera.update();
 
 		secondCamera = new CameraManager(Globals.ScreenWidth,
@@ -264,12 +283,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		/*if (pointer < Globals.MAX_FINGERS) {
-			touches.get(pointer).screenX = screenX;
-			touches.get(pointer).screenY = screenY;
-
-			return true;
-		}*/
+		/*
+		 * if (pointer < Globals.MAX_FINGERS) { touches.get(pointer).screenX =
+		 * screenX; touches.get(pointer).screenY = screenY;
+		 * 
+		 * return true; }
+		 */
 		return true;
 	}
 
@@ -290,7 +309,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		GameMesh.destroy();
 
 	}
-	
+
 	@Override
 	public void dispose() {
 		batch.dispose();
@@ -304,22 +323,21 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		touches = null;
 	}
 
-
 	// ------------------------------------------------------UNUSED------------------------------------------------
 	// //
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		//paused = true;
+		// paused = true;
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		//paused = false;
+		// paused = false;
 	}
-	
+
 	@Override
 	public boolean keyDown(int keycode) {
 		// TODO Auto-generated method stub

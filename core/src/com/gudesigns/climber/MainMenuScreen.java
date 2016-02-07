@@ -4,12 +4,8 @@ import wrapper.CameraManager;
 import wrapper.Globals;
 import Menu.Button;
 import Menu.PopQueManager;
-import RESTWrapper.REST;
-import RESTWrapper.RESTPaths;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.HttpResponse;
-import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;

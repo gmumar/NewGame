@@ -22,41 +22,43 @@ public class SplashScreen implements Screen {
 	private SpriteBatch batch;
 	private Stage stage;
 	private FitViewport vp;
-	
-	private float time = 0;
-	
-	public class SplashActor extends Actor {
-        Texture texture = gameLoader.Assets.get("colooorsssxcf.png", Texture.class);
-        public boolean started = false;
 
-        public SplashActor(){
-            setBounds(getX(),getY(),texture.getWidth(),texture.getHeight());
-        }
-        
-        @Override
-        public void draw(Batch batch, float alpha){
-            batch.draw(texture,this.getX(),getY(),getWidth(),getHeight());
-        }
-    }
+	private float time = 0;
+
+	public class SplashActor extends Actor {
+		Texture texture = gameLoader.Assets.get("colooorsssxcf.png",
+				Texture.class);
+		public boolean started = false;
+
+		public SplashActor() {
+			setBounds(getX(), getY(), texture.getWidth(), texture.getHeight());
+		}
+
+		@Override
+		public void draw(Batch batch, float alpha) {
+			batch.draw(texture, this.getX(), getY(), getWidth(), getHeight());
+		}
+	}
 
 	public SplashScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 
 		initStage();
-		
-		SplashActor splashActor = new SplashActor();
-		splashActor.setSize(Globals.ScreenWidth*1/6, Globals.ScreenWidth*1/6);
-		splashActor.setX(Globals.ScreenWidth*5/12);
-		splashActor.setY(Globals.ScreenHeight*2/5 - 20);
 
-		
-	    MoveToAction moveAction = new MoveToAction();
-        moveAction.setPosition(Globals.ScreenWidth*5/12, Globals.ScreenHeight*2/5);
-        moveAction.setDuration(0.5f);
-        
-        
-        splashActor.addAction(Actions.sequence(Actions.fadeOut(0.1f),moveAction , Actions.fadeIn(1.5f)));
-		
+		SplashActor splashActor = new SplashActor();
+		splashActor.setSize(Globals.ScreenWidth * 1 / 6,
+				Globals.ScreenWidth * 1 / 6);
+		splashActor.setX(Globals.ScreenWidth * 5 / 12);
+		splashActor.setY(Globals.ScreenHeight * 2 / 5 - 20);
+
+		MoveToAction moveAction = new MoveToAction();
+		moveAction.setPosition(Globals.ScreenWidth * 5 / 12,
+				Globals.ScreenHeight * 2 / 5);
+		moveAction.setDuration(0.5f);
+
+		splashActor.addAction(Actions.sequence(Actions.fadeOut(0.1f),
+				moveAction, Actions.fadeIn(1.5f)));
+
 		stage.addActor(splashActor);
 
 	}
@@ -93,24 +95,28 @@ public class SplashScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		
+
 		time += delta;
-		if(time > 0.5f){
+		if (time > 0.1f) {
 			gameLoader.setScreen(new MainMenuScreen(gameLoader));
 		}
-		
+
 	}
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		  Gdx.gl20.glEnable(GL20.GL_BLEND);
-	        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		Gdx.gl20.glClearColor(1, 1, 1, 1);
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
+		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		batch.enableBlending();
 
 		batch.setProjectionMatrix(camera.combined);
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
+		
+		batch.disableBlending();
+		Gdx.gl20.glDisable(GL20.GL_BLEND);
 
 	}
 
