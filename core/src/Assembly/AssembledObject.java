@@ -10,7 +10,6 @@ import Component.Component;
 import Component.ComponentNames;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
@@ -165,16 +164,6 @@ public class AssembledObject {
 		 * 
 		 * delayedDraw.clear();
 		 */
-	}
-
-	public void setScale(float scale) {
-
-		iter = partList.iterator();
-
-		while (iter.hasNext()) {
-			part = iter.next();
-			part.getObject().setScale(scale);
-		}
 	}
 
 	public void drawImage(SpriteBatch batch) {

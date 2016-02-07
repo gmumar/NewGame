@@ -20,7 +20,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -56,8 +55,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private float timePassed = 0;
 
-	TextureRegion tr;
-
 	public GamePlayScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 		Globals.updateScreenInfo();
@@ -71,9 +68,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 
 		// debugRenderer = new Box2DDebugRenderer();
-
-		Assembler asm = new Assembler();
-		builtCar = asm.assembleObject(new GameState(world, gameLoader));
+		builtCar = Assembler.assembleObject(new GameState(world, gameLoader));
 		builtCar.setPosition(0, 50);
 
 		initShader();
@@ -86,9 +81,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		world.step(10, 100, 100);
 		
-		tr = asm.assembleObjectImage(new GameState(world,
-				gameLoader));
-
+		
 
 	}
 
@@ -141,13 +134,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		attachCameraTo(builtCar.getBasePart());
 
 		batch.begin();
-		//batch.enableBlending();
-		//batch.draw(t, 0, 30, 20, 10);
-		batch.draw(tr, 0, 30, 20,10);
+		
+		//batch.draw(tr, 0, 30, 20,10);
 		
 		ground.draw(camera, batch);
 		builtCar.draw(batch);
-		//batch.disableBlending();
+		
 		batch.end();
 
 		hud.update(delta);

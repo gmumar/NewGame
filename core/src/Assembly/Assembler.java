@@ -30,6 +30,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
+import com.gudesigns.climber.GameLoader;
 
 public class Assembler {
 
@@ -39,7 +40,7 @@ public class Assembler {
 
 	final private static short CAR = -2;
 
-	public AssembledObject assembleObject(GameState gameState) {
+	public static AssembledObject assembleObject(GameState gameState) {
 		AssembledObject obj = new AssembledObject();
 		Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
@@ -102,11 +103,12 @@ public class Assembler {
 		return obj;
 	}
 
-	public TextureRegion assembleObjectImage(GameState gameState) {
-
+	public static TextureRegion assembleObjectImage(GameLoader gameLoader) {
+		
 		World tempWorld = new World(new Vector2(0, 0f), false);
 		tempWorld.setWarmStarting(true);
-		gameState.setWorld(tempWorld);
+
+		GameState gameState = new GameState(tempWorld, gameLoader);
 
 		CameraManager camera = new CameraManager(Globals.ScreenWidth,
 				Globals.ScreenHeight - 50);
@@ -116,11 +118,9 @@ public class Assembler {
 		camera.update();
 
 		AssembledObject object = assembleObject(gameState);
-		// object.setScale(120);
 		object.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
-		// object.setPosition(0, 45);
 
-		tempWorld.step(1000, 100, 100);
+		tempWorld.step(10, 100, 100);
 
 		FrameBuffer frameBufferObject = new FrameBuffer(Format.RGBA8888,
 				Globals.ScreenWidth, Globals.ScreenHeight, false);
@@ -130,7 +130,7 @@ public class Assembler {
 		batch.setProjectionMatrix(camera.combined);
 
 		frameBufferObject.begin();
-		Gdx.gl20.glClearColor(0f, 0f, 0f, 0.1f); // transparent black
+		Gdx.gl20.glClearColor(0f, 0f, 0f, 0f); // transparent black
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear the color buffer
 
 		batch.begin();
@@ -144,6 +144,10 @@ public class Assembler {
 		TextureRegion tr = new TextureRegion(
 				frameBufferObject.getColorBufferTexture());
 		tr.flip(false, true);
+		
+		tempWorld.dispose();
+		//frameBufferObject.dispose();
+		batch.dispose();
 
 		return tr;
 

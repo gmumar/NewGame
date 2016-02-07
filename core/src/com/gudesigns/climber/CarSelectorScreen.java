@@ -6,6 +6,7 @@ import java.util.Iterator;
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
 import wrapper.Globals;
+import Assembly.Assembler;
 import Menu.Button;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -18,15 +19,20 @@ import RESTWrapper.RESTPaths;
 import RESTWrapper.RESTProperties;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class CarSelectorScreen implements Screen {
@@ -36,7 +42,8 @@ public class CarSelectorScreen implements Screen {
 	private Stage stage;
 	private FitViewport vp;
 	
-	private ArrayList<Button> buttons = new ArrayList<Button>();
+	//private ArrayList<Button> buttons = new ArrayList<Button>();
+	private ArrayList<ImageButton> buttons = new ArrayList<ImageButton>();
 	private TableW tracksTable;
 	private ScrollPane scrollPane;
 	private PopQueManager popQueManager;
@@ -84,14 +91,14 @@ public class CarSelectorScreen implements Screen {
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				String response = httpResponse.getResultAsString();
 				
-				System.out.println("---results " + response);
+				//System.out.println("---results " + response);
 				Backendless_Object obj = Backendless_JSONParser.processDownloadedCars(response);
 				
 				Iterator<String> iter = obj.getData().iterator();
 				
 				while(iter.hasNext()){
 					final String car = iter.next();
-					System.out.println(car);
+					//System.out.println(car);
 					Globals.runOnUIThread(new Runnable() {
 						
 						@Override
@@ -123,6 +130,7 @@ public class CarSelectorScreen implements Screen {
 
 	private void initCarSelector(){
 		tracksTable = new TableW();
+		tracksTable.setWidth(300);
 		//tracksTable.setRotation(-20);
 		//tracksTable.setFillParent(true);
 		//tracksTable.align(Align.center);
@@ -132,6 +140,7 @@ public class CarSelectorScreen implements Screen {
 		//scrollPane.setHeight(Globals.ScreenHeight);
 		//scrollPane.setWidth(Globals.ScreenWidth);
 		//scrollPane.setOrigin(0, 0);
+		scrollPane.setWidth(100);
 		scrollPane.setSmoothScrolling(true);
 		scrollPane.setFillParent(true);
 		scrollPane.setLayoutEnabled(true);
@@ -142,9 +151,9 @@ public class CarSelectorScreen implements Screen {
 
 	private void initButtons() {
 		
-		Button b;
+		ImageButton b;
 		
-		Iterator<Button> iter = buttons.iterator();
+		Iterator<ImageButton> iter = buttons.iterator();
 		
 		int count = 0;
 
@@ -178,7 +187,7 @@ public class CarSelectorScreen implements Screen {
 	
 	
 	private void addButton(final String text){
-		Button b = new Button("bla"){
+		/*Button b = new Button("bla"){
 
 			@Override
 			public void Clicked() {
@@ -188,7 +197,44 @@ public class CarSelectorScreen implements Screen {
 				super.Clicked();
 			}
 			
-		};
+		};*/
+		
+		String prevString = prefs
+				.getString(
+						GamePreferences.CAR_MAP_STR,
+						"{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}");//
+
+		
+		prefs.putString(GamePreferences.CAR_MAP_STR, text);
+		prefs.flush();
+
+		TextureRegion tr = Assembler.assembleObjectImage(gameLoader);
+		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
+		trd.setMinWidth(200);
+		trd.setMinHeight(160);
+		ImageButton b = new ImageButton(trd);
+		//b.setPosition(100, 100);
+		b.setSize(100, 100);
+		//stage.addActor(b);
+		prefs.putString(GamePreferences.CAR_MAP_STR, prevString);
+		prefs.flush();
+
+		b.addListener(new ClickListener(){
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				prefs.putString(GamePreferences.CAR_MAP_STR, text);
+				prefs.flush();
+				System.out.println("clicked");
+				gameLoader.setScreen(new GamePlayScreen(gameLoader));
+				super.clicked(event, x, y);
+			}
+			
+			
+			
+		});
+		
+		//b.setBackground(trd);
 
 		buttons.add(b);
 		
