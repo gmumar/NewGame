@@ -1,8 +1,10 @@
 package Menu;
 
 import wrapper.CameraManager;
+import wrapper.Globals;
 import GroundWorks.TrackBuilder;
 import JSONifier.JSONCompiler;
+import RESTWrapper.BackendFunctions;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gudesigns.climber.GameLoader;
@@ -14,18 +16,18 @@ public class TrackMenuBuilder {
 	//private final float BOX_SIZE = 0.0001f;
 	//private final float ROTATION_SIZE = 30;
 
-	private Button zoomIn, zoomOut, panLeft, panRight, build, exit;
+	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload;
 
 	private CameraManager camera;
 	private JSONCompiler compiler;
+	private BackendFunctions backend;
 
 	public TrackMenuBuilder(Stage stage, CameraManager secondCamera,
 			final GameLoader gameLoader, final TrackBuilder trackBuilder) {
 
 		//this.stage = stage;
 		this.camera = secondCamera;
-		//this.gameLoader = gameLoader;
-		//this.builder = trackBuilder;
+		this.backend = new BackendFunctions();
 		
 		compiler = new JSONCompiler();
 
@@ -65,6 +67,20 @@ public class TrackMenuBuilder {
 
 		build.setPosition(200, 0);
 		stage.addActor(build);
+		
+		upload = new Button("^") {
+			@Override
+			public void Clicked() {
+				compiler
+				.compile(
+						trackBuilder.getMapList());
+				backend.uploadTrack();
+			}
+
+		};
+
+		upload.setPosition(Globals.ScreenWidth - 100, Globals.ScreenHeight - 100);
+		stage.addActor(upload);
 
 		panLeft = new Button(">") {
 			@Override

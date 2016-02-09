@@ -11,8 +11,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class JointLimits {
 
-	private final static double TORQUE_FACTOR = 9e4;
-	private final static double FORCE_FACTOR = 5e3;
+	private final static double TORQUE_FACTOR = 1e5;
+	private final static double FORCE_FACTOR = 1e4;
 	private final static double FORCE_DEVIDER = 5e5;
 
 	private final static int DEFAULT_BREAKING_TORQUE = (int) (3 * TORQUE_FACTOR);
@@ -27,60 +27,66 @@ public class JointLimits {
 	private static final Array<Joint> joints = new Array<Joint>();
 	private static Iterator<Joint> iter;
 	private static Joint joint;
-	private static float force ;
-	private static float torque;
+	private static double force;
+	private static double torque;
+	private World world;
 
-	public static void enableJointLimits(World world, float step) {
+	public JointLimits(World world) {
+		this.world = world;
+
+	}
+
+	final public void enableJointLimits(final float step) {
 
 		world.getJoints(joints);
-
 		iter = joints.iterator();
+
 		while (iter.hasNext()) {
 			joint = iter.next();
 
-			if (joint.getType() == JointType.PrismaticJoint) {
+			if ((joint.getType() == JointType.PrismaticJoint)
+					|| (jointBetween(joint, ComponentNames.AXLE,
+							ComponentNames.TIRE))) {
 				continue;
 			}
 
-			force = (float) ((joint.getReactionForce(1 / step).len2()) / FORCE_DEVIDER);
-			torque = joint.getReactionTorque(1 / step);
+			force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
+			torque = joint.getReactionTorque(step);
 
-			if (jointBetween(joint, ComponentNames.AXLE, ComponentNames.TIRE)) {
-				continue;
-			} else if (jointHas(joint, ComponentNames.LIFE)) {
+			if (jointHas(joint, ComponentNames.LIFE)) {
 				if (torque > LIFE_BAR_BREAKING_TORQUE) {
-					//System.out.println("break 2 torque " + torque);
+					// System.out.println("break 2 torque " + torque);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > LIFE_BAR_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					//System.out.println("break 2 force " + force);
+					// System.out.println("break 2 force " + force);
 					continue;
 				}
 			} else if (jointHas(joint, ComponentNames.BAR3)) {
 				if (torque > BAR_BAR_BREAKING_TORQUE) {
 					world.destroyJoint(joint);
-					//System.out.println("break 1 torque " + torque);
+					// System.out.println("break 1 torque " + torque);
 					continue;
 				}
 
 				if (force > BAR_BAR_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					System.out.println("break 1 force " + force);
+					// System.out.println("break 1 force " + force);
 					continue;
 				}
 			} else {
 				if (torque > DEFAULT_BREAKING_TORQUE) {
-					//System.out.println("break default torque " + torque);
+					// System.out.println("break default torque " + torque);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > DEFAULT_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					//System.out.println("break default force " + force);
+					// System.out.println("break default force " + force);
 					continue;
 				}
 			}
@@ -111,7 +117,7 @@ public class JointLimits {
 		}
 	}
 
-	private static boolean jointHas(Joint joint, String name1) {
+	final private static boolean jointHas(Joint joint, String name1) {
 		if (((String) joint.getBodyA().getUserData()).contains(name1)
 
 		||
@@ -123,7 +129,8 @@ public class JointLimits {
 		return false;
 	}
 
-	private static boolean jointBetween(Joint joint, String name1, String name2) {
+	final private static boolean jointBetween(Joint joint, String name1,
+			String name2) {
 		if (((String) joint.getBodyA().getUserData()).contains(name1)
 				&& ((String) joint.getBodyB().getUserData()).contains(name2)
 

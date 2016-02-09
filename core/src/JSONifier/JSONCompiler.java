@@ -75,8 +75,8 @@ public class JSONCompiler {
 		prefs.putString(GamePreferences.CAR_MAP_STR, car.jsonify());
 		prefs.flush();
 
-		System.out.println(prefs
-				.getString(GamePreferences.CAR_MAP_STR, "Error"));
+		//System.out.println(prefs
+			//	.getString(GamePreferences.CAR_MAP_STR, "Error"));
 		
 		return car.jsonify();
 	}
@@ -102,8 +102,8 @@ public class JSONCompiler {
 		prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
 		prefs.flush();
 		
-		System.out.println(prefs
-				.getString(GamePreferences.TRACK_MAP_STR, "Error"));
+		//System.out.println(prefs
+			//	.getString(GamePreferences.TRACK_MAP_STR, "Error"));
 		
 	}
 }

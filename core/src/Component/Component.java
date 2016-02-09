@@ -85,7 +85,7 @@ public class Component {
 				}
 			}
 
-			System.out.println(this + " " + property);
+			//System.out.println(this + " " + property);
 		}
 
 	}
@@ -224,8 +224,8 @@ public class Component {
 				}
 				body.setPosition(body.getPosition().x + f, body.getPosition().y
 						+ g); // This line is the TODO
-				System.out.println(body + " " + body.getName()
-						+ " Setting position " + body.getPosition());
+				//System.out.println(body + " " + body.getName()
+					//	+ " Setting position " + body.getPosition());
 			}
 		}
 

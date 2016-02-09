@@ -144,8 +144,10 @@ public class ComponentBuilder {
 		float springTravel = 0.5f;
 
 		float height = 0;
-		if (forBuilder)
+		if (forBuilder){
 			height = (float) (1.5 / 2);
+			springHeight = 1.1f;
+		}
 
 		// Setup mounts, shape
 		/*

@@ -28,6 +28,8 @@ public class REST {
 	private final static String CONTENT_TYPE_VALUE = "application/json";
 
 	private final static String URL = "https://api.backendless.com/v1/data";
+	
+	public static final int PAGE_SIZE = 5;
 
 	private static HttpRequest getRequest(String path, String method) {
 		HttpRequest request = new HttpRequest(method);
@@ -70,6 +72,8 @@ public class REST {
 	public static void getData(String path, final HttpResponseListener listener) {
 		final HttpRequest request = getRequest(path, HttpMethods.GET);
 		request.setContent("");
+		
+		System.out.println(path);
 
 		Gdx.net.sendHttpRequest(request, listener);
 		

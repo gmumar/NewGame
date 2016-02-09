@@ -101,13 +101,13 @@ public class AssemblyRules {
 
 		}
 
-		System.out.println("-------------------------");
+		/*//System.out.println("-------------------------");
 		Iterator<Body> bodyIter = partsSeen.iterator();
 		while (bodyIter.hasNext()) {
 			Body obj = bodyIter.next();
-			System.out.println(obj.getUserData());
+			//System.out.println(obj.getUserData());
 		}
-		System.out.println("-------------------------");
+		//System.out.println("-------------------------");*/
 
 		return partsSeen;
 	}

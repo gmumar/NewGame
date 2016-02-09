@@ -25,6 +25,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
+import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GamePlayScreen implements Screen, InputProcessor {
@@ -43,17 +45,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private float speedZoom = 0;
 	private float dlTime;
 
-	// private volatile boolean paused = true;
-
 	public static final float CAMERA_OFFSET = 12;
 
 	private GroundBuilder ground;
 
-	// Box2DDebugRenderer debugRenderer ;
-
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
 	private float timePassed = 0;
+	
+	private JointLimits jointLimits;
+
+	private AsyncExecutor taskRunner;
+	private boolean submit = true, running = true;
+	private volatile boolean collisionWait = false;
+	private AsyncTask<String> collisionTask;
 
 	public GamePlayScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
@@ -81,11 +86,26 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		world.step(10, 100, 100);
 		
-		
+		jointLimits = new JointLimits(world);
 
+		taskRunner = new AsyncExecutor(1);
+		collisionTask = new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+				while (running) {
+					jointLimits.enableJointLimits(1/dlTime);
+					collisionWait = true;
+					while (collisionWait)
+						;
+
+				}
+				return null;
+			}
+		};
 	}
 
-	private void initShader() {
+	final private void initShader() {
 		String vertexShader = Gdx.files.internal("shaders/vertex.glsl")
 				.readString();
 		String fragmentShader = Gdx.files.internal("shaders/fragment.glsl")
@@ -103,13 +123,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			Gdx.app.log("ShaderError", shader.getLog());
 			System.exit(0);
 		}
-
-		// mesh = new GameMesh();
-		// GameMesh.create();
-
 	}
 
-	private void initHud() {
+	final private void initHud() {
 
 		hud = new HUDBuilder(stage, ground, gameLoader);
 
@@ -117,84 +133,58 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
-		//if (timePassed > 3) {
-			handleInput(touches);
-		//}
-
-		/*
-		 * 
-		 */
+		handleInput(touches);
 
 		renderWorld();
-		// shader.begin();
-		// shader.setUniformMatrix("u_projTrans", batch.getProjectionMatrix());
-		// shader.setUniformi("u_texture", 0);
 		ground.drawShapes(camera);
-		// shader.end();
 		attachCameraTo(builtCar.getBasePart());
 
 		batch.begin();
-		
-		//batch.draw(tr, 0, 30, 20,10);
-		
+
 		ground.draw(camera, batch);
 		builtCar.draw(batch);
-		
+
 		batch.end();
 
 		hud.update(delta);
-		// stage.act(Gdx.graphics.getFramesPerSecond());
 		stage.draw();
-		// stage.act(Gdx.graphics.getDeltaTime());
-		//Gdx.gl20.glDisable(GL20.GL_BLEND);
 
 	}
 
-	private void handleInput(ArrayList<TouchUnit> touchesIn) {
+	final private void handleInput(ArrayList<TouchUnit> touchesIn) {
 		builtCar.handleInput(touchesIn);
 
 	}
 
-	private void renderWorld() {
+	final private void renderWorld() {
 
-		
 		dlTime = Gdx.graphics.getDeltaTime() / 1.1f;
 
 		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
 				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
-		// Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
-		//Gdx.gl20.glEnable(GL20.GL_BLEND);
-		//Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		batch.setProjectionMatrix(camera.combined);
 
-		// debugRenderer.render(world, camera.combined);
-		// if (timePassed > 2) {
 		world.step(dlTime, 40, 40);
-		// }
 
-		// if (timePassed > 0.2f) {
-		// paused = false;
-		// }
+		if (timePassed > 2) {
 
-		if (timePassed > 5) {
-			// enable joint checking
-			// skip_count++;
-			// if (skip_count >= SKIP_COUNT) {
-			// skip_count = 0;
-
-			JointLimits.enableJointLimits(world, dlTime);
-			// }
+			if (submit) {
+				taskRunner.submit(collisionTask);
+				submit = false;
+			}
 
 		} else {
 			timePassed += dlTime;
 		}
+
+		collisionWait = false;
+
 	}
 
-	private void attachCameraTo(Body actor) {
+	final private void attachCameraTo(Body actor) {
 		// System.out.println();
 		rollingAvg.add(actor.getLinearVelocity().x);
 		speedZoom = (float) rollingAvg.getAverage() * 0.025f;
@@ -208,12 +198,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.update();
 	}
 
-	private void initWorld() {
+	final private void initWorld() {
 		world = (new World(new Vector2(0, -38f), true));
+		world.setAutoClearForces(true);
+		
 		world.setWarmStarting(true);
 	}
 
-	private void initStage() {
+	final private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.zoom = 0.5f;
@@ -304,6 +296,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
+		running = false;
+
 		batch.dispose();
 		builtCar.dispose();
 		world.dispose();
