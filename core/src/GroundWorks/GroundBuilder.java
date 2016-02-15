@@ -95,7 +95,7 @@ public class GroundBuilder {
 		decor = new GroundDecor(gameState);
 
 		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, null);
-		System.out.println(mapString);
+		//System.out.println(mapString);
 		if (mapString == null) {
 			infinate = true;
 		} else {
@@ -155,7 +155,7 @@ public class GroundBuilder {
 				ADD_FLOOR_COUNT = ADD_FLOOR_COUNT_FINAL;
 				floor.destroyFixture(verticalEdge);
 				verticalEdge = drawEdge(gud.getEnd(), new Vector2(
-						gud.getEnd().x, gud.getEnd().y + 150));
+						gud.getEnd().x, gud.getEnd().y + 50));
 
 				gud = mapList.get(lastRemovedPointer);
 				shaderStart = gud.getVertexId();

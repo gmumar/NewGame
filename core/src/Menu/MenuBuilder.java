@@ -358,7 +358,7 @@ public class MenuBuilder {
 		public boolean reportFixture(Fixture fixture) {
 
 			if (fixture.getShape().getType() == Type.Circle) {
-				System.out.println(fixture.getUserData());
+				//System.out.println(fixture.getUserData());
 			}
 
 			return true;
@@ -453,7 +453,8 @@ public class MenuBuilder {
 			if (fixture.testPoint(mousePoint.x, mousePoint.y)) {
 				
 				if(((String)fixture.getBody().getUserData()).contains(ComponentNames.LIFE) ||
-						((String)fixture.getBody().getUserData()).contains(ComponentNames.AXLE)){
+						((String)fixture.getBody().getUserData()).contains(ComponentNames.AXLE) |  
+						((String)fixture.getBody().getUserData()).contains(ComponentNames.TIRE)){
 					return true;
 				}
 				

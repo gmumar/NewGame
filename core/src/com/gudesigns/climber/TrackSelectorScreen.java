@@ -6,6 +6,7 @@ import java.util.Iterator;
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
 import wrapper.Globals;
+import JSONifier.JSONTrack;
 import Menu.Button;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -16,6 +17,8 @@ import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
 import RESTWrapper.RESTProperties;
+import Storage.FileManager;
+import Storage.FileObject;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -38,7 +41,9 @@ public class TrackSelectorScreen implements Screen {
 	private Stage stage;
 	private FitViewport vp;
 
-	 private ArrayList<Button> buttons = new ArrayList<Button>();
+	private ArrayList<Button> buttons = new ArrayList<Button>();
+	private ArrayList<String> uniquenessList = new ArrayList<String>();
+	private ArrayList<String> tracks = new ArrayList<String>();
 	//private ArrayList<ImageButton> buttons = new ArrayList<ImageButton>();
 	private TableW tracksTable;
 	private ScrollPane scrollPane;
@@ -114,12 +119,17 @@ public class TrackSelectorScreen implements Screen {
 
 							while (iter.hasNext()) {
 								final String track = iter.next();
-								System.out.println(track);
+								final String trackId = JSONTrack.objectify(track).getId();
+								//System.out.println(track);
 								Globals.runOnUIThread(new Runnable() {
 
 									@Override
 									public void run() {
-										addButton(track);
+										if(!uniquenessList.contains(trackId)){
+											addButton(track);
+											uniquenessList.add(trackId);
+											tracks.add(track);
+										}
 
 									}
 								});
@@ -154,14 +164,41 @@ public class TrackSelectorScreen implements Screen {
 				}
 
 				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+				
+				Globals.runOnUIThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						writeTracksToFile();						
+					}
+				});
+				
 
 				return null;
 			}
 		});
 
 	}
+	
+	private void writeTracksToFile() {
+		
+		//System.out.println("starting write");
+		
+		Iterator<String> iter = tracks.iterator();
+		ArrayList<JSONTrack> list = new ArrayList<JSONTrack>();
+		while(iter.hasNext()){
+			String track = iter.next();
+			list.add(JSONTrack.objectify(track));
+		}
+		
+		FileObject fileObject = new FileObject();
+		fileObject.setTracks(list);
+		
+		FileManager.writeToFile(fileObject);
+		
+	}
 
-	private void initCarSelector() {
+	private void initTrackSelector() {
 		tracksTable = new TableW();
 		tracksTable.setWidth(300);
 		// tracksTable.setRotation(-20);
@@ -208,7 +245,7 @@ public class TrackSelectorScreen implements Screen {
 	}
 
 	private void refreshAllButtons() {
-		initCarSelector();
+		initTrackSelector();
 		initButtons();
 
 		tracksTable.invalidate();

@@ -171,10 +171,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		if (timePassed > 2) {
 
-			if (submit) {
+			/*if (submit) {
 				taskRunner.submit(collisionTask);
 				submit = false;
-			}
+			}*/
+			
+			jointLimits.enableJointLimits(1/dlTime);
 
 		} else {
 			timePassed += dlTime;

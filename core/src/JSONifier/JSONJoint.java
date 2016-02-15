@@ -12,12 +12,14 @@ public class JSONJoint {
 		
 		public String jsonify(){
 			Json json = new Json();
+			json.setIgnoreUnknownFields(true);
 			return json.toJson(this);
 		}
 		
 		public static JSONJoint objectify(String str){
 			
 			Json json = new Json();
+			json.setIgnoreUnknownFields(true);
 			JSONJoint comp = json.fromJson(JSONJoint.class, str);
 			return comp;
 			

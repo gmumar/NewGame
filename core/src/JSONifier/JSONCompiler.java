@@ -22,7 +22,7 @@ public class JSONCompiler {
 
 	public String compile(World world, ArrayList<Component> parts) {
 
-		JSONParent car = new JSONParent();
+		JSONCar car = new JSONCar();
 		Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
 

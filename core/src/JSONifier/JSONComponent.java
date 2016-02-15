@@ -11,12 +11,14 @@ public class JSONComponent {
 
 	public String jsonify() {
 		Json json = new Json();
+		json.setIgnoreUnknownFields(true);
 		return json.toJson(this);
 	}
 
 	public static JSONComponent objectify(String str) {
 
 		Json json = new Json();
+		json.setIgnoreUnknownFields(true);
 		JSONComponent comp = json.fromJson(JSONComponent.class, str);
 		return comp;
 

@@ -26,7 +26,7 @@ public class Backendless_Car implements Json.Serializable {
 
 		JsonValue localData = jsonData.get("data");
 		
-		System.out.println(totalObjects);
+		//System.out.println(totalObjects);
 
 		JsonIterator iter = localData.iterator();
 		while (iter.hasNext()) {

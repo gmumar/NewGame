@@ -40,7 +40,7 @@ public class HUDBuilder {
 		restart = new Button("restart") {
 			@Override
 			public void Clicked() {
-				System.out.println("restarting");
+				//System.out.println("restarting");
 				gameLoader.setScreen(new GamePlayScreen(gameLoader));
 			}
 		};

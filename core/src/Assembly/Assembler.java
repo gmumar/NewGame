@@ -17,7 +17,7 @@ import Component.ComponentSubNames;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONComponent;
 import JSONifier.JSONJoint;
-import JSONifier.JSONParent;
+import JSONifier.JSONCar;
 import JSONifier.JSONTrack;
 
 import com.badlogic.gdx.Gdx;
@@ -50,8 +50,8 @@ public class Assembler {
 						GamePreferences.CAR_MAP_STR,
 						"{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}");//
 
-		JSONParent source = new JSONParent();
-		source = JSONParent.objectify(inputString);
+		JSONCar source = new JSONCar();
+		source = JSONCar.objectify(inputString);
 
 		HashMap<String, Component> parts = extractComponents(source, gameState);
 		// Read the JSONJoint array and build the obj
@@ -154,7 +154,7 @@ public class Assembler {
 	}
 
 	static private HashMap<String, Component> extractComponents(
-			JSONParent source, GameState gameState) {
+			JSONCar source, GameState gameState) {
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
 

@@ -7,16 +7,19 @@ import wrapper.CameraManager;
 import wrapper.GamePreferences;
 import wrapper.Globals;
 import Assembly.Assembler;
+import JSONifier.JSONCar;
 import Menu.Button;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.TableW;
-import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_Car;
+import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
 import RESTWrapper.RESTProperties;
+import Storage.FileManager;
+import Storage.FileObject;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -46,6 +49,8 @@ public class CarSelectorScreen implements Screen {
 
 	// private ArrayList<Button> buttons = new ArrayList<Button>();
 	private ArrayList<ImageButton> buttons = new ArrayList<ImageButton>();
+	private ArrayList<String> uniquenessList = new ArrayList<String>();
+	private ArrayList<String> cars = new ArrayList<String>();
 	private TableW tracksTable;
 	private ScrollPane scrollPane;
 	private PopQueManager popQueManager;
@@ -67,10 +72,12 @@ public class CarSelectorScreen implements Screen {
 
 		popQueManager = new PopQueManager(stage);
 		popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
-
+		
+		loadLocalCars();
 		downloadCars();
 
 	}
+
 
 	private void initNavigationButtons() {
 		exit = new Button("exit") {
@@ -85,6 +92,27 @@ public class CarSelectorScreen implements Screen {
 
 	}
 
+
+	private void loadLocalCars() {
+
+		FileObject object = FileManager.readFromFile();
+		ArrayList<JSONCar> carList = object.getCars();
+		Iterator<JSONCar> iter = carList.iterator();
+		
+		while(iter.hasNext()){
+			JSONCar car = iter.next();
+			if(!uniquenessList.contains((String)car.getId())){
+				addButton(car.jsonify());
+				cars.add(car.jsonify());
+				uniquenessList.add(car.getId());
+				//System.out.println(car.jsonify());
+			}
+		}
+		
+		System.out.println("loaded from file: " + uniquenessList.size() );
+		
+	}
+	
 	private void downloadCars() {
 		AsyncExecutor ae = new AsyncExecutor(1);
 		resultsRemaining = true;
@@ -120,12 +148,18 @@ public class CarSelectorScreen implements Screen {
 
 							while (iter.hasNext()) {
 								final String car = iter.next();
+								final String carId = JSONCar.objectify(car).getId();
 								// System.out.println(car);
 								Globals.runOnUIThread(new Runnable() {
 
 									@Override
 									public void run() {
-										addButton(car);
+										if(!uniquenessList.contains(carId)){
+											addButton(car);
+										
+											cars.add(car);
+											uniquenessList.add(carId);
+										}
 
 									}
 								});
@@ -160,11 +194,40 @@ public class CarSelectorScreen implements Screen {
 				}
 
 				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+				
+				Globals.runOnUIThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						writeCarsToFile();						
+					}
+				});
+				
 
 				return null;
 			}
+
+			
 		});
 
+	}
+	
+	private void writeCarsToFile() {
+		
+		//System.out.println("starting write");
+		
+		Iterator<String> iter = cars.iterator();
+		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
+		while(iter.hasNext()){
+			String car = iter.next();
+			list.add(JSONCar.objectify(car));
+		}
+		
+		FileObject fileObject = new FileObject();
+		fileObject.setCars(list);
+		
+		FileManager.writeToFile(fileObject);
+		
 	}
 
 	private void initCarSelector() {
@@ -224,6 +287,7 @@ public class CarSelectorScreen implements Screen {
 	}
 
 	private void addButton(final String text) {
+
 		/*
 		 * Button b = new Button("bla"){
 		 * 
@@ -260,7 +324,6 @@ public class CarSelectorScreen implements Screen {
 			public void clicked(InputEvent event, float x, float y) {
 				prefs.putString(GamePreferences.CAR_MAP_STR, text);
 				prefs.flush();
-				System.out.println("clicked");
 				gameLoader.setScreen(new GamePlayScreen(gameLoader));
 				super.clicked(event, x, y);
 			}

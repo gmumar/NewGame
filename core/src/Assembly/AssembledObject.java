@@ -94,7 +94,7 @@ public class AssembledObject {
 			}
 		}
 
-		System.out.println("left Most: " + leftMost.getComponentName());
+		//System.out.println("left Most: " + leftMost.getComponentName());
 	}
 
 	public void setRightMost() {
@@ -108,7 +108,7 @@ public class AssembledObject {
 				maxY = component.getObject().getPosition().x;
 			}
 		}
-		System.out.println("right Most: " + rightMost.getComponentName());
+		//System.out.println("right Most: " + rightMost.getComponentName());
 	}
 
 	public Vector2 getCenter() {
@@ -138,7 +138,7 @@ public class AssembledObject {
 					component.getComponentName()).split(
 					Assembler.NAME_SUBNAME_SPLIT)[0]
 					+ Globals.getId(component.getComponentName());
-			System.out.println(componentName);
+			//System.out.println(componentName);
 			if (componentsSet.contains(componentName))
 				continue;
 			component.setPosition(x, y);
@@ -256,13 +256,13 @@ public class AssembledObject {
 	}*/
 
 	public void addToDriveList(Component c) {
-		System.out.println("Adding to drive list");
+		//System.out.println("Adding to drive list");
 		if (driveList == null) {
 			driveList = new ArrayList<BaseActor>();
 		}
 		// c.getObject().getPhysicsBody().setAngularDamping(0.5f);
 
-		System.out.println(c.getComponentName());
+		//System.out.println(c.getComponentName());
 		if (c.getComponentName().contains(ComponentNames.TIRE)) {
 			ArrayList<BaseActor> bodies = c.getJointBodies();
 			driveList.add(bodies.get(0));
