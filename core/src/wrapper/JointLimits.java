@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class JointLimits {
 
-	private final static double TORQUE_FACTOR = 1e5;
+	private final static double TORQUE_FACTOR = 8e4;
 	private final static double FORCE_FACTOR = 1e4;
 	private final static double FORCE_DEVIDER = 5e5;
 
@@ -43,9 +43,10 @@ public class JointLimits {
 
 		while (iter.hasNext()) {
 			joint = iter.next();
-
-			if ((joint.getType() == JointType.PrismaticJoint)
-					|| (jointBetween(joint, ComponentNames.AXLE,
+			
+			 
+			if ( ( (joint.getType() == JointType.PrismaticJoint) ||
+					jointBetween(joint, ComponentNames.AXLE,
 							ComponentNames.TIRE))) {
 				continue;
 			}

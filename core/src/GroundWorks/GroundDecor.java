@@ -6,6 +6,7 @@ import java.util.Iterator;
 import wrapper.BaseActor;
 import wrapper.GameState;
 import Component.ComponentNames;
+import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -26,8 +27,11 @@ public class GroundDecor {
 	public void addChequeredFlag(ArrayList<GroundUnitDescriptor> preMadeMapList) {
 		
 		GroundUnitDescriptor lastPos = preMadeMapList.get(preMadeMapList.size()-1);
+		JSONComponentName name = new JSONComponentName();
 		
-		BaseActor flag = new BaseActor(ComponentNames.CEQUEREDFLAG, "chequered_flag.png", gameState);
+		name.setBaseName(ComponentNames.CEQUEREDFLAG);
+		
+		BaseActor flag = new BaseActor(name, "chequered_flag.png", gameState);
 		flag.setSensor();
 		flag.setBodyType(BodyType.StaticBody);
 		flag.setPosition(lastPos.getEnd().x, (lastPos.getEnd().y + lastPos.getStart().y)/2 + 3);

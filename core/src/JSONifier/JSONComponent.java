@@ -6,7 +6,8 @@ import com.badlogic.gdx.utils.Json;
 
 public class JSONComponent {
 
-	private String cN;//componentName
+	//private String cN;//componentName
+	private JSONComponentName cN;
 	private HashMap<String, String> props;
 
 	public String jsonify() {
@@ -24,14 +25,38 @@ public class JSONComponent {
 
 	}
 
-	public String getComponentName() {
+	/*public String getComponentName() {
 		return cN;
 	}
 
 	public void setComponentName(String componentName) {
 		this.cN = componentName;
+	}*/
+	
+	public JSONComponentName getjComponentName() {
+		return cN;
 	}
 
+	public void setjComponentName(JSONComponentName cN) {
+		this.cN = cN;
+	}
+	
+	public String getBaseName() {
+		return cN.getBaseName();
+	}
+	
+	public String getSubName() {
+		return cN.getSubName();
+	}
+	
+	public String getComponentId() {
+		return cN.getComponentId();
+	}
+	
+	public String getMountId() {
+		return cN.getMountId();
+	}
+	
 	public HashMap<String, String> getProperties() {
 		return props;
 	}

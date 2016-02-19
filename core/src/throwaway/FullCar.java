@@ -27,7 +27,7 @@ public class FullCar {
 	DistanceJointDef frontDamper, backDamper;
 	GameLoader gameLoader;
 
-	public FullCar(GameState gameState) {
+	/*public FullCar(GameState gameState) {
 		gameLoader = gameState.getGameLoader();
 		carBody = new BaseActor("base", "temp_car.png", gameState);
 		carBody.setMounts(createCarMounts(),0);
@@ -131,6 +131,6 @@ public class FullCar {
 		tmp.setJoint(0, j);
 
 		return tmp;
-	}
+	}*/
 
 }

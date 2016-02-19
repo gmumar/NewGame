@@ -74,8 +74,15 @@ public class Globals {
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
 
-			if (joinIn.getMount1().compareTo(join.getMount1()) == 0
+			/*if (joinIn.getMount1().compareTo(join.getMount1()) == 0
 					&& joinIn.getMount2().compareTo(join.getMount2()) == 0
+					&& joinIn.props != null
+					&& joinIn.props.size() == join.props.size()) {
+				return true;
+			}*/
+			
+			if (joinIn.getMount1().getId().compareTo(join.getMount1().getId()) == 0
+					&& joinIn.getMount2().getId().compareTo(join.getMount2().getId()) == 0
 					&& joinIn.props != null
 					&& joinIn.props.size() == join.props.size()) {
 				return true;
@@ -85,7 +92,7 @@ public class Globals {
 		return false;
 	}
 	
-	public static String getId(String name) {
+	/*public static String getId(String name) {
 		return name.split(Assembler.NAME_ID_SPLIT)[1];
 	}
 
@@ -106,6 +113,6 @@ public class Globals {
 	public static String getComponentName(String name) {
 		// e.g. bar3
 		return name.split(Assembler.NAME_ID_SPLIT)[0];
-	}
+	}*/
 
 }

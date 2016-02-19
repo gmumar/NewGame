@@ -53,7 +53,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private float timePassed = 0;
 	
-	private JointLimits jointLimits;
+	//private JointLimits jointLimits;
 
 	private AsyncExecutor taskRunner;
 	private boolean submit = true, running = true;
@@ -86,7 +86,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		world.step(10, 100, 100);
 		
-		jointLimits = new JointLimits(world);
+		//jointLimits = new JointLimits(world);
 
 		taskRunner = new AsyncExecutor(1);
 		collisionTask = new AsyncTask<String>() {
@@ -94,7 +94,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			@Override
 			public String call() throws Exception {
 				while (running) {
-					jointLimits.enableJointLimits(1/dlTime);
+					//jointLimits.enableJointLimits(1/dlTime);
 					collisionWait = true;
 					while (collisionWait)
 						;
@@ -176,7 +176,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				submit = false;
 			}*/
 			
-			jointLimits.enableJointLimits(1/dlTime);
+			//jointLimits.enableJointLimits(1/dlTime);
 
 		} else {
 			timePassed += dlTime;

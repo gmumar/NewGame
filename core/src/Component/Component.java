@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import wrapper.BaseActor;
-import Assembly.Assembler;
 import JSONifier.JSONComponent;
+import JSONifier.JSONComponentName;
 import JSONifier.Properties;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,16 +30,23 @@ public class Component {
 
 	private BaseActor object;
 	private ComponentTypes componentTypes;
-	private String componentName;
+	//private String componentName;
+	private JSONComponentName jComponentName;
 	private boolean Motor = false;
 	private ArrayList<BaseActor> jointBodies = null;
 
-	public Component(BaseActor obj, ComponentTypes type, String name) {
+	/*public Component(BaseActor obj, ComponentTypes type, String name) {
 		object = obj;
 		componentTypes = type;
 		componentName = name;
-	}
+	}*/
 
+	public Component(BaseActor obj, ComponentTypes type, JSONComponentName name) {
+		object = obj;
+		componentTypes = type;
+		jComponentName = name;
+	}
+	
 	public ArrayList<BaseActor> getJointBodies() {
 		return jointBodies;
 	}
@@ -90,8 +97,14 @@ public class Component {
 
 	}
 
-	public void setUpForBuilder(String name) {
+	//public void setUpForBuilder(String name) {
+	public void setUpForBuilder(JSONComponentName name) {
+		//this.jComponentName = name;
+		
 		if (this.componentTypes == ComponentTypes.PART) {
+			this.setComponentId(name.getComponentId());
+			this.setMountId(name.getMountId());
+			
 			Body body = this.getObject().getPhysicsBody();
 			body.setUserData(name);
 
@@ -104,35 +117,65 @@ public class Component {
 			while (iter.hasNext()) {
 				Vector2 mount = iter.next();
 				FixtureDef fixtureDef = ComponentBuilder
-						.buildMount(mount, true);
+						.buildMount(mount, 1, true);
 				Fixture fixture = body.createFixture(fixtureDef);
-				fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT
-						+ mountId++);
+				JSONComponentName fixtureName = new JSONComponentName();
+				fixtureName.setBaseName(name.getBaseName());
+				fixtureName.setComponentId(name.getComponentId());
+				//fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT
+				//		+ mountId++);
+				fixtureName.setMountId(Integer.toString(mountId++));
+				
+				System.out.println("Component: Creating mount fixture:" + fixtureName);
+				fixture.setUserData(fixtureName);
 			}
 		} else if (this.componentTypes == ComponentTypes.JOINT) {
 			int mountId = 0;
 			ArrayList<BaseActor> bodies = this.getJointBodies();
 			Iterator<BaseActor> iter = bodies.iterator();
+			
 			while (iter.hasNext()) {
+				JSONComponentName fixtureName = new JSONComponentName();
+				
 				BaseActor body = iter.next();
+				
+				this.setComponentId(name.getComponentId());
+				System.out.println("Componenet : jointBodyCount " + body.getjName());
 				// TODO: finalize this
 				body.setSensor();
 				// body.setBodyType(BodyType.KinematicBody);
 				FixtureDef fixtureDef = ComponentBuilder.buildMount(
-						new Vector2(0, 0), true);
+						new Vector2(0, 0), 1, true);
 				Fixture fixture = body.getPhysicsBody().createFixture(
 						fixtureDef);
-				fixture.setUserData(body.getPhysicsBody().getUserData() + name
+				/*fixture.setUserData(body.getPhysicsBody().getUserData() + name
 						+ Assembler.NAME_MOUNT_SPLIT + mountId);
 				body.getPhysicsBody().setUserData(
-						body.getPhysicsBody().getUserData() + name);
+						body.getPhysicsBody().getUserData() + name);*/
+				//name.setMountId(Integer.toString(mountId));
+				System.out.println("Componenet : bodyName: " + ((JSONComponentName)body.getPhysicsBody().getUserData()).getBaseName());
+				//name.setBaseName(body.getPhysicsBody().getUserData() + name.getBaseName());
+				
+				fixtureName.setComponentId(name.getComponentId());
+				fixtureName.setBaseName(name.getBaseName());
+				fixtureName.setSubName(body.getjName().getSubName());
+				fixtureName.setMountId(Integer.toString(mountId));
+				
+				fixture.setUserData(fixtureName);
+				body.getPhysicsBody().setUserData(fixtureName);
+				
 			}
 		}
 	}
 
-	public JSONComponent toJSONComponent(String name) {
+	//public JSONComponent toJSONComponent(String name) {
+	public JSONComponent toJSONComponent(JSONComponentName name) {
+		
+		System.out.println("Component: creatingJSONComponent: " + name);
+		
 		JSONComponent jComponent = new JSONComponent();
-		jComponent.setComponentName(name);
+		//jComponent.setComponentName(name);
+		jComponent.setjComponentName(name);
 
 		HashMap<String, String> prop = new HashMap<String, String>();
 		prop.put(
@@ -142,9 +185,16 @@ public class Component {
 		prop.put(Properties.POSITION, this.getObject().getPosition().x
 				+ "," + this.getObject().getPosition().y); // "-10,5"
 
-		if (name.contains(ComponentNames.TIRE)) {
+		/*if (name.contains(ComponentNames.TIRE)) {
 			prop.put(Properties.MOTOR, "1");
 		} else if (name.contains(ComponentNames.SPRINGJOINT)) {
+			prop.put(Properties.TYPE,
+					ComponentNames.SPRINGJOINT);
+		}*/
+		
+		if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+			prop.put(Properties.MOTOR, "1");
+		} else if (name.getBaseName().compareTo(ComponentNames.SPRINGJOINT) == 0) {
 			prop.put(Properties.TYPE,
 					ComponentNames.SPRINGJOINT);
 		}
@@ -153,9 +203,11 @@ public class Component {
 		return jComponent;
 	}
 
-	public JSONComponent toJSONComponent(String name, BaseActor body) {
+	//public JSONComponent toJSONComponent(String name, BaseActor body) {
+	public JSONComponent toJSONComponent(JSONComponentName name, BaseActor body) {
 		JSONComponent jComponent = new JSONComponent();
-		jComponent.setComponentName(name);
+		//jComponent.setComponentName(name);
+		jComponent.setjComponentName(name);
 
 		HashMap<String, String> prop = new HashMap<String, String>();
 		prop.put(Properties.ROTATION,
@@ -193,16 +245,60 @@ public class Component {
 		this.componentTypes = componentTypes;
 	}
 
-	public String getComponentName() {
+	/*public String getComponentName() {
 		return componentName;
 	}
 
 	public void setComponentName(String componentName) {
 		this.componentName = componentName;
-	}
+	}*/
 
 	public void destroyObject() {
 		object.destroy();
+	}
+
+	public JSONComponentName getjComponentName() {
+		return jComponentName;
+	}
+	
+	public String getComponentName() {
+		return jComponentName.getBaseName();
+	}
+
+	public void setjComponentName(JSONComponentName jComponentName) {
+		this.jComponentName = jComponentName;
+	}
+	
+	public void setBaseName(String baseName) {
+		jComponentName.setBaseName(baseName);
+	}
+	
+	public void setSubName(String subName) {
+		jComponentName.setSubName(subName);
+	}
+	
+	public void setComponentId(String componentId) {
+		jComponentName.setComponentId(componentId);
+	}
+	
+	public void setMountId(String mountId) {
+		jComponentName.setMountId(mountId);
+	}
+	
+	public String getBaseName() {
+		return jComponentName.getBaseName();
+	}
+	
+	public String getSubName() {
+		return jComponentName.getSubName();
+	}
+	
+	public String getComponentId() {
+		return jComponentName.getComponentId();
+	}
+	
+	public String getMountId() {
+		return jComponentName.getMountId();
 	}
 
 	public void setPosition(float f, float g) {

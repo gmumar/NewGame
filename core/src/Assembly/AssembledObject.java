@@ -8,6 +8,7 @@ import wrapper.Globals;
 import wrapper.TouchUnit;
 import Component.Component;
 import Component.ComponentNames;
+import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -52,7 +53,8 @@ public class AssembledObject {
 
 		while (iter.hasNext()) {
 			Component part = iter.next();
-			if (part.getComponentName().contains(ComponentNames.LIFE)) {
+			//if (part.getComponentName().contains(ComponentNames.LIFE)) {
+			if (part.getComponentName().compareTo(ComponentNames.LIFE)==0) {
 				this.basePart = part.getJointBodies().get(1).getPhysicsBody();// .getObject().getPhysicsBody();
 			}
 		}
@@ -128,16 +130,18 @@ public class AssembledObject {
 	}
 
 	public void setPosition(float x, float y) {
-		String componentName = "";
-		ArrayList<String> componentsSet = new ArrayList<String>();
+		//String componentName = "";
+		JSONComponentName componentName = new JSONComponentName();
+		ArrayList<JSONComponentName> componentsSet = new ArrayList<JSONComponentName>();
 
 		Iterator<Component> iter = partList.iterator();
 		while (iter.hasNext()) {
 			Component component = iter.next();
-			componentName = Globals.getComponentName(
+			componentName = component.getjComponentName();
+			/*componentName = Globals.getComponentName(
 					component.getComponentName()).split(
 					Assembler.NAME_SUBNAME_SPLIT)[0]
-					+ Globals.getId(component.getComponentName());
+					+ Globals.getId(component.getComponentName());*/
 			//System.out.println(componentName);
 			if (componentsSet.contains(componentName))
 				continue;

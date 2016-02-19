@@ -3,6 +3,9 @@ package wrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Component.ComponentProperties;
+import JSONifier.JSONComponentName;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -16,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Joint;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -25,7 +29,9 @@ public class BaseActor {
 	private Sprite sprite;
 	private Body body;
 
-	private String name, textureStr;
+	//private String name, textureStr;
+	private JSONComponentName name;
+	private String textureStr;
 	private Texture texture;
 	private boolean onlyPhysicBody = false;
 	private boolean useDefaultShape = true;
@@ -48,11 +54,12 @@ public class BaseActor {
 	private float density = 25;
 	private float friction = 0.1f;
 	private final float DEFAULT_SIZE = 1f;
+	private float massScale = 1;
 
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
 
-	public BaseActor(String name, String texture, GameState gameState) {
+	public BaseActor(JSONComponentName name, String texture, GameState gameState) {
 
 		this.texture = gameState.getGameLoader().Assets.get(texture,Texture.class);
 		this.name = name;
@@ -63,7 +70,7 @@ public class BaseActor {
 		initBody();
 	}
 
-	public BaseActor(String name, GameState gameState) {
+	public BaseActor(JSONComponentName name, GameState gameState) {
 		this.onlyPhysicBody = true;
 		this.name = name;
 		this.world = gameState.getWorld();
@@ -96,6 +103,24 @@ public class BaseActor {
 		this.onlyPhysicBody = other.onlyPhysicBody;
 		this.friction = other.friction;
 		this.mountDistance = other.mountDistance;
+		this.massScale = other.massScale;
+
+		initSprite();
+		initBody();
+	}
+
+	public BaseActor(JSONComponentName name, ComponentProperties properties,
+			GameState gameState) {
+		
+		this.textureStr = (properties.getTexture() == null) ? this.textureStr  : properties.getTexture();
+		this.density = (properties.getDensity() == -1) ? this.density  : properties.getDensity();
+		this.restitution = (properties.getRestituition() == -1) ? this.restitution  : properties.getRestituition();
+		this.friction = (properties.getFriction() == -1) ? this.friction  : properties.getFriction();
+		
+		this.texture = gameState.getGameLoader().Assets.get(textureStr,Texture.class);
+		this.name = name;
+		this.world = gameState.getWorld();
+	
 
 		initSprite();
 		initBody();
@@ -218,17 +243,20 @@ public class BaseActor {
 
 	public float getRotation() {
 		float rot = body.getAngle();
-		if (rot >= 2 * Math.PI) {
+		while (rot >= 2 * Math.PI) {
 			System.out.println("resetting");
-			setRotation((float)(body.getAngle() - 2 * Math.PI)*MathUtils.radiansToDegrees);
+			rot -= (2 * Math.PI);
+			setRotation(rot*MathUtils.radiansToDegrees);
 		}
 		
-		if (rot <= -2 * Math.PI) {
+		while (rot <= -2 * Math.PI) {
 			System.out.println("resetting");
-			setRotation((float)(body.getAngle() + 2 * Math.PI)*MathUtils.radiansToDegrees);
+			rot += (2 * Math.PI);
+			setRotation(rot*MathUtils.radiansToDegrees);
+			//setRotation((float)(body.getAngle() + 2 * Math.PI)*MathUtils.radiansToDegrees);
 		}
 
-		return body.getAngle();
+		return rot;
 	}
 
 	public void setScale(float xy) {
@@ -334,7 +362,11 @@ public class BaseActor {
 		this.body = body;
 	}
 
-	public String getName() {
+	//public String getName() {
+	//	return name;
+	//}
+	
+	public JSONComponentName getjName() {
 		return name;
 	}
 
@@ -379,6 +411,19 @@ public class BaseActor {
 	public void setDensity(float density) {
 		this.density = density;
 		fixture.setDensity(density);
+		//body.resetMassData();
+		
+	}
+	
+	public void setMassScale(float scale){
+		this.massScale = scale;
+		MassData data = body.getMassData();
+		data.mass *= scale;
+		body.setMassData(data);
+	}
+	
+	public float getDensity() {
+		return fixture.getDensity();
 	}
 
 	public void setSensor() {

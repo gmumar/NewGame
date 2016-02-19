@@ -6,6 +6,7 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import Component.Component;
+import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -123,8 +124,12 @@ public class AssemblyRules {
 		while (iter.hasNext()) {
 			SimpleJoint joint = iter.next();
 
-			if (((String) joint.bodyA.getUserData())
-					.compareTo((String) currentBody.getUserData()) == 0) {
+			//if (((String) joint.bodyA.getUserData())
+			//		.compareTo((String) currentBody.getUserData()) == 0) {
+			if (((JSONComponentName) joint.bodyA.getUserData())
+					.equals((JSONComponentName) currentBody.getUserData())) {
+					
+						
 				connectedBodies.add(joint.bodyB);
 
 				Iterator<JointEdge> bodyIter = joint.bodyB.getJointList()
@@ -137,8 +142,11 @@ public class AssemblyRules {
 				continue;
 			}
 
-			if (((String) joint.bodyB.getUserData())
-					.compareTo((String) currentBody.getUserData()) == 0) {
+			/*if (((String) joint.bodyB.getUserData())
+					.compareTo((String) currentBody.getUserData()) == 0) {*/
+			
+			if (((JSONComponentName) joint.bodyB.getUserData())
+					.equals((JSONComponentName) currentBody.getUserData())) {
 				connectedBodies.add(joint.bodyA);
 				// System.out.println(joint.bodyA.getUserData());
 				Iterator<JointEdge> bodyIter = joint.bodyA.getJointList()

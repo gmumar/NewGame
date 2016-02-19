@@ -15,9 +15,10 @@ import Component.ComponentBuilder;
 import Component.ComponentNames;
 import Component.ComponentSubNames;
 import GroundWorks.GroundUnitDescriptor;
-import JSONifier.JSONComponent;
-import JSONifier.JSONJoint;
 import JSONifier.JSONCar;
+import JSONifier.JSONComponent;
+import JSONifier.JSONComponentName;
+import JSONifier.JSONJoint;
 import JSONifier.JSONTrack;
 
 import com.badlogic.gdx.Gdx;
@@ -34,9 +35,9 @@ import com.gudesigns.climber.GameLoader;
 
 public class Assembler {
 
-	final public static String NAME_MOUNT_SPLIT = ":";
-	final public static String NAME_ID_SPLIT = "-";
-	final public static String NAME_SUBNAME_SPLIT = "=";
+	//final public static String NAME_MOUNT_SPLIT = ":";
+	//final public static String NAME_ID_SPLIT = "-";
+	//final public static String NAME_SUBNAME_SPLIT = "=";
 
 	final private static short CAR = -2;
 
@@ -53,7 +54,9 @@ public class Assembler {
 		JSONCar source = new JSONCar();
 		source = JSONCar.objectify(inputString);
 
+		//HashMap<String, Component> parts = extractComponents(source, gameState);
 		HashMap<String, Component> parts = extractComponents(source, gameState);
+		System.out.println("Assembler :" + parts);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
 		Iterator<JSONJoint> JointIter = jcomponents.iterator();
@@ -62,15 +65,27 @@ public class Assembler {
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
 
-			String componentAName = Globals.parseName(join.m1)[0];
+			/*String componentAName = Globals.parseName(join.m1)[0];
 			// System.out.println(componentAName);
 			BaseActor bodyA = parts.get(componentAName).getObject();
-			int componentAMountId = Globals.getMountId(join.m1);
+			int componentAMountId = Globals.getMountId(join.m1);*/
+			
+			String componentAName = join.getMount1().getId();
+			System.out.println("Assembler : componentA" + componentAName);
+			
+			BaseActor bodyA = parts.get(componentAName).
+							getObject();
+			int componentAMountId = Integer.parseInt(join.getMount1().getMountId());
 
-			String componentBName = Globals.parseName(join.m2)[0];
+			/*String componentBName = Globals.parseName(join.m2)[0];
 			// System.out.println(componentBName);
 			BaseActor bodyB = parts.get(componentBName).getObject();
-			int componentBMountId = Globals.getMountId(join.m2);
+			int componentBMountId = Globals.getMountId(join.m2);*/
+			
+			String componentBName = join.getMount2().getId();
+			System.out.println("Assembler : componentB" + componentBName);
+			BaseActor bodyB = parts.get(componentBName).getObject();
+			int componentBMountId = Integer.parseInt(join.getMount2().getMountId());
 
 			{
 				/*
@@ -155,6 +170,7 @@ public class Assembler {
 
 	static private HashMap<String, Component> extractComponents(
 			JSONCar source, GameState gameState) {
+		//HashMap<String, Component> ret = new HashMap<String, Component>();
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
 
@@ -162,26 +178,36 @@ public class Assembler {
 		JSONComponent sourceComponent;
 		Component component = null;
 		ArrayList<Component> componentList = null;
-		String componentName;
-
+		//String componentName;
+		JSONComponentName componentName;
+		
 		while (iter.hasNext()) {
 			componentList = null;
 			component = null;
 			sourceComponent = iter.next();
-			componentName = Globals.getComponentName(sourceComponent
-					.getComponentName());
+			//componentName = Globals.getComponentName(sourceComponent
+			//		.getComponentName());
+			componentName = sourceComponent.getjComponentName();
 
-			// System.out.println("Extracting: " + componentName);
+			
 
-			if (componentName.contains(ComponentNames.SPRINGJOINT)) {
+			/*if (componentName.contains(ComponentNames.SPRINGJOINT)) {
 				componentList = ComponentBuilder.buildJointComponent(
-						componentName, gameState);
+						componentName, 1, gameState);*/
+			
+			if (componentName.getBaseName().compareTo(ComponentNames.SPRINGJOINT)==0) {
+				componentList = ComponentBuilder.buildJointComponent(
+						componentName.getBaseName(), 1, gameState);
+				
+				
 
-				String[] nameList = sourceComponent.getComponentName().split(
+				/*String[] nameList = sourceComponent.getComponentName().split(
 						NAME_ID_SPLIT);
 				String jointComponentName = nameList[0];
-				String jointComponentId = nameList[1];
-
+				String jointComponentId = nameList[1];*/
+				String jointComponentName = sourceComponent.getBaseName();
+				String jointComponentId = sourceComponent.getComponentId();
+				
 				Iterator<Component> it = componentList.iterator();
 				while (it.hasNext()) {
 					Component localComponent = it.next();
@@ -196,37 +222,72 @@ public class Assembler {
 						.applyProperties(sourceComponent.getProperties(),
 								PropertyTypes.ABSOLUTE);
 
-				componentList.get(0).setComponentName(
+				/*componentList.get(0).setComponentName(
 						jointComponentName + NAME_SUBNAME_SPLIT
 								+ ComponentSubNames.UPPER + NAME_ID_SPLIT
-								+ jointComponentId);
+								+ jointComponentId);*/
+				
+				componentList.get(0).setBaseName(jointComponentName);
+				componentList.get(0).setSubName(ComponentSubNames.UPPER);
+				componentList.get(0).setComponentId(jointComponentId);
+				componentList.get(0).setMountId(Integer.toString(0));
 
-				componentList.get(1).setComponentName(
+				/*componentList.get(1).setComponentName(
 						jointComponentName + NAME_SUBNAME_SPLIT
 								+ ComponentSubNames.LOWER + NAME_ID_SPLIT
-								+ jointComponentId);
+								+ jointComponentId);*/
+				
+				componentList.get(1).setBaseName(jointComponentName);
+				componentList.get(1).setSubName(ComponentSubNames.LOWER);
+				componentList.get(1).setComponentId(jointComponentId);
+				componentList.get(1).setMountId(Integer.toString(0));
+				
+				 System.out.println("Assembler:  Extracting springA: " + componentList.get(0).getjComponentName());
+				 System.out.println("Assembler:  Extracting springB: " + componentList.get(1).getjComponentName());
 
-				ret.put(componentList.get(0).getComponentName(),
+				/*ret.put(componentList.get(0).getComponentName(),
 						componentList.get(0));
 				ret.put(jointComponentName + NAME_SUBNAME_SPLIT
 						+ ComponentSubNames.LOWER + NAME_ID_SPLIT
-						+ jointComponentId, componentList.get(1));
+						+ jointComponentId, componentList.get(1));*/
+				
+				ret.put(componentList.get(0).getjComponentName().getId(),
+						componentList.get(0));
+				ret.put(componentList.get(1).getjComponentName().getId(),
+						componentList.get(1));
+				
 
 			} else {
-
-				component = ComponentBuilder.buildComponent(componentName,
+				
+				componentName = sourceComponent.getjComponentName();
+				
+				//--------------------HACK-----------------------
+				if(componentName.getBaseName().compareTo(ComponentNames.AXLE)==0){
+					componentName.setBaseName(ComponentNames.TIRE);
+				}
+				//-----------------------------------------------
+				
+				System.out.println("Assembler : sourceComponet: " + componentName);
+				
+				component = ComponentBuilder.buildComponent(componentName.getBaseName(), 1,
 						gameState);
-
-				// the heart will always be rotate by 90 cause its not the
-				// retunred obj
 
 				if (sourceComponent.getProperties() != null) {
 					component.applyProperties(sourceComponent.getProperties(),
 							PropertyTypes.BOTH);
 				}
 				component.setGroup(CAR);
-				component.setComponentName(sourceComponent.getComponentName());
-				ret.put(sourceComponent.getComponentName(), component);
+				//component.setComponentName(sourceComponent.getComponentName());
+				//String[] nameList = component.getComponentName().split(
+				//		NAME_ID_SPLIT);
+				//String jointComponentName = nameList[0];
+				//String jointComponentId = nameList[1];
+				
+				component.setBaseName(sourceComponent.getBaseName());//(jointComponentName);
+				component.setComponentId(sourceComponent.getComponentId());//(jointComponentId);
+				
+				//ret.put(sourceComponent.getComponentName(), component);
+				ret.put(sourceComponent.getjComponentName().getId(), component);
 			}
 
 		}

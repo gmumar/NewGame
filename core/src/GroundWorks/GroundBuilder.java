@@ -318,7 +318,7 @@ public class GroundBuilder {
 		fixtureDef.shape = edgeShape;
 		fixtureDef.density = 1;
 		fixtureDef.friction = 5;
-		fixtureDef.restitution = 0;
+		fixtureDef.restitution = 0.5f;
 
 		Fixture f = floor.createFixture(fixtureDef);
 
