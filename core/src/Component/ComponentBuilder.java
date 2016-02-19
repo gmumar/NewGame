@@ -331,8 +331,6 @@ public class ComponentBuilder {
 
 	public static Component buildLife(GameState gameState, int level, boolean forBuilder) {
 		
-		String NAME_SUBNAME_SPLIT = "=";
-		
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.LIFE);
 		

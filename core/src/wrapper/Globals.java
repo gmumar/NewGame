@@ -3,7 +3,6 @@ package wrapper;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import Assembly.Assembler;
 import JSONifier.JSONJoint;
 
 import com.badlogic.gdx.Gdx;
@@ -91,28 +90,5 @@ public class Globals {
 		}
 		return false;
 	}
-	
-	/*public static String getId(String name) {
-		return name.split(Assembler.NAME_ID_SPLIT)[1];
-	}
-
-	public static String getSubname(String name) {
-		String subpart = name.split(Assembler.NAME_SUBNAME_SPLIT)[1];
-		return subpart.split(Assembler.NAME_ID_SPLIT)[0];
-	}
-
-	public static int getMountId(String name) {
-		return Integer.parseInt(parseName(name)[1]);
-	}
-
-	public static String[] parseName(String name) {
-		// e.g. bar3_0 , 1
-		return name.split(Assembler.NAME_MOUNT_SPLIT);
-	}
-
-	public static String getComponentName(String name) {
-		// e.g. bar3
-		return name.split(Assembler.NAME_ID_SPLIT)[0];
-	}*/
 
 }

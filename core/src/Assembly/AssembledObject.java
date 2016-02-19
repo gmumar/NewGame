@@ -19,7 +19,7 @@ public class AssembledObject {
 	private ArrayList<Component> partList;
 	private ArrayList<BaseActor> driveList;
 	private Body basePart;
-	private Component leftMost, rightMost;
+	//private Component leftMost, rightMost;
 	// private int basePartIndex;
 
 	private final float ANGULAR_DAMPING = 1f;
@@ -62,8 +62,8 @@ public class AssembledObject {
 		// this.basePart.getObject().getPhysicsBody()
 		// .setAngularDamping(ANGULAR_DAMPING);
 
-		this.setLeftMost();
-		this.setRightMost();
+		//this.setLeftMost();
+		//this.setRightMost();
 	}
 
 	public ArrayList<Component> getPartList() {
@@ -84,7 +84,7 @@ public class AssembledObject {
 		}
 	}
 
-	public void setLeftMost() {
+	/*public void setLeftMost() {
 		Iterator<Component> iter = partList.iterator();
 		float minY = Float.POSITIVE_INFINITY;
 
@@ -111,7 +111,7 @@ public class AssembledObject {
 			}
 		}
 		//System.out.println("right Most: " + rightMost.getComponentName());
-	}
+	}*/
 
 	public Vector2 getCenter() {
 		float sumX = 0, sumY = 0;
@@ -131,23 +131,26 @@ public class AssembledObject {
 
 	public void setPosition(float x, float y) {
 		//String componentName = "";
-		JSONComponentName componentName = new JSONComponentName();
-		ArrayList<JSONComponentName> componentsSet = new ArrayList<JSONComponentName>();
+		//JSONComponentName componentName = new JSONComponentName();
+		ArrayList<String> componentsSet = new ArrayList<String>();
 
 		Iterator<Component> iter = partList.iterator();
 		while (iter.hasNext()) {
 			Component component = iter.next();
-			componentName = component.getjComponentName();
+			JSONComponentName componentName = component.getjComponentName();
 			/*componentName = Globals.getComponentName(
 					component.getComponentName()).split(
 					Assembler.NAME_SUBNAME_SPLIT)[0]
 					+ Globals.getId(component.getComponentName());*/
 			//System.out.println(componentName);
-			if (componentsSet.contains(componentName))
+			if (componentsSet.contains(componentName.getBaseId()))
 				continue;
 			component.setPosition(x, y);
-			componentsSet.add(componentName);
+			System.out.println("AssembledObject :setting " + component.getjComponentName() + " -- " + component.getObject().getPosition());
+			componentsSet.add(componentName.getBaseId());
 		}
+		
+		
 	}
 
 	public void draw(SpriteBatch batch) {

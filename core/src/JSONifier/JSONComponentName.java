@@ -41,8 +41,8 @@ public class JSONComponentName {
 		MountId = mountId;
 	}
 
-	public String getMountedId() {
-		return BaseName + "_" + ComponentId + "_" + MountId;
+	public String getBaseId() {
+		return BaseName + "_" + ComponentId;
 	}
 
 	public String getId() {

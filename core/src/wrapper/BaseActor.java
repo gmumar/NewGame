@@ -243,13 +243,13 @@ public class BaseActor {
 
 	public float getRotation() {
 		float rot = body.getAngle();
-		while (rot >= 2 * Math.PI) {
+		while (rot > 2 * Math.PI) {
 			System.out.println("resetting");
 			rot -= (2 * Math.PI);
 			setRotation(rot*MathUtils.radiansToDegrees);
 		}
 		
-		while (rot <= -2 * Math.PI) {
+		while (rot < 0) {
 			System.out.println("resetting");
 			rot += (2 * Math.PI);
 			setRotation(rot*MathUtils.radiansToDegrees);
