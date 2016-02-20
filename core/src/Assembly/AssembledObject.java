@@ -39,6 +39,10 @@ public class AssembledObject {
 	public Body getBasePart() {
 		return basePart;
 	}
+	
+	public Vector2 getSpeed(){
+		return getBasePart().getLinearVelocity();
+	}
 
 	/*
 	 * public void setBasePartbyIndex(int i) { this.basePart =

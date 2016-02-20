@@ -67,8 +67,28 @@ public class TrackSelectorScreen implements Screen {
 		popQueManager = new PopQueManager(stage);
 		popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
 
+		loadLocalTracks();
 		downloadCars();
 
+	}
+
+	private void loadLocalTracks() {
+		FileObject object = FileManager.readFromFile();
+		ArrayList<JSONTrack> trackList = object.getTracks();
+		Iterator<JSONTrack> iter = trackList.iterator();
+		
+		while(iter.hasNext()){
+			JSONTrack track = iter.next();
+			if(!uniquenessList.contains((String)track.getId())){
+				addButton(track.jsonify());
+				tracks.add(track.jsonify());
+				uniquenessList.add(track.getId());
+				//System.out.println(car.jsonify());
+			}
+		}
+		
+		System.out.println("loaded from file: " + uniquenessList.size() );
+		
 	}
 
 	private void initNavigationButtons() {

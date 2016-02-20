@@ -249,7 +249,7 @@ public class BaseActor {
 			setRotation(rot*MathUtils.radiansToDegrees);
 		}
 		
-		while (rot < 0) {
+		while (rot < -2 * Math.PI) {
 			System.out.println("resetting");
 			rot += (2 * Math.PI);
 			setRotation(rot*MathUtils.radiansToDegrees);

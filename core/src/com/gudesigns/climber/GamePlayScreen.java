@@ -12,6 +12,7 @@ import Assembly.AssembledObject;
 import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
 import Menu.HUDBuilder;
+import ParallexBackground.ScrollingBackground;
 import Shader.GameMesh;
 
 import com.badlogic.gdx.Gdx;
@@ -52,6 +53,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
 	private float timePassed = 0;
+	
+	private ScrollingBackground scrollingBackground;
 	
 	//private JointLimits jointLimits;
 
@@ -103,6 +106,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				return null;
 			}
 		};
+		
+		scrollingBackground = new ScrollingBackground(new GameState(world, gameLoader), builtCar);
 	}
 
 	final private void initShader() {
@@ -134,8 +139,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void render(float delta) {
 		handleInput(touches);
-
 		renderWorld();
+		
+		//batch.begin();
+
+		scrollingBackground.draw(batch,delta);
+		//batch.end();
+		
+		
 		ground.drawShapes(camera);
 		attachCameraTo(builtCar.getBasePart());
 
@@ -145,6 +156,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		builtCar.draw(batch);
 
 		batch.end();
+		
+		
 
 		hud.update(delta);
 		stage.draw();

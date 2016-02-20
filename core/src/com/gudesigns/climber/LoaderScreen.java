@@ -50,6 +50,8 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("button.png", Texture.class);
 		gameLoader.Assets.load("temp_ground_filler.png", Texture.class);
 		gameLoader.Assets.load("colooorsssxcf.png", Texture.class);
+		gameLoader.Assets.load("temp_background1.png", Texture.class);
+		gameLoader.Assets.load("temp_background2.png", Texture.class);
 	}
 
 	private void initStage() {
