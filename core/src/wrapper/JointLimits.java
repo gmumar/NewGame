@@ -1,8 +1,7 @@
 package wrapper;
 
-import java.util.Iterator;
-
 import Component.ComponentNames;
+import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointDef.JointType;
@@ -25,12 +24,13 @@ public class JointLimits {
 	private final static int LIFE_BAR_BREAKING_FORCE = (int) (1 * FORCE_FACTOR);
 
 	private static final Array<Joint> joints = new Array<Joint>();
-	private static Iterator<Joint> iter;
-	private static Joint joint;
 	private static double force;
 	private static double torque;
 	private World world;
 
+	private static String nameBodyA = "";
+	private static String nameBodyB = "";
+	
 	public JointLimits(World world) {
 		this.world = world;
 
@@ -39,17 +39,19 @@ public class JointLimits {
 	final public void enableJointLimits(final float step) {
 
 		world.getJoints(joints);
-		iter = joints.iterator();
+		//iter = joints.iterator();
 
-		while (iter.hasNext()) {
-			joint = iter.next();
-			
+		for (Joint joint : joints) {
+			//joint = iter.next();
 			 
 			if ( ( (joint.getType() == JointType.PrismaticJoint) ||
 					jointBetween(joint, ComponentNames.AXLE,
 							ComponentNames.TIRE))) {
 				continue;
 			}
+			
+			nameBodyA = ((JSONComponentName)joint.getBodyA().getUserData()).getBaseName();
+			nameBodyB = ((JSONComponentName)joint.getBodyB().getUserData()).getBaseName();
 
 			force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
 			torque = joint.getReactionTorque(step);
@@ -119,11 +121,18 @@ public class JointLimits {
 	}
 
 	final private static boolean jointHas(Joint joint, String name1) {
-		if (((String) joint.getBodyA().getUserData()).contains(name1)
+		/*if (((String) joint.getBodyA().getUserData()).contains(name1)
 
 		||
 
 		((String) joint.getBodyB().getUserData()).contains(name1)) {
+			return true;
+		}*/
+		
+		if(
+				nameBodyA.compareTo(name1)==0 ||
+				nameBodyB.compareTo(name1)==0
+				) {
 			return true;
 		}
 
@@ -132,13 +141,23 @@ public class JointLimits {
 
 	final private static boolean jointBetween(Joint joint, String name1,
 			String name2) {
-		if (((String) joint.getBodyA().getUserData()).contains(name1)
+		/*if (((String) joint.getBodyA().getUserData()).contains(name1)
 				&& ((String) joint.getBodyB().getUserData()).contains(name2)
 
 				||
 
 				((String) joint.getBodyA().getUserData()).contains(name1)
 				&& ((String) joint.getBodyB().getUserData()).contains(name2)) {
+			return true;
+		}*/
+		
+		if (
+				nameBodyA.compareTo(name1)==0 &&
+				nameBodyB.compareTo(name2)==0 ||
+				nameBodyA.compareTo(name2)==0 &&
+				nameBodyB.compareTo(name1)==0 
+				
+				) {
 			return true;
 		}
 

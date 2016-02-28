@@ -193,7 +193,7 @@ public class GameMesh {
 	
 		}else{
 			// no need for depth...
-			Gdx.gl.glDepthMask(false);
+			//Gdx.gl.glDepthMask(false);
 	
 			// enable blending, for alpha
 			Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
@@ -216,7 +216,7 @@ public class GameMesh {
 	
 	
 			// re-enable depth to reset states to their default
-			Gdx.gl.glDepthMask(true);
+			//Gdx.gl.glDepthMask(true);
 		}
 
 	}

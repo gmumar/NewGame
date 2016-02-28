@@ -52,7 +52,7 @@ public class GroundBuilder {
 	private Random r = new Random();
 	private GroundDecor decor;
 
-	private static final int ADD_FLOOR_COUNT_FINAL = 3;
+	private static final int ADD_FLOOR_COUNT_FINAL = 4;
 	private int addFloorCount;
 	private int ADD_FLOOR_COUNT = 0;
 	private int flatFloorCount;
@@ -124,7 +124,7 @@ public class GroundBuilder {
 		// float h = Gdx.graphics.getHeight() - 300;
 		floor = world.createBody(bodyDef2);
 
-		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-50
+		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-60
 				* UNIT_LENGTH, TRACK_HEIGHT), new Vector2(-5 * UNIT_LENGTH,
 				TRACK_HEIGHT), true);// ,
 								// "temp_ground.png","temp_ground_filler_premade.png");
@@ -316,13 +316,13 @@ public class GroundBuilder {
 
 		edgeShape.set(v1, v2);
 		fixtureDef.shape = edgeShape;
-		fixtureDef.density = 1;
-		fixtureDef.friction = 5;
+		//fixtureDef.density = 1;
+		fixtureDef.friction = 1;
 		fixtureDef.restitution = 0.5f;
 
-		Fixture f = floor.createFixture(fixtureDef);
+		//Fixture f = ;
 
-		return f;
+		return floor.createFixture(fixtureDef);
 	}
 
 	public Shape getShapeBase(Vector2 pos) {

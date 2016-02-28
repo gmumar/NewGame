@@ -106,14 +106,14 @@ public class TrackBuilder {
 
 	public void draw(SpriteBatch batch) {
 
-		Iterator<GroundUnitDescriptor> iter = mapList.iterator();
+		/*Iterator<GroundUnitDescriptor> iter = mapList.iterator();
 
 		while (iter.hasNext()) {
 			GroundUnitDescriptor groundItem = iter.next();
 			if (!groundItem.isFixtureDeleted())
 				;
 			// groundItem.draw(batch);
-		}
+		}*/
 
 	}
 

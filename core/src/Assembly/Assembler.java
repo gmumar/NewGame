@@ -30,6 +30,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.gudesigns.climber.GameLoader;
 
@@ -42,6 +43,8 @@ public class Assembler {
 	final private static short CAR = -2;
 
 	public static AssembledObject assembleObject(GameState gameState) {
+		Integer jointType = 0;
+		
 		AssembledObject obj = new AssembledObject();
 		Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
@@ -56,11 +59,14 @@ public class Assembler {
 
 		//HashMap<String, Component> parts = extractComponents(source, gameState);
 		HashMap<String, Component> parts = extractComponents(source, gameState);
-		System.out.println("Assembler :" + parts);
+		//System.out.println("Assembler :" + parts);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
 		Iterator<JSONJoint> JointIter = jcomponents.iterator();
 		JSONJoint join;
+		
+		HashMap<String, Integer> jointTypeList = source.getJointTypeList();
+		System.out.println("Assembler : jointType" + jointTypeList);
 
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
@@ -71,7 +77,7 @@ public class Assembler {
 			int componentAMountId = Globals.getMountId(join.m1);*/
 			
 			String componentAName = join.getMount1().getId();
-			System.out.println("Assembler : componentA" + componentAName);
+			System.out.println("Assembler : componentA " + join.getMount1().getMountedId());
 			
 			BaseActor bodyA = parts.get(componentAName).
 							getObject();
@@ -83,22 +89,25 @@ public class Assembler {
 			int componentBMountId = Globals.getMountId(join.m2);*/
 			
 			String componentBName = join.getMount2().getId();
-			System.out.println("Assembler : componentB" + componentBName);
+			System.out.println("Assembler : componentB " + join.getMount2().getMountedId());
 			BaseActor bodyB = parts.get(componentBName).getObject();
 			int componentBMountId = Integer.parseInt(join.getMount2().getMountId());
+			
+			jointType = jointTypeList.get(join.getMount1().getMountedId());
 
-			{
-				/*
-				 * RevoluteJointDef rJoint = new RevoluteJointDef();
-				 * 
-				 * rJoint.initialize(bodyA.getPhysicsBody(),
-				 * bodyB.getPhysicsBody(), bodyB.getMount(componentBMountId));
-				 * rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
-				 * rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
-				 * rJoint.collideConnected = false; rJoint.enableLimit = true;
-				 * world.createJoint(rJoint);
-				 */
-
+			if(jointType == 1){
+				
+				  RevoluteJointDef rJoint = new RevoluteJointDef();
+				  
+				  rJoint.initialize(bodyA.getPhysicsBody(),
+				  bodyB.getPhysicsBody(), bodyB.getMount(componentBMountId));
+				  rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+				  rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+				  rJoint.collideConnected = false; 
+				  rJoint.enableLimit = false;
+				  gameState.getWorld().createJoint(rJoint);
+				 
+			} else {
 				WeldJointDef wJoint = new WeldJointDef();
 
 				wJoint.initialize(bodyA.getPhysicsBody(),
@@ -108,7 +117,6 @@ public class Assembler {
 				wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				wJoint.collideConnected = false;
 				gameState.getWorld().createJoint(wJoint);
-
 			}
 
 		}
@@ -188,6 +196,7 @@ public class Assembler {
 			//componentName = Globals.getComponentName(sourceComponent
 			//		.getComponentName());
 			componentName = sourceComponent.getjComponentName();
+			Integer partLevel = componentName.getLevel() == null ? 1 : componentName.getLevel();
 
 			
 
@@ -197,7 +206,7 @@ public class Assembler {
 			
 			if (componentName.getBaseName().compareTo(ComponentNames.SPRINGJOINT)==0) {
 				componentList = ComponentBuilder.buildJointComponent(
-						componentName.getBaseName(), 1, gameState);
+						componentName.getBaseName(), partLevel, gameState);
 				
 				
 
@@ -207,6 +216,7 @@ public class Assembler {
 				String jointComponentId = nameList[1];*/
 				String jointComponentName = sourceComponent.getBaseName();
 				String jointComponentId = sourceComponent.getComponentId();
+				
 				
 				Iterator<Component> it = componentList.iterator();
 				while (it.hasNext()) {
@@ -231,6 +241,7 @@ public class Assembler {
 				componentList.get(0).setSubName(ComponentSubNames.UPPER);
 				componentList.get(0).setComponentId(jointComponentId);
 				componentList.get(0).setMountId(Integer.toString(0));
+				componentList.get(0).setPartLevel(partLevel);
 
 				/*componentList.get(1).setComponentName(
 						jointComponentName + NAME_SUBNAME_SPLIT
@@ -241,9 +252,10 @@ public class Assembler {
 				componentList.get(1).setSubName(ComponentSubNames.LOWER);
 				componentList.get(1).setComponentId(jointComponentId);
 				componentList.get(1).setMountId(Integer.toString(0));
+				componentList.get(1).setPartLevel(partLevel);
 				
-				 System.out.println("Assembler:  Extracting springA: " + componentList.get(0).getjComponentName());
-				 System.out.println("Assembler:  Extracting springB: " + componentList.get(1).getjComponentName());
+				 //System.out.println("Assembler:  Extracting springA: " + componentList.get(0).getjComponentName());
+				 //System.out.println("Assembler:  Extracting springB: " + componentList.get(1).getjComponentName());
 
 				/*ret.put(componentList.get(0).getComponentName(),
 						componentList.get(0));
@@ -267,9 +279,9 @@ public class Assembler {
 				}
 				//-----------------------------------------------
 				
-				System.out.println("Assembler : sourceComponet: " + componentName);
+				//System.out.println("Assembler : sourceComponet: " + componentName);
 				
-				component = ComponentBuilder.buildComponent(componentName.getBaseName(), 1,
+				component = ComponentBuilder.buildComponent(componentName.getBaseName(), partLevel,
 						gameState);
 
 				if (sourceComponent.getProperties() != null) {

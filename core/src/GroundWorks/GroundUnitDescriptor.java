@@ -61,11 +61,11 @@ public class GroundUnitDescriptor {
 	public void deleteUnit(Body floor) {
 		floor.destroyFixture(fixture);
 		fixtureDeleted = true;
-		if (graphic != null) {
+		//if (graphic != null) {
 			// texture.dispose();
 			graphic = null;
 			// texture = null;
-		}
+		//}
 	}
 
 	public void setFixture(Fixture drawEdge) {

@@ -20,8 +20,6 @@ public class ComponentBuilder {
 
 	public static Component buildComponent(String name, int level, GameState gameState) {
 		
-		System.out.println("ComponentBuilder: building " + name);
-
 		if (name.compareTo(ComponentNames.BAR3) == 0) {
 			return buildBar3(gameState, level, false);
 		} else if (name.compareTo(ComponentNames.SOLIDJOINT) == 0) {
@@ -50,11 +48,12 @@ public class ComponentBuilder {
 	// Builders
 	public static Component buildBar3(GameState gameState, int level, boolean forBuilder) {
 		
+		
 		ComponentProperties properties = new ComponentProperties();
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.BAR3);		
 		
-		properties.setDensity(150);
+		properties.setDensity(10 * 15/level);
 		properties.setTexture("temp_bar.png");
 		
 		// Setup mounts, shape
@@ -432,7 +431,7 @@ public class ComponentBuilder {
 		FixtureDef fix = new FixtureDef();
 
 		CircleShape shape = new CircleShape();
-		shape.setRadius(0.1f);
+		shape.setRadius(0.1f * level);
 		shape.setPosition(mount);
 		fix.isSensor = true;
 		fix.shape = shape;

@@ -1,7 +1,6 @@
 package GroundWorks;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import wrapper.BaseActor;
 import wrapper.GameState;
@@ -15,9 +14,6 @@ public class GroundDecor {
 	
 	private GameState gameState;
 	private ArrayList<BaseActor> decorations;
-	
-	private BaseActor decoration ;
-	private Iterator<BaseActor> iter;
 
 	public GroundDecor( GameState gameState) {
 		decorations = new ArrayList<BaseActor>();
@@ -41,10 +37,7 @@ public class GroundDecor {
 
 	public void draw(SpriteBatch batch) {
 		
-		iter = decorations.iterator();
-		
-		while(iter.hasNext()){
-			decoration = iter.next();
+		for (BaseActor decoration : decorations){
 			decoration.draw(batch);
 		}
 		

@@ -1,6 +1,7 @@
 package JSONifier;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.utils.Json;
@@ -9,6 +10,7 @@ public class JSONCar {
 
 	private ArrayList<JSONJoint> jointList = null;
 	private ArrayList<JSONComponent> componentList = null;
+	private HashMap<String,Integer> jointTypeList = null;
 	
 	public String jsonify(){
 		Json obj = new Json();
@@ -36,6 +38,14 @@ public class JSONCar {
 	
 	public void setJointList(ArrayList<JSONJoint> joints) {
 		jointList = joints;
+	}
+
+	public HashMap<String, Integer> getJointTypeList() {
+		return jointTypeList;
+	}
+
+	public void setJointTypeList(HashMap<String, Integer> jointTypeList) {
+		this.jointTypeList = jointTypeList;
 	}
 
 	@Override

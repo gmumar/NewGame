@@ -39,7 +39,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	private Box2DDebugRenderer debugRenderer;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
-	private float zoom = 0.05f;
+	private float zoom = 0.015f;
 
 	public BuilderScreen(GameLoader gameLoader) {
 		//this.gameLoader = gameLoader;
@@ -178,6 +178,8 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
 		if(menu.isJoined())
 			return false;
+		
+		menu.handlePan(x,y,deltaX, deltaY);
 		camera.position.x -= deltaX/(40+camera.zoom);
 		camera.position.y += deltaY/(40+camera.zoom);
 		camera.update();

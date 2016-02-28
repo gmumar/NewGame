@@ -56,7 +56,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	
 	private ScrollingBackground scrollingBackground;
 	
-	//private JointLimits jointLimits;
+	private JointLimits jointLimits;
 
 	private AsyncExecutor taskRunner;
 	private boolean submit = true, running = true;
@@ -89,7 +89,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		world.step(10, 100, 100);
 		
-		//jointLimits = new JointLimits(world);
+		jointLimits = new JointLimits(world);
 
 		taskRunner = new AsyncExecutor(1);
 		collisionTask = new AsyncTask<String>() {
@@ -189,7 +189,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				submit = false;
 			}*/
 			
-			//jointLimits.enableJointLimits(1/dlTime);
+			jointLimits.enableJointLimits(1/dlTime);
 
 		} else {
 			timePassed += dlTime;
@@ -206,10 +206,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		if (speedZoom < 0) {
 			speedZoom = 0;
 		}
-		camera.position.set(actor.getPosition().x + CAMERA_OFFSET
+		
+		camera.position.set(actor.getPosition().x + CAMERA_OFFSET 
 				- (0.4f - speedZoom * 4), actor.getPosition().y, 1);// +
 																	// camera.viewportWidth*2.5f
 		camera.zoom = 4.2f + speedZoom;// 4.5f;
+		
+		
 		camera.update();
 	}
 

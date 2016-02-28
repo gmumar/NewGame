@@ -1,6 +1,7 @@
 package JSONifier;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import wrapper.BaseActor;
@@ -19,7 +20,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class JSONCompiler {
 
-	public String compile(World world, ArrayList<Component> parts) {
+	public String compile(World world, ArrayList<Component> parts, HashMap<String, Integer> jointTypes) {
 
 		JSONCar car = new JSONCar();
 		Preferences prefs = Gdx.app
@@ -82,7 +83,9 @@ public class JSONCompiler {
 				joints.add(joint);
 		}
 		car.setJointList(joints);
-
+		
+		car.setJointTypeList(jointTypes);
+		
 		prefs.putString(GamePreferences.CAR_MAP_STR, car.jsonify());
 		prefs.flush();
 

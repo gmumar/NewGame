@@ -67,11 +67,10 @@ public class Globals {
 		if (jointExclusionList.isEmpty())
 			return false;
 
-		Iterator<JSONJoint> JointIter = jointExclusionList.iterator();
-		JSONJoint join;
 
-		while (JointIter.hasNext()) {
-			join = JointIter.next();
+
+		for (JSONJoint join: jointExclusionList) {
+			
 
 			/*if (joinIn.getMount1().compareTo(join.getMount1()) == 0
 					&& joinIn.getMount2().compareTo(join.getMount2()) == 0

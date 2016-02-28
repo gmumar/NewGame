@@ -98,12 +98,13 @@ public class Component {
 	}
 
 	//public void setUpForBuilder(String name) {
-	public void setUpForBuilder(JSONComponentName name) {
+	public void setUpForBuilder(JSONComponentName name, int partLevel) {
 		//this.jComponentName = name;
 		
 		if (this.componentTypes == ComponentTypes.PART) {
 			this.setComponentId(name.getComponentId());
 			this.setMountId(name.getMountId());
+			this.setPartLevel(partLevel);
 			
 			Body body = this.getObject().getPhysicsBody();
 			body.setUserData(name);
@@ -160,6 +161,7 @@ public class Component {
 				fixtureName.setBaseName(name.getBaseName());
 				fixtureName.setSubName(body.getjName().getSubName());
 				fixtureName.setMountId(Integer.toString(mountId));
+				fixtureName.setLevel(partLevel);
 				
 				fixture.setUserData(fixtureName);
 				body.getPhysicsBody().setUserData(fixtureName);
@@ -285,6 +287,14 @@ public class Component {
 		jComponentName.setMountId(mountId);
 	}
 	
+	public void setPartLevel(Integer level){
+		jComponentName.setLevel(level);
+	}
+	
+	public Integer getPartLevel(Integer level){
+		return jComponentName.getLevel();
+	}
+	
 	public String getBaseName() {
 		return jComponentName.getBaseName();
 	}
@@ -348,9 +358,13 @@ public class Component {
 		if (getJointBodies() == null) {
 			this.getObject().draw(batch);
 		} else {
-			Iterator<BaseActor> iter = getJointBodies().iterator();
+			/*Iterator<BaseActor> iter = getJointBodies().iterator();
 			while (iter.hasNext()) {
 				BaseActor body = iter.next();
+				body.draw(batch);
+			}*/
+			
+			for (BaseActor body : getJointBodies()){
 				body.draw(batch);
 			}
 		}

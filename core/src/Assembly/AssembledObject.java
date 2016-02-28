@@ -26,11 +26,7 @@ public class AssembledObject {
 	// private final float ROTATION_FORCE = 4000;
 	private final float MAX_VELOCITY = 45f;
 
-	private Iterator<TouchUnit> touchIter;
 	private int direction;
-	private TouchUnit touch;
-	private Iterator<BaseActor> driveListIter;
-	private BaseActor comp;
 
 	private Iterator<Component> iter;
 	// private ArrayList<Component> delayedDraw = new ArrayList<Component>();
@@ -150,7 +146,6 @@ public class AssembledObject {
 			if (componentsSet.contains(componentName.getBaseId()))
 				continue;
 			component.setPosition(x, y);
-			System.out.println("AssembledObject :setting " + component.getjComponentName() + " -- " + component.getObject().getPosition());
 			componentsSet.add(componentName.getBaseId());
 		}
 		
@@ -158,7 +153,7 @@ public class AssembledObject {
 	}
 
 	public void draw(SpriteBatch batch) {
-		iter = partList.iterator();
+		/*iter = partList.iterator();
 
 		while (iter.hasNext()) {
 			part = iter.next();
@@ -167,6 +162,10 @@ public class AssembledObject {
 			// }else{
 			part.draw(batch);
 			// }
+		}*/
+		
+		for (Component part : partList){
+			part.draw(batch);
 		}
 
 		/*
@@ -286,13 +285,13 @@ public class AssembledObject {
 		if (driveList == null || touchesIn == null)
 			return;
 
-		touchIter = touchesIn.iterator();
+		//touchIter = touchesIn.iterator();
 		direction = 0;
 
 		// System.out.println(rightMost.getObject().getRotation());
 
-		while (touchIter.hasNext()) {
-			touch = touchIter.next();
+		for (TouchUnit touch : touchesIn) {
+			//touch = touchIter.next();
 
 			if (touch.isTouched()) {
 
@@ -322,10 +321,9 @@ public class AssembledObject {
 
 				}
 
-				driveListIter = driveList.iterator();
-				while (driveListIter.hasNext()) {
+				//driveListIter = driveList.iterator();
+				for (BaseActor comp : driveList) {
 
-					comp = driveListIter.next();
 					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
 							true);
 

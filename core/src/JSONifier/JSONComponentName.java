@@ -8,6 +8,15 @@ public class JSONComponentName {
 	private String SubName;
 	private String ComponentId = null;
 	private String MountId;
+	private Integer Level;
+
+	public Integer getLevel() {
+		return Level;
+	}
+
+	public void setLevel(Integer level) {
+		Level = level;
+	}
 
 	public String getBaseName() {
 		return BaseName;
@@ -43,6 +52,15 @@ public class JSONComponentName {
 
 	public String getBaseId() {
 		return BaseName + "_" + ComponentId;
+	}
+	
+	public String getMountedId() {
+		if (BaseName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
+			return BaseName + "_" + SubName + "_" + ComponentId + "_" + MountId;
+		} else {
+			return BaseName + "_" + ComponentId + "_" + MountId;
+		}
+
 	}
 
 	public String getId() {
