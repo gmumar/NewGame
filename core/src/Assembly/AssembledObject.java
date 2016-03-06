@@ -153,27 +153,11 @@ public class AssembledObject {
 	}
 
 	public void draw(SpriteBatch batch) {
-		/*iter = partList.iterator();
 
-		while (iter.hasNext()) {
-			part = iter.next();
-			// if(part.getComponentName().contains(ComponentNames.SPRINGJOINT)){
-			// delayedDraw.add(part);
-			// }else{
-			part.draw(batch);
-			// }
-		}*/
-		
 		for (Component part : partList){
 			part.draw(batch);
 		}
 
-		/*
-		 * iter = delayedDraw.iterator(); while (iter.hasNext()) {
-		 * iter.next().draw(batch); }
-		 * 
-		 * delayedDraw.clear();
-		 */
 	}
 
 	public void drawImage(SpriteBatch batch) {
@@ -198,73 +182,6 @@ public class AssembledObject {
 
 	}
 
-	/*public void drawImage(SpriteBatch batch, FrameBuffer frameBufferObject) {
-
-		Texture texture;
-		BaseActor partObj;
-		TextureRegion tr;
-
-		ArrayList<BaseActor> secondaryParts = new ArrayList<BaseActor>();
-		ArrayList<BaseActor> tempParts;
-
-		float offsetX = frameBufferObject.getWidth() / 2;
-		float offsetY = frameBufferObject.getHeight() / 2;
-
-		float scale = 1;
-
-		iter = partList.iterator();
-
-		while (iter.hasNext()) {
-			part = iter.next();
-			// if(part.getComponentName().contains(ComponentNames.SPRINGJOINT))
-			// continue;
-
-			tempParts = part.getJointBodies();
-			if (tempParts != null) {
-				secondaryParts.addAll(tempParts);
-			}
-
-			partObj = part.getObject();
-			texture = partObj.getTexture();
-			if (texture == null)
-				continue;
-
-			tr = new TextureRegion(texture);
-
-			partObj.getSprite().draw(batch);
-
-			batch.draw(tr, (partObj.getPosition().x - texture.getWidth() / 250)
-					+ offsetX,
-					(partObj.getPosition().y - texture.getHeight() / 250)
-							+ offsetY, 0, 0, texture.getWidth(),
-					texture.getHeight(), 1 / scale, 1 / scale,
-					MathUtils.radiansToDegrees * partObj.getRotation(), false);
-
-		}
-
-		Iterator<BaseActor> secondaryiter = secondaryParts.iterator();
-
-		while (secondaryiter.hasNext()) {
-			partObj = secondaryiter.next();
-			texture = partObj.getTexture();
-			if (texture == null)
-				continue;
-
-			tr = new TextureRegion(texture);
-			batch.draw(
-					tr,
-					Globals.MetersToPixel(partObj.getPosition().x)
-							- texture.getWidth() / 250 + offsetX,
-					Globals.MetersToPixel(partObj.getPosition().y)
-							- texture.getHeight() / 250 + offsetY, 0, 0,
-					texture.getWidth(), texture.getHeight(), 1 / scale,
-					1 / scale,
-					MathUtils.radiansToDegrees * partObj.getRotation(), false);
-
-		}
-
-	}*/
-
 	public void addToDriveList(Component c) {
 		//System.out.println("Adding to drive list");
 		if (driveList == null) {
@@ -287,6 +204,8 @@ public class AssembledObject {
 
 		//touchIter = touchesIn.iterator();
 		direction = 0;
+		
+		float resultantForce = 0;
 
 		// System.out.println(rightMost.getObject().getRotation());
 
@@ -322,17 +241,21 @@ public class AssembledObject {
 				}
 
 				//driveListIter = driveList.iterator();
-				for (BaseActor comp : driveList) {
+				resultantForce += -100 * direction;
+			}
+			
+		}
 
-					comp.getPhysicsBody().applyAngularImpulse(-100 * direction,
-							true);
+		for (BaseActor comp : driveList) {
 
-					if (comp.getPhysicsBody().getAngularVelocity() > MAX_VELOCITY) {
-						comp.getPhysicsBody().setAngularVelocity(MAX_VELOCITY);
-					} else if (comp.getPhysicsBody().getAngularVelocity() < -MAX_VELOCITY) {
-						comp.getPhysicsBody().setAngularVelocity(-MAX_VELOCITY);
-					}
-				}
+			Body body = comp.getPhysicsBody();
+
+			body.applyAngularImpulse(resultantForce,true);
+			
+			if (body.getAngularVelocity() > MAX_VELOCITY) {
+				body.setAngularVelocity(MAX_VELOCITY);
+			} else if (body.getAngularVelocity() < -MAX_VELOCITY) {
+				body.setAngularVelocity(-MAX_VELOCITY);
 			}
 		}
 	}

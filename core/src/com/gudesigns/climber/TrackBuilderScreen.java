@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 
 import wrapper.CameraManager;
+import wrapper.GameState;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import GroundWorks.TrackBuilder;
@@ -37,7 +38,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 
 	private float zoom = 0.1f;
 
-	public TrackBuilderScreen(GameLoader gameLoader) {
+	public TrackBuilderScreen(GameState gameState) {
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
 		initStage();
@@ -48,7 +49,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 		}
 
 		trackBuilder = new TrackBuilder(world, camera);
-		new TrackMenuBuilder( stage, camera, gameLoader, trackBuilder);
+		new TrackMenuBuilder( stage, camera, gameState, trackBuilder);
 		debugRenderer = new Box2DDebugRenderer();
 
 	}

@@ -1,7 +1,6 @@
 package wrapper;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import JSONifier.JSONJoint;
 
@@ -28,7 +27,7 @@ public class Globals {
 
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
-	final public static int VERSION = 3;
+	final public static int VERSION = 4;
 	
 
 	public static void  runOnUIThread(Runnable runnable){

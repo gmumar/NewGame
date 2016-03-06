@@ -1,6 +1,7 @@
 package Menu;
 
 import wrapper.CameraManager;
+import wrapper.GameState;
 import wrapper.Globals;
 import GroundWorks.TrackBuilder;
 import JSONifier.JSONCompiler;
@@ -21,13 +22,15 @@ public class TrackMenuBuilder {
 	private CameraManager camera;
 	private JSONCompiler compiler;
 	private BackendFunctions backend;
+	private GameLoader gameLoader;
 
 	public TrackMenuBuilder(Stage stage, CameraManager secondCamera,
-			final GameLoader gameLoader, final TrackBuilder trackBuilder) {
+			final GameState gameState, final TrackBuilder trackBuilder) {
 
 		//this.stage = stage;
 		this.camera = secondCamera;
 		this.backend = new BackendFunctions();
+		this.gameLoader = gameState.getGameLoader();
 		
 		compiler = new JSONCompiler();
 
@@ -59,7 +62,7 @@ public class TrackMenuBuilder {
 				compiler
 				.compile(
 						trackBuilder.getMapList());
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
+				gameLoader.setScreen(new GamePlayScreen(gameState));
 				Destroy();
 			}
 

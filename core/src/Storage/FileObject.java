@@ -6,12 +6,7 @@ import java.util.Iterator;
 import JSONifier.JSONCar;
 import JSONifier.JSONTrack;
 
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.Json.Serializable;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonValue.JsonIterator;
-
-public class FileObject implements Serializable {
+public class FileObject  {
 	
 	private final static String CARS = "cars";
 	private final static String TRACKS = "tracks";
@@ -30,76 +25,6 @@ public class FileObject implements Serializable {
 	}
 	public void setTracks(ArrayList<JSONTrack> tracks) {
 		this.tracks = tracks;
-	}
-	
-	@Override
-	public void write(Json json) {
-		
-		if(cars !=null && !cars.isEmpty()){
-			json.writeArrayStart(CARS);
-			Iterator<JSONCar> carIter = cars.iterator();
-			while(carIter.hasNext()){
-				JSONCar car = carIter.next();
-				json.writeValue(car.jsonify());
-			}
-			json.writeArrayEnd();
-		}
-		
-		if(tracks !=null && !tracks.isEmpty()){
-			json.writeArrayStart(TRACKS);
-			Iterator<JSONTrack> trackIter = tracks.iterator();
-			while(trackIter.hasNext()){
-				JSONTrack track = trackIter.next();
-				json.writeValue(track.jsonify());
-			}
-			json.writeArrayEnd();
-		}
-		
-	}
-	
-	@Override
-	public void read(Json json, JsonValue jsonData) {
-		JsonValue carData = jsonData.get(CARS);
-		JsonValue trackData = jsonData.get(TRACKS);
-		
-		if(carData!=null){
-			JsonIterator carIter = carData.iterator();
-			while (carIter.hasNext()) {
-				JsonValue item = carIter.next();
-				String b = item.asString();
-	
-				//System.out.println(b);
-				
-				/*try {
-					car = Gzip.decompress(b);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
-	
-				//System.out.println(car);
-				cars.add(JSONCar.objectify(b));
-			}
-		}
-		
-		if(trackData!=null){
-			JsonIterator trackIter = trackData.iterator();
-			while (trackIter.hasNext()) {
-				JsonValue item = trackIter.next();
-				String b = item.asString();
-	
-				//System.out.println(b);
-				
-				/*try {
-					car = Gzip.decompress(b);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
-	
-				//System.out.println(car);
-				tracks.add(JSONTrack.objectify(b));
-			}
-		}
-		
 	}
 	
 	public void append(FileObject objectIn) {

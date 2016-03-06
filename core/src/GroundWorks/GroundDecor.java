@@ -3,7 +3,7 @@ package GroundWorks;
 import java.util.ArrayList;
 
 import wrapper.BaseActor;
-import wrapper.GameState;
+import wrapper.GamePhysicalState;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 
@@ -12,10 +12,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class GroundDecor {
 	
-	private GameState gameState;
+	private GamePhysicalState gameState;
 	private ArrayList<BaseActor> decorations;
 
-	public GroundDecor( GameState gameState) {
+	public GroundDecor( GamePhysicalState gameState) {
 		decorations = new ArrayList<BaseActor>();
 		this.gameState = gameState;
 	}

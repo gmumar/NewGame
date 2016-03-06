@@ -3,10 +3,11 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 
 import wrapper.CameraManager;
+import wrapper.GamePhysicalState;
 import wrapper.GameState;
 import wrapper.Globals;
 import wrapper.JointLimits;
-import wrapper.Rolling;
+import wrapper.RollingAverage;
 import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
@@ -33,6 +34,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class GamePlayScreen implements Screen, InputProcessor {
 
 	private GameLoader gameLoader;
+	private GameState gameState;
 	private SpriteBatch batch;
 	private AssembledObject builtCar;
 	private World world;
@@ -42,7 +44,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private FitViewport vp;
 	private ShaderProgram shader, colorShader;
 
-	private Rolling rollingAvg;
+	private RollingAverage rollingAvg;
 	private float speedZoom = 0;
 	private float dlTime;
 
@@ -63,8 +65,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private volatile boolean collisionWait = false;
 	private AsyncTask<String> collisionTask;
 
-	public GamePlayScreen(GameLoader gameLoader) {
-		this.gameLoader = gameLoader;
+	public GamePlayScreen(GameState gameState) {
+		this.gameState = gameState;
+		this.gameLoader = gameState.getGameLoader();
 		Globals.updateScreenInfo();
 
 		batch = new SpriteBatch();
@@ -76,16 +79,16 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 
 		// debugRenderer = new Box2DDebugRenderer();
-		builtCar = Assembler.assembleObject(new GameState(world, gameLoader));
+		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world, this.gameLoader));
 		builtCar.setPosition(0, 50);
 
 		initShader();
-		ground = new GroundBuilder(new GameState(world, gameLoader), camera,
+		ground = new GroundBuilder(new GamePhysicalState(this.world, this.gameLoader), camera,
 				shader, colorShader);
 
 		initHud();
 
-		rollingAvg = new Rolling(60);
+		rollingAvg = new RollingAverage(60);
 
 		world.step(10, 100, 100);
 		
@@ -97,7 +100,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			@Override
 			public String call() throws Exception {
 				while (running) {
-					//jointLimits.enableJointLimits(1/dlTime);
+					jointLimits.enableJointLimits(1/dlTime);
 					collisionWait = true;
 					while (collisionWait)
 						;
@@ -107,7 +110,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 		};
 		
-		scrollingBackground = new ScrollingBackground(new GameState(world, gameLoader), builtCar);
+		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
 	}
 
 	final private void initShader() {
@@ -132,7 +135,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	final private void initHud() {
 
-		hud = new HUDBuilder(stage, ground, gameLoader);
+		hud = new HUDBuilder(stage, ground, gameState);
 
 	}
 
@@ -141,11 +144,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		handleInput(touches);
 		renderWorld();
 		
-		//batch.begin();
+		scrollingBackground.draw();
 
-		scrollingBackground.draw(batch,delta);
-		//batch.end();
-		
 		
 		ground.drawShapes(camera);
 		attachCameraTo(builtCar.getBasePart());
@@ -156,8 +156,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		builtCar.draw(batch);
 
 		batch.end();
-		
-		
 
 		hud.update(delta);
 		stage.draw();
@@ -171,12 +169,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	final private void renderWorld() {
 
-		dlTime = Gdx.graphics.getDeltaTime() / 1.1f;
+		dlTime = Gdx.graphics.getDeltaTime()/1.1f;
 
 		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
 				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
+		//Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
 
 		batch.setProjectionMatrix(camera.combined);
 

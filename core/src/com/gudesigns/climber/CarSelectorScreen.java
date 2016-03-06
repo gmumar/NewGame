@@ -1,10 +1,16 @@
 package com.gudesigns.climber;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
+import wrapper.GameState;
 import wrapper.Globals;
 import Assembly.Assembler;
 import JSONifier.JSONCar;
@@ -39,6 +45,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 public class CarSelectorScreen implements Screen {
 
@@ -50,11 +58,15 @@ public class CarSelectorScreen implements Screen {
 	// private ArrayList<Button> buttons = new ArrayList<Button>();
 	private ArrayList<ImageButton> buttons = new ArrayList<ImageButton>();
 	private ArrayList<String> uniquenessList = new ArrayList<String>();
-	private ArrayList<String> cars = new ArrayList<String>();
+	private ArrayList<String> uniquenessButtonList = new ArrayList<String>();
+	private ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
 	private TableW tracksTable;
 	private ScrollPane scrollPane;
 	private PopQueManager popQueManager;
 	private GameLoader gameLoader;
+
+	private Lock carLock = new ReentrantLock();
+	private boolean first = false;
 
 	private Button exit;
 	private Preferences prefs = Gdx.app
@@ -63,21 +75,27 @@ public class CarSelectorScreen implements Screen {
 	boolean resultsRemaining = true;
 	int currentOffset = 0;
 	volatile boolean stall = true;
+	AsyncExecutor ae = new AsyncExecutor(4);
 
-	public CarSelectorScreen(GameLoader gameLoader) {
-		this.gameLoader = gameLoader;
+	private Integer previousSize = 0;
+
+	private GameState gameState;
+	
+	public CarSelectorScreen(GameState gameState) {
+		// carLock.lock();
+		this.gameState = gameState;
+		this.gameLoader = this.gameState.getGameLoader();
 		initStage();
 
 		initNavigationButtons();
 
 		popQueManager = new PopQueManager(stage);
 		popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
-		
+
 		loadLocalCars();
 		downloadCars();
 
 	}
-
 
 	private void initNavigationButtons() {
 		exit = new Button("exit") {
@@ -92,29 +110,116 @@ public class CarSelectorScreen implements Screen {
 
 	}
 
+	/*
+	 * private void loadLocalCars() {
+	 * 
+	 * ae.submit(new AsyncTask<String>() {
+	 * 
+	 * @Override public String call() throws Exception { FileObject object =
+	 * FileManager.readFromFile(); ArrayList<JSONCar> carList =
+	 * object.getCars(); Iterator<JSONCar> iter = carList.iterator(); int count
+	 * = 0;
+	 * 
+	 * System.out.println("number of cars: " + carList.size());
+	 * 
+	 * while (iter.hasNext()) {
+	 * 
+	 * //carLock.lock(); if (carLock.tryLock(1,TimeUnit.MILLISECONDS)) {
+	 * System.out.println("reading " + count++); JSONCar car = iter.next(); if
+	 * (!uniquenessList.contains((String) car.getId())) { //
+	 * addButton(car.jsonify()); cars.add(car); uniquenessList.add(car.getId());
+	 * // System.out.println(car.jsonify()); } carLock.unlock(); }
+	 * 
+	 * }
+	 * 
+	 * System.out.println("loaded from file: " + uniquenessList.size()); return
+	 * null; } });
+	 * 
+	 * }
+	 */
 
 	private void loadLocalCars() {
 
-		FileObject object = FileManager.readFromFile();
-		ArrayList<JSONCar> carList = object.getCars();
-		Iterator<JSONCar> iter = carList.iterator();
-		
-		while(iter.hasNext()){
-			JSONCar car = iter.next();
-			if(!uniquenessList.contains((String)car.getId())){
-				addButton(car.jsonify());
-				cars.add(car.jsonify());
-				uniquenessList.add(car.getId());
-				//System.out.println(car.jsonify());
+		ae.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+				Reader stream = FileManager
+						.getFileStream(FileManager.CAR_FILE_NAME);
+				ArrayList<JSONCar> carList = new ArrayList<JSONCar>();
+				
+
+				if (stream == null)
+					return null;
+
+				JsonReader reader = new JsonReader(stream);
+				try {
+					reader.beginArray();
+					while (reader.hasNext()) {
+						while (reader.hasNext()) {
+							if (carLock.tryLock(10, TimeUnit.MILLISECONDS)) {
+								final JSONCar car = new Gson()
+										.fromJson(reader, JSONCar.class);
+
+								cars.add(car);
+
+								System.out.println(car.getId());
+								
+								Globals.runOnUIThread(new Runnable() {
+
+									@Override
+									public void run() {
+										if (!uniquenessButtonList.contains(car.getId())) {
+											addButton(car.jsonify());
+											System.out.println("adding car");
+											uniquenessButtonList.add(car.getId());
+										}
+									}
+								});
+								
+								carLock.unlock();
+								break;
+							}
+						}
+
+						
+
+					}
+
+					reader.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// Iterator<JSONCar> iter = carList.iterator();
+				// int count = 0;
+
+				System.out.println("number of cars: " + carList.size());
+
+				/*
+				 * while (iter.hasNext()) {
+				 * 
+				 * 
+				 * //if (carLock.tryLock(1,TimeUnit.MILLISECONDS)) {
+				 * System.out.println("reading " + count++); JSONCar car =
+				 * iter.next(); if (!uniquenessList.contains((String)
+				 * car.getId())) { // addButton(car.jsonify()); cars.add(car);
+				 * uniquenessList.add(car.getId()); //
+				 * System.out.println(car.jsonify()); } carLock.unlock(); //}
+				 * 
+				 * }
+				 */
+
+				System.out.println("loaded from file: " + uniquenessList.size());
+				return null;
 			}
-		}
-		
-		System.out.println("loaded from file: " + uniquenessList.size() );
-		
+		});
+
 	}
-	
+
 	private void downloadCars() {
-		AsyncExecutor ae = new AsyncExecutor(1);
+
 		resultsRemaining = true;
 		currentOffset = 0;
 
@@ -147,23 +252,29 @@ public class CarSelectorScreen implements Screen {
 							Iterator<String> iter = obj.getData().iterator();
 
 							while (iter.hasNext()) {
+
+								carLock.lock();
+								// if (carLock.tryLock()) {
+
 								final String car = iter.next();
-								final String carId = JSONCar.objectify(car).getId();
+								final JSONCar carJson = JSONCar.objectify(car);
+								final String carId = carJson.getId();
 								// System.out.println(car);
-								Globals.runOnUIThread(new Runnable() {
+								// Globals.runOnUIThread(new Runnable() {
 
-									@Override
-									public void run() {
-										if(!uniquenessList.contains(carId)){
-											addButton(car);
-										
-											cars.add(car);
-											uniquenessList.add(carId);
-										}
+								// @Override
+								// public void run() {
+								if (!uniquenessList.contains(carId)) {
+									// addButton(car);
 
-									}
-								});
+									cars.add(carJson);
+									uniquenessList.add(carId);
+								}
 
+								// }
+								// });
+								carLock.unlock();
+								// }
 							}
 
 							if (obj.getTotalObjects() - obj.getOffset() > 0) {
@@ -188,46 +299,45 @@ public class CarSelectorScreen implements Screen {
 						}
 
 					});
-					while (stall);
+					while (stall)
+						;
 
 					currentOffset += REST.PAGE_SIZE;
 				}
 
 				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
-				
-				Globals.runOnUIThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						writeCarsToFile();						
-					}
-				});
-				
+
+				// Globals.runOnUIThread(new Runnable() {
+
+				// @Override
+				// public void run() {
+				writeCarsToFile();
+				// }
+				// });
 
 				return null;
 			}
 
-			
 		});
 
 	}
-	
+
 	private void writeCarsToFile() {
-		
-		//System.out.println("starting write");
-		
-		Iterator<String> iter = cars.iterator();
+
+		// System.out.println("starting write");
+
+		// Iterator<String> iter = cars.iterator();
 		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
-		while(iter.hasNext()){
-			String car = iter.next();
-			list.add(JSONCar.objectify(car));
+		for (JSONCar car : cars) {
+			// String car = iter.next();
+			list.add(car);
 		}
-		
+
 		FileObject fileObject = new FileObject();
 		fileObject.setCars(list);
-		
-		FileManager.writeToFile(fileObject);
-		
+
+		FileManager.writeToFileGson(list);
+
 	}
 
 	private void initCarSelector() {
@@ -324,7 +434,7 @@ public class CarSelectorScreen implements Screen {
 			public void clicked(InputEvent event, float x, float y) {
 				prefs.putString(GamePreferences.CAR_MAP_STR, text);
 				prefs.flush();
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
+				gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
 			}
 
@@ -370,6 +480,25 @@ public class CarSelectorScreen implements Screen {
 	public void render(float delta) {
 		renderWorld();
 		popQueManager.update(delta);
+
+		if (!first) {
+			// carLock.unlock();
+			first = true;
+		}
+
+		/*
+		 * carLock.lock(); //if (carLock.tryLock()) { if (previousSize !=
+		 * cars.size()) { previousSize = cars.size();
+		 * 
+		 * System.out.println("render" + cars.size());
+		 * 
+		 * for (JSONCar car : cars) { if
+		 * (!uniquenessButtonList.contains(car.getId())) {
+		 * addButton(car.jsonify()); uniquenessButtonList.add(car.getId()); } }
+		 * 
+		 * } carLock.unlock();
+		 */
+		// }
 
 		/*
 		 * if(!buttonQue.isEmpty()){ while(!buttonQue.isEmpty()){

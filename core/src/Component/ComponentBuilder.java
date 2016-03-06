@@ -3,7 +3,7 @@ package Component;
 import java.util.ArrayList;
 
 import wrapper.BaseActor;
-import wrapper.GameState;
+import wrapper.GamePhysicalState;
 import Component.Component.ComponentTypes;
 import JSONifier.JSONComponentName;
 
@@ -18,7 +18,7 @@ import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 
 public class ComponentBuilder {
 
-	public static Component buildComponent(String name, int level, GameState gameState) {
+	public static Component buildComponent(String name, int level, GamePhysicalState gameState) {
 		
 		if (name.compareTo(ComponentNames.BAR3) == 0) {
 			return buildBar3(gameState, level, false);
@@ -36,7 +36,7 @@ public class ComponentBuilder {
 	}
 
 	public static ArrayList<Component> buildJointComponent(String name, int level,
-			GameState gameState) {
+			GamePhysicalState gameState) {
 
 		if (name.compareTo(ComponentNames.SPRINGJOINT) == 0) {
 			return buildSpringJoint(gameState, level, false);
@@ -46,7 +46,7 @@ public class ComponentBuilder {
 	}
 
 	// Builders
-	public static Component buildBar3(GameState gameState, int level, boolean forBuilder) {
+	public static Component buildBar3(GamePhysicalState gameState, int level, boolean forBuilder) {
 		
 		
 		ComponentProperties properties = new ComponentProperties();
@@ -82,7 +82,7 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static Component buildSolidJoint(GameState gameState, int level,
+	public static Component buildSolidJoint(GamePhysicalState gameState, int level,
 			boolean forBuilder) {
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.SOLIDJOINT);
@@ -94,7 +94,7 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static Component buildAxle(GameState gameState, int level, boolean forBuilder) {
+	public static Component buildAxle(GamePhysicalState gameState, int level, boolean forBuilder) {
 		// Build axle
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.SOLIDJOINT);
@@ -105,7 +105,7 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static Component buildTire(GameState gameState, int level, boolean forBuilder) {
+	public static Component buildTire(GamePhysicalState gameState, int level, boolean forBuilder) {
 		// Setup mounts, shape
 		JSONComponentName componentName = new JSONComponentName();
 		ComponentProperties properties = new ComponentProperties();
@@ -165,7 +165,7 @@ public class ComponentBuilder {
 		return axleComponent;
 	}
 
-	public static ArrayList<Component> buildSpringJoint(GameState gameState, int level,
+	public static ArrayList<Component> buildSpringJoint(GamePhysicalState gameState, int level,
 			boolean forBuilder) {
 
 		JSONComponentName componentNameUpper = new JSONComponentName();
@@ -328,7 +328,7 @@ public class ComponentBuilder {
 		return retList;
 	}
 
-	public static Component buildLife(GameState gameState, int level, boolean forBuilder) {
+	public static Component buildLife(GamePhysicalState gameState, int level, boolean forBuilder) {
 		
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.LIFE);

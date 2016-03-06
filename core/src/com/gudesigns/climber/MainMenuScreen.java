@@ -1,9 +1,11 @@
 package com.gudesigns.climber;
 
 import wrapper.CameraManager;
+import wrapper.GameState;
 import wrapper.Globals;
 import Menu.Button;
 import Menu.PopQueManager;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -14,11 +16,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class MainMenuScreen implements Screen {
 
 	private GameLoader gameLoader;
+	private GameState gameState;
 	private CameraManager camera;
 	private Stage stage;
 	private FitViewport vp;
 	private PopQueManager popQueManager;
-
+	private User user;
+	
 	private Button builder, playGame, buildTrack, selectTrack, selectCar;
 
 	public MainMenuScreen(GameLoader gameLoader) {
@@ -26,6 +30,14 @@ public class MainMenuScreen implements Screen {
 
 		initStage();
 		initButtons();
+		initUser();
+		
+		this.gameState = new GameState(gameLoader , user);
+		
+	}
+
+	private void initUser() {
+		//user = User.getInstance();
 		
 	}
 
@@ -34,7 +46,7 @@ public class MainMenuScreen implements Screen {
 		builder = new Button("builder") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new BuilderScreen(gameLoader));
+				gameLoader.setScreen(new BuilderScreen(gameState));
 			}
 		};
 
@@ -44,7 +56,7 @@ public class MainMenuScreen implements Screen {
 		playGame = new Button("playGame") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
+				gameLoader.setScreen(new GamePlayScreen(gameState));
 			}
 		};
 
@@ -54,7 +66,7 @@ public class MainMenuScreen implements Screen {
 		buildTrack = new Button("build track") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new TrackBuilderScreen(gameLoader));
+				gameLoader.setScreen(new TrackBuilderScreen(gameState));
 			}
 		};
 
@@ -64,7 +76,7 @@ public class MainMenuScreen implements Screen {
 		selectTrack = new Button("select track") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new TrackSelectorScreen(gameLoader));
+				gameLoader.setScreen(new TrackSelectorScreen(gameState));
 			}
 		};
 
@@ -74,7 +86,7 @@ public class MainMenuScreen implements Screen {
 		selectCar = new Button("select car") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new CarSelectorScreen(gameLoader));
+				gameLoader.setScreen(new CarSelectorScreen(gameState));
 			}
 		};
 

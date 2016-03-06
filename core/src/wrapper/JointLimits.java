@@ -43,6 +43,9 @@ public class JointLimits {
 
 		for (Joint joint : joints) {
 			//joint = iter.next();
+			
+			nameBodyA = ((JSONComponentName)joint.getBodyA().getUserData()).getBaseName();
+			nameBodyB = ((JSONComponentName)joint.getBodyB().getUserData()).getBaseName();
 			 
 			if ( ( (joint.getType() == JointType.PrismaticJoint) ||
 					jointBetween(joint, ComponentNames.AXLE,
@@ -50,9 +53,6 @@ public class JointLimits {
 				continue;
 			}
 			
-			nameBodyA = ((JSONComponentName)joint.getBodyA().getUserData()).getBaseName();
-			nameBodyB = ((JSONComponentName)joint.getBodyB().getUserData()).getBaseName();
-
 			force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
 			torque = joint.getReactionTorque(step);
 
@@ -129,10 +129,8 @@ public class JointLimits {
 			return true;
 		}*/
 		
-		if(
-				nameBodyA.compareTo(name1)==0 ||
-				nameBodyB.compareTo(name1)==0
-				) {
+		if(	nameBodyA.compareTo(name1)==0 ||
+			nameBodyB.compareTo(name1)==0) {
 			return true;
 		}
 
@@ -151,13 +149,10 @@ public class JointLimits {
 			return true;
 		}*/
 		
-		if (
-				nameBodyA.compareTo(name1)==0 &&
+		if (nameBodyA.compareTo(name1)==0 &&
 				nameBodyB.compareTo(name2)==0 ||
 				nameBodyA.compareTo(name2)==0 &&
-				nameBodyB.compareTo(name1)==0 
-				
-				) {
+				nameBodyB.compareTo(name1)==0 ) {
 			return true;
 		}
 

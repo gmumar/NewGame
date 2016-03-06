@@ -1,31 +1,31 @@
 package wrapper;
 
-import com.badlogic.gdx.physics.box2d.World;
+import User.User;
+
 import com.gudesigns.climber.GameLoader;
 
 public class GameState {
 
-	private World world;
 	private GameLoader gameLoader;
+	private User user;
 	
-	public GameState(World world, GameLoader gameLoader) {
+	public GameState(GameLoader gameLoader, User user) {
 		super();
-		this.world = world;
 		this.gameLoader = gameLoader;
+		this.user = user;
 	}
 	
-	public World getWorld() {
-		return world;
-	}
-	public void setWorld(World world) {
-		this.world = world;
-	}
 	public GameLoader getGameLoader() {
 		return gameLoader;
 	}
 	public void setGameLoader(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 	}
-	
+	public void setUser(User user){
+		this.user = user;
+	}
+	public User getUser(){
+		return user;
+	}
 	
 }

@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import wrapper.BaseActor;
 import wrapper.CameraManager;
+import wrapper.GamePhysicalState;
 import wrapper.GameState;
 import wrapper.Globals;
 import Assembly.AssemblyRules;
@@ -15,6 +16,7 @@ import Component.ComponentNames;
 import JSONifier.JSONCompiler;
 import JSONifier.JSONComponentName;
 import RESTWrapper.BackendFunctions;
+import User.User;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,7 +51,7 @@ public class MenuBuilder {
 
 	private final static Color GREEN = new Color(0, 1, 0, 1);
 	private final static Color RED = new Color(1, 0, 0, 1);
-	private final static Color ORANGE = new Color(1, 0.6f, 0, 1);
+	private final static Color ORANGE = new Color(0.4f, 0.8f, 0.4f, 1);
 
 	private Stage stage;
 	private World world;
@@ -83,18 +85,21 @@ public class MenuBuilder {
 
 	volatile private int partLevel = 1;
 	
+	private GameState gameState;
+	
 	//private FixtureDef mouseFixture;
 	//BaseActor mouseActor;
 	
-	public MenuBuilder(final GameState gameState, Stage stage,
-			CameraManager secondCamera, ShapeRenderer shapeRenderer) {
+	public MenuBuilder(final GamePhysicalState gamePhysicalState, Stage stage,
+			CameraManager secondCamera, ShapeRenderer shapeRenderer, User user) {
 
 		this.backend = new BackendFunctions();
-		this.world = gameState.getWorld();
+		this.world = gamePhysicalState.getWorld();
 		this.stage = stage;
 		this.camera = secondCamera;
 		this.mouseJoined = false;
-		this.gameLoader = gameState.getGameLoader();
+		this.gameLoader = gamePhysicalState.getGameLoader();
+		this.gameState = new GameState(gameLoader, user);
 		MenuBuilder.fixtureRenderer = shapeRenderer;
 
 		BodyDef bodyDef = new BodyDef();
@@ -109,7 +114,7 @@ public class MenuBuilder {
 		// Add life regardless
 
 		incrementCount(ComponentNames.LIFE);
-		Component c = ComponentBuilder.buildLife(new GameState(world,
+		Component c = ComponentBuilder.buildLife(new GamePhysicalState(world,
 				gameLoader), 1, true);
 		//c.setUpForBuilder(ComponentNames.LIFE
 		//		+ Assembler.NAME_ID_SPLIT
@@ -130,7 +135,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames.BAR3);
-				Component c = ComponentBuilder.buildBar3(new GameState(world,
+				Component c = ComponentBuilder.buildBar3(new GamePhysicalState(world,
 						gameLoader), partLevel, true);
 				//c.setUpForBuilder(ComponentNames.BAR3
 				//		+ Assembler.NAME_ID_SPLIT
@@ -218,7 +223,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				incrementCount(ComponentNames.TIRE);
-				Component c = ComponentBuilder.buildTire(new GameState(world,
+				Component c = ComponentBuilder.buildTire(new GamePhysicalState(world,
 						gameLoader), partLevel, true);
 				//c.setUpForBuilder(ComponentNames.TIRE
 				//		+ Assembler.NAME_ID_SPLIT
@@ -241,7 +246,7 @@ public class MenuBuilder {
 			public void Clicked() {
 				incrementCount(ComponentNames.SPRINGJOINT);
 				Component c = ComponentBuilder.buildSpringJoint(
-						new GameState(world, gameLoader), partLevel, true).get(0);
+						new GamePhysicalState(world, gameLoader), partLevel, true).get(0);
 				//c.setUpForBuilder(Assembler.NAME_ID_SPLIT
 				//		+ componentCounts.get(ComponentNames.SPRINGJOINT));
 				JSONComponentName name = new JSONComponentName();
@@ -285,7 +290,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				if(buildCar()){
-					gameLoader.setScreen(new GamePlayScreen(gameLoader));
+					gameLoader.setScreen(new GamePlayScreen(gameState));
 					Destroy();
 				}
 			}
@@ -418,6 +423,8 @@ public class MenuBuilder {
 		partLevelText.setText(Integer.toString(partLevel));
 		Integer jointType;
 		
+		ArrayList<String> drawIds = new ArrayList<String>();
+		
 		// world.QueryAABB(fixtureCallback, -20,-20, 20, 20);
 		//mouseActor.setPosition(mousePoint.x, mousePoint.y);
 
@@ -425,39 +432,8 @@ public class MenuBuilder {
 		Iterator<Contact> contactIter = contacts.iterator();
 
 		Iterator<Component> iter = parts.iterator();
-
-		while (iter.hasNext()) {
-			Component part = iter.next();
-			ArrayList<BaseActor> bodies = part.getJointBodies();
-
-			if (bodies == null) {
-				Body body = part.getObject().getPhysicsBody();
-				Array<Fixture> fixtures = body.getFixtureList();
-
-				Iterator<Fixture> fixtureIter = fixtures.iterator();
-
-				while (fixtureIter.hasNext()) {
-					drawFixture(fixtureIter.next(), RED);
-				}
-			} else {
-
-				Iterator<BaseActor> bodiesIter = bodies.iterator();
-
-				while (bodiesIter.hasNext()) {
-					BaseActor base = bodiesIter.next();
-					Body body = base.getPhysicsBody();
-					Array<Fixture> fixtures = body.getFixtureList();
-
-					Iterator<Fixture> fixtureIter = fixtures.iterator();
-
-					while (fixtureIter.hasNext()) {
-						drawFixture(fixtureIter.next(), RED);
-					}
-				}
-			}
-			//
-
-		}
+		
+		
 		while (contactIter.hasNext()) {
 			Contact contact = contactIter.next();
 			Fixture fixtureA = contact.getFixtureA();
@@ -473,18 +449,22 @@ public class MenuBuilder {
 				
 				jointType = lookupJointType(fixtureA);
 				if(jointType == 0){
-					drawFixture(fixtureA, GREEN);
+					drawFixtureSquare(fixtureA, ORANGE);
 				} else if(jointType == 1){
-					drawFixture(fixtureA, ORANGE);
+					drawFixture(fixtureA, GREEN);
 				}
+				
+				drawIds.add(((JSONComponentName) fixtureA.getUserData()).getMountedId());
 				
 				
 				jointType = lookupJointType(fixtureB);
 				if(jointType == 0){
-					drawFixture(fixtureB, GREEN);
+					drawFixtureSquare(fixtureB, ORANGE);
 				} else if(jointType == 1){
-					drawFixture(fixtureB, ORANGE);
+					drawFixture(fixtureB, GREEN);
 				}
+				
+				drawIds.add(((JSONComponentName) fixtureB.getUserData()).getMountedId());
 				
 				/*DistanceJointDef dJoint = new DistanceJointDef();
 				dJoint.initialize(fixtureA.getBody(),
@@ -502,6 +482,55 @@ public class MenuBuilder {
 				
 			}
 		}
+		
+
+		while (iter.hasNext()) {
+			Component part = iter.next();
+			ArrayList<BaseActor> bodies = part.getJointBodies();
+
+			if (bodies == null) {
+				Body body = part.getObject().getPhysicsBody();
+	
+				for (Fixture fixture :  body.getFixtureList()) {
+					//jointType = lookupJointType(fixture);
+					//if(jointType == -1){
+					if(fixture.getUserData() == null){
+						drawFixture(fixture, RED);
+					} else 	if(!drawIds.contains(((JSONComponentName)fixture.getUserData()).getMountedId())) {
+						drawFixture(fixture, RED);
+					}
+					//} else if(jointType == 1){
+					//	;
+					//}
+					
+				}
+			} else {
+
+				Iterator<BaseActor> bodiesIter = bodies.iterator();
+
+				while (bodiesIter.hasNext()) {
+					BaseActor base = bodiesIter.next();
+					Body body = base.getPhysicsBody();
+					
+					for (Fixture fixture :  body.getFixtureList()) {
+						//jointType = lookupJointType(fixture);
+						//if(jointType == -1){
+						if(fixture.getUserData() == null){
+							drawFixture(fixture, RED);
+						} else 	if(!drawIds.contains(((JSONComponentName)fixture.getUserData()).getMountedId())) {
+							drawFixture(fixture, RED);
+						}
+						//} else if(jointType == 1){
+						//	;
+						//}
+						
+					}
+				}
+			}
+			//
+
+		}
+		
 	}
 	
 	private boolean buildCar(){
@@ -545,6 +574,26 @@ public class MenuBuilder {
 			// Gdx.gl.glLineWidth(20 / camera.zoom);
 			fixtureRenderer.setColor(c);
 			fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 45);
+
+		}
+	}
+	
+	private void drawFixtureSquare(Fixture fix, Color c) {
+		if (!isFixtureName((JSONComponentName) fix.getUserData())) {
+			return;
+		}
+
+		Transform transform = fix.getBody().getTransform();
+		if (fix.getShape().getType() == Type.Circle) {
+
+			CircleShape shape = (CircleShape) fix.getShape();
+			Vector2 vec = new Vector2();
+			vec.set(shape.getPosition());
+			transform.mul(vec);
+			// Gdx.gl.glLineWidth(20 / camera.zoom);
+			fixtureRenderer.setColor(c);
+			fixtureRenderer.box(vec.x -0.25f, vec.y-0.25f, 0, 0.5f, 0.5f, 1);
+			//fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 45);
 
 		}
 	}
@@ -713,13 +762,16 @@ public class MenuBuilder {
 
 	private Integer lookupJointType(Fixture fixture){
 		
+		if(fixture == null) return -1;
+		if(fixture.getUserData() == null) return -1;
+		
 		JSONComponentName componentName = (JSONComponentName)fixture.getUserData();
 		
 		if(jointTypes.containsKey(componentName.getMountedId())){
 			return jointTypes.get(componentName.getMountedId());
 		}
 		
-		return 0;
+		return -1;
 	}
 
 	private void incrementJointType(JSONComponentName componentName) {

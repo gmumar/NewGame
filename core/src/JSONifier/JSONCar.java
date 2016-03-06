@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.utils.Json;
 
-public class JSONCar {
+public class JSONCar{
 
 	private ArrayList<JSONJoint> jointList = null;
 	private ArrayList<JSONComponent> componentList = null;

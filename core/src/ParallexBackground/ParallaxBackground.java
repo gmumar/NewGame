@@ -26,8 +26,8 @@ public class ParallaxBackground {
     * @param speed A Vector2 attribute to point out the x and y speed
     * 
     */
-   public void render(float delta, Vector2 speed){
-      this.camera.position.add(speed.x*delta,speed.y*delta, 0);
+   public void render(Vector2 speed){
+      this.camera.position.add(speed.x/100,speed.y/100, 0);
       for(ParallaxLayer layer:layers){
          batch.setProjectionMatrix(camera.projection);
          batch.begin();

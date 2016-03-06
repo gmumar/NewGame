@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
+import wrapper.GameState;
 import wrapper.Globals;
 import JSONifier.JSONTrack;
 import Menu.Button;
@@ -57,9 +58,10 @@ public class TrackSelectorScreen implements Screen {
 	boolean resultsRemaining = true;
 	int currentOffset = 0;
 	volatile boolean stall = true;
+	private AsyncExecutor ae = new AsyncExecutor(1);
 
-	public TrackSelectorScreen(GameLoader gameLoader) {
-		this.gameLoader = gameLoader;
+	public TrackSelectorScreen(GameState gameState) {
+		this.gameLoader = gameState.getGameLoader();
 		initStage();
 
 		initNavigationButtons();
@@ -73,22 +75,32 @@ public class TrackSelectorScreen implements Screen {
 	}
 
 	private void loadLocalTracks() {
-		FileObject object = FileManager.readFromFile();
-		ArrayList<JSONTrack> trackList = object.getTracks();
-		Iterator<JSONTrack> iter = trackList.iterator();
 		
-		while(iter.hasNext()){
-			JSONTrack track = iter.next();
-			if(!uniquenessList.contains((String)track.getId())){
-				addButton(track.jsonify());
-				tracks.add(track.jsonify());
-				uniquenessList.add(track.getId());
-				//System.out.println(car.jsonify());
+		ae.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+				FileObject object = FileManager.readFromFile();
+				ArrayList<JSONTrack> trackList = object.getTracks();
+				Iterator<JSONTrack> iter = trackList.iterator();
+				
+				while(iter.hasNext()){
+					JSONTrack track = iter.next();
+					if(!uniquenessList.contains((String)track.getId())){
+						addButton(track.jsonify());
+						tracks.add(track.jsonify());
+						uniquenessList.add(track.getId());
+						//System.out.println(car.jsonify());
+					}
+				}
+				
+				System.out.println("loaded from file: " + uniquenessList.size() );
+				return null;
 			}
-		}
-		
-		System.out.println("loaded from file: " + uniquenessList.size() );
-		
+			
+		});
+
+		refreshAllButtons();
 	}
 
 	private void initNavigationButtons() {
@@ -105,7 +117,7 @@ public class TrackSelectorScreen implements Screen {
 	}
 
 	private void downloadCars() {
-		AsyncExecutor ae = new AsyncExecutor(1);
+		
 		resultsRemaining = true;
 		currentOffset = 0;
 
@@ -240,14 +252,10 @@ public class TrackSelectorScreen implements Screen {
 
 	private void initButtons() {
 
-		Button b;
-
-		Iterator<Button> iter = buttons.iterator();
 
 		int count = 0;
 
-		while (iter.hasNext()) {
-			b = iter.next();
+		for (Button b : buttons) {
 			// b.setRotation(-20);
 			// b.setWidth(1000);
 			b.invalidate();
@@ -286,41 +294,6 @@ public class TrackSelectorScreen implements Screen {
 		  }
 		  
 		  };
-		 
-
-		/*String prevString = prefs
-				.getString(
-						GamePreferences.CAR_MAP_STR,
-						"{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}");//
-
-		prefs.putString(GamePreferences.CAR_MAP_STR, text);
-		prefs.flush();
-
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader);
-		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
-		trd.setMinWidth(200);
-		trd.setMinHeight(140);
-		ImageButton b = new ImageButton(trd);
-		// b.setPosition(100, 100);
-		b.setSize(100, 100);
-		// stage.addActor(b);
-		prefs.putString(GamePreferences.CAR_MAP_STR, prevString);
-		prefs.flush();
-
-		b.addListener(new ClickListener() {
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				prefs.putString(GamePreferences.CAR_MAP_STR, text);
-				prefs.flush();
-				System.out.println("clicked");
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
-				super.clicked(event, x, y);
-			}
-
-		});
-
-		// b.setBackground(trd);*/
 
 		buttons.add(b);
 

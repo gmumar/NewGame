@@ -14,14 +14,32 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 class MeshDescriptor {
-	float[] vertices;
-	short[] indices;
+	int start = -1, end = -1;
+	int index = 0, i = 0;
+
+	float[] vertices = new float[1236];
+
+	// short[] indices = new short[0];
+
+	public int getStart() {
+		return start == -1 ? 0 : start;
+	}
+
+	public int getEnd() {
+		return end == -1 ? 0 : end;
+	}
 };
 
 public class GameMesh {
+
+	private static final int LAYER_COUNT = 4;
+
 	private static Mesh mesh;
 	private static MeshDescriptor layer;
-	private static MeshDescriptor ret ;
+	// private static MeshDescriptor retGlobal;
+
+	private static MeshDescriptor retArray[];// = new
+												// MeshDescriptor[LAYER_COUNT];
 
 	// Position attribute - (x, y)
 	public static final int POSITION_COMPONENTS = 2;
@@ -40,40 +58,48 @@ public class GameMesh {
 	public static final int MAX_TRIS = 1;
 
 	// The maximum number of vertices our mesh will hold
-	public static final int MAX_VERTS = 7000;//MAX_TRIS * 3;
+	public static final int MAX_VERTS = 7000;// MAX_TRIS * 3;
 
 	// The array which holds all the data, interleaved like so:
 	// x, y, r, g, b, a
 	// x, y, r, g, b, a,
 	// x, y, r, g, b, a,
 	// ... etc ...
-	//static protected float[] verts = new float[MAX_VERTS * NUM_COMPONENTS];
+	// static protected float[] verts = new float[MAX_VERTS * NUM_COMPONENTS];
 
 	static protected ArrayList<Float> vectorVerts = new ArrayList<Float>();
 
 	// The current index that we are pushing triangles into the array
 	static protected int idx = 0;
 
+	static private int prevVectexCount = -1;
+	private static short[] solvedIndices;
+
 	static public void create(CameraManager cam, ShaderProgram shader) {
 		initArrays();
-		mesh = new Mesh(false, MAX_VERTS, MAX_VERTS, 
-				new VertexAttribute(Usage.Position,	POSITION_COMPONENTS, "a_position"), 
-				new VertexAttribute(Usage.ColorUnpacked, COLOR_COMPONENTS, "a_color"), 
-				new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord0"));
-		
-		
-		//for(int i=0;i<150;i++) addPoint(0,0);
-		//addTriangle(0, 0, 0, 0, 0, 0, Globals.BLUE);
+		mesh = new Mesh(false, MAX_VERTS, MAX_VERTS, new VertexAttribute(
+				Usage.Position, POSITION_COMPONENTS, "a_position"),
+				new VertexAttribute(Usage.ColorUnpacked, COLOR_COMPONENTS,
+						"a_color"), new VertexAttribute(
+						Usage.TextureCoordinates, 2, "a_texCoord0"));
+
+		// for(int i=0;i<150;i++) addPoint(0,0);
+		// addTriangle(0, 0, 0, 0, 0, 0, Globals.BLUE);
+		retArray = new MeshDescriptor[LAYER_COUNT];
+		for (int i = 0; i < LAYER_COUNT; i++) {
+			retArray[i] = new MeshDescriptor();
+		}
 
 	}
-	
-	public static void initArrays(){
-		//if(verts==null)
-			//verts = new float[MAX_VERTS * NUM_COMPONENTS];
-		if(vectorVerts==null)
+
+	public static void initArrays() {
+		// if(verts==null)
+		// verts = new float[MAX_VERTS * NUM_COMPONENTS];
+		if (vectorVerts == null)
 			vectorVerts = new ArrayList<Float>();
+
 	}
-	
+
 	static public int addPoint(float x, float y) {
 		// we don't want to hit any index out of bounds exception...
 		// so we need to flush the batch if we can't store any more verts
@@ -96,23 +122,64 @@ public class GameMesh {
 
 		return vectorVerts.size();
 	}
-	
-	static public void destroy(){
+
+	static public void destroy() {
 		mesh.dispose();
 		vectorVerts = null;
-		//verts = null;
+
+		retArray = null;
+
+		// verts = null;
 	}
-	
-	
-	static private MeshDescriptor setUpLayer(int start, int end, float depth, boolean drawTexture, Color color, float offset){
-		ret = new MeshDescriptor();
-		int vertexCount = (end - start)*2;
-		
-		ret.vertices  = new float[vertexCount];
-		int index = 0;
+
+	static final private MeshDescriptor setUpLayerFast(int start, int end,
+			float depth, boolean drawTexture, Color color, float offset,
+			int meshIndex) {
+
+		boolean same = true;
+
+		MeshDescriptor ret = retArray[meshIndex];
+
+		if (ret.end != end) {
+			same = false;
+		}
+
+		if (ret.start != start) {
+			same = false;
+		}
+
+		if (same) {
+			return ret;
+		}
+
+		// int vertexCount = (end - start) * 2 ;
+
+		// float[] prevVertices = ret.vertices;
+		// Declare new array with new size
+		// if(ret.vertices.length != vertexCount){
+		// ret.vertices = new float[vertexCount];
+		// }
+
+		int startDiff = start - ret.getStart();
+
+		// Copy over from over array
+		System.arraycopy(ret.vertices, startDiff * 2, ret.vertices, 0,
+				ret.vertices.length - startDiff * 2);
+
+		ret.end = end;
+		ret.start = start;
+
+		int index = ret.index - startDiff * 2;// 0
+
+		// System.out.println("vertices len: " + ret.vertices.length);
+
 		// sends our vertex data to the mesh
-		for (int i = start; i < end;) {
-			//int index = i - start;
+		for (int i = ret.i; i < end;) {// i = ret.i
+			// int index = i - start;
+			// if(index >= vertexCount) break;
+
+			// System.out.println(i + " " + index);
+
 			float pointX = vectorVerts.get(i++);
 			float pointY = vectorVerts.get(i++);
 			float colorr = color.r;
@@ -125,98 +192,157 @@ public class GameMesh {
 			i++;
 			float pointXt = vectorVerts.get(i++);
 			float pointYt = vectorVerts.get(i++);
-			
+
 			ret.vertices[index++] = pointX;
-			ret.vertices[index++] = pointY+offset;
+			ret.vertices[index++] = pointY + offset;
 			ret.vertices[index++] = colorr;
 			ret.vertices[index++] = colorg;
 			ret.vertices[index++] = colorb;
 			ret.vertices[index++] = colora;
 			ret.vertices[index++] = pointXt;
-			ret.vertices[index++] = pointYt+offset;
-		
+			ret.vertices[index++] = pointYt + offset;
+
 			ret.vertices[index++] = pointX;
-			ret.vertices[index++] = pointY-depth + offset;
+			ret.vertices[index++] = pointY - depth + offset;
 			ret.vertices[index++] = colorr;
 			ret.vertices[index++] = colorg;
 			ret.vertices[index++] = colorb;
 			ret.vertices[index++] = colora;
 			ret.vertices[index++] = pointXt;
-			ret.vertices[index++] = pointYt-depth/2+offset;
-			//System.out.println("added " + tmpVerts[i - start]);
+			ret.vertices[index++] = pointYt - depth / 2 + offset;
+
+			ret.i = i;
 		}
-		
-		int indicesLength = vertexCount+1;
-		ret.indices = new short[indicesLength];
-		int  vertex = 0;
-		// sends our vertex data to the mesh
-		//for (int i = start; i < end; ++i) {
-		//	index = i - start;
-		for (int i = 0; i < indicesLength; i++) {
-			index = i;
-			
-			ret.indices[index] = (short) (vertex);
-			if(index+1>=indicesLength) break;
-			ret.indices[index+1] = (short) (vertex+1);
-			if(index+2>=indicesLength) break;
-			ret.indices[index+2] = (short) (vertex+2);
-			if(index+3>=indicesLength) break;
-	
-			vertex+=1;
-			i+=8;
-			//System.out.println("added " + tmpVerts[i - start]);
-		}
-		
+
+		ret.index = index;
+		// ret.indices = getIndices(vertexCount);
+
+		retArray[meshIndex] = ret;
+
 		return ret;
 	}
 
+	/*
+	 * static private MeshDescriptor setUpLayer(int start, int end, float depth,
+	 * boolean drawTexture, Color color, float offset) { retGlobal = new
+	 * MeshDescriptor(); int vertexCount = (end - start) * 2;
+	 * 
+	 * retGlobal.vertices = new float[vertexCount]; int index = 0; // sends our
+	 * vertex data to the mesh for (int i = start; i < end;) { // int index = i
+	 * - start; float pointX = vectorVerts.get(i++); float pointY =
+	 * vectorVerts.get(i++); float colorr = color.r; i++; float colorg =
+	 * color.g; i++; float colorb = color.b; i++; float colora = drawTexture ?
+	 * color.a : 0.0f; i++; float pointXt = vectorVerts.get(i++); float pointYt
+	 * = vectorVerts.get(i++);
+	 * 
+	 * retGlobal.vertices[index++] = pointX; retGlobal.vertices[index++] =
+	 * pointY + offset; retGlobal.vertices[index++] = colorr;
+	 * retGlobal.vertices[index++] = colorg; retGlobal.vertices[index++] =
+	 * colorb; retGlobal.vertices[index++] = colora; retGlobal.vertices[index++]
+	 * = pointXt; retGlobal.vertices[index++] = pointYt + offset;
+	 * 
+	 * retGlobal.vertices[index++] = pointX; retGlobal.vertices[index++] =
+	 * pointY - depth + offset; retGlobal.vertices[index++] = colorr;
+	 * retGlobal.vertices[index++] = colorg; retGlobal.vertices[index++] =
+	 * colorb; retGlobal.vertices[index++] = colora; retGlobal.vertices[index++]
+	 * = pointXt; retGlobal.vertices[index++] = pointYt - depth / 2 + offset; //
+	 * System.out.println("added " + tmpVerts[i - start]); }
+	 * 
+	 * retGlobal.indices = getIndices(vertexCount);
+	 * 
+	 * return retGlobal; }
+	 */
+
+	private static short[] getIndices(int vertexCount) {
+
+		if (prevVectexCount == vertexCount) {
+			return solvedIndices;
+		}
+
+		prevVectexCount = vertexCount;
+		int indicesLength = vertexCount + 1;
+		solvedIndices = new short[indicesLength];
+		int vertex = 0;
+		int index;
+		// sends our vertex data to the mesh
+		// for (int i = start; i < end; ++i) {
+		// index = i - start;
+		for (int i = 0; i < indicesLength; i++) {
+			index = i;
+
+			solvedIndices[index] = (short) (vertex);
+			if (index + 1 >= indicesLength)
+				break;
+			solvedIndices[index + 1] = (short) (vertex + 1);
+			if (index + 2 >= indicesLength)
+				break;
+			solvedIndices[index + 2] = (short) (vertex + 2);
+			if (index + 3 >= indicesLength)
+				break;
+
+			vertex += 1;
+			i += 8;
+			// System.out.println("added " + tmpVerts[i - start]);
+		}
+
+		return solvedIndices;
+
+	}
 
 	static public void flush(CameraManager cam, ShaderProgram shader,
-			int start, int end, Texture texture, float depth, Color color, float offset) {
-		
-		layer = setUpLayer(start, end, depth, texture==null?true:false, color, offset);
-		
+			int start, int end, Texture texture, float depth, Color color,
+			float offset, int meshIndex) {
+
+		int vertexCount = (end - start) * 2;
+
+		// layer = setUpLayer(start, end, depth, texture==null?true:false,
+		// color, offset);
+
+		layer = setUpLayerFast(start, end, depth, texture == null ? true
+				: false, color, offset, meshIndex);
+
 		mesh.setVertices(layer.vertices);
-		mesh.setIndices(layer.indices);
-		
+
+		if (prevVectexCount != vertexCount) {
+			mesh.setIndices(getIndices(vertexCount));// (layer.indices);
+		}
+
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-		
-		
-		if(texture == null){
-			
+		if (texture == null) {
+
 			// update the projection matrix so our triangles are rendered in 2D
 			shader.setUniformMatrix("u_projTrans", cam.combined);
 			// render the mesh
 			mesh.render(shader, GL20.GL_TRIANGLES);
-	
-		}else{
+
+		} else {
 			// no need for depth...
-			//Gdx.gl.glDepthMask(false);
-	
+			// Gdx.gl.glDepthMask(false);
+
 			// enable blending, for alpha
 			Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
-	
+
 			// update the camera with our Y-up coordiantes
 			// cam.setToOrtho(false, Gdx.graphics.getWidth(),
 			// Gdx.graphics.getHeight());
-	
+
 			// start the shader before setting any uniforms
-			texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.Repeat);
+			texture.setWrap(Texture.TextureWrap.ClampToEdge,
+					Texture.TextureWrap.Repeat);
 			texture.bind(0);
-			
+
 			// update the projection matrix so our triangles are rendered in 2D
 			shader.setUniformMatrix("u_projTrans", cam.combined);
-			
+
 			shader.setUniformi("u_texture", 0);
-	
+
 			// render the mesh
 			mesh.render(shader, GL20.GL_TRIANGLES);
-	
-	
+
 			// re-enable depth to reset states to their default
-			//Gdx.gl.glDepthMask(true);
+			// Gdx.gl.glDepthMask(true);
 		}
 
 	}

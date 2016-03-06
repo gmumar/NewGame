@@ -3,7 +3,7 @@ package throwaway;
 import java.util.ArrayList;
 
 import wrapper.BaseActor;
-import wrapper.GameState;
+import wrapper.GamePhysicalState;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;

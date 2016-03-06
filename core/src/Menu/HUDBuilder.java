@@ -1,5 +1,6 @@
 package Menu;
 
+import wrapper.GameState;
 import wrapper.Globals;
 import GroundWorks.GroundBuilder;
 
@@ -20,11 +21,13 @@ public class HUDBuilder {
 	private float progress;
 
 	private boolean init = false;
+	private GameLoader gameLoader;
 
 	public HUDBuilder(Stage stage,
-			GroundBuilder ground, final GameLoader gameLoader) {
+			GroundBuilder ground, final GameState gameState) {
 
 		this.ground = ground;
+		this.gameLoader = gameState.getGameLoader();
 
 		//Buttons
 		exit = new Button("exit") {
@@ -41,7 +44,7 @@ public class HUDBuilder {
 			@Override
 			public void Clicked() {
 				//System.out.println("restarting");
-				gameLoader.setScreen(new GamePlayScreen(gameLoader));
+				gameLoader.setScreen(new GamePlayScreen(gameState));
 			}
 		};
 

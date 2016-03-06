@@ -7,7 +7,7 @@ import java.util.Iterator;
 import wrapper.BaseActor;
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
-import wrapper.GameState;
+import wrapper.GamePhysicalState;
 import wrapper.Globals;
 import Component.Component;
 import Component.Component.PropertyTypes;
@@ -42,7 +42,7 @@ public class Assembler {
 
 	final private static short CAR = -2;
 
-	public static AssembledObject assembleObject(GameState gameState) {
+	public static AssembledObject assembleObject(GamePhysicalState gameState) {
 		Integer jointType = 0;
 		
 		AssembledObject obj = new AssembledObject();
@@ -131,7 +131,7 @@ public class Assembler {
 		World tempWorld = new World(new Vector2(0, 0f), false);
 		tempWorld.setWarmStarting(true);
 
-		GameState gameState = new GameState(tempWorld, gameLoader);
+		GamePhysicalState gameState = new GamePhysicalState(tempWorld, gameLoader);
 
 		CameraManager camera = new CameraManager(Globals.ScreenWidth,
 				Globals.ScreenHeight - 50);
@@ -177,7 +177,7 @@ public class Assembler {
 	}
 
 	static private HashMap<String, Component> extractComponents(
-			JSONCar source, GameState gameState) {
+			JSONCar source, GamePhysicalState gameState) {
 		//HashMap<String, Component> ret = new HashMap<String, Component>();
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();

@@ -59,7 +59,7 @@ public class BaseActor {
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
 
-	public BaseActor(JSONComponentName name, String texture, GameState gameState) {
+	public BaseActor(JSONComponentName name, String texture, GamePhysicalState gameState) {
 
 		this.texture = gameState.getGameLoader().Assets.get(texture,Texture.class);
 		this.name = name;
@@ -70,7 +70,7 @@ public class BaseActor {
 		initBody();
 	}
 
-	public BaseActor(JSONComponentName name, GameState gameState) {
+	public BaseActor(JSONComponentName name, GamePhysicalState gameState) {
 		this.onlyPhysicBody = true;
 		this.name = name;
 		this.world = gameState.getWorld();
@@ -110,7 +110,7 @@ public class BaseActor {
 	}
 
 	public BaseActor(JSONComponentName name, ComponentProperties properties,
-			GameState gameState) {
+			GamePhysicalState gameState) {
 		
 		this.textureStr = (properties.getTexture() == null) ? this.textureStr  : properties.getTexture();
 		this.density = (properties.getDensity() == -1) ? this.density  : properties.getDensity();

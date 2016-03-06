@@ -5,7 +5,7 @@ import java.util.Random;
 
 import wrapper.CameraManager;
 import wrapper.GamePreferences;
-import wrapper.GameState;
+import wrapper.GamePhysicalState;
 import wrapper.Globals;
 import Assembly.Assembler;
 import Shader.GameMesh;
@@ -52,7 +52,7 @@ public class GroundBuilder {
 	private Random r = new Random();
 	private GroundDecor decor;
 
-	private static final int ADD_FLOOR_COUNT_FINAL = 4;
+	private static final int ADD_FLOOR_COUNT_FINAL = 3;
 	private int addFloorCount;
 	private int ADD_FLOOR_COUNT = 0;
 	private int flatFloorCount;
@@ -84,7 +84,7 @@ public class GroundBuilder {
 	private static ShaderProgram shader;
 	private static ShaderProgram colorShader;
 
-	public GroundBuilder(GameState gameState, CameraManager camera, ShaderProgram shader, ShaderProgram colorShader) {
+	public GroundBuilder(GamePhysicalState gameState, CameraManager camera, ShaderProgram shader, ShaderProgram colorShader) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
@@ -298,16 +298,16 @@ public class GroundBuilder {
 		shader.begin();
 		GameMesh.flush(cam, shader, shaderStart, shaderEnd,
 				groundFiller,
-				30, Color.WHITE, 0f);
+				30, Color.WHITE, 0f,0);
 		shader.end();
 
 		colorShader.begin();
 		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.8f,
-				Globals.TRANSPERENT_BLACK, 0.0f);
+				Globals.TRANSPERENT_BLACK, 0.0f,1);
 		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.6f,
-				Globals.GREEN, 0.5f);
+				Globals.GREEN, 0.5f,2);
 		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.1f,
-				Globals.GREEN1, 0.6f);
+				Globals.GREEN1, 0.6f,3);
 		colorShader.end();
 
 	}
