@@ -28,9 +28,10 @@ public class ParallaxBackground {
     */
    public void render(Vector2 speed){
       this.camera.position.add(speed.x/100,speed.y/100, 0);
+      batch.begin();
       for(ParallaxLayer layer:layers){
          batch.setProjectionMatrix(camera.projection);
-         batch.begin();
+        
          float currentX = - camera.position.x*layer.parallaxRatio.x % ( layer.region.getRegionWidth() + layer.padding.x) ;
          
          if( speed.x < 0 )currentX += -( layer.region.getRegionWidth() + layer.padding.x);
@@ -45,7 +46,8 @@ public class ParallaxBackground {
             }while( currentY < camera.viewportHeight);
             currentX += ( layer.region.getRegionWidth()+ layer.padding.x);
          }while( currentX < camera.viewportWidth);
-         batch.end();
+         
       }
+      batch.end();
    }
 }

@@ -27,8 +27,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.async.AsyncExecutor;
-import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GamePlayScreen implements Screen, InputProcessor {
@@ -60,11 +58,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	
 	private JointLimits jointLimits;
 
-	private AsyncExecutor taskRunner;
-	private boolean submit = true, running = true;
-	private volatile boolean collisionWait = false;
-	private AsyncTask<String> collisionTask;
-
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
 		this.gameLoader = gameState.getGameLoader();
@@ -93,22 +86,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		world.step(10, 100, 100);
 		
 		jointLimits = new JointLimits(world);
-
-		taskRunner = new AsyncExecutor(1);
-		collisionTask = new AsyncTask<String>() {
-
-			@Override
-			public String call() throws Exception {
-				while (running) {
-					jointLimits.enableJointLimits(1/dlTime);
-					collisionWait = true;
-					while (collisionWait)
-						;
-
-				}
-				return null;
-			}
-		};
 		
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
 	}
@@ -145,7 +122,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		renderWorld();
 		
 		scrollingBackground.draw();
-
 		
 		ground.drawShapes(camera);
 		attachCameraTo(builtCar.getBasePart());
@@ -174,12 +150,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
 				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		//Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
+		Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
 
 		batch.setProjectionMatrix(camera.combined);
 
-		world.step(dlTime, 40, 40);
-
+		if(!ground.loading){
+			world.step(dlTime, 40, 20);
+		}
+			
 		if (timePassed > 2) {
 
 			/*if (submit) {
@@ -190,10 +168,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			jointLimits.enableJointLimits(1/dlTime);
 
 		} else {
-			timePassed += dlTime;
+			if(!ground.loading){
+				timePassed += dlTime;
+			}
 		}
-
-		collisionWait = false;
 
 	}
 
@@ -312,7 +290,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		running = false;
+		//running = false;
 
 		batch.dispose();
 		builtCar.dispose();

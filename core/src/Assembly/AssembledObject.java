@@ -19,6 +19,7 @@ public class AssembledObject {
 	private ArrayList<Component> partList;
 	private ArrayList<BaseActor> driveList;
 	private Body basePart;
+	private Body driveBody ;
 	//private Component leftMost, rightMost;
 	// private int basePartIndex;
 
@@ -248,14 +249,14 @@ public class AssembledObject {
 
 		for (BaseActor comp : driveList) {
 
-			Body body = comp.getPhysicsBody();
+			driveBody = comp.getPhysicsBody();
 
-			body.applyAngularImpulse(resultantForce,true);
+			driveBody.applyAngularImpulse(resultantForce,true);
 			
-			if (body.getAngularVelocity() > MAX_VELOCITY) {
-				body.setAngularVelocity(MAX_VELOCITY);
-			} else if (body.getAngularVelocity() < -MAX_VELOCITY) {
-				body.setAngularVelocity(-MAX_VELOCITY);
+			if (driveBody.getAngularVelocity() > MAX_VELOCITY) {
+				driveBody.setAngularVelocity(MAX_VELOCITY);
+			} else if (driveBody.getAngularVelocity() < -MAX_VELOCITY) {
+				driveBody.setAngularVelocity(-MAX_VELOCITY);
 			}
 		}
 	}

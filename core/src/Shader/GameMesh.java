@@ -75,6 +75,9 @@ public class GameMesh {
 	static private int prevVectexCount = -1;
 	private static short[] solvedIndices;
 
+	// vertice floats
+	static float pointX,  pointY , colorr , colorg , colorb , colora , pointXt , pointYt;
+	
 	static public void create(CameraManager cam, ShaderProgram shader) {
 		initArrays();
 		mesh = new Mesh(false, MAX_VERTS, MAX_VERTS, new VertexAttribute(
@@ -138,9 +141,10 @@ public class GameMesh {
 
 		boolean same = true;
 
-		MeshDescriptor ret = retArray[meshIndex];
+		final MeshDescriptor ret = retArray[meshIndex];
 
 		if (ret.end != end) {
+			ret.end = end;
 			same = false;
 		}
 
@@ -154,44 +158,48 @@ public class GameMesh {
 
 		// int vertexCount = (end - start) * 2 ;
 
-		// float[] prevVertices = ret.vertices;
 		// Declare new array with new size
+		// Array size fixed to MAX
 		// if(ret.vertices.length != vertexCount){
 		// ret.vertices = new float[vertexCount];
 		// }
 
-		int startDiff = start - ret.getStart();
+		final int startDiff = (start - ret.getStart())*2;
 
 		// Copy over from over array
-		System.arraycopy(ret.vertices, startDiff * 2, ret.vertices, 0,
-				ret.vertices.length - startDiff * 2);
+		System.arraycopy(ret.vertices, startDiff , ret.vertices, 0,
+				ret.vertices.length - startDiff );
 
-		ret.end = end;
+		
 		ret.start = start;
 
-		int index = ret.index - startDiff * 2;// 0
+		int index = ret.index - startDiff ;// 0
+		final int vertexLen = ret.vertices.length - 16;
 
 		// System.out.println("vertices len: " + ret.vertices.length);
 
+		colorr = color.r;
+		colorg = color.g;
+		colorb = color.b;
+		colora = drawTexture ? color.a : 0.0f;
+		
 		// sends our vertex data to the mesh
-		for (int i = ret.i; i < end;) {// i = ret.i
-			// int index = i - start;
-			// if(index >= vertexCount) break;
+		for (int i = ret.i; i < end;) {
 
-			// System.out.println(i + " " + index);
-
-			float pointX = vectorVerts.get(i++);
-			float pointY = vectorVerts.get(i++);
-			float colorr = color.r;
-			i++;
-			float colorg = color.g;
-			i++;
-			float colorb = color.b;
-			i++;
-			float colora = drawTexture ? color.a : 0.0f;
-			i++;
-			float pointXt = vectorVerts.get(i++);
-			float pointYt = vectorVerts.get(i++);
+			pointX = vectorVerts.get(i++);
+			pointY = vectorVerts.get(i++);
+			//colorr = color.r;
+			//i++;
+			//colorg = color.g;
+			//i++;
+			//colorb = color.b;
+			//i++;
+			//colora = drawTexture ? color.a : 0.0f;
+			i+=4;
+			pointXt = vectorVerts.get(i++);
+			pointYt = vectorVerts.get(i++);
+			
+			if(index > vertexLen) break;
 
 			ret.vertices[index++] = pointX;
 			ret.vertices[index++] = pointY + offset;
@@ -215,9 +223,8 @@ public class GameMesh {
 		}
 
 		ret.index = index;
-		// ret.indices = getIndices(vertexCount);
-
-		retArray[meshIndex] = ret;
+		
+		//retArray[meshIndex] = ret;
 
 		return ret;
 	}
@@ -260,7 +267,7 @@ public class GameMesh {
 		}
 
 		prevVectexCount = vertexCount;
-		int indicesLength = vertexCount + 1;
+		int indicesLength = vertexCount ;
 		solvedIndices = new short[indicesLength];
 		int vertex = 0;
 		int index;
@@ -289,11 +296,9 @@ public class GameMesh {
 
 	}
 
-	static public void flush(CameraManager cam, ShaderProgram shader,
+	static public final void flush(CameraManager cam, ShaderProgram shader,
 			int start, int end, Texture texture, float depth, Color color,
-			float offset, int meshIndex) {
-
-		int vertexCount = (end - start) * 2;
+			float offset, int meshIndex, int vertexCount) {
 
 		// layer = setUpLayer(start, end, depth, texture==null?true:false,
 		// color, offset);
@@ -313,9 +318,9 @@ public class GameMesh {
 		if (texture == null) {
 
 			// update the projection matrix so our triangles are rendered in 2D
-			shader.setUniformMatrix("u_projTrans", cam.combined);
+			//shader.setUniformMatrix("u_projTrans", cam.combined);
 			// render the mesh
-			mesh.render(shader, GL20.GL_TRIANGLES);
+			//mesh.render(shader, GL20.GL_TRIANGLES);
 
 		} else {
 			// no need for depth...
@@ -334,16 +339,18 @@ public class GameMesh {
 			texture.bind(0);
 
 			// update the projection matrix so our triangles are rendered in 2D
-			shader.setUniformMatrix("u_projTrans", cam.combined);
+			//shader.setUniformMatrix("u_projTrans", cam.combined);
 
 			shader.setUniformi("u_texture", 0);
 
 			// render the mesh
-			mesh.render(shader, GL20.GL_TRIANGLES);
+			
 
 			// re-enable depth to reset states to their default
 			// Gdx.gl.glDepthMask(true);
 		}
+		
+		mesh.render(shader, GL20.GL_TRIANGLES);
 
 	}
 

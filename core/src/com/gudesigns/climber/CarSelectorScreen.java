@@ -77,7 +77,7 @@ public class CarSelectorScreen implements Screen {
 	volatile boolean stall = true;
 	AsyncExecutor ae = new AsyncExecutor(4);
 
-	private Integer previousSize = 0;
+	//private Integer previousSize = 0;
 
 	private GameState gameState;
 	

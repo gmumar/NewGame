@@ -52,7 +52,7 @@ public class GroundBuilder {
 	private Random r = new Random();
 	private GroundDecor decor;
 
-	private static final int ADD_FLOOR_COUNT_FINAL = 3;
+	private static int ADD_FLOOR_COUNT_FINAL = 0;
 	private int addFloorCount;
 	private int ADD_FLOOR_COUNT = 0;
 	private int flatFloorCount;
@@ -78,13 +78,17 @@ public class GroundBuilder {
 
 	private GroundUnitDescriptor lastObj;
 	private GroundUnitDescriptor gud;
-	
-	private static Texture groundFiller ;
-	
+
+	private static Texture groundFiller;
+
 	private static ShaderProgram shader;
 	private static ShaderProgram colorShader;
+	
+	private int initial = 0*8;
+	public boolean loading = true;
 
-	public GroundBuilder(GamePhysicalState gameState, CameraManager camera, ShaderProgram shader, ShaderProgram colorShader) {
+	public GroundBuilder(GamePhysicalState gameState, CameraManager camera,
+			ShaderProgram shader, ShaderProgram colorShader) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
@@ -95,7 +99,7 @@ public class GroundBuilder {
 		decor = new GroundDecor(gameState);
 
 		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, null);
-		//System.out.println(mapString);
+		// System.out.println(mapString);
 		if (mapString == null) {
 			infinate = true;
 		} else {
@@ -112,9 +116,14 @@ public class GroundBuilder {
 			// System.out.println("point on map " + mapList.size() + " vertex: "
 			// + shaderEnd);
 		}
-		
-		groundFiller = gameLoader.Assets.get("temp_ground_filler.png", Texture.class);
 
+		groundFiller = gameLoader.Assets.get("temp_ground_filler.png",
+				Texture.class);
+
+	}
+	
+	public boolean isLoading(){
+		return loading;
 	}
 
 	private void createFloor() {
@@ -127,7 +136,7 @@ public class GroundBuilder {
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-60
 				* UNIT_LENGTH, TRACK_HEIGHT), new Vector2(-5 * UNIT_LENGTH,
 				TRACK_HEIGHT), true);// ,
-								// "temp_ground.png","temp_ground_filler_premade.png");
+		// "temp_ground.png","temp_ground_filler_premade.png");
 		mapList.add(gud);
 		// gud.fixture = drawEdge(gud.start, gud.end);
 		gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
@@ -137,8 +146,8 @@ public class GroundBuilder {
 
 		gud = mapList.get(lastDrawnPointer);
 
-		if (getEdge(cam) > gud.getEnd().x) {
-
+		if (getEdge(cam) + initial > gud.getEnd().x ) {
+			
 			lastDrawnPointer++;
 			gud = mapList.get(lastDrawnPointer);
 			gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
@@ -164,6 +173,10 @@ public class GroundBuilder {
 				lastRemovedPointer++;
 
 			}
+		} else {
+			initial = 0;
+			loading = false;
+			ADD_FLOOR_COUNT_FINAL = 3;
 		}
 
 		/*
@@ -187,7 +200,7 @@ public class GroundBuilder {
 
 		randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
 
-		if (getEdge(cam) > lastObj.getEnd().x) {
+		if (getEdge(cam) + initial > lastObj.getEnd().x) {
 			if (infinate) {
 				addGroundUnitDescriptor(lastObj, randf);
 			} else {
@@ -220,7 +233,8 @@ public class GroundBuilder {
 	private void addGroundUnitDescriptor(GroundUnitDescriptor lastObj,
 			float randf) {
 		newObj = new GroundUnitDescriptor(lastObj.getEnd(), new Vector2(
-				lastObj.getEnd().x + UNIT_LENGTH, lastObj.getEnd().y + randf), true);
+				lastObj.getEnd().x + UNIT_LENGTH, lastObj.getEnd().y + randf),
+				true);
 		// ,"temp_ground.png", "temp_ground_filler_premade.png");
 		mapList.add(newObj);
 		shaderEnd = newObj.getVertexId();
@@ -253,7 +267,7 @@ public class GroundBuilder {
 	}
 
 	private float getEdge(CameraManager cam) {
-		return cam.getViewPortRightEdge() + UNIT_LENGTH * 40;
+		return cam.getViewPortRightEdge() + UNIT_LENGTH * 40 ;
 	}
 
 	private float getBackEdge(CameraManager cam) {
@@ -295,19 +309,23 @@ public class GroundBuilder {
 		 * iter.next(); if (!groundItem.isFixtureDeleted())
 		 * groundItem.drawShapes(cam,shader); }
 		 */
+
+		int vertexCount = (shaderEnd - shaderStart) * 2;
+
 		shader.begin();
-		GameMesh.flush(cam, shader, shaderStart, shaderEnd,
-				groundFiller,
-				30, Color.WHITE, 0f,0);
+		shader.setUniformMatrix("u_projTrans", cam.combined);
+		GameMesh.flush(cam, shader, shaderStart, shaderEnd, groundFiller, 30,
+				Color.WHITE, 0f, 0, vertexCount);
 		shader.end();
 
 		colorShader.begin();
+		colorShader.setUniformMatrix("u_projTrans", cam.combined);
 		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.8f,
-				Globals.TRANSPERENT_BLACK, 0.0f,1);
+				Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
 		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.6f,
-				Globals.GREEN, 0.5f,2);
+				Globals.GREEN, 0.5f, 2, vertexCount);
 		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.1f,
-				Globals.GREEN1, 0.6f,3);
+				Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();
 
 	}
@@ -316,11 +334,11 @@ public class GroundBuilder {
 
 		edgeShape.set(v1, v2);
 		fixtureDef.shape = edgeShape;
-		//fixtureDef.density = 1;
+		// fixtureDef.density = 1;
 		fixtureDef.friction = 1;
 		fixtureDef.restitution = 0.5f;
 
-		//Fixture f = ;
+		// Fixture f = ;
 
 		return floor.createFixture(fixtureDef);
 	}
