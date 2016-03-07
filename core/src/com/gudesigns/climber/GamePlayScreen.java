@@ -27,6 +27,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
+import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GamePlayScreen implements Screen, InputProcessor {
@@ -53,10 +55,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 
 	private float timePassed = 0;
-	
+
 	private ScrollingBackground scrollingBackground;
-	
+
 	private JointLimits jointLimits;
+
+	private final AsyncExecutor runner = new AsyncExecutor(2);
+	boolean running = true;
 
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
@@ -72,22 +77,47 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 
 		// debugRenderer = new Box2DDebugRenderer();
-		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world, this.gameLoader));
+		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
+				this.gameLoader));
 		builtCar.setPosition(0, 50);
 
 		initShader();
-		ground = new GroundBuilder(new GamePhysicalState(this.world, this.gameLoader), camera,
-				shader, colorShader);
+		ground = new GroundBuilder(new GamePhysicalState(this.world,
+				this.gameLoader), camera, shader, colorShader);
 
 		initHud();
 
 		rollingAvg = new RollingAverage(60);
 
 		world.step(10, 100, 100);
-		
+
 		jointLimits = new JointLimits(world);
-		
+
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
+
+		runner.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+				float timePassed = 0;
+
+				while (running) {
+
+					timePassed += Gdx.graphics.getDeltaTime();
+
+					if (timePassed >= 1 / 60f) {
+						hud.update(1/60f);
+						timePassed = 0;
+					}
+
+					
+				}
+				return null;
+
+			}
+
+		});
+
 	}
 
 	final private void initShader() {
@@ -119,10 +149,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void render(float delta) {
 		handleInput(touches);
-		renderWorld();
-		
+		renderWorld(delta);
+
 		scrollingBackground.draw();
-		
+
 		ground.drawShapes(camera);
 		attachCameraTo(builtCar.getBasePart());
 
@@ -133,7 +163,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.end();
 
-		hud.update(delta);
+		
 		stage.draw();
 
 	}
@@ -143,9 +173,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	}
 
-	final private void renderWorld() {
+	final private void renderWorld(float delta) {
 
-		dlTime = Gdx.graphics.getDeltaTime()/1.1f;
+		dlTime = delta / 1.1f;
 
 		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
 				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
@@ -154,21 +184,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		if(!ground.loading){
+		if (!ground.loading) {
 			world.step(dlTime, 40, 20);
 		}
-			
+
 		if (timePassed > 2) {
 
-			/*if (submit) {
-				taskRunner.submit(collisionTask);
-				submit = false;
-			}*/
-			
-			jointLimits.enableJointLimits(1/dlTime);
+			/*
+			 * if (submit) { taskRunner.submit(collisionTask); submit = false; }
+			 */
+
+			jointLimits.enableJointLimits(1 / dlTime);
 
 		} else {
-			if(!ground.loading){
+			if (!ground.loading) {
 				timePassed += dlTime;
 			}
 		}
@@ -182,20 +211,19 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		if (speedZoom < 0) {
 			speedZoom = 0;
 		}
-		
-		camera.position.set(actor.getPosition().x + CAMERA_OFFSET 
+
+		camera.position.set(actor.getPosition().x + CAMERA_OFFSET
 				- (0.4f - speedZoom * 4), actor.getPosition().y, 1);// +
 																	// camera.viewportWidth*2.5f
 		camera.zoom = 4.2f + speedZoom;// 4.5f;
-		
-		
+
 		camera.update();
 	}
 
 	final private void initWorld() {
 		world = (new World(new Vector2(0, -38f), true));
 		world.setAutoClearForces(true);
-		
+
 		world.setWarmStarting(true);
 	}
 
@@ -290,7 +318,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		//running = false;
+		running = false;
 
 		batch.dispose();
 		builtCar.dispose();

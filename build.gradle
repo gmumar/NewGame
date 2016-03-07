@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:1.5.0'
     }
 }
 
@@ -17,11 +17,11 @@ allprojects {
     version = '1.0'
     ext {
         appName = "climber"
-        gdxVersion = '1.7.0'
-        roboVMVersion = '1.8.0'
-        box2DLightsVersion = '1.4'
-        ashleyVersion = '1.6.0'
-        aiVersion = '1.6.0'
+        gdxVersion = '1.9.1'
+        roboVMVersion = '1.12.0'
+       // box2DLightsVersion = '1.4'
+       // ashleyVersion = '1.6.0'
+       // aiVersion = '1.6.0'
     }
 
     repositories {
@@ -60,8 +60,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
-        compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
-        compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+       // compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+       // compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
@@ -83,8 +83,8 @@ project(":html") {
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
-        compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-ai:$aiVersion:sources"
+       // compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion:sources"
+       // compile "com.badlogicgames.gdx:gdx-ai:$aiVersion:sources"
     }
 }
 
@@ -94,8 +94,8 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
-        compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+        //compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        //compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "com.google.code.gson:gson:2.6.2"
     }
