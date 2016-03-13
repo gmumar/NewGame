@@ -2,6 +2,8 @@ package JSONifier;
 
 import Component.ComponentNames;
 
+import com.badlogic.gdx.utils.Json;
+
 public class JSONComponentName {
 
 	private String BaseName;
@@ -87,9 +89,8 @@ public class JSONComponentName {
 
 	@Override
 	public String toString() {
-		return "JSONComponentName [BaseName=" + BaseName + ", SubName="
-				+ SubName + ", ComponentId=" + ComponentId + ", MountId="
-				+ MountId + "]";
+		Json json = new Json();
+		return json.toJson(this);
 	}
 
 }

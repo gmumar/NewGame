@@ -60,8 +60,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private JointLimits jointLimits;
 
-	private final AsyncExecutor runner = new AsyncExecutor(2);
+	private final AsyncExecutor runner = new AsyncExecutor(3);
 	boolean running = true;
+	boolean paused = true;
 
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
@@ -95,27 +96,49 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
 
+		/*
+		 * runner.submit(new AsyncTask<String>() {
+		 * 
+		 * @Override public String call() throws Exception { float timePassed =
+		 * 0;
+		 * 
+		 * while (running) {
+		 * 
+		 * timePassed += Gdx.graphics.getDeltaTime();
+		 * 
+		 * if (timePassed >= 1 / 60f) {
+		 * 
+		 * timePassed = 0; }
+		 * 
+		 * } return null;
+		 * 
+		 * 
+		 * }
+		 * 
+		 * });
+		 */
+
 		runner.submit(new AsyncTask<String>() {
 
 			@Override
 			public String call() throws Exception {
-				float timePassed = 0;
+				// float timePassed = 0;
+				long prevTime = System.nanoTime();
+				long currentTime = prevTime;
 
 				while (running) {
 
-					timePassed += Gdx.graphics.getDeltaTime();
+					currentTime = System.nanoTime();
 
-					if (timePassed >= 1 / 60f) {
-						hud.update(1/60f);
-						timePassed = 0;
+					if (currentTime - prevTime >= 1 / 60f) {
+						hud.update(1 / 60f);
+
+						prevTime = currentTime;
+
 					}
-
-					
 				}
 				return null;
-
 			}
-
 		});
 
 	}
@@ -148,22 +171,21 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
-		handleInput(touches);
+
 		renderWorld(delta);
 
 		scrollingBackground.draw();
 
-		ground.drawShapes(camera);
 		attachCameraTo(builtCar.getBasePart());
+		ground.drawShapes();
 
 		batch.begin();
 
-		ground.draw(camera, batch);
+		ground.draw(batch);
 		builtCar.draw(batch);
 
 		batch.end();
 
-		
 		stage.draw();
 
 	}
@@ -173,35 +195,44 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	}
 
+	float timeCounter = 0;
+
 	final private void renderWorld(float delta) {
 
 		dlTime = delta / 1.1f;
 
+		timeCounter += dlTime;
+
 		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
 				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
+		// Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
 
 		batch.setProjectionMatrix(camera.combined);
 
-		if (!ground.loading) {
-			world.step(dlTime, 40, 20);
-		}
+		if (timeCounter >= 1 / 30f) {
+			timeCounter = 1 / 100f;
 
-		if (timePassed > 2) {
+		} else if (timeCounter >= 1 / 85f) {
 
-			/*
-			 * if (submit) { taskRunner.submit(collisionTask); submit = false; }
-			 */
+			handleInput(touches);
 
-			jointLimits.enableJointLimits(1 / dlTime);
-
-		} else {
 			if (!ground.loading) {
-				timePassed += dlTime;
+				world.step(timeCounter, 40, 20);
 			}
-		}
 
+			if (timePassed > 2) {
+
+				jointLimits.enableJointLimits(1 / timeCounter);
+
+			} else {
+				if (!ground.loading) {
+					timePassed += dlTime;
+				}
+			}
+
+			timeCounter = 0;
+		}
 	}
 
 	final private void attachCameraTo(Body actor) {
@@ -303,7 +334,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		initInputs();
 		Globals.updateScreenInfo();
 		GameMesh.create(camera, shader);
-		//
+		paused = false;
 
 	}
 
@@ -319,6 +350,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void dispose() {
 		running = false;
+		paused = true;
 
 		batch.dispose();
 		builtCar.dispose();
@@ -337,13 +369,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		// paused = true;
+		paused = true;
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		// paused = false;
+		paused = false;
 	}
 
 	@Override

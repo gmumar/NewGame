@@ -81,7 +81,7 @@ public class AssemblyRules {
 
 		ArrayList<Body> partsSeen = new ArrayList<Body>();
 
-		Queue<Body> que = new ArrayBlockingQueue<Body>(100);
+		Queue<Body> que = new ArrayBlockingQueue<Body>(100000);
 		Body currentBody;
 
 		que.add(baseObject);

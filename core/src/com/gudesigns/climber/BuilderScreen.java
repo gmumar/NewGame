@@ -8,6 +8,7 @@ import wrapper.GameState;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import Menu.MenuBuilder;
+import Menu.PopQueManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -28,7 +29,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
-	//private GameLoader gameLoader;
+	// private GameLoader gameLoader;
 	private SpriteBatch batch;
 	private CameraManager camera, secondCamera;
 	private World world;
@@ -36,43 +37,49 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	private MenuBuilder menu;
 	private FitViewport vp;
 	private ShapeRenderer shapeRenderer;
-	
+
 	private Box2DDebugRenderer debugRenderer;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
+	private PopQueManager popQueManager;
 
 	private float zoom = 0.015f;
 
 	public BuilderScreen(GameState gameState) {
-		//this.gameLoader = gameLoader;
+		// this.gameLoader = gameLoader;		
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		initStage();
 		initWorld();
+		
+		popQueManager = new PopQueManager(stage);
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
 		}
 
-		menu = new MenuBuilder(new GamePhysicalState(world, gameState.getGameLoader()), stage, camera,shapeRenderer,gameState.getUser());
+		menu = new MenuBuilder(new GamePhysicalState(world,
+				gameState.getGameLoader()), stage, camera, shapeRenderer,
+				gameState.getUser(), popQueManager);
+		
 		debugRenderer = new Box2DDebugRenderer();
-		
-		debugRenderer.AABB_COLOR.set( Color.WHITE);
-		debugRenderer.SHAPE_NOT_ACTIVE.set( Color.WHITE);
-		
-		debugRenderer.JOINT_COLOR.set( Color.WHITE );
-		debugRenderer.SHAPE_AWAKE.set( Color.WHITE);
-		debugRenderer.SHAPE_KINEMATIC.set( Color.WHITE);
-		
-		debugRenderer.SHAPE_NOT_AWAKE.set( Color.WHITE);
-		debugRenderer.VELOCITY_COLOR.set( Color.WHITE);
+
+		debugRenderer.AABB_COLOR.set(Color.WHITE);
+		debugRenderer.SHAPE_NOT_ACTIVE.set(Color.WHITE);
+
+		debugRenderer.JOINT_COLOR.set(Color.WHITE);
+		debugRenderer.SHAPE_AWAKE.set(Color.WHITE);
+		debugRenderer.SHAPE_KINEMATIC.set(Color.WHITE);
+
+		debugRenderer.SHAPE_NOT_AWAKE.set(Color.WHITE);
+		debugRenderer.VELOCITY_COLOR.set(Color.WHITE);
 
 	}
 
 	private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
-		
+
 		camera.zoom = zoom;
 		camera.update();
 
@@ -82,8 +89,8 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new FitViewport(Globals.ScreenWidth,
-				Globals.ScreenHeight, secondCamera);
+		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+				secondCamera);
 
 		stage = new Stage(vp);
 
@@ -106,27 +113,29 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		//batch.begin();
-		//menu.draw(batch);
-		//batch.end();
-		
+		// batch.begin();
+		// menu.draw(batch);
+		// batch.end();
+
 		shapeRenderer.begin(ShapeType.Line);
 		menu.drawShapes(batch);
 		shapeRenderer.end();
+		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+		stage.draw();
+		popQueManager.update(delta);
 	}
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(0.3f, 0.3f, 1, 1);
+		Gdx.gl.glClearColor(0.4f, 0.4f, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
-		
+
 		debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
-		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-		stage.draw();
+		
 	}
 
 	@Override
@@ -177,12 +186,12 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		if(menu.isJoined())
+		if (menu.isJoined())
 			return false;
-		
-		menu.handlePan(x,y,deltaX, deltaY);
-		camera.position.x -= deltaX/(40+camera.zoom);
-		camera.position.y += deltaY/(40+camera.zoom);
+
+		menu.handlePan(x, y, deltaX, deltaY);
+		camera.position.x -= deltaX / (40 + camera.zoom);
+		camera.position.y += deltaY / (40 + camera.zoom);
 		camera.update();
 		return true;
 	}
@@ -198,15 +207,15 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		Gdx.input.setInputProcessor(null);
 
 	}
-	
+
 	@Override
 	public void dispose() {
 		batch.dispose();
 		camera = null;
 		secondCamera = null;
 		// these two self destroyed by menu
-		//world.dispose();
-		//stage.dispose();
+		// world.dispose();
+		// stage.dispose();
 		shapeRenderer.dispose();
 		debugRenderer.dispose();
 		touches.clear();

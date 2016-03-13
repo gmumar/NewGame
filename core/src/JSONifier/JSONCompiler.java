@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import wrapper.BaseActor;
 import wrapper.GamePreferences;
 import Component.Component;
 import Component.Component.ComponentTypes;
@@ -28,15 +27,14 @@ public class JSONCompiler {
 
 		// component list
 		ArrayList<JSONComponent> JSONparts = new ArrayList<JSONComponent>();
-		Iterator<Component> partsIter = parts.iterator();
-		while (partsIter.hasNext()) {
-			Component part = partsIter.next();
-			if (part.getComponentTypes() == ComponentTypes.PART) {
+		
+		for (Component part : parts) {
+			if (part.getComponentTypes() == ComponentTypes.PART || part.getComponentTypes() == ComponentTypes.JOINT) {
 				//JSONparts.add(part.toJSONComponent((String) part.getObject()
 				//		.getPhysicsBody().getUserData()));
 				JSONparts.add(part.toJSONComponent(part.getjComponentName()));
 
-			} else if (part.getComponentTypes() == ComponentTypes.JOINT) {
+			}/* else if (part.getComponentTypes() == ComponentTypes.JOINT) {
 				ArrayList<BaseActor> bodies = part.getJointBodies();
 				BaseActor body = bodies.get(0);
 				//String[] nameParts =  ((String) body.getPhysicsBody().getUserData())
@@ -45,7 +43,7 @@ public class JSONCompiler {
 				//String bodyIndex = nameParts[1].split(Assembler.NAME_ID_SPLIT)[1];
 				//JSONparts.add(part.toJSONComponent(bodyName + Assembler.NAME_ID_SPLIT + bodyIndex, body));
 				JSONparts.add(part.toJSONComponent(part.getjComponentName(), body));
-			}
+			}*/
 		}
 		car.setComponentList(JSONparts);
 

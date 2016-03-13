@@ -1,83 +1,99 @@
 package User;
 
+import Component.ComponentNames;
+
 public class User {
-	
-	private Integer smallBarLevel ;
-	private Integer tireLevel ;
-	private Integer springLevel ;
-	private Integer money ;
-	
+
+	private Integer smallBarLevel = 6;
+	private Integer tireLevel = 1;
+	private Integer springLevel = 6;
+	private Integer money = 10000;
+
 	private static User instance;
-	
-	private User(){
-		
+
+	private User() {
+
 	}
-	
-	public static User getInstance(){
-		if(instance == null){
+
+	public Integer getLevel(String partName) {
+
+		if (partName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
+			return getSpringLevel();
+		} else if (partName.compareTo(ComponentNames.WHEEL) == 0) {
+			return getTireLevel();
+		} else if (partName.compareTo(ComponentNames.BAR3) == 0) {
+			return getSmallBarLevel();
+		}
+		return 1;
+	}
+
+	public static User getInstance() {
+		if (instance == null) {
 			instance = new User();
 		}
 		return instance;
 	}
-	
+
 	public Integer getSmallBarLevel() {
-		if(smallBarLevel<=1){
+		if (smallBarLevel <= 1) {
 			return 1;
 		}
-		return smallBarLevel;
+		return new Integer(smallBarLevel);
 	}
+
 	public void setSmallBarLevel(Integer smallBarLevel) {
 		this.smallBarLevel = smallBarLevel;
 	}
-	public void decrementSmallBarLevel(){
+
+	public void decrementSmallBarLevel() {
 		smallBarLevel--;
-		if(smallBarLevel<=1){
+		if (smallBarLevel <= 1) {
 			smallBarLevel = 1;
 		}
 	}
-	
-	
+
 	public Integer getTireLevel() {
-		if(tireLevel<=1){
+		if (tireLevel <= 1) {
 			return 1;
 		}
-		return tireLevel;
+		return new Integer(tireLevel);
 	}
+
 	public void setTireLevel(Integer tireLevel) {
 		this.tireLevel = tireLevel;
-	}	
-	public void decrementTireLevel(){
+	}
+
+	public void decrementTireLevel() {
 		tireLevel--;
-		if(tireLevel<=1){
+		if (tireLevel <= 1) {
 			tireLevel = 1;
 		}
 	}
-	
-	
-	
+
 	public Integer getSpringLevel() {
-		if(springLevel<=1){
+		if (springLevel <= 1) {
 			return 1;
 		}
-		return springLevel;
+		return new Integer(springLevel);
 	}
+
 	public void setSpringLevel(Integer springLevel) {
 		this.springLevel = springLevel;
 	}
-	public void decrementSpringLevel(){
+
+	public void decrementSpringLevel() {
 		springLevel--;
-		if(springLevel<=1){
+		if (springLevel <= 1) {
 			springLevel = 1;
 		}
 	}
-	
-	
-	
+
 	public Integer getMoney() {
 		return money;
 	}
+
 	public void setMoney(Integer money) {
 		this.money = money;
-	}	
+	}
 
 }

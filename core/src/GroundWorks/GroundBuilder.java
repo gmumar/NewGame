@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import wrapper.CameraManager;
-import wrapper.GamePreferences;
 import wrapper.GamePhysicalState;
+import wrapper.GamePreferences;
 import wrapper.Globals;
 import Assembly.Assembler;
 import Shader.GameMesh;
@@ -87,7 +87,7 @@ public class GroundBuilder {
 	private int initial = 0*8;
 	public boolean loading = true;
 
-	public GroundBuilder(GamePhysicalState gameState, CameraManager camera,
+	public GroundBuilder(GamePhysicalState gameState, final CameraManager camera,
 			ShaderProgram shader, ShaderProgram colorShader) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
@@ -142,11 +142,11 @@ public class GroundBuilder {
 		gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
 	}
 
-	public void drawFloor(CameraManager cam) {
+	public void addFloorUnitToMap() {
 
 		gud = mapList.get(lastDrawnPointer);
 
-		if (getEdge(cam) + initial > gud.getEnd().x ) {
+		if (getEdge()  > gud.getEnd().x ) {
 			
 			lastDrawnPointer++;
 			gud = mapList.get(lastDrawnPointer);
@@ -160,7 +160,7 @@ public class GroundBuilder {
 			verticalEdge = drawEdge(gud.getStart(), new Vector2(
 					gud.getStart().x, gud.getStart().y + 150));
 
-			if (getBackEdge(cam) > gud.getStart().x) {
+			if (getBackEdge() > gud.getStart().x) {
 				ADD_FLOOR_COUNT = ADD_FLOOR_COUNT_FINAL;
 				floor.destroyFixture(verticalEdge);
 				verticalEdge = drawEdge(gud.getEnd(), new Vector2(
@@ -191,7 +191,7 @@ public class GroundBuilder {
 
 	}
 
-	public void updateFloor(CameraManager cam) {
+	public void getNextFloorUnit() {
 
 		float randf = (float) (r.nextFloat());
 		lastObj = mapList.get(mapList.size() - 1);
@@ -200,7 +200,7 @@ public class GroundBuilder {
 
 		randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
 
-		if (getEdge(cam) + initial > lastObj.getEnd().x) {
+		if (getEdge()  > lastObj.getEnd().x) {
 			if (infinate) {
 				addGroundUnitDescriptor(lastObj, randf);
 			} else {
@@ -266,23 +266,27 @@ public class GroundBuilder {
 
 	}
 
-	private float getEdge(CameraManager cam) {
-		return cam.getViewPortRightEdge() + UNIT_LENGTH * 40 ;
+	private float getEdge() {
+		return camera.getViewPortRightEdge() + UNIT_LENGTH * 40 ;
 	}
 
-	private float getBackEdge(CameraManager cam) {
-		return cam.getViewPortLeftEdge() - UNIT_LENGTH * BACK_EDGE_UNITS;
+	private float getBackEdge() {
+		return camera.getViewPortLeftEdge() - UNIT_LENGTH * BACK_EDGE_UNITS;
 	}
-
-	public void draw(CameraManager cam, SpriteBatch batch) {
+	
+	
+	public void draw( SpriteBatch batch) {
+			
+		
 		if (addFloorCount > ADD_FLOOR_COUNT) {
-			updateFloor(cam);
-			drawFloor(cam);
+			getNextFloorUnit();
+			addFloorUnitToMap();
+
 			addFloorCount = 0;
 		}
 
 		++addFloorCount;
-
+		
 		decor.draw(batch);
 
 		/*
@@ -301,7 +305,7 @@ public class GroundBuilder {
 
 	}
 
-	public void drawShapes(CameraManager cam) {
+	public void drawShapes() {
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
 		 * 
@@ -313,20 +317,21 @@ public class GroundBuilder {
 		int vertexCount = (shaderEnd - shaderStart) * 2;
 
 		shader.begin();
-		shader.setUniformMatrix("u_projTrans", cam.combined);
-		GameMesh.flush(cam, shader, shaderStart, shaderEnd, groundFiller, 30,
+		shader.setUniformMatrix("u_projTrans", camera.combined);
+		GameMesh.flush(camera, shader, shaderStart, shaderEnd, groundFiller, 30,
 				Color.WHITE, 0f, 0, vertexCount);
 		shader.end();
 
 		colorShader.begin();
-		colorShader.setUniformMatrix("u_projTrans", cam.combined);
-		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.8f,
+		colorShader.setUniformMatrix("u_projTrans", camera.combined);
+		GameMesh.flush(camera, colorShader, shaderStart, shaderEnd, null, 0.8f,
 				Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
-		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.6f,
+		GameMesh.flush(camera, colorShader, shaderStart, shaderEnd, null, 0.6f,
 				Globals.GREEN, 0.5f, 2, vertexCount);
-		GameMesh.flush(cam, colorShader, shaderStart, shaderEnd, null, 0.1f,
+		GameMesh.flush(camera, colorShader, shaderStart, shaderEnd, null, 0.1f,
 				Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();
+
 
 	}
 
@@ -355,6 +360,7 @@ public class GroundBuilder {
 
 	public void destory() {
 		edgeShape.dispose();
+		
 	}
 
 	public float getProgress() {

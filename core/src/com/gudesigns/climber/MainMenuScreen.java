@@ -37,7 +37,7 @@ public class MainMenuScreen implements Screen {
 	}
 
 	private void initUser() {
-		//user = User.getInstance();
+		user = User.getInstance();
 		
 	}
 

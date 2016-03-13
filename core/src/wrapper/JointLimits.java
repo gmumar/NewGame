@@ -44,6 +44,13 @@ public class JointLimits {
 		for (Joint joint : joints) {
 			//joint = iter.next();
 			
+			force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
+			torque = joint.getReactionTorque(step);
+			
+			if(torque < LIFE_BAR_BREAKING_TORQUE && force < LIFE_BAR_BREAKING_FORCE){
+				continue;
+			}
+
 			nameBodyA = ((JSONComponentName)joint.getBodyA().getUserData()).getBaseName();
 			nameBodyB = ((JSONComponentName)joint.getBodyB().getUserData()).getBaseName();
 			 
@@ -53,9 +60,6 @@ public class JointLimits {
 				continue;
 			}
 			
-			force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
-			torque = joint.getReactionTorque(step);
-
 			if (jointHas(joint, ComponentNames.LIFE)) {
 				if (torque > LIFE_BAR_BREAKING_TORQUE) {
 					// System.out.println("break 2 torque " + torque);

@@ -133,14 +133,12 @@ public class Component {
 		} else if (this.componentTypes == ComponentTypes.JOINT) {
 			int mountId = 0;
 			ArrayList<BaseActor> bodies = this.getJointBodies();
-			Iterator<BaseActor> iter = bodies.iterator();
 			
-			while (iter.hasNext()) {
-				JSONComponentName fixtureName = new JSONComponentName();
-				
-				BaseActor body = iter.next();
+			for (BaseActor body : bodies) {
+				JSONComponentName subBodyName = new JSONComponentName();
 				
 				this.setComponentId(name.getComponentId());
+				this.setPartLevel(partLevel);
 				System.out.println("Componenet : jointBodyCount " + body.getjName());
 				// TODO: finalize this
 				body.setSensor();
@@ -154,17 +152,17 @@ public class Component {
 				body.getPhysicsBody().setUserData(
 						body.getPhysicsBody().getUserData() + name);*/
 				//name.setMountId(Integer.toString(mountId));
-				System.out.println("Componenet : bodyName: " + ((JSONComponentName)body.getPhysicsBody().getUserData()).getBaseName());
+				System.out.println("Before Componenet : bodyName: " + ((JSONComponentName)body.getPhysicsBody().getUserData()));
 				//name.setBaseName(body.getPhysicsBody().getUserData() + name.getBaseName());
 				
-				fixtureName.setComponentId(name.getComponentId());
-				fixtureName.setBaseName(name.getBaseName());
-				fixtureName.setSubName(body.getjName().getSubName());
-				fixtureName.setMountId(Integer.toString(mountId));
-				fixtureName.setLevel(partLevel);
+				subBodyName.setComponentId(name.getComponentId());
+				subBodyName.setBaseName(name.getBaseName());
+				subBodyName.setSubName(body.getjName().getSubName());
+				subBodyName.setMountId(Integer.toString(mountId));
+				subBodyName.setLevel(partLevel);
 				
-				fixture.setUserData(fixtureName);
-				body.getPhysicsBody().setUserData(fixtureName);
+				fixture.setUserData(subBodyName);
+				body.getPhysicsBody().setUserData(subBodyName);
 				
 			}
 		}
