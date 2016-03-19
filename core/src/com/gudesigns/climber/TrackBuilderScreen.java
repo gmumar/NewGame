@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 
 import wrapper.CameraManager;
+import wrapper.GamePhysicalState;
 import wrapper.GameState;
 import wrapper.Globals;
 import wrapper.TouchUnit;
@@ -15,6 +16,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
@@ -23,24 +26,28 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
-public class TrackBuilderScreen implements Screen, InputProcessor, GestureListener {
+public class TrackBuilderScreen implements Screen, InputProcessor,
+		GestureListener {
 
 	private SpriteBatch batch;
 	private CameraManager camera, secondCamera;
 	private World world;
 	private Stage stage;
 	private StretchViewport vp;
-	
+
 	private Box2DDebugRenderer debugRenderer;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
-	
+
 	private TrackBuilder trackBuilder;
+	private TrackMenuBuilder menu;
+	private ShapeRenderer fixtureRenderer;
 
 	private float zoom = 0.1f;
 
 	public TrackBuilderScreen(GameState gameState) {
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
+		fixtureRenderer = new ShapeRenderer();
 		initStage();
 		initWorld();
 
@@ -49,7 +56,9 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 		}
 
 		trackBuilder = new TrackBuilder(world, camera);
-		new TrackMenuBuilder( stage, camera, gameState, trackBuilder);
+		menu = new TrackMenuBuilder(new GamePhysicalState(world,
+				gameState.getGameLoader()), stage, camera, trackBuilder,
+				gameState.getUser(), fixtureRenderer);
 		debugRenderer = new Box2DDebugRenderer();
 
 	}
@@ -57,7 +66,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 	private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
-		
+
 		camera.zoom = zoom;
 		camera.update();
 
@@ -67,8 +76,8 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth,
-				Globals.ScreenHeight, secondCamera);
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+				secondCamera);
 
 		stage = new Stage(vp);
 
@@ -91,14 +100,20 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		trackBuilder.handleTouches(touches);
+		if (!menu.isJoined() && menu.getDrawTrack()) {
+			trackBuilder.handleTouches(touches);
+		}
 		
 		batch.begin();
-		
+
 		trackBuilder.draw(batch);
 		
-		batch.end();
+		fixtureRenderer.begin(ShapeType.Line);
+		menu.drawShapes(batch);
+		fixtureRenderer.end();
 		
+		batch.end();
+
 	}
 
 	private void renderWorld() {
@@ -107,7 +122,8 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
-		
+		fixtureRenderer.setProjectionMatrix(camera.combined);
+
 		debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -116,7 +132,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-
+		menu.handleClick(screenX, screenY);
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
@@ -129,7 +145,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
+		menu.handleRelease(screenX, screenY);
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = 0;
 			touches.get(pointer).screenY = 0;
@@ -142,7 +158,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-
+		menu.handleDrag(screenX, screenY);
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
@@ -161,9 +177,9 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		//camera.position.x -= deltaX/(40+camera.zoom);
-		//camera.position.y += deltaY/(40+camera.zoom);
-		//camera.update();
+		// camera.position.x -= deltaX/(40+camera.zoom);
+		// camera.position.y += deltaY/(40+camera.zoom);
+		// camera.update();
 		return true;
 	}
 
@@ -178,8 +194,8 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 		Gdx.input.setInputProcessor(null);
 		destroy();
 	}
-	
-	public void destroy(){
+
+	public void destroy() {
 		stage.dispose();
 		trackBuilder.destroy();
 	}

@@ -7,6 +7,7 @@ import wrapper.CameraManager;
 import wrapper.GamePhysicalState;
 import wrapper.GamePreferences;
 import wrapper.Globals;
+import Assembly.AssembledTrack;
 import Assembly.Assembler;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
@@ -87,14 +88,14 @@ public class GroundBuilder {
 	private int initial = 0 * 8;
 	public boolean loading = true;
 
-	private float totalTrackLength = -1;
+	private AssembledTrack track;
 
 	private JSONComponentName groundFixtureName = new JSONComponentName();
 	private Fixture groundFixture;
 
 	public GroundBuilder(GamePhysicalState gameState,
 			final CameraManager camera, ShaderProgram shader,
-			ShaderProgram colorShader) {
+			ShaderProgram colorShader, boolean forMainMenu) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
@@ -111,10 +112,12 @@ public class GroundBuilder {
 		} else {
 			infinate = false;
 			mapListCounter = 0;
-			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(
-					TRACK_WIDTH, TRACK_HEIGHT));
 
-			totalTrackLength = calculateTotalTrackLength(preMadeMapList);
+			track = assembler.assembleTrack(mapString, gameState, new Vector2(TRACK_WIDTH,
+					TRACK_HEIGHT),forMainMenu);
+
+			preMadeMapList = track.getPoints();
+
 			decor.addChequeredFlag(preMadeMapList);
 			// mapList.addAll(assembler.assembleTrack(mapString, new
 			// Vector2(-10,-50)));
@@ -129,16 +132,6 @@ public class GroundBuilder {
 
 		groundFixtureName.setBaseName(ComponentNames.GROUND);
 
-	}
-
-	private float calculateTotalTrackLength(ArrayList<GroundUnitDescriptor> map) {
-		GroundUnitDescriptor lastPos = preMadeMapList
-				.get(preMadeMapList.size() - 1);
-		return lastPos.getEnd().dst(0, lastPos.getEnd().y);
-	}
-
-	public float getTotalTrackLength() {
-		return totalTrackLength;
 	}
 
 	public boolean isLoading() {
@@ -303,7 +296,9 @@ public class GroundBuilder {
 
 		if (!forMainMenu) {
 			decor.draw(batch);
+			track.draw(batch);
 		}
+
 
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
@@ -377,6 +372,10 @@ public class GroundBuilder {
 	public void destory() {
 		edgeShape.dispose();
 
+	}
+
+	public float getTotalTrackLength() {
+		return track.getTotalTrackLength();
 	}
 
 }

@@ -53,6 +53,10 @@ public class JointLimits {
 
 			nameBodyA = ((JSONComponentName)joint.getBodyA().getUserData()).getBaseName();
 			nameBodyB = ((JSONComponentName)joint.getBodyB().getUserData()).getBaseName();
+			
+			if(nameBodyA.startsWith(ComponentNames.TRACK_NAME_PREFIX) || nameBodyB.startsWith(ComponentNames.TRACK_NAME_PREFIX) ){
+				continue;
+			}
 			 
 			if ( ( (joint.getType() == JointType.PrismaticJoint) ||
 					jointBetween(joint, ComponentNames.AXLE,

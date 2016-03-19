@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
@@ -18,25 +19,31 @@ import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 
 public class ComponentBuilder {
 
-	public static Component buildComponent(String name, int level, GamePhysicalState gameState) {
-		
+	public static Component buildComponent(String name, int level,
+			GamePhysicalState gameState) {
+
 		if (name.compareTo(ComponentNames.BAR3) == 0) {
 			return buildBar3(gameState, level, false);
 		} else if (name.compareTo(ComponentNames.SOLIDJOINT) == 0) {
 			return buildSolidJoint(gameState, level, false);
-		} else if (name.compareTo(ComponentNames.TIRE) == 0 || name.compareTo(ComponentNames.AXLE) == 0) {
+		} else if (name.compareTo(ComponentNames.TIRE) == 0
+				|| name.compareTo(ComponentNames.AXLE) == 0) {
 			return buildTire(gameState, level, false);
 		} else if (name.compareTo(ComponentNames.SPRINGJOINT) == 0) {
 			return buildSpringJoint(gameState, level, false).get(0);
 		} else if (name.compareTo(ComponentNames.LIFE) == 0) {
 			return buildLife(gameState, level, false);
+		} else if (name.compareTo(ComponentNames.POST) == 0) {
+			return buildTrackPost(gameState, level, false);
+		} else if (name.compareTo(ComponentNames.TRACKBAR) == 0) {
+			return buildTrackBar(gameState, level, false);
 		}
 
 		return null;
 	}
 
-	public static ArrayList<Component> buildJointComponent(String name, int level,
-			GamePhysicalState gameState) {
+	public static ArrayList<Component> buildJointComponent(String name,
+			int level, GamePhysicalState gameState) {
 
 		if (name.compareTo(ComponentNames.SPRINGJOINT) == 0) {
 			return buildSpringJoint(gameState, level, false);
@@ -46,19 +53,18 @@ public class ComponentBuilder {
 	}
 
 	// Builders
-	public static Component buildBar3(GamePhysicalState gameState, int level, boolean forBuilder) {
-		
-		
+	public static Component buildBar3(GamePhysicalState gameState, int level,
+			boolean forBuilder) {
+
 		ComponentProperties properties = new ComponentProperties();
 		JSONComponentName componentName = new JSONComponentName();
-		componentName.setBaseName(ComponentNames.BAR3);		
-		
-		properties.setDensity(10 * 15/level);
+		componentName.setBaseName(ComponentNames.BAR3);
+
+		properties.setDensity(10 * 15 / level);
 		properties.setTexture("temp_bar.png");
-		
+
 		// Setup mounts, shape
-		BaseActor tmpActor = new BaseActor(componentName,
-				properties, gameState);
+		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
 
 		float mountHeight = tmpActor.getCenter().y;
 
@@ -70,8 +76,6 @@ public class ComponentBuilder {
 				tmpActor.getCenter().x + tmpActor.getWidth() / 2, mountHeight));
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
-		
-
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				componentName);
 
@@ -82,52 +86,51 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static Component buildSolidJoint(GamePhysicalState gameState, int level,
-			boolean forBuilder) {
+	public static Component buildSolidJoint(GamePhysicalState gameState,
+			int level, boolean forBuilder) {
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.SOLIDJOINT);
-		BaseActor tmpActor = new BaseActor(componentName,
-				"solid_joint.png", gameState);
+		BaseActor tmpActor = new BaseActor(componentName, "solid_joint.png",
+				gameState);
 		// tmpActor.disablePhysics();
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.JOINT,
 				componentName);
 		return tmpComponent;
 	}
 
-	public static Component buildAxle(GamePhysicalState gameState, int level, boolean forBuilder) {
+	public static Component buildAxle(GamePhysicalState gameState, int level,
+			boolean forBuilder) {
 		// Build axle
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.SOLIDJOINT);
-		BaseActor tmpActor = new BaseActor(componentName,
-				gameState);
+		BaseActor tmpActor = new BaseActor(componentName, gameState);
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.JOINT,
 				componentName);
 		return tmpComponent;
 	}
 
-	public static Component buildTire(GamePhysicalState gameState, int level, boolean forBuilder) {
+	public static Component buildTire(GamePhysicalState gameState, int level,
+			boolean forBuilder) {
 		// Setup mounts, shape
 		JSONComponentName componentName = new JSONComponentName();
 		ComponentProperties properties = new ComponentProperties();
-		
+
 		properties.setFriction(0.1f);
 		properties.setDensity(100);
 		properties.setTexture("temp_tire_2.png");
-		
+
 		componentName.setBaseName(ComponentNames.WHEEL);
-		BaseActor tmpActor = new BaseActor(componentName,
-				properties, gameState);
+		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
 		CircleShape shape = new CircleShape();
 
 		tmpActor.setRestitution(20f);
 		// tmpActor.setScale(1.2f);
 		// tmpActor.setPosition(0, 0);
-		//tmpActor.setDensity(40);
+		// tmpActor.setDensity(40);
 		shape.setRadius(tmpActor.getWidth() / 2);
 		tmpActor.setShapeBase(shape);
 		componentName.setBaseName(ComponentNames.AXLE);
-		BaseActor fixture = new BaseActor(componentName,
-				gameState);
+		BaseActor fixture = new BaseActor(componentName, gameState);
 		// fixture.setPosition(tmpActor.getCenter().x, tmpActor.getCenter().y);
 		// fixture.setMounts(mounts, 0.0f);
 		fixture.setScale(0.3f);
@@ -149,9 +152,10 @@ public class ComponentBuilder {
 		bodies.add(tmpActor);
 		bodies.add(fixture);
 
-		//Component tireComponent = new Component(tmpActor, ComponentTypes.PART,
-		//		ComponentNames.WHEEL);
-		
+		// Component tireComponent = new Component(tmpActor,
+		// ComponentTypes.PART,
+		// ComponentNames.WHEEL);
+
 		componentName.setBaseName(ComponentNames.WHEEL);
 		Component tireComponent = new Component(tmpActor, ComponentTypes.PART,
 				componentName);
@@ -165,22 +169,22 @@ public class ComponentBuilder {
 		return axleComponent;
 	}
 
-	public static ArrayList<Component> buildSpringJoint(GamePhysicalState gameState, int level,
-			boolean forBuilder) {
+	public static ArrayList<Component> buildSpringJoint(
+			GamePhysicalState gameState, int level, boolean forBuilder) {
 
 		JSONComponentName componentNameUpper = new JSONComponentName();
 		componentNameUpper.setBaseName(ComponentNames.SPRINGJOINT);
 		componentNameUpper.setSubName(ComponentSubNames.UPPER);
-		
+
 		ComponentProperties properties = new ComponentProperties();
 		properties.setDensity(10);
 		properties.setTexture("suspension_lower.png");
-		
+
 		float springHeight = 1.5f;
 		float springTravel = 0.5f;
 
 		float height = 0;
-		if (forBuilder){
+		if (forBuilder) {
 			height = (float) (1.5 / 2);
 			springHeight = 1.1f;
 		}
@@ -199,12 +203,11 @@ public class ComponentBuilder {
 		 * + height)); tmpActor.destroy();
 		 */
 
-		
-		/*BaseActor topFixture = new BaseActor(
-				ComponentNames.SPRINGJOINT
-						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.UPPER,
-				"suspension_lower.png", gameState);*/
+		/*
+		 * BaseActor topFixture = new BaseActor( ComponentNames.SPRINGJOINT +
+		 * Assembler.NAME_SUBNAME_SPLIT + ComponentSubNames.UPPER,
+		 * "suspension_lower.png", gameState);
+		 */
 
 		BaseActor topFixture = new BaseActor(componentNameUpper,
 				"suspension_lower.png", gameState);
@@ -232,20 +235,20 @@ public class ComponentBuilder {
 			 * topFixture.getPhysicsBody().createFixture(fixtureDef);
 			 */
 		}
-		
+
 		JSONComponentName componentNameLower = new JSONComponentName();
 		componentNameLower.setBaseName(ComponentNames.SPRINGJOINT);
 		componentNameLower.setSubName(ComponentSubNames.LOWER);
 		properties.setTexture("suspension_upper.png");
-		
+
 		BaseActor botFixture = new BaseActor(componentNameLower,
 				"suspension_upper.png", gameState);
-		
-		/*BaseActor botFixture = new BaseActor(
-				ComponentNames.SPRINGJOINT
-						+ Assembler.NAME_SUBNAME_SPLIT
-						+ ComponentSubNames.LOWER,
-				"suspension_upper.png", gameState);*/
+
+		/*
+		 * BaseActor botFixture = new BaseActor( ComponentNames.SPRINGJOINT +
+		 * Assembler.NAME_SUBNAME_SPLIT + ComponentSubNames.LOWER,
+		 * "suspension_upper.png", gameState);
+		 */
 		//
 		ArrayList<Vector2> mountBot = new ArrayList<Vector2>();
 		mountBot.add(botFixture.getCenter());
@@ -312,7 +315,6 @@ public class ComponentBuilder {
 		// if(!forBuilder)
 		gameState.getWorld().createJoint(rJoint);
 
-		
 		Component topComponent = new Component(topFixture,
 				ComponentTypes.JOINT, componentNameUpper);
 		topComponent.setJointBodies(bodies);
@@ -328,20 +330,20 @@ public class ComponentBuilder {
 		return retList;
 	}
 
-	public static Component buildLife(GamePhysicalState gameState, int level, boolean forBuilder) {
-		
+	public static Component buildLife(GamePhysicalState gameState, int level,
+			boolean forBuilder) {
+
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.LIFE);
-		
+
 		ComponentProperties properties = new ComponentProperties();
-		
+
 		properties.setDensity(5);
 		properties.setTexture("life_small.png");
 		properties.setSetFixtureData(true);
-		
+
 		// Setup mounts, shape
-		BaseActor tmpActor = new BaseActor(componentName,
-				properties, gameState);
+		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
 
 		tmpActor.setDensity(5);
 		tmpActor.setScale(0.6f);
@@ -352,22 +354,19 @@ public class ComponentBuilder {
 
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
-		
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				componentName);
-		
-		//componentName.setBaseName(ComponentNames.LIFE + NAME_SUBNAME_SPLIT
-		//		+ ComponentNames.CAMERAFOCUS);
+
+		// componentName.setBaseName(ComponentNames.LIFE + NAME_SUBNAME_SPLIT
+		// + ComponentNames.CAMERAFOCUS);
 		componentName.setBaseName(ComponentNames.LIFE);
 		componentName.setSubName(ComponentNames.CAMERAFOCUS);
 
-		BaseActor cameraActor = new BaseActor(componentName,
-				gameState);
+		BaseActor cameraActor = new BaseActor(componentName, gameState);
 		cameraActor.setMounts(mounts, tmpActor.getWidth() / 2);
-		//cameraActor.setDensity(1f);
+		// cameraActor.setDensity(1f);
 		cameraActor.setScale(0.2f);
 		cameraActor.setSensor();
-
 
 		Component camerafocus = new Component(cameraActor, ComponentTypes.PART,
 				componentName);
@@ -379,18 +378,16 @@ public class ComponentBuilder {
 		dJoint.localAnchorB.set(cameraActor.getCenter());
 		dJoint.maxLength = 1f;
 
-		/*DistanceJointDef dJoint = new DistanceJointDef();
-		dJoint.initialize(tmpActor.getPhysicsBody(),
-				cameraActor.getPhysicsBody(), tmpActor.getCenter(),
-				cameraActor.getCenter());
-		dJoint.length = 1f;
-		dJoint.collideConnected = false;
-		if (!forBuilder) {
-			dJoint.frequencyHz = 10000;
-			dJoint.dampingRatio = 1000f;
-		}*/
+		/*
+		 * DistanceJointDef dJoint = new DistanceJointDef();
+		 * dJoint.initialize(tmpActor.getPhysicsBody(),
+		 * cameraActor.getPhysicsBody(), tmpActor.getCenter(),
+		 * cameraActor.getCenter()); dJoint.length = 1f; dJoint.collideConnected
+		 * = false; if (!forBuilder) { dJoint.frequencyHz = 10000;
+		 * dJoint.dampingRatio = 1000f; }
+		 */
 		gameState.getWorld().createJoint(dJoint);
-		
+
 		PrismaticJointDef rJoint = new PrismaticJointDef();
 		rJoint.initialize(tmpActor.getPhysicsBody(),
 				cameraActor.getPhysicsBody(), cameraActor.getCenter(),
@@ -402,15 +399,15 @@ public class ComponentBuilder {
 		rJoint.lowerTranslation = -1f;
 		rJoint.upperTranslation = 1f;
 		if (!forBuilder) {
-			//rJoint.lowerTranslation = springHeight - springTravel;
-			//rJoint.upperTranslation = springHeight + springTravel;
+			// rJoint.lowerTranslation = springHeight - springTravel;
+			// rJoint.upperTranslation = springHeight + springTravel;
 			rJoint.enableLimit = true;
 		} else {
-			//rJoint.lowerTranslation = springHeight;
-			//rJoint.upperTranslation = springHeight;
+			// rJoint.lowerTranslation = springHeight;
+			// rJoint.upperTranslation = springHeight;
 			rJoint.enableLimit = false;
 		}
-		
+
 		gameState.getWorld().createJoint(rJoint);
 
 		ArrayList<BaseActor> bodies = new ArrayList<BaseActor>();
@@ -428,7 +425,77 @@ public class ComponentBuilder {
 		return tmpComponent;
 	}
 
-	public static FixtureDef buildMount(Vector2 mount, int level, boolean forBuilder) {
+	public static Component buildTrackPost(GamePhysicalState gamePhysicalState,
+			int partLevel, boolean forBuilder) {
+
+		System.out.println("ComponentBuilder: building Post");
+
+		ComponentProperties properties = new ComponentProperties();
+		JSONComponentName componentName = new JSONComponentName();
+		componentName.setBaseName(ComponentNames.POST);
+
+		properties.setDensity(partLevel);
+		properties.setTexture("temp_post.png");
+
+		// Setup mounts, shape
+		BaseActor tmpActor = new BaseActor(componentName, properties,
+				gamePhysicalState);
+
+		tmpActor.setBodyType(BodyType.StaticBody);
+
+		float mountHeight = tmpActor.getCenter().y;
+
+		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
+		mounts.add(new Vector2(tmpActor.getCenter().x, mountHeight));
+		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
+
+		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
+				componentName);
+
+		if (forBuilder) {
+
+		}
+
+		return tmpComponent;
+	}
+
+	public static Component buildTrackBar(GamePhysicalState gamePhysicalState,
+			int partLevel, boolean forBuilder) {
+
+		ComponentProperties properties = new ComponentProperties();
+		JSONComponentName componentName = new JSONComponentName();
+		componentName.setBaseName(ComponentNames.TRACKBAR);
+
+		properties.setDensity(5);
+		properties.setFriction(1);
+		properties.setTexture("temp_bar.png");
+
+		// Setup mounts, shape
+		BaseActor tmpActor = new BaseActor(componentName, properties,
+				gamePhysicalState);
+
+		float mountHeight = tmpActor.getCenter().y;
+
+		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
+		mounts.add(new Vector2(
+				tmpActor.getCenter().x - tmpActor.getWidth() / 2, mountHeight));
+		mounts.add(new Vector2(tmpActor.getCenter().x, mountHeight));
+		mounts.add(new Vector2(
+				tmpActor.getCenter().x + tmpActor.getWidth() / 2, mountHeight));
+		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
+
+		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
+				componentName);
+
+		if (forBuilder) {
+
+		}
+
+		return tmpComponent;
+	}
+
+	public static FixtureDef buildMount(Vector2 mount, int level,
+			boolean forBuilder) {
 		FixtureDef fix = new FixtureDef();
 
 		CircleShape shape = new CircleShape();
@@ -439,4 +506,5 @@ public class ComponentBuilder {
 
 		return fix;
 	}
+
 }

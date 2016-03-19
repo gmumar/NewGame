@@ -7,6 +7,10 @@ public class Properties{
 	static public final String MOTOR = "MT";
 	static public final String TYPE = "TP";
 	
+	public static String makePostionString(float x, float y){
+		return Float.toString(x) + "," + Float.toString(y);
+	}
+	
 }
 
 

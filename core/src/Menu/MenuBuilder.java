@@ -46,13 +46,9 @@ import com.gudesigns.climber.MainMenuScreen;
 public class MenuBuilder {
 
 	private final static float BOX_SIZE = 0.3f;
-	private final static float ROTATION_SIZE = 30;
+	public final static float ROTATION_SIZE = 30;
 	private final static int LIMIT_BOX_X = -5, LIMIT_BOX_Y = -5,
 			LIMIT_BOX_X_LEN = 20, LIMIT_BOX_Y_LEN = 20;
-
-	private final static Color GREEN = new Color(0, 1, 0, 1);
-	private final static Color RED = new Color(1, 0, 0, 1);
-	private final static Color ORANGE = new Color(0.4f, 0.8f, 0.4f, 1);
 
 	private Stage stage;
 	private World world;
@@ -74,7 +70,7 @@ public class MenuBuilder {
 	private AssemblyRules assemblyRules = new AssemblyRules();
 	private HashMap<String, Integer> jointTypes = new HashMap<String, Integer>();
 
-	private HashMap<String, Integer> componentCounts;
+	private HashMap<String, Integer> componentCounts = new HashMap<String, Integer>();;
 
 	private GameLoader gameLoader;
 
@@ -104,9 +100,7 @@ public class MenuBuilder {
 
 		BodyDef bodyDef = new BodyDef();
 		world.createBody(bodyDef);
-
-		componentCounts = new HashMap<String, Integer>();
-
+		
 		drawBox(LIMIT_BOX_X, LIMIT_BOX_Y, LIMIT_BOX_X_LEN, LIMIT_BOX_Y_LEN);
 
 		// Add life regardless
@@ -522,9 +516,9 @@ public class MenuBuilder {
 
 				jointType = lookupJointType(fixtureA);
 				if (jointType == 0) {
-					drawFixtureSquare(fixtureA, ORANGE);
+					drawFixtureSquare(fixtureA, Globals.ORANGE);
 				} else if (jointType == 1) {
-					drawFixture(fixtureA, GREEN);
+					drawFixture(fixtureA, Globals.GREEN);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureA.getUserData())
@@ -532,9 +526,9 @@ public class MenuBuilder {
 
 				jointType = lookupJointType(fixtureB);
 				if (jointType == 0) {
-					drawFixtureSquare(fixtureB, ORANGE);
+					drawFixtureSquare(fixtureB, Globals.ORANGE);
 				} else if (jointType == 1) {
-					drawFixture(fixtureB, GREEN);
+					drawFixture(fixtureB, Globals.GREEN);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureB.getUserData())
@@ -567,10 +561,10 @@ public class MenuBuilder {
 					// jointType = lookupJointType(fixture);
 					// if(jointType == -1){
 					if (fixture.getUserData() == null) {
-						drawFixture(fixture, RED);
+						drawFixture(fixture, Globals.RED);
 					} else if (!drawIds.contains(((JSONComponentName) fixture
 							.getUserData()).getMountedId())) {
-						drawFixture(fixture, RED);
+						drawFixture(fixture, Globals.RED);
 					}
 					// } else if(jointType == 1){
 					// ;
@@ -589,11 +583,11 @@ public class MenuBuilder {
 						// jointType = lookupJointType(fixture);
 						// if(jointType == -1){
 						if (fixture.getUserData() == null) {
-							drawFixture(fixture, RED);
+							drawFixture(fixture, Globals.RED);
 						} else if (!drawIds
 								.contains(((JSONComponentName) fixture
 										.getUserData()).getMountedId())) {
-							drawFixture(fixture, RED);
+							drawFixture(fixture, Globals.RED);
 						}
 						// } else if(jointType == 1){
 						// ;

@@ -1,6 +1,7 @@
 package Assembly;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -19,7 +20,9 @@ import JSONifier.JSONCar;
 import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import JSONifier.JSONJoint;
+import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
+import JSONifier.JSONParentClass.JSONParentType;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -52,7 +55,7 @@ public class Assembler {
 		String inputString = prefs
 				.getString(
 						GamePreferences.CAR_MAP_STR,
-						"{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}");//
+						"{\"jointList\":[{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"3\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"3\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"3\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"2\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"2\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"1\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"1\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"0\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"0\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"0\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"3\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"2\",\"MountId\":\"0\"},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"3\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"0\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"1\",\"MountId\":\"2\"},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"0\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"0\"},\"m2\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"2\",\"MountId\":\"2\"}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"2\"},\"m2\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"1\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_LF_\",\"ComponentId\":\"0\",\"MountId\":\"0\"},\"m2\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"1\"}}],\"componentList\":[{\"cN\":{\"BaseName\":\"_LF_\",\"SubName\":\"_CMF_\",\"ComponentId\":\"0\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"0.0,0.0\"}},{\"cN\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"0.008904815,-0.97968745\"}},{\"cN\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"1\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"-30.0\",\"PS\":\"2.2528849,-1.5554688\"}},{\"cN\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"2\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"30.0\",\"PS\":\"-2.2172656,-1.5726564\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"0\"},\"props\":{\"RT\":\"-35.744865\",\"PS\":\"3.2702003,-2.1663425\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"1\"},\"props\":{\"RT\":\"-88.88195\",\"PS\":\"2.480349,-3.350538\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"2\"},\"props\":{\"RT\":\"-91.22624\",\"PS\":\"0.9702445,-3.3822753\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"3\"},\"props\":{\"RT\":\"40.948753\",\"PS\":\"-3.2291574,-2.2037032\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"4\"},\"props\":{\"RT\":\"-90.689224\",\"PS\":\"-0.5786072,-3.3631654\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"0\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"2.5933516,-3.3783803\",\"MT\":\"1\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"1\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"0.9976059,-3.4091816\",\"MT\":\"1\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"2\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"-0.59686476,-3.3681068\",\"MT\":\"1\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"3\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"-2.1917672,-3.3857064\",\"MT\":\"1\"}}],\"jointTypeList\":{\"_TR__0_0\":1,\"_SPJ___UP__3_0\":0,\"_SPJ___LO__3_0\":1,\"_TR__2_0\":0,\"_LF__0_0\":0,\"_SPJ___UP__0_0\":0,\"_TR__3_0\":1,\"_SPJ___UP__4_0\":0,\"_B3__2_2\":0,\"_B3__2_1\":0,\"_TR__1_0\":0,\"_SPJ___UP__1_0\":1,\"_B3__2_0\":0,\"_SPJ___LO__0_0\":1,\"_SPJ___UP__2_0\":0,\"_B3__0_0\":0,\"_SPJ___LO__1_0\":0,\"_SPJ___LO__2_0\":0,\"_B3__0_2\":0,\"_SPJ___LO__4_0\":1,\"_B3__0_1\":0,\"_B3__1_0\":0,\"_B3__1_2\":0}}");//
 
 		JSONCar source = new JSONCar();
 		source = JSONCar.objectify(inputString);
@@ -184,7 +187,7 @@ public class Assembler {
 	}
 
 	static private HashMap<String, Component> extractComponents(
-			JSONCar source, GamePhysicalState gameState) {
+			JSONParentClass source, GamePhysicalState gameState) {
 		//HashMap<String, Component> ret = new HashMap<String, Component>();
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
@@ -228,7 +231,9 @@ public class Assembler {
 				Iterator<Component> it = componentList.iterator();
 				while (it.hasNext()) {
 					Component localComponent = it.next();
-					localComponent.setGroup(CAR);
+					if(source.getParentType() == JSONParentType.CAR){
+						localComponent.setGroup(CAR);
+					}
 					// localComponent.applyProperties(sourceComponent.getProperties());
 
 				}
@@ -286,16 +291,17 @@ public class Assembler {
 				}
 				//-----------------------------------------------
 				
-				//System.out.println("Assembler : sourceComponet: " + componentName);
+				System.out.println("Assembler : sourceComponet: " + componentName);
 				
 				component = ComponentBuilder.buildComponent(componentName.getBaseName(), partLevel,
 						gameState);
 
 				if (sourceComponent.getProperties() != null) {
-					component.applyProperties(sourceComponent.getProperties(),
-							PropertyTypes.BOTH);
+					component.applyProperties(sourceComponent.getProperties(), PropertyTypes.BOTH);
 				}
-				component.setGroup(CAR);
+				if(source.getParentType() == JSONParentType.CAR){
+					component.setGroup(CAR);
+				}
 				//component.setComponentName(sourceComponent.getComponentName());
 				//String[] nameList = component.getComponentName().split(
 				//		NAME_ID_SPLIT);
@@ -314,12 +320,92 @@ public class Assembler {
 		return ret;
 	}
 
-	public ArrayList<GroundUnitDescriptor> assembleTrack(String mapString,
-			Vector2 offset) {
+	public AssembledTrack assembleTrack(String mapString,
+			GamePhysicalState gameState, Vector2 offset, boolean buildForMainMenu) {
+		Integer jointType = 0;
+		
 		JSONTrack jsonTrack = JSONTrack.objectify(mapString);
+		jsonTrack.applyOffset(offset);
+		
 		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
+		
+		System.out.println("AssembleTrack: " + mapString);
+	
+		HashMap<String, Component> parts = extractComponents(jsonTrack, gameState);
+		Collection<Component> partsCollection = parts.values();
+		
+		if(buildForMainMenu){
+			for(Component part:partsCollection){
+				part.getObject().setSensor();
+			}
+		}
+		
+		
+		
+		ArrayList<JSONJoint> jcomponents = jsonTrack.getJointList();
+		
+		HashMap<String, Integer> jointTypeList = jsonTrack.getComponentJointTypes();
+		System.out.println("Assembler : jointType" + jointTypeList);
 
-		// System.out.println(mapPoints.size());
+		for  (JSONJoint join : jcomponents) {
+
+
+			/*String componentAName = Globals.parseName(join.m1)[0];
+			// System.out.println(componentAName);
+			BaseActor bodyA = parts.get(componentAName).getObject();
+			int componentAMountId = Globals.getMountId(join.m1);*/
+			
+			String componentAName = join.getMount1().getId();
+			System.out.println("Assembler : componentA " + join.getMount1().getMountedId());
+			
+			//if(parts.get(componentAName) == null) continue;
+			
+			BaseActor bodyA = parts.get(componentAName).
+							getObject();
+			
+			//if(join.getMount1().getMountId().contains("*")) continue;
+			
+			int componentAMountId = Integer.parseInt(join.getMount1().getMountId());
+
+			/*String componentBName = Globals.parseName(join.m2)[0];
+			// System.out.println(componentBName);
+			BaseActor bodyB = parts.get(componentBName).getObject();
+			int componentBMountId = Globals.getMountId(join.m2);*/
+			
+			String componentBName = join.getMount2().getId();
+			System.out.println("Assembler : componentB " + join.getMount2().getMountedId());
+			//if(parts.get(componentBName) == null) continue;
+			
+			BaseActor bodyB = parts.get(componentBName).getObject();
+			int componentBMountId = Integer.parseInt(join.getMount2().getMountId());
+			
+			jointType = jointTypeList.get(join.getMount1().getMountedId());
+
+			if(jointType == 1){
+				
+				  RevoluteJointDef rJoint = new RevoluteJointDef();
+				  
+				  rJoint.initialize(bodyA.getPhysicsBody(),
+				  bodyB.getPhysicsBody(), bodyB.getMount(componentBMountId));
+				  rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+				  rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+				  rJoint.collideConnected = false; 
+				  rJoint.enableLimit = false;
+				  gameState.getWorld().createJoint(rJoint);
+				 
+			} else {
+				WeldJointDef wJoint = new WeldJointDef();
+
+				wJoint.initialize(bodyA.getPhysicsBody(),
+						bodyB.getPhysicsBody(),
+						bodyB.getMount(componentBMountId));
+				wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+				wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+				wJoint.collideConnected = false;
+				gameState.getWorld().createJoint(wJoint);
+			}
+
+		}
 
 		ArrayList<GroundUnitDescriptor> retList = new ArrayList<GroundUnitDescriptor>();
 
@@ -330,22 +416,19 @@ public class Assembler {
 		while (iter.hasNext()) {
 			if (first) {
 				point = iter.next();
-				point.x += offset.x;
-				point.y += offset.y;
 				first = !first;
 				continue;
 			}
 			lastPoint = point;
 			point = iter.next();
-			point.x += offset.x;
-			point.y += offset.y;
+			
 			GroundUnitDescriptor gud = new GroundUnitDescriptor(lastPoint,
 					point, false);// , "texture.png");
 			retList.add(gud);
 
 		}
 
-		return retList;
+		return new AssembledTrack(retList, partsCollection );
 	}
 
 }

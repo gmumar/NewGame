@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.utils.Json;
 
-public class JSONCar{
+public class JSONCar extends JSONParentClass{
 
 	private ArrayList<JSONJoint> jointList = null;
 	private ArrayList<JSONComponent> componentList = null;
@@ -28,6 +28,7 @@ public class JSONCar{
 		return jointList;
 	}
 	
+	@Override
 	public ArrayList<JSONComponent> getComponentList() {
 		return componentList;
 	}
@@ -68,6 +69,11 @@ public class JSONCar{
 		}
 		
 		return ret;
+	}
+
+	@Override
+	public JSONParentType getParentType() {
+		return JSONParentType.CAR;
 	}
 	
 }

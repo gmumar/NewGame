@@ -12,5 +12,9 @@ public class ComponentNames {
 	public final static String CEQUEREDFLAG = "_CF_";
 	public final static String CAMERAFOCUS = "_CMF_";
 	public static final String GROUND = "GND";
+
+	public static final String TRACK_NAME_PREFIX = "T_";
+	public static final String POST = TRACK_NAME_PREFIX + "P";
+	public static final String TRACKBAR = TRACK_NAME_PREFIX + "B";
 	
 }

@@ -73,7 +73,7 @@ public class MainMenuScreen implements Screen {
 		touches.add(fakeTouch);
 
 		ground = new GroundBuilder(new GamePhysicalState(this.world,
-				this.gameLoader), carCamera, shader, colorShader);
+				this.gameLoader), carCamera, shader, colorShader, true);
 
 		world.step(10, 40, 20);
 		// -------------------------------------------------------

@@ -24,6 +24,10 @@ public class Globals {
 	
 	final static public Color BROWN1 =new Color(0.73f, 0.40f, 0.31f, 1);	
 	final static public Color TRANSPERENT_BLACK = new Color(0,0,0, 0.4f);
+	
+	public final static Color DARK_GREEN = new Color(0, 1, 0, 1);
+	public final static Color RED = new Color(1, 0, 0, 1);
+	public final static Color ORANGE = new Color(0.4f, 0.8f, 0.4f, 1);
 
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;

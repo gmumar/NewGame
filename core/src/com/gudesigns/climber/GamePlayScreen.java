@@ -70,6 +70,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	boolean paused = true;
 
 	private PopQueManager popQueManager;
+	
+	//private Box2DDebugRenderer debugRenderer ;
 
 	// ---- Game Play ----
 	private float progress = 0;
@@ -94,14 +96,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.add(new TouchUnit());
 		}
 
-		// debugRenderer = new Box2DDebugRenderer();
+		//debugRenderer = new Box2DDebugRenderer();
 		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
 				this.gameLoader));
 		builtCar.setPosition(0, 50);
 
 		initShader();
 		ground = new GroundBuilder(new GamePhysicalState(this.world,
-				this.gameLoader), camera, shader, colorShader);
+				this.gameLoader), camera, shader, colorShader, false);
 
 		currentTrackLen = ground.getTotalTrackLength();
 		initHud();
@@ -197,7 +199,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
-
+		
 		renderWorld(delta);
 
 		scrollingBackground.draw();
@@ -214,6 +216,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		stage.draw();
 		popQueManager.update(delta);
+		
+		//debugRenderer.render(world, camera.combined);
 
 	}
 

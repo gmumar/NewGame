@@ -30,23 +30,22 @@ public class Component {
 
 	private BaseActor object;
 	private ComponentTypes componentTypes;
-	//private String componentName;
+	// private String componentName;
 	private JSONComponentName jComponentName;
 	private boolean Motor = false;
 	private ArrayList<BaseActor> jointBodies = null;
 
-	/*public Component(BaseActor obj, ComponentTypes type, String name) {
-		object = obj;
-		componentTypes = type;
-		componentName = name;
-	}*/
+	/*
+	 * public Component(BaseActor obj, ComponentTypes type, String name) {
+	 * object = obj; componentTypes = type; componentName = name; }
+	 */
 
 	public Component(BaseActor obj, ComponentTypes type, JSONComponentName name) {
 		object = obj;
 		componentTypes = type;
 		jComponentName = name;
 	}
-	
+
 	public ArrayList<BaseActor> getJointBodies() {
 		return jointBodies;
 	}
@@ -81,8 +80,8 @@ public class Component {
 						Motor = false;
 					}
 				}
-			} 
-			
+			}
+
 			if (type == PropertyTypes.RELATIVE || type == PropertyTypes.BOTH) {
 
 				if (property.getKey().compareTo(Properties.POSITION) == 0) {
@@ -92,20 +91,20 @@ public class Component {
 				}
 			}
 
-			//System.out.println(this + " " + property);
+			// System.out.println(this + " " + property);
 		}
 
 	}
 
-	//public void setUpForBuilder(String name) {
+	// public void setUpForBuilder(String name) {
 	public void setUpForBuilder(JSONComponentName name, int partLevel) {
-		//this.jComponentName = name;
-		
+		// this.jComponentName = name;
+
 		if (this.componentTypes == ComponentTypes.PART) {
 			this.setComponentId(name.getComponentId());
 			this.setMountId(name.getMountId());
 			this.setPartLevel(partLevel);
-			
+
 			Body body = this.getObject().getPhysicsBody();
 			body.setUserData(name);
 
@@ -117,29 +116,31 @@ public class Component {
 			Iterator<Vector2> iter = mounts.iterator();
 			while (iter.hasNext()) {
 				Vector2 mount = iter.next();
-				FixtureDef fixtureDef = ComponentBuilder
-						.buildMount(mount, 1, true);
+				FixtureDef fixtureDef = ComponentBuilder.buildMount(mount, 1,
+						true);
 				Fixture fixture = body.createFixture(fixtureDef);
 				JSONComponentName fixtureName = new JSONComponentName();
 				fixtureName.setBaseName(name.getBaseName());
 				fixtureName.setComponentId(name.getComponentId());
-				//fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT
-				//		+ mountId++);
+				// fixture.setUserData(name + Assembler.NAME_MOUNT_SPLIT
+				// + mountId++);
 				fixtureName.setMountId(Integer.toString(mountId++));
-				
-				System.out.println("Component: Creating mount fixture:" + fixtureName);
+
+				System.out.println("Component: Creating mount fixture:"
+						+ fixtureName);
 				fixture.setUserData(fixtureName);
 			}
 		} else if (this.componentTypes == ComponentTypes.JOINT) {
 			int mountId = 0;
 			ArrayList<BaseActor> bodies = this.getJointBodies();
-			
+
 			for (BaseActor body : bodies) {
 				JSONComponentName subBodyName = new JSONComponentName();
-				
+
 				this.setComponentId(name.getComponentId());
 				this.setPartLevel(partLevel);
-				System.out.println("Componenet : jointBodyCount " + body.getjName());
+				System.out.println("Componenet : jointBodyCount "
+						+ body.getjName());
 				// TODO: finalize this
 				body.setSensor();
 				// body.setBodyType(BodyType.KinematicBody);
@@ -147,34 +148,39 @@ public class Component {
 						new Vector2(0, 0), 1, true);
 				Fixture fixture = body.getPhysicsBody().createFixture(
 						fixtureDef);
-				/*fixture.setUserData(body.getPhysicsBody().getUserData() + name
-						+ Assembler.NAME_MOUNT_SPLIT + mountId);
-				body.getPhysicsBody().setUserData(
-						body.getPhysicsBody().getUserData() + name);*/
-				//name.setMountId(Integer.toString(mountId));
-				System.out.println("Before Componenet : bodyName: " + ((JSONComponentName)body.getPhysicsBody().getUserData()));
-				//name.setBaseName(body.getPhysicsBody().getUserData() + name.getBaseName());
-				
+				/*
+				 * fixture.setUserData(body.getPhysicsBody().getUserData() +
+				 * name + Assembler.NAME_MOUNT_SPLIT + mountId);
+				 * body.getPhysicsBody().setUserData(
+				 * body.getPhysicsBody().getUserData() + name);
+				 */
+				// name.setMountId(Integer.toString(mountId));
+				System.out.println("Before Componenet : bodyName: "
+						+ ((JSONComponentName) body.getPhysicsBody()
+								.getUserData()));
+				// name.setBaseName(body.getPhysicsBody().getUserData() +
+				// name.getBaseName());
+
 				subBodyName.setComponentId(name.getComponentId());
 				subBodyName.setBaseName(name.getBaseName());
 				subBodyName.setSubName(body.getjName().getSubName());
 				subBodyName.setMountId(Integer.toString(mountId));
 				subBodyName.setLevel(partLevel);
-				
+
 				fixture.setUserData(subBodyName);
 				body.getPhysicsBody().setUserData(subBodyName);
-				
+
 			}
 		}
 	}
 
-	//public JSONComponent toJSONComponent(String name) {
+	// public JSONComponent toJSONComponent(String name) {
 	public JSONComponent toJSONComponent(JSONComponentName name) {
-		
+
 		System.out.println("Component: creatingJSONComponent: " + name);
-		
+
 		JSONComponent jComponent = new JSONComponent();
-		//jComponent.setComponentName(name);
+		// jComponent.setComponentName(name);
 		jComponent.setjComponentName(name);
 
 		HashMap<String, String> prop = new HashMap<String, String>();
@@ -182,31 +188,32 @@ public class Component {
 				Properties.ROTATION,
 				Float.toString(this.getObject().getRotation()
 						* MathUtils.radiansToDegrees));// In radians
-		prop.put(Properties.POSITION, this.getObject().getPosition().x
-				+ "," + this.getObject().getPosition().y); // "-10,5"
+		prop.put(Properties.POSITION, Properties.makePostionString(this
+				.getObject().getPosition().x, this.getObject().getPosition().y));
 
-		/*if (name.contains(ComponentNames.TIRE)) {
-			prop.put(Properties.MOTOR, "1");
-		} else if (name.contains(ComponentNames.SPRINGJOINT)) {
-			prop.put(Properties.TYPE,
-					ComponentNames.SPRINGJOINT);
-		}*/
-		
+		// .POSITION,
+		// + "," + this.getObject().getPosition().y); // "-10,5"
+
+		/*
+		 * if (name.contains(ComponentNames.TIRE)) { prop.put(Properties.MOTOR,
+		 * "1"); } else if (name.contains(ComponentNames.SPRINGJOINT)) {
+		 * prop.put(Properties.TYPE, ComponentNames.SPRINGJOINT); }
+		 */
+
 		if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
 			prop.put(Properties.MOTOR, "1");
 		} else if (name.getBaseName().compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			prop.put(Properties.TYPE,
-					ComponentNames.SPRINGJOINT);
+			prop.put(Properties.TYPE, ComponentNames.SPRINGJOINT);
 		}
 		jComponent.setProperties(prop);
 
 		return jComponent;
 	}
 
-	//public JSONComponent toJSONComponent(String name, BaseActor body) {
+	// public JSONComponent toJSONComponent(String name, BaseActor body) {
 	public JSONComponent toJSONComponent(JSONComponentName name, BaseActor body) {
 		JSONComponent jComponent = new JSONComponent();
-		//jComponent.setComponentName(name);
+		// jComponent.setComponentName(name);
 		jComponent.setjComponentName(name);
 
 		HashMap<String, String> prop = new HashMap<String, String>();
@@ -245,13 +252,12 @@ public class Component {
 		this.componentTypes = componentTypes;
 	}
 
-	/*public String getComponentName() {
-		return componentName;
-	}
-
-	public void setComponentName(String componentName) {
-		this.componentName = componentName;
-	}*/
+	/*
+	 * public String getComponentName() { return componentName; }
+	 * 
+	 * public void setComponentName(String componentName) { this.componentName =
+	 * componentName; }
+	 */
 
 	public void destroyObject() {
 		object.destroy();
@@ -260,7 +266,7 @@ public class Component {
 	public JSONComponentName getjComponentName() {
 		return jComponentName;
 	}
-	
+
 	public String getComponentName() {
 		return jComponentName.getBaseName();
 	}
@@ -268,43 +274,43 @@ public class Component {
 	public void setjComponentName(JSONComponentName jComponentName) {
 		this.jComponentName = jComponentName;
 	}
-	
+
 	public void setBaseName(String baseName) {
 		jComponentName.setBaseName(baseName);
 	}
-	
+
 	public void setSubName(String subName) {
 		jComponentName.setSubName(subName);
 	}
-	
+
 	public void setComponentId(String componentId) {
 		jComponentName.setComponentId(componentId);
 	}
-	
+
 	public void setMountId(String mountId) {
 		jComponentName.setMountId(mountId);
 	}
-	
-	public void setPartLevel(Integer level){
+
+	public void setPartLevel(Integer level) {
 		jComponentName.setLevel(level);
 	}
-	
-	public Integer getPartLevel(Integer level){
+
+	public Integer getPartLevel(Integer level) {
 		return jComponentName.getLevel();
 	}
-	
+
 	public String getBaseName() {
 		return jComponentName.getBaseName();
 	}
-	
+
 	public String getSubName() {
 		return jComponentName.getSubName();
 	}
-	
+
 	public String getComponentId() {
 		return jComponentName.getComponentId();
 	}
-	
+
 	public String getMountId() {
 		return jComponentName.getMountId();
 	}
@@ -328,8 +334,8 @@ public class Component {
 				}
 				body.setPosition(body.getPosition().x + f, body.getPosition().y
 						+ g); // This line is the TODO
-				//System.out.println(body + " " + body.getName()
-					//	+ " Setting position " + body.getPosition());
+				// System.out.println(body + " " + body.getName()
+				// + " Setting position " + body.getPosition());
 			}
 		}
 
@@ -356,13 +362,13 @@ public class Component {
 		if (getJointBodies() == null) {
 			this.getObject().draw(batch);
 		} else {
-			/*Iterator<BaseActor> iter = getJointBodies().iterator();
-			while (iter.hasNext()) {
-				BaseActor body = iter.next();
-				body.draw(batch);
-			}*/
-			
-			for (BaseActor body : getJointBodies()){
+			/*
+			 * Iterator<BaseActor> iter = getJointBodies().iterator(); while
+			 * (iter.hasNext()) { BaseActor body = iter.next();
+			 * body.draw(batch); }
+			 */
+
+			for (BaseActor body : getJointBodies()) {
 				body.draw(batch);
 			}
 		}
