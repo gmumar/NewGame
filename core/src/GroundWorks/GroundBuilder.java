@@ -8,6 +8,8 @@ import wrapper.GamePhysicalState;
 import wrapper.GamePreferences;
 import wrapper.Globals;
 import Assembly.Assembler;
+import Component.ComponentNames;
+import JSONifier.JSONComponentName;
 import Shader.GameMesh;
 
 import com.badlogic.gdx.Gdx;
@@ -81,14 +83,18 @@ public class GroundBuilder {
 
 	private static ShaderProgram shader;
 	private static ShaderProgram colorShader;
-	
-	private int initial = 0*8;
+
+	private int initial = 0 * 8;
 	public boolean loading = true;
-	
+
 	private float totalTrackLength = -1;
 
-	public GroundBuilder(GamePhysicalState gameState, final CameraManager camera,
-			ShaderProgram shader, ShaderProgram colorShader) {
+	private JSONComponentName groundFixtureName = new JSONComponentName();
+	private Fixture groundFixture;
+
+	public GroundBuilder(GamePhysicalState gameState,
+			final CameraManager camera, ShaderProgram shader,
+			ShaderProgram colorShader) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
@@ -107,7 +113,7 @@ public class GroundBuilder {
 			mapListCounter = 0;
 			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(
 					TRACK_WIDTH, TRACK_HEIGHT));
-			
+
 			totalTrackLength = calculateTotalTrackLength(preMadeMapList);
 			decor.addChequeredFlag(preMadeMapList);
 			// mapList.addAll(assembler.assembleTrack(mapString, new
@@ -121,19 +127,21 @@ public class GroundBuilder {
 		groundFiller = gameLoader.Assets.get("temp_ground_filler.png",
 				Texture.class);
 
+		groundFixtureName.setBaseName(ComponentNames.GROUND);
+
 	}
-	
-	private float calculateTotalTrackLength(
-			ArrayList<GroundUnitDescriptor> map) {
-		GroundUnitDescriptor lastPos = preMadeMapList.get(preMadeMapList.size()-1);
+
+	private float calculateTotalTrackLength(ArrayList<GroundUnitDescriptor> map) {
+		GroundUnitDescriptor lastPos = preMadeMapList
+				.get(preMadeMapList.size() - 1);
 		return lastPos.getEnd().dst(0, lastPos.getEnd().y);
 	}
-	
-	public float getTotalTrackLength(){
+
+	public float getTotalTrackLength() {
 		return totalTrackLength;
 	}
 
-	public boolean isLoading(){
+	public boolean isLoading() {
 		return loading;
 	}
 
@@ -157,8 +165,8 @@ public class GroundBuilder {
 
 		gud = mapList.get(lastDrawnPointer);
 
-		if (getEdge()  > gud.getEnd().x ) {
-			
+		if (getEdge() > gud.getEnd().x) {
+
 			lastDrawnPointer++;
 			gud = mapList.get(lastDrawnPointer);
 			gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
@@ -211,7 +219,7 @@ public class GroundBuilder {
 
 		randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
 
-		if (getEdge()  > lastObj.getEnd().x) {
+		if (getEdge() > lastObj.getEnd().x) {
 			if (infinate || forMainMenu) {
 				addGroundUnitDescriptor(lastObj, randf);
 			} else {
@@ -223,10 +231,10 @@ public class GroundBuilder {
 					infinate = true;
 				}
 			}
-			/*if (camera.position.x - GamePlayScreen.CAMERA_OFFSET > preMadeMapList
-					.get(0).getEnd().x) {
-				++progressCounter;
-			}*/
+			/*
+			 * if (camera.position.x - GamePlayScreen.CAMERA_OFFSET >
+			 * preMadeMapList .get(0).getEnd().x) { ++progressCounter; }
+			 */
 
 		}
 
@@ -263,34 +271,27 @@ public class GroundBuilder {
 	}
 
 	private void generateBias(Random r, boolean forMainMenu) {
-		//float randf = (float) (r.nextFloat());
+		// float randf = (float) (r.nextFloat());
 		bias = Math.sin(angle) * baising;
 
-		/*if(!forMainMenu){
-			if (randf > 0.55f) {
-				bias = 0;
-			}
-	
-			angle += PERIOD;
-			if (angle > Math.PI * 2) {
-				angle = 0;
-			}
-		}*/
+		/*
+		 * if(!forMainMenu){ if (randf > 0.55f) { bias = 0; }
+		 * 
+		 * angle += PERIOD; if (angle > Math.PI * 2) { angle = 0; } }
+		 */
 
 	}
 
 	private float getEdge() {
-		return camera.getViewPortRightEdge() + UNIT_LENGTH * 40 ;
+		return camera.getViewPortRightEdge() + UNIT_LENGTH * 40;
 	}
 
 	private float getBackEdge() {
 		return camera.getViewPortLeftEdge() - UNIT_LENGTH * BACK_EDGE_UNITS;
 	}
-	
-	
-	public void draw( SpriteBatch batch, boolean forMainMenu) {
-			
-		
+
+	public void draw(SpriteBatch batch, boolean forMainMenu) {
+
 		if (addFloorCount > ADD_FLOOR_COUNT) {
 			getNextFloorUnit(forMainMenu);
 			addFloorUnitToMap();
@@ -299,8 +300,10 @@ public class GroundBuilder {
 		}
 
 		++addFloorCount;
-		
-		decor.draw(batch);
+
+		if (!forMainMenu) {
+			decor.draw(batch);
+		}
 
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
@@ -331,20 +334,19 @@ public class GroundBuilder {
 
 		shader.begin();
 		shader.setUniformMatrix("u_projTrans", camera.combined);
-		GameMesh.drawLayer(camera, shader, shaderStart, shaderEnd, groundFiller, 30,
-				Color.WHITE, 0f, 0, vertexCount);
+		GameMesh.drawLayer(camera, shader, shaderStart, shaderEnd,
+				groundFiller, 30, Color.WHITE, 0f, 0, vertexCount);
 		shader.end();
 
 		colorShader.begin();
 		colorShader.setUniformMatrix("u_projTrans", camera.combined);
-		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null, 0.8f,
-				Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
-		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null, 0.6f,
-				Globals.GREEN, 0.5f, 2, vertexCount);
-		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null, 0.1f,
-				Globals.GREEN1, 0.6f, 3, vertexCount);
+		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
+				0.8f, Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
+		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
+				0.6f, Globals.GREEN, 0.5f, 2, vertexCount);
+		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
+				0.1f, Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();
-
 
 	}
 
@@ -356,9 +358,10 @@ public class GroundBuilder {
 		fixtureDef.friction = 1;
 		fixtureDef.restitution = 0.5f;
 
-		// Fixture f = ;
+		groundFixture = floor.createFixture(fixtureDef);
+		groundFixture.setUserData(groundFixtureName);
 
-		return floor.createFixture(fixtureDef);
+		return groundFixture;
 	}
 
 	public Shape getShapeBase(Vector2 pos) {
@@ -373,7 +376,7 @@ public class GroundBuilder {
 
 	public void destory() {
 		edgeShape.dispose();
-		
+
 	}
 
 }

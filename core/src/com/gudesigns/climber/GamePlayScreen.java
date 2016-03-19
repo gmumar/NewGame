@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 
 import wrapper.CameraManager;
+import wrapper.GameContactListener;
 import wrapper.GamePhysicalState;
 import wrapper.GameState;
 import wrapper.Globals;
@@ -64,18 +65,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private JointLimits jointLimits;
 
-	private final AsyncExecutor runner = new AsyncExecutor(3);
+	private final AsyncExecutor runner = new AsyncExecutor(4);
 	boolean running = true;
 	boolean paused = true;
-	
+
 	private PopQueManager popQueManager;
-	
+
 	// ---- Game Play ----
 	private float progress = 0;
 	private float currentTrackLen = 0;
-	private boolean gameWon = false;
+	private boolean gameWon = false, gameLost = false;
 	private TouchUnit fakeTouch = new TouchUnit();
 	private float gameOverOffset = 0;
+	private GameContactListener contactListener = new GameContactListener();
+	private int slowMoFactor = 1;
 	// -------------------
 
 	public GamePlayScreen(GameState gameState) {
@@ -110,7 +113,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		jointLimits = new JointLimits(world);
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
-		
+
 		popQueManager = new PopQueManager(stage);
 
 		runner.submit(new AsyncTask<String>() {
@@ -136,10 +139,34 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 		});
 
+		runner.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+				// float timePassed = 0;
+				long prevTime = System.nanoTime();
+				long currentTime = prevTime;
+
+				while (running) {
+
+					currentTime = System.nanoTime();
+
+					if (currentTime - prevTime >= 100000) {
+						monitorProgress();
+						prevTime = currentTime;
+
+					}
+				}
+				return null;
+			}
+		});
+
 		fakeTouch.screenX = 5000;
 		fakeTouch.touched = true;
 		fakeTouches.add(fakeTouch);
-		
+
+		world.setContactListener(contactListener);
+
 	}
 
 	final private void initShader() {
@@ -172,7 +199,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 
 		renderWorld(delta);
-		monitorProgress();
 
 		scrollingBackground.draw();
 
@@ -190,35 +216,48 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		popQueManager.update(delta);
 
 	}
-	
+
 	private void monitorProgress() {
-		progress = (builtCar.getPosition().x/currentTrackLen)*100;
-		
-		if(progress >= 100){
-			builtCar.setMaxVelocity(20);
-			gameOverOffset = gameOverOffset < CAMERA_OFFSET + 0.05f ? gameOverOffset + 0.06f : CAMERA_OFFSET + 0.05f ; 
-			
-			if(!gameWon){
-				popQueManager.push(new PopQueObject(PopQueObjectType.WIN));
-				gameWon = !gameWon;
+		if (contactListener.isKilled()) {
+			if (!gameLost) {
+				popQueManager.push(new PopQueObject(PopQueObjectType.KILLED));
+				gameLost = true;
 			}
 		}
-		
+
+		if (gameLost){
+			slowMoFactor = slowMoFactor < 4 ? slowMoFactor + 1 : slowMoFactor;
+			return;
+		}
+
+		progress = (builtCar.getPosition().x / currentTrackLen) * 100;
+
+		if (progress >= 100) {
+			builtCar.setMaxVelocity(20);
+			gameOverOffset = gameOverOffset < CAMERA_OFFSET + 0.05f ? gameOverOffset + 0.0006f
+					: CAMERA_OFFSET + 0.05f;
+
+			if (!gameWon) {
+				popQueManager.push(new PopQueObject(PopQueObjectType.WIN));
+				gameWon = true;
+			}
+		}
+
 	}
-	
-	private boolean gameOver() {	
-		return gameWon;
+
+	private boolean gameOver() {
+		return gameWon || gameLost;
 	}
 
 	final private void handleInput(ArrayList<TouchUnit> touchesIn) {
-			builtCar.handleInput(touchesIn);
+		builtCar.handleInput(touchesIn);
 	}
 
 	float fixedStep = 0;
 
 	final private void renderWorld(float delta) {
 
-		dlTime = delta / 1.1f;
+		dlTime = delta / (1.1f );
 
 		fixedStep += dlTime;
 
@@ -234,14 +273,16 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		} else if (fixedStep >= 1 / 85f) {
 
-			if(gameOver()){
+			if (gameWon) {
 				handleInput(fakeTouches);
+			} else if (gameLost) {
+				;
 			} else {
 				handleInput(touches);
 			}
 
 			if (!ground.loading) {
-				world.step(fixedStep, 40, 20);
+				world.step(fixedStep/slowMoFactor, 40, 20);
 			}
 
 			if (timePassed > 2) {
@@ -267,8 +308,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 
 		camera.position.set(actor.getPosition().x + CAMERA_OFFSET
-				- (0.4f - speedZoom * 4) - gameOverOffset, actor.getPosition().y, 1);// +
-																	// camera.viewportWidth*2.5f
+				- (0.4f - speedZoom * 4) - gameOverOffset,
+				actor.getPosition().y, 1);// +
+		// camera.viewportWidth*2.5f
 		camera.zoom = 4.2f + speedZoom;// 4.5f;
 
 		camera.update();
@@ -297,7 +339,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				secondCamera);
 
 		stage = new Stage(vp);
-		
+
 	}
 
 	private void initInputs() {
@@ -320,8 +362,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
-		if(gameOver()) return false;
-		
+		if (gameOver())
+			return false;
+
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
@@ -334,8 +377,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if(gameOver()) return false;
-		
+		if (gameOver())
+			return false;
+
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = 0;
 			touches.get(pointer).screenY = 0;

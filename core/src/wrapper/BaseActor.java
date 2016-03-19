@@ -3,6 +3,7 @@ package wrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Component.ComponentNames;
 import Component.ComponentProperties;
 import JSONifier.JSONComponentName;
 
@@ -55,6 +56,7 @@ public class BaseActor {
 	private float friction = 0.1f;
 	private final float DEFAULT_SIZE = 1f;
 	private float massScale = 1;
+	private boolean setFixtureData = false;
 
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
@@ -104,6 +106,7 @@ public class BaseActor {
 		this.friction = other.friction;
 		this.mountDistance = other.mountDistance;
 		this.massScale = other.massScale;
+		this.setFixtureData = other.setFixtureData;
 
 		initSprite();
 		initBody();
@@ -116,6 +119,7 @@ public class BaseActor {
 		this.density = (properties.getDensity() == -1) ? this.density  : properties.getDensity();
 		this.restitution = (properties.getRestituition() == -1) ? this.restitution  : properties.getRestituition();
 		this.friction = (properties.getFriction() == -1) ? this.friction  : properties.getFriction();
+		this.setFixtureData = properties.isSetFixtureData();
 		
 		this.texture = gameState.getGameLoader().Assets.get(textureStr,Texture.class);
 		this.name = name;
@@ -173,9 +177,18 @@ public class BaseActor {
 
 		body = world.createBody(bodyDef);
 		fixture = body.createFixture(fixtureDef);
+		if(setFixtureData) fixture.setUserData(name);
 		fixture.setSensor(false);
 
 		body.setUserData(name);
+	}
+	
+	public Fixture getFixture(){
+		return fixture;
+	}
+	
+	public void setFixtureData(Object userData){
+		fixture.setUserData(userData);
 	}
 
 	public Shape getShapeBase() {

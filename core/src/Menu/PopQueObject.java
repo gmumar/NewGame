@@ -2,7 +2,7 @@ package Menu;
 
 public class PopQueObject {
 	
-	public enum PopQueObjectType { TEST, DELETE, LOADING, BUY, WIN };
+	public enum PopQueObjectType { TEST, DELETE, LOADING, BUY, WIN, KILLED };
 
 	private PopQueObjectType type;
 	

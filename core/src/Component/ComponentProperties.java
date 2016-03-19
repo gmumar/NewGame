@@ -1,10 +1,13 @@
 package Component;
 
+import JSONifier.JSONComponentName;
+
 public class ComponentProperties {
 	
 	private float restituition = -1;
 	private float friction = -1;
 	private float density = -1;
+	private boolean setFixtureData = false;
 	private String texture = null;
 	
 	public float getRestituition() {
@@ -31,8 +34,12 @@ public class ComponentProperties {
 	public void setTexture(String texture) {
 		this.texture = texture;
 	}
-	
-
+	public boolean isSetFixtureData() {
+		return setFixtureData;
+	}
+	public void setSetFixtureData(boolean setFixtureData) {
+		this.setFixtureData = setFixtureData;
+	}
 	
 
 }

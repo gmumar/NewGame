@@ -337,6 +337,7 @@ public class ComponentBuilder {
 		
 		properties.setDensity(5);
 		properties.setTexture("life_small.png");
+		properties.setSetFixtureData(true);
 		
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(componentName,

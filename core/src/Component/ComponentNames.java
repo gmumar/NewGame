@@ -11,5 +11,6 @@ public class ComponentNames {
 	public final static String LIFE = "_LF_";
 	public final static String CEQUEREDFLAG = "_CF_";
 	public final static String CAMERAFOCUS = "_CMF_";
+	public static final String GROUND = "GND";
 	
 }

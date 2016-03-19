@@ -169,6 +169,7 @@ public class MenuBuilder {
 				JSONComponentName name = new JSONComponentName();
 				name.setBaseName(ComponentNames.TIRE);
 				name.setLevel(partLevel);
+				name.setMountId("*");
 				name.setComponentId(Integer.toString(componentCounts
 						.get(ComponentNames.TIRE)));
 				c.setUpForBuilder(name, partLevel);
@@ -194,6 +195,7 @@ public class MenuBuilder {
 				JSONComponentName name = new JSONComponentName();
 				name.setBaseName(ComponentNames.SPRINGJOINT);
 				name.setLevel(partLevel);
+				name.setMountId("*");
 				name.setComponentId(Integer.toString(componentCounts
 						.get(ComponentNames.SPRINGJOINT)));
 				c.setUpForBuilder(name, partLevel);
@@ -621,6 +623,9 @@ public class MenuBuilder {
 			return false;
 		}
 
+		if((jsonComponentName.getMountId().contains("*"))){
+			return false;
+		}
 		/*
 		 * if (jsonComponentName.contains(Assembler.NAME_ID_SPLIT)) { return
 		 * true; }

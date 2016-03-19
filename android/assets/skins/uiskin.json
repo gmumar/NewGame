@@ -8,8 +8,7 @@ com.badlogic.gdx.graphics.Color: {
 	black: { a: 1 }
 },
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	font_laksaman-_bold_italic_16pt: { file: font_laksaman-_bold_italic_16pt.fnt },
-	default-font: { file: default.fnt }
+	font_laksaman-_bold_italic_16pt: { file: font_laksaman-_bold_italic_16pt.fnt }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: {

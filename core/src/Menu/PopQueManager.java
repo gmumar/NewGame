@@ -20,9 +20,12 @@ public class PopQueManager {
 
 	private DialogBase dialog;
 	private PopQueObject currentMsg;
+	
+	Skin skin = Skins.loadDefault();
 
 	public PopQueManager(Stage stage) {
 		this.stage = stage;
+		skin = Skins.loadDefault();
 	}
 
 	public void update(float delta) {
@@ -63,6 +66,8 @@ public class PopQueManager {
 			createBuyDialog();
 		} else if (popQueObject.getType() == PopQueObjectType.WIN) {
 			createWinDialog();
+		} else if (popQueObject.getType() == PopQueObjectType.KILLED) {
+			createLostDialog();
 		}
 	}
 
@@ -78,25 +83,25 @@ public class PopQueManager {
 		
 		
 	}
+	private void createLostDialog() {
+		dialog = new TextDialog("Killed", skin, "default");
+		dialog.setTouchable(Touchable.disabled);
+		dialog.show(stage);
+	}
 	
 	private void createWinDialog() {
-		Skin skin = Skins.loadDefault();
-
 		dialog = new TextDialog("Win", skin, "default");
-		dialog.setTouchable(Touchable.enabled);
+		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
 
 	private void createLoadingDialog() {
-		Skin skin = Skins.loadDefault();
-
 		dialog = new TextDialog("Loading", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
 
 	private void createDialog() {
-		Skin skin = Skins.loadDefault();
 
 		dialog = new TextDialog("blaa", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
