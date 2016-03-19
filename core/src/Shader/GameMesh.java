@@ -267,24 +267,24 @@ public class GameMesh {
 		}
 
 		prevVectexCount = vertexCount;
-		int indicesLength = vertexCount ;
-		solvedIndices = new short[indicesLength];
+		//int indicesLength = vertexCount ;
+		solvedIndices = new short[vertexCount];
 		int vertex = 0;
 		int index;
 		// sends our vertex data to the mesh
 		// for (int i = start; i < end; ++i) {
 		// index = i - start;
-		for (int i = 0; i < indicesLength; i++) {
+		for (int i = 0; i < vertexCount; i++) {
 			index = i;
 
 			solvedIndices[index] = (short) (vertex);
-			if (index + 1 >= indicesLength)
+			if (index + 1 >= vertexCount)
 				break;
 			solvedIndices[index + 1] = (short) (vertex + 1);
-			if (index + 2 >= indicesLength)
+			if (index + 2 >= vertexCount)
 				break;
 			solvedIndices[index + 2] = (short) (vertex + 2);
-			if (index + 3 >= indicesLength)
+			if (index + 3 >= vertexCount)
 				break;
 
 			vertex += 1;
@@ -296,7 +296,20 @@ public class GameMesh {
 
 	}
 
-	static public final void flush(CameraManager cam, ShaderProgram shader,
+	/*
+	 * cam: camra used to draw at
+	 * shader: shader program to use
+	 * start: start point of the vertices to draw
+	 * end: end point of the vertices to draw
+	 * depth: the height of the layer
+	 * color: the color of the layer
+	 * offset: distance offset from the actual vertex
+	 * meshindex: the layer number, this is used to lookup the same layer
+	 * in repeated calls
+	 * vertexCount: end - start
+	 * 
+	 */
+	static public final void drawLayer(CameraManager cam, ShaderProgram shader,
 			int start, int end, Texture texture, float depth, Color color,
 			float offset, int meshIndex, int vertexCount) {
 

@@ -33,14 +33,14 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class TrackSelectorScreen implements Screen {
 
 	private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
-	private FitViewport vp;
+	private StretchViewport vp;
 
 	private ArrayList<Button> buttons = new ArrayList<Button>();
 	private ArrayList<String> uniquenessList = new ArrayList<String>();
@@ -307,7 +307,7 @@ public class TrackSelectorScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import Dialog.DialogBase;
 import Dialog.Skins;
-import Dialog.Text2ButtonDialog;
+import Dialog.TestDialog;
 import Dialog.TextDialog;
 import Menu.PopQueObject.PopQueObjectType;
 
@@ -61,13 +61,28 @@ public class PopQueManager {
 			dialog.hide();
 		} else if (popQueObject.getType() == PopQueObjectType.BUY) {
 			createBuyDialog();
+		} else if (popQueObject.getType() == PopQueObjectType.WIN) {
+			createWinDialog();
 		}
 	}
 
 	private void createBuyDialog() {
-		Skin skin = Skins.loadDefault();
+		/*Skin skin = Skins.loadDefault();
 
 		dialog = new Text2ButtonDialog("Buy", skin, "default");
+		dialog.setTouchable(Touchable.enabled);
+		dialog.show(stage);*/
+		
+		dialog = TestDialog.CreateDialog();
+		dialog.show(stage);
+		
+		
+	}
+	
+	private void createWinDialog() {
+		Skin skin = Skins.loadDefault();
+
+		dialog = new TextDialog("Win", skin, "default");
 		dialog.setTouchable(Touchable.enabled);
 		dialog.show(stage);
 	}

@@ -26,7 +26,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.gudesigns.climber.GameLoader;
-import com.gudesigns.climber.GamePlayScreen;
 
 public class GroundBuilder {
 
@@ -60,7 +59,6 @@ public class GroundBuilder {
 
 	private boolean infinate = true;
 	private int mapListCounter = 0;
-	private int progressCounter = 0;
 
 	private ArrayList<GroundUnitDescriptor> preMadeMapList;
 
@@ -86,6 +84,8 @@ public class GroundBuilder {
 	
 	private int initial = 0*8;
 	public boolean loading = true;
+	
+	private float totalTrackLength = -1;
 
 	public GroundBuilder(GamePhysicalState gameState, final CameraManager camera,
 			ShaderProgram shader, ShaderProgram colorShader) {
@@ -107,7 +107,8 @@ public class GroundBuilder {
 			mapListCounter = 0;
 			preMadeMapList = assembler.assembleTrack(mapString, new Vector2(
 					TRACK_WIDTH, TRACK_HEIGHT));
-
+			
+			totalTrackLength = calculateTotalTrackLength(preMadeMapList);
 			decor.addChequeredFlag(preMadeMapList);
 			// mapList.addAll(assembler.assembleTrack(mapString, new
 			// Vector2(-10,-50)));
@@ -122,6 +123,16 @@ public class GroundBuilder {
 
 	}
 	
+	private float calculateTotalTrackLength(
+			ArrayList<GroundUnitDescriptor> map) {
+		GroundUnitDescriptor lastPos = preMadeMapList.get(preMadeMapList.size()-1);
+		return lastPos.getEnd().dst(0, lastPos.getEnd().y);
+	}
+	
+	public float getTotalTrackLength(){
+		return totalTrackLength;
+	}
+
 	public boolean isLoading(){
 		return loading;
 	}
@@ -191,17 +202,17 @@ public class GroundBuilder {
 
 	}
 
-	public void getNextFloorUnit() {
+	public void getNextFloorUnit(boolean forMainMenu) {
 
 		float randf = (float) (r.nextFloat());
 		lastObj = mapList.get(mapList.size() - 1);
 
-		generateBias(r);
+		generateBias(r, forMainMenu);
 
 		randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
 
 		if (getEdge()  > lastObj.getEnd().x) {
-			if (infinate) {
+			if (infinate || forMainMenu) {
 				addGroundUnitDescriptor(lastObj, randf);
 			} else {
 				addGroundUnitDescriptor(lastObj,
@@ -212,10 +223,10 @@ public class GroundBuilder {
 					infinate = true;
 				}
 			}
-			if (camera.position.x - GamePlayScreen.CAMERA_OFFSET > preMadeMapList
+			/*if (camera.position.x - GamePlayScreen.CAMERA_OFFSET > preMadeMapList
 					.get(0).getEnd().x) {
 				++progressCounter;
-			}
+			}*/
 
 		}
 
@@ -251,18 +262,20 @@ public class GroundBuilder {
 		// return newObj;
 	}
 
-	private void generateBias(Random r) {
-		float randf = (float) (r.nextFloat());
+	private void generateBias(Random r, boolean forMainMenu) {
+		//float randf = (float) (r.nextFloat());
 		bias = Math.sin(angle) * baising;
 
-		if (randf > 0.55f) {
-			bias = 0;
-		}
-
-		angle += PERIOD;
-		if (angle > Math.PI * 2) {
-			angle = 0;
-		}
+		/*if(!forMainMenu){
+			if (randf > 0.55f) {
+				bias = 0;
+			}
+	
+			angle += PERIOD;
+			if (angle > Math.PI * 2) {
+				angle = 0;
+			}
+		}*/
 
 	}
 
@@ -275,11 +288,11 @@ public class GroundBuilder {
 	}
 	
 	
-	public void draw( SpriteBatch batch) {
+	public void draw( SpriteBatch batch, boolean forMainMenu) {
 			
 		
 		if (addFloorCount > ADD_FLOOR_COUNT) {
-			getNextFloorUnit();
+			getNextFloorUnit(forMainMenu);
 			addFloorUnitToMap();
 
 			addFloorCount = 0;
@@ -318,17 +331,17 @@ public class GroundBuilder {
 
 		shader.begin();
 		shader.setUniformMatrix("u_projTrans", camera.combined);
-		GameMesh.flush(camera, shader, shaderStart, shaderEnd, groundFiller, 30,
+		GameMesh.drawLayer(camera, shader, shaderStart, shaderEnd, groundFiller, 30,
 				Color.WHITE, 0f, 0, vertexCount);
 		shader.end();
 
 		colorShader.begin();
 		colorShader.setUniformMatrix("u_projTrans", camera.combined);
-		GameMesh.flush(camera, colorShader, shaderStart, shaderEnd, null, 0.8f,
+		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null, 0.8f,
 				Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
-		GameMesh.flush(camera, colorShader, shaderStart, shaderEnd, null, 0.6f,
+		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null, 0.6f,
 				Globals.GREEN, 0.5f, 2, vertexCount);
-		GameMesh.flush(camera, colorShader, shaderStart, shaderEnd, null, 0.1f,
+		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null, 0.1f,
 				Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();
 
@@ -361,16 +374,6 @@ public class GroundBuilder {
 	public void destory() {
 		edgeShape.dispose();
 		
-	}
-
-	public float getProgress() {
-
-		float progress = ((float) progressCounter / (preMadeMapList.size()))
-				* (100 - 0);
-		progress = progress > 100 ? 100 : progress;
-
-		return progress;
-
 	}
 
 }

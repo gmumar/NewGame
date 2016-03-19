@@ -2,7 +2,6 @@ package Menu;
 
 import wrapper.GameState;
 import wrapper.Globals;
-import GroundWorks.GroundBuilder;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,18 +15,14 @@ public class HUDBuilder {
 	private TextBox fps, version;
 	private ProgressBarW mapProgress;
 
-	private GroundBuilder ground;
-	
-	private float progress;
-
 	private boolean init = false;
 	private GameLoader gameLoader;
+	
 
-	public HUDBuilder(Stage stage,
-			GroundBuilder ground, final GameState gameState) {
+	public HUDBuilder(Stage stage, final GameState gameState) {
 
-		this.ground = ground;
 		this.gameLoader = gameState.getGameLoader();
+
 
 		//Buttons
 		exit = new Button("exit") {
@@ -59,7 +54,7 @@ public class HUDBuilder {
 		version = new TextBox("Version:" + Globals.VERSION);
 		version.setPosition(0, Globals.ScreenHeight - 25);
 		stage.addActor(version);
-		
+
 		//Progress Bars
 		mapProgress = new ProgressBarW(0, 100, 0.01f, false,  "mapProgress");
 		mapProgress.setPosition(Globals.ScreenWidth/4, Globals.ScreenHeight - Globals.ScreenHeight/12);
@@ -71,16 +66,14 @@ public class HUDBuilder {
 
 	}
 
-	public void update(float delta) {
+	public void update(float delta, float progress) {
 		fps.setTextBoxString("fps: " + Gdx.graphics.getFramesPerSecond());
-
 		if (!init) {
 			version.setTextBoxString("Version:" + Globals.VERSION);
 			init = true;
 		}
 		
-		progress = ground.getProgress();
-		mapProgress.setValue(progress);
+		mapProgress.setValue( progress > 100 ? 100 : progress );
 		mapProgress.act(delta);
 
 	}
@@ -88,7 +81,5 @@ public class HUDBuilder {
 	public void dispose() {
 		
 	}
-
-
-
+	
 }

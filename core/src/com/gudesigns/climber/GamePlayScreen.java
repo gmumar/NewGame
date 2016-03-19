@@ -13,6 +13,9 @@ import Assembly.AssembledObject;
 import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
 import Menu.HUDBuilder;
+import Menu.PopQueManager;
+import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
 import ParallexBackground.ScrollingBackground;
 import Shader.GameMesh;
 
@@ -29,7 +32,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class GamePlayScreen implements Screen, InputProcessor {
 
@@ -41,7 +44,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private CameraManager camera, secondCamera;
 	private HUDBuilder hud;
 	private Stage stage;
-	private FitViewport vp;
+	private StretchViewport vp;
 	private ShaderProgram shader, colorShader;
 
 	private RollingAverage rollingAvg;
@@ -53,6 +56,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private GroundBuilder ground;
 
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
+	private ArrayList<TouchUnit> fakeTouches = new ArrayList<TouchUnit>();
 
 	private float timePassed = 0;
 
@@ -63,6 +67,16 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private final AsyncExecutor runner = new AsyncExecutor(3);
 	boolean running = true;
 	boolean paused = true;
+	
+	private PopQueManager popQueManager;
+	
+	// ---- Game Play ----
+	private float progress = 0;
+	private float currentTrackLen = 0;
+	private boolean gameWon = false;
+	private TouchUnit fakeTouch = new TouchUnit();
+	private float gameOverOffset = 0;
+	// -------------------
 
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
@@ -86,6 +100,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		ground = new GroundBuilder(new GamePhysicalState(this.world,
 				this.gameLoader), camera, shader, colorShader);
 
+		currentTrackLen = ground.getTotalTrackLength();
 		initHud();
 
 		rollingAvg = new RollingAverage(60);
@@ -95,28 +110,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		jointLimits = new JointLimits(world);
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
-
-		/*
-		 * runner.submit(new AsyncTask<String>() {
-		 * 
-		 * @Override public String call() throws Exception { float timePassed =
-		 * 0;
-		 * 
-		 * while (running) {
-		 * 
-		 * timePassed += Gdx.graphics.getDeltaTime();
-		 * 
-		 * if (timePassed >= 1 / 60f) {
-		 * 
-		 * timePassed = 0; }
-		 * 
-		 * } return null;
-		 * 
-		 * 
-		 * }
-		 * 
-		 * });
-		 */
+		
+		popQueManager = new PopQueManager(stage);
 
 		runner.submit(new AsyncTask<String>() {
 
@@ -131,7 +126,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 					currentTime = System.nanoTime();
 
 					if (currentTime - prevTime >= 1 / 60f) {
-						hud.update(1 / 60f);
+						hud.update(1 / 60f, progress);
 
 						prevTime = currentTime;
 
@@ -141,6 +136,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 		});
 
+		fakeTouch.screenX = 5000;
+		fakeTouch.touched = true;
+		fakeTouches.add(fakeTouch);
+		
 	}
 
 	final private void initShader() {
@@ -165,7 +164,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	final private void initHud() {
 
-		hud = new HUDBuilder(stage, ground, gameState);
+		hud = new HUDBuilder(stage, gameState);
 
 	}
 
@@ -173,35 +172,55 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 
 		renderWorld(delta);
+		monitorProgress();
 
 		scrollingBackground.draw();
 
-		attachCameraTo(builtCar.getBasePart());
+		attachCameraTo(builtCar.getCameraFocusPart());
 		ground.drawShapes();
 
 		batch.begin();
 
-		ground.draw(batch);
+		ground.draw(batch, false);
 		builtCar.draw(batch);
 
 		batch.end();
 
 		stage.draw();
+		popQueManager.update(delta);
 
+	}
+	
+	private void monitorProgress() {
+		progress = (builtCar.getPosition().x/currentTrackLen)*100;
+		
+		if(progress >= 100){
+			builtCar.setMaxVelocity(20);
+			gameOverOffset = gameOverOffset < CAMERA_OFFSET + 0.05f ? gameOverOffset + 0.06f : CAMERA_OFFSET + 0.05f ; 
+			
+			if(!gameWon){
+				popQueManager.push(new PopQueObject(PopQueObjectType.WIN));
+				gameWon = !gameWon;
+			}
+		}
+		
+	}
+	
+	private boolean gameOver() {	
+		return gameWon;
 	}
 
 	final private void handleInput(ArrayList<TouchUnit> touchesIn) {
-		builtCar.handleInput(touchesIn);
-
+			builtCar.handleInput(touchesIn);
 	}
 
-	float timeCounter = 0;
+	float fixedStep = 0;
 
 	final private void renderWorld(float delta) {
 
 		dlTime = delta / 1.1f;
 
-		timeCounter += dlTime;
+		fixedStep += dlTime;
 
 		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
 				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
@@ -210,20 +229,24 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		if (timeCounter >= 1 / 30f) {
-			timeCounter = 1 / 100f;
+		if (fixedStep >= 1 / 30f) {
+			fixedStep = 1 / 100f;
 
-		} else if (timeCounter >= 1 / 85f) {
+		} else if (fixedStep >= 1 / 85f) {
 
-			handleInput(touches);
+			if(gameOver()){
+				handleInput(fakeTouches);
+			} else {
+				handleInput(touches);
+			}
 
 			if (!ground.loading) {
-				world.step(timeCounter, 40, 20);
+				world.step(fixedStep, 40, 20);
 			}
 
 			if (timePassed > 2) {
 
-				jointLimits.enableJointLimits(1 / timeCounter);
+				jointLimits.enableJointLimits(1 / fixedStep);
 
 			} else {
 				if (!ground.loading) {
@@ -231,7 +254,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				}
 			}
 
-			timeCounter = 0;
+			fixedStep = 0;
 		}
 	}
 
@@ -244,7 +267,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 
 		camera.position.set(actor.getPosition().x + CAMERA_OFFSET
-				- (0.4f - speedZoom * 4), actor.getPosition().y, 1);// +
+				- (0.4f - speedZoom * 4) - gameOverOffset, actor.getPosition().y, 1);// +
 																	// camera.viewportWidth*2.5f
 		camera.zoom = 4.2f + speedZoom;// 4.5f;
 
@@ -270,10 +293,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				secondCamera);
 
 		stage = new Stage(vp);
+		
 	}
 
 	private void initInputs() {
@@ -296,6 +320,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
+		if(gameOver()) return false;
+		
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
@@ -308,6 +334,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if(gameOver()) return false;
+		
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = 0;
 			touches.get(pointer).screenY = 0;

@@ -463,6 +463,21 @@ public class MenuBuilder {
 		// mouseActor.getPhysicsBody().createFixture(mouseFixture);
 
 	}
+	
+	public void drawForBuilder(SpriteBatch batch) {
+
+
+		if(lastSelected == null) return;
+		
+		String name = ((JSONComponentName)lastSelected.getUserData()).getBaseId();
+
+		for (Component part : parts) {
+			if(part.getjComponentName().getBaseId().compareTo(name)==0){
+				part.draw(batch);
+			}
+		}
+
+	}
 
 	public void draw(SpriteBatch batch) {
 		Iterator<Component> iter = parts.iterator();

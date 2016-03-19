@@ -45,6 +45,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -53,7 +54,7 @@ public class CarSelectorScreen implements Screen {
 	private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
-	private FitViewport vp;
+	private StretchViewport vp;
 
 	// private ArrayList<Button> buttons = new ArrayList<Button>();
 	private ArrayList<ImageButton> buttons = new ArrayList<ImageButton>();
@@ -454,7 +455,7 @@ public class CarSelectorScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 

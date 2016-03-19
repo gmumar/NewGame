@@ -21,7 +21,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class TrackBuilderScreen implements Screen, InputProcessor, GestureListener {
 
@@ -29,7 +29,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 	private CameraManager camera, secondCamera;
 	private World world;
 	private Stage stage;
-	private FitViewport vp;
+	private StretchViewport vp;
 	
 	private Box2DDebugRenderer debugRenderer;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
@@ -67,7 +67,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor, GestureListen
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new FitViewport(Globals.ScreenWidth,
+		vp = new StretchViewport(Globals.ScreenWidth,
 				Globals.ScreenHeight, secondCamera);
 
 		stage = new Stage(vp);

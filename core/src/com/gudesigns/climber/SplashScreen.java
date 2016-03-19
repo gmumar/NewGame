@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class SplashScreen implements Screen {
 
@@ -21,7 +21,7 @@ public class SplashScreen implements Screen {
 	private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
-	private FitViewport vp;
+	private StretchViewport vp;
 
 	private float time = 0;
 
@@ -70,7 +70,7 @@ public class SplashScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 

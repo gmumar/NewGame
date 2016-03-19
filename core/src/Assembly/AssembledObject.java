@@ -18,14 +18,14 @@ public class AssembledObject {
 
 	private ArrayList<Component> partList;
 	private ArrayList<BaseActor> driveList;
-	private Body basePart;
+	private Body cameraFocusPart, basePart;
 	private Body driveBody ;
 	//private Component leftMost, rightMost;
 	// private int basePartIndex;
 
 	private final float ANGULAR_DAMPING = 1f;
 	// private final float ROTATION_FORCE = 4000;
-	private final float MAX_VELOCITY = 45f;
+	private float MAX_VELOCITY = 45f;
 
 	private int direction;
 
@@ -33,12 +33,20 @@ public class AssembledObject {
 	// private ArrayList<Component> delayedDraw = new ArrayList<Component>();
 	private Component part;
 
-	public Body getBasePart() {
+	public Body getCameraFocusPart() {
+		return cameraFocusPart;
+	}
+	
+	private Body getBasePart() {
 		return basePart;
+	}
+
+	public Vector2 getPosition(){
+		return getBasePart().getPosition();
 	}
 	
 	public Vector2 getSpeed(){
-		return getBasePart().getLinearVelocity();
+		return getCameraFocusPart().getLinearVelocity();
 	}
 
 	/*
@@ -54,9 +62,9 @@ public class AssembledObject {
 
 		while (iter.hasNext()) {
 			Component part = iter.next();
-			//if (part.getComponentName().contains(ComponentNames.LIFE)) {
 			if (part.getComponentName().compareTo(ComponentNames.LIFE)==0) {
-				this.basePart = part.getJointBodies().get(1).getPhysicsBody();// .getObject().getPhysicsBody();
+				this.cameraFocusPart = part.getJointBodies().get(1).getPhysicsBody();// .getObject().getPhysicsBody();
+				this.basePart = part.getJointBodies().get(0).getPhysicsBody();
 			}
 		}
 
@@ -263,5 +271,9 @@ public class AssembledObject {
 
 	public void dispose() {
 		// comp.destroy();
+	}
+	
+	public void setMaxVelocity(float maxVelocity){
+		MAX_VELOCITY = maxVelocity;
 	}
 }

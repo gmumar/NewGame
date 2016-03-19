@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class LoaderScreen implements Screen {
 
@@ -23,7 +23,7 @@ public class LoaderScreen implements Screen {
 	private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
-	private FitViewport vp;
+	private StretchViewport vp;
 	private ShapeRenderer loaderBar;
 	
 	private float progress = 0f;
@@ -61,7 +61,7 @@ public class LoaderScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new FitViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 		

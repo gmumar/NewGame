@@ -13,8 +13,8 @@ public class Globals {
 	static public int ScreenWidth;
 	static public float AspectRatio;
 
-	final static public int GameHeight = 440;
-	final static public int GameWidth = 710;
+	final static public int GameHeight = 480;
+	final static public int GameWidth = 720;
 	
 	final static public Color BLUE = new Color(0.3f, 0.3f, 1, 1);
 	final static public Color SKY_BLUE = new Color((float) 118 / 256, (float) 211 / 256,

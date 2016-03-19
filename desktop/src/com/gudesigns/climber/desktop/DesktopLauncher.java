@@ -9,8 +9,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.samples = 2;
-		config.width = 1280;
-		config.height = 768;
+		config.width = 1080;
+		config.height = 720;
 		Mesh.clearAllMeshes(new LwjglApplication(new GameLoader(), config));
 	}
 }
