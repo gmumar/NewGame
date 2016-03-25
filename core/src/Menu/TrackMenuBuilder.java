@@ -45,7 +45,7 @@ public class TrackMenuBuilder {
 	// private final float ROTATION_SIZE = 30;
 
 	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload,
-			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode;
+			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildBall;
 	private TextBox currentMode;
 
 	private CameraManager camera;
@@ -65,6 +65,9 @@ public class TrackMenuBuilder {
 	private static ShapeRenderer fixtureRenderer;
 	private boolean drawTrack = true;
 
+
+	private int panSpeedMultiplier = 1;
+	private final static int PAN_SPEED = 1;
 	public TrackMenuBuilder(final GamePhysicalState gamePhysicalState,
 			Stage stage, CameraManager secondCamera,
 			final TrackBuilder trackBuilder, final User user,
@@ -135,7 +138,7 @@ public class TrackMenuBuilder {
 		panLeft = new Button(">") {
 			@Override
 			public void Clicked() {
-				camera.position.x += 5;
+				camera.position.x += PAN_SPEED * panSpeedMultiplier;
 				camera.update();
 				
 			}
@@ -150,7 +153,7 @@ public class TrackMenuBuilder {
 		panRight = new Button("<") {
 			@Override
 			public void Clicked() {
-				camera.position.x -= 5;
+				camera.position.x -= PAN_SPEED * panSpeedMultiplier;
 				camera.update();
 				
 			}
@@ -164,7 +167,7 @@ public class TrackMenuBuilder {
 		panUp = new Button("^") {
 			@Override
 			public void Clicked() {
-				camera.position.y += 5;
+				camera.position.y += PAN_SPEED * panSpeedMultiplier;
 				camera.update();
 				
 			}
@@ -179,7 +182,7 @@ public class TrackMenuBuilder {
 		panDown = new Button("\\/") {
 			@Override
 			public void Clicked() {
-				camera.position.y -= 5;
+				camera.position.y -= PAN_SPEED * panSpeedMultiplier;
 				camera.update();
 				
 			}
@@ -207,8 +210,22 @@ public class TrackMenuBuilder {
 			}
 		};
 
-		switchMode.setPosition(600, 0);
+		switchMode.setPosition(600, 50);
+		switchMode.setHeight(50);
 		stage.addActor(switchMode);
+		
+		moveMultiple = new Button("multiply") {
+			@Override
+			public void Clicked() {
+				panSpeedMultiplier += 1;
+				
+				if(panSpeedMultiplier>5) panSpeedMultiplier = 1;
+			}
+		};
+
+		moveMultiple.setPosition(600, 0);
+		moveMultiple.setHeight(50);
+		stage.addActor(moveMultiple);
 		
 		currentMode = new TextBox("Mode");
 		currentMode.setPosition(0, Globals.ScreenHeight - 25);
@@ -361,7 +378,39 @@ public class TrackMenuBuilder {
 		};
 
 		buildBar.setPosition(500, 0);
-		stage.addActor(buildBar);
+		buildBar.setHeight(50);
+		stage.addActor(buildBar);//buildBall
+		
+		buildBall = new Button("buildBall") {
+			@Override
+			public void Clicked() {
+				drawTrack = false;
+				int partLevel = 1;
+				incrementCount(ComponentNames.TRACKBALL);
+				Component c = ComponentBuilder.buildTrackBall(
+						new GamePhysicalState(world, gameLoader), partLevel,
+						true);
+				// c.setUpForBuilder(ComponentNames.BAR3
+				// + Assembler.NAME_ID_SPLIT
+				// + componentCounts.get(ComponentNames.BAR3));
+				JSONComponentName name = new JSONComponentName();
+				name.setBaseName(ComponentNames.TRACKBALL);
+				name.setComponentId(Integer.toString(componentCounts
+						.get(ComponentNames.TRACKBALL)));
+				name.setMountId("*");
+				name.setLevel(partLevel);
+				c.setUpForBuilder(name, partLevel);
+				System.out.println("TrackBuilder: " + name);
+				lastSelected = c.getObject().getPhysicsBody();
+				c.setPosition(camera.position.x, camera.position.y);
+				parts.add(c);
+
+			}
+		};
+
+		buildBall.setPosition(500, 50);
+		buildBall.setHeight(50);
+		stage.addActor(buildBall);
 
 	}
 
@@ -503,9 +552,9 @@ public class TrackMenuBuilder {
 	public void drawShapes(SpriteBatch batch) {
 		
 		if(drawTrack){
-			currentMode.setTextBoxString("Track");
+			currentMode.setTextBoxString("Track " + panSpeedMultiplier);
 		} else {
-			currentMode.setTextBoxString("Parts");
+			currentMode.setTextBoxString("Parts " + panSpeedMultiplier);
 		}
 
 		Integer jointType;

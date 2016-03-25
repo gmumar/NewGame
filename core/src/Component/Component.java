@@ -3,6 +3,7 @@ package Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class Component {
 		this.jointBodies = jointBodies;
 	}
 
-	public void applyProperties(HashMap<String, String> propertiesIn,
+	public void applyProperties(Map<String, String> propertiesIn,
 			PropertyTypes type) {
 		if (propertiesIn.isEmpty())
 			return;
@@ -177,7 +178,7 @@ public class Component {
 	// public JSONComponent toJSONComponent(String name) {
 	public JSONComponent toJSONComponent(JSONComponentName name) {
 
-		System.out.println("Component: creatingJSONComponent: " + name);
+		//System.out.println("Component: creatingJSONComponent: " + name);
 
 		JSONComponent jComponent = new JSONComponent();
 		// jComponent.setComponentName(name);
@@ -295,7 +296,7 @@ public class Component {
 		jComponentName.setLevel(level);
 	}
 
-	public Integer getPartLevel(Integer level) {
+	public Integer getPartLevel() {
 		return jComponentName.getLevel();
 	}
 

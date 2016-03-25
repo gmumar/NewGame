@@ -11,13 +11,14 @@ import com.badlogic.gdx.Preferences;
 
 public class BackendFunctions {
 
-	public void uploadCar() {
-		Preferences prefs = Gdx.app
-				.getPreferences(GamePreferences.CAR_PREF_STR);
+	public void uploadCar(String inputString) {
+		//Preferences prefs = Gdx.app
+			//	.getPreferences(GamePreferences.CAR_PREF_STR);
 
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.CAR_JSON,// "hello"
-				prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
+				//prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
+				inputString);
 
 		REST.postData(RESTPaths.CARS, parameters, new HttpResponseListener() {
 

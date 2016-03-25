@@ -1,15 +1,12 @@
 package com.gudesigns.climber;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import wrapper.CameraManager;
-import wrapper.GamePreferences;
 import wrapper.GameState;
 import wrapper.Globals;
 import Assembly.Assembler;
@@ -30,7 +27,6 @@ import Storage.FileObject;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -44,10 +40,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class CarSelectorScreen implements Screen {
 
@@ -57,31 +52,35 @@ public class CarSelectorScreen implements Screen {
 	private StretchViewport vp;
 
 	// private ArrayList<Button> buttons = new ArrayList<Button>();
-	private ArrayList<ImageButton> buttons = new ArrayList<ImageButton>();
-	private ArrayList<String> uniquenessList = new ArrayList<String>();
-	private ArrayList<String> uniquenessButtonList = new ArrayList<String>();
+	static private ArrayList<ImageButton> buttons = new ArrayList<ImageButton>();
+	private ArrayList<JsonElement> uniquenessButtonList = new ArrayList<JsonElement>();
 	private ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
 	private TableW tracksTable;
 	private ScrollPane scrollPane;
 	private PopQueManager popQueManager;
 	private GameLoader gameLoader;
 
-	private Lock carLock = new ReentrantLock();
-	private boolean first = false;
-
-	private Button exit;
-	private Preferences prefs = Gdx.app
-			.getPreferences(GamePreferences.CAR_PREF_STR);
+	private Button exit, nextPage, prevPage;
 
 	boolean resultsRemaining = true;
 	int currentOffset = 0;
 	volatile boolean stall = true;
-	AsyncExecutor ae = new AsyncExecutor(4);
+	AsyncExecutor ae = new AsyncExecutor(6);
 
-	//private Integer previousSize = 0;
+	private Semaphore loaderSemaphore = new Semaphore(2);
+	private Lock uniqueListLock = new ReentrantLock();
+	private Semaphore loadingLock = new Semaphore(1);
+
+	private int pageNumber = 0;
+	private static final int MAX_CARS_PER_PAGE = 6;
+	private int currentPageStart = 0;
+	private int currentPageEnd = MAX_CARS_PER_PAGE;
+	private int loadedCount = 0;
+	private JsonParser parser = new JsonParser();
+	// private Integer previousSize = 0;
 
 	private GameState gameState;
-	
+
 	public CarSelectorScreen(GameState gameState) {
 		// carLock.lock();
 		this.gameState = gameState;
@@ -91,10 +90,22 @@ public class CarSelectorScreen implements Screen {
 		initNavigationButtons();
 
 		popQueManager = new PopQueManager(stage);
-		popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
+
+		if (loadingLock.tryAcquire()) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
+		}
+
+		try {
+			loaderSemaphore.acquire(2);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		loadLocalCars();
 		downloadCars();
+
+		writeCarsToFile();
 
 	}
 
@@ -109,35 +120,62 @@ public class CarSelectorScreen implements Screen {
 		exit.setPosition(0, 0);
 		stage.addActor(exit);
 
-	}
+		nextPage = new Button(">") {
+			@Override
+			public void Clicked() {
+				pageNumber++;
+				if (loadingLock.tryAcquire()) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.LOADING));
+				}
 
-	/*
-	 * private void loadLocalCars() {
-	 * 
-	 * ae.submit(new AsyncTask<String>() {
-	 * 
-	 * @Override public String call() throws Exception { FileObject object =
-	 * FileManager.readFromFile(); ArrayList<JSONCar> carList =
-	 * object.getCars(); Iterator<JSONCar> iter = carList.iterator(); int count
-	 * = 0;
-	 * 
-	 * System.out.println("number of cars: " + carList.size());
-	 * 
-	 * while (iter.hasNext()) {
-	 * 
-	 * //carLock.lock(); if (carLock.tryLock(1,TimeUnit.MILLISECONDS)) {
-	 * System.out.println("reading " + count++); JSONCar car = iter.next(); if
-	 * (!uniquenessList.contains((String) car.getId())) { //
-	 * addButton(car.jsonify()); cars.add(car); uniquenessList.add(car.getId());
-	 * // System.out.println(car.jsonify()); } carLock.unlock(); }
-	 * 
-	 * }
-	 * 
-	 * System.out.println("loaded from file: " + uniquenessList.size()); return
-	 * null; } });
-	 * 
-	 * }
-	 */
+				pageDisplayed = false;
+				// buttons.clear();
+				currentPageStart += MAX_CARS_PER_PAGE;
+				currentPageEnd += MAX_CARS_PER_PAGE;
+
+				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
+			}
+		};
+
+		nextPage.setPosition(Globals.ScreenWidth - 50,
+				Globals.ScreenHeight / 2 - 100);
+		nextPage.setHeight(200);
+		nextPage.setWidth(50);
+
+		stage.addActor(nextPage);
+
+		prevPage = new Button("<") {
+			@Override
+			public void Clicked() {
+				pageNumber--;
+
+				if (pageNumber < 0) {
+					pageNumber = 0;
+				} else {
+					pageDisplayed = false;
+					if (loadingLock.tryAcquire()) {
+						popQueManager.push(new PopQueObject(
+								PopQueObjectType.LOADING));
+					}
+					// buttons.clear();
+
+					currentPageStart -= MAX_CARS_PER_PAGE;
+					if (currentPageStart <= 0)
+						currentPageStart = 0;
+					currentPageEnd = currentPageStart + MAX_CARS_PER_PAGE;
+				}
+
+			}
+		};
+
+		prevPage.setPosition(0, Globals.ScreenHeight / 2 - 100);
+		prevPage.setHeight(200);
+		prevPage.setWidth(50);
+
+		stage.addActor(prevPage);
+
+	}
 
 	private void loadLocalCars() {
 
@@ -145,74 +183,13 @@ public class CarSelectorScreen implements Screen {
 
 			@Override
 			public String call() throws Exception {
-				Reader stream = FileManager
-						.getFileStream(FileManager.CAR_FILE_NAME);
-				ArrayList<JSONCar> carList = new ArrayList<JSONCar>();
-				
 
-				if (stream == null)
-					return null;
-
-				JsonReader reader = new JsonReader(stream);
-				try {
-					reader.beginArray();
-					while (reader.hasNext()) {
-						while (reader.hasNext()) {
-							if (carLock.tryLock(10, TimeUnit.MILLISECONDS)) {
-								final JSONCar car = new Gson()
-										.fromJson(reader, JSONCar.class);
-
-								cars.add(car);
-
-								System.out.println(car.getId());
-								
-								Globals.runOnUIThread(new Runnable() {
-
-									@Override
-									public void run() {
-										if (!uniquenessButtonList.contains(car.getId())) {
-											addButton(car.jsonify());
-											System.out.println("adding car");
-											uniquenessButtonList.add(car.getId());
-										}
-									}
-								});
-								
-								carLock.unlock();
-								break;
-							}
-						}
-
-						
-
-					}
-
-					reader.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				for (JSONCar car : gameLoader.cars) {
+					addCarToList(car);
 				}
 
-				// Iterator<JSONCar> iter = carList.iterator();
-				// int count = 0;
+				loaderSemaphore.release();
 
-				System.out.println("number of cars: " + carList.size());
-
-				/*
-				 * while (iter.hasNext()) {
-				 * 
-				 * 
-				 * //if (carLock.tryLock(1,TimeUnit.MILLISECONDS)) {
-				 * System.out.println("reading " + count++); JSONCar car =
-				 * iter.next(); if (!uniquenessList.contains((String)
-				 * car.getId())) { // addButton(car.jsonify()); cars.add(car);
-				 * uniquenessList.add(car.getId()); //
-				 * System.out.println(car.jsonify()); } carLock.unlock(); //}
-				 * 
-				 * }
-				 */
-
-				System.out.println("loaded from file: " + uniquenessList.size());
 				return null;
 			}
 		});
@@ -227,7 +204,7 @@ public class CarSelectorScreen implements Screen {
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
-			public String call() throws Exception {
+			public String call() {
 
 				while (resultsRemaining) {
 					stall = true;
@@ -254,28 +231,19 @@ public class CarSelectorScreen implements Screen {
 
 							while (iter.hasNext()) {
 
-								carLock.lock();
-								// if (carLock.tryLock()) {
+								// carLock.lock();
 
 								final String car = iter.next();
 								final JSONCar carJson = JSONCar.objectify(car);
-								final String carId = carJson.getId();
-								// System.out.println(car);
-								// Globals.runOnUIThread(new Runnable() {
+								// System.out.println("adding from cloud");
 
-								// @Override
-								// public void run() {
-								if (!uniquenessList.contains(carId)) {
-									// addButton(car);
+								addCarToList(carJson);
 
-									cars.add(carJson);
-									uniquenessList.add(carId);
-								}
+								uniqueListLock.lock();
+								uniqueListLock.unlock();
 
-								// }
-								// });
-								carLock.unlock();
-								// }
+								// carLock.unlock();
+
 							}
 
 							if (obj.getTotalObjects() - obj.getOffset() > 0) {
@@ -306,16 +274,8 @@ public class CarSelectorScreen implements Screen {
 					currentOffset += REST.PAGE_SIZE;
 				}
 
-				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
-
-				// Globals.runOnUIThread(new Runnable() {
-
-				// @Override
-				// public void run() {
-				writeCarsToFile();
-				// }
-				// });
-
+				System.out.println("release download");
+				loaderSemaphore.release();
 				return null;
 			}
 
@@ -323,21 +283,77 @@ public class CarSelectorScreen implements Screen {
 
 	}
 
-	private void writeCarsToFile() {
+	private void addCarToList(final JSONCar car) {
 
-		// System.out.println("starting write");
+		uniqueListLock.lock();
 
-		// Iterator<String> iter = cars.iterator();
-		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
-		for (JSONCar car : cars) {
-			// String car = iter.next();
-			list.add(car);
+		JsonElement catElem = parser.parse(car.jsonify());
+		
+		if (!uniquenessButtonList.contains(catElem)) {
+			cars.add(car);
+			uniquenessButtonList.add(catElem);
 		}
 
-		FileObject fileObject = new FileObject();
-		fileObject.setCars(list);
+		uniqueListLock.unlock();
 
-		FileManager.writeToFileGson(list);
+	}
+
+	private void addCarToDisplay(final int from, final int to) {
+
+		final int actualTo = to >= cars.size() ? cars.size() : to;
+
+		Globals.runOnUIThread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				for (int i = from; i < actualTo; i++) {
+					addButton(cars.get(i).jsonify());
+				}
+
+				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+				loadingLock.release();
+			}
+		});
+
+	}
+
+	private void writeCarsToFile() {
+
+		ae.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+
+				try {
+					while (isLoading())
+						Thread.sleep(5);
+					// loaderSemaphore.acquire(2);
+
+					// Iterator<String> iter = cars.iterator();
+					ArrayList<JSONCar> list = new ArrayList<JSONCar>();
+					for (JSONCar car : cars) {
+						// String car = iter.next();
+						list.add(car);
+					}
+
+					System.out.println("writing " + list.size());
+
+					FileObject fileObject = new FileObject();
+					fileObject.setCars(list);
+
+					FileManager.writeToFileGson(list);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					// loaderSemaphore.release(2);
+				}
+
+				return null;
+
+			}
+		});
 
 	}
 
@@ -410,31 +426,37 @@ public class CarSelectorScreen implements Screen {
 		 * };
 		 */
 
-		String prevString = prefs
-				.getString(
-						GamePreferences.CAR_MAP_STR,
-						"{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}");//
+		/*
+		 * String prevString = prefs .getString( GamePreferences.CAR_MAP_STR,
+		 * "{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}"
+		 * );//
+		 * 
+		 * prefs.putString(GamePreferences.CAR_MAP_STR, text); prefs.flush();
+		 */
 
-		prefs.putString(GamePreferences.CAR_MAP_STR, text);
-		prefs.flush();
-
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader);
+		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(200);
 		trd.setMinHeight(140);
 		ImageButton b = new ImageButton(trd);
+		b.setZIndex(100);
 		// b.setPosition(100, 100);
 		b.setSize(100, 100);
 		// stage.addActor(b);
-		prefs.putString(GamePreferences.CAR_MAP_STR, prevString);
-		prefs.flush();
+		/*
+		 * prefs.putString(GamePreferences.CAR_MAP_STR, prevString);
+		 * prefs.flush();
+		 */
 
 		b.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				prefs.putString(GamePreferences.CAR_MAP_STR, text);
-				prefs.flush();
+				/*
+				 * prefs.putString(GamePreferences.CAR_MAP_STR, text);
+				 * prefs.flush();
+				 */
+				gameState.getUser().setCurrentCar(text);
 				gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
 			}
@@ -455,7 +477,8 @@ public class CarSelectorScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+				camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 
@@ -474,7 +497,24 @@ public class CarSelectorScreen implements Screen {
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		Globals.updateScreenInfo();
+	}
 
+	boolean pageDisplayed = false;
+
+	private void showCars() {
+		if (pageDisplayed == false) {
+			buttons.clear();
+			if (tracksTable != null) {
+				tracksTable.clear();
+			}
+			addCarToDisplay(currentPageStart, currentPageEnd);
+			pageDisplayed = true;
+		}
+
+	}
+
+	private boolean isLoading() {
+		return loaderSemaphore.availablePermits() != 2;
 	}
 
 	@Override
@@ -482,9 +522,21 @@ public class CarSelectorScreen implements Screen {
 		renderWorld();
 		popQueManager.update(delta);
 
-		if (!first) {
-			// carLock.unlock();
-			first = true;
+		if (uniqueListLock.tryLock()) {
+			loadedCount = uniquenessButtonList.size();
+
+			uniqueListLock.unlock();
+		}
+
+		if (loadedCount <= currentPageEnd) {
+			if (isLoading()) {
+				;// loading
+			} else {
+				// done loading
+				showCars();
+			}
+		} else {
+			showCars();
 		}
 
 		/*

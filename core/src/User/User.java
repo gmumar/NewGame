@@ -1,19 +1,74 @@
 package User;
 
+import wrapper.GamePreferences;
+import wrapper.Globals;
 import Component.ComponentNames;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 
 public class User {
 
-	private Integer smallBarLevel = 6;
-	private Integer tireLevel = 1;
-	private Integer springLevel = 6;
+	private Integer smallBarLevel = 15;
+	private Integer tireLevel = 15;
+	private Integer springLevel = 15;
 	private Integer money = 10000;
+	private String currentCar = null;
+	private String currentTrack = null;
 
 	private static User instance;
 
 	private User() {
-
+		currentCar = (Globals.defualt_car);
+		currentTrack = (Globals.default_track);
 	}
+
+	public String getCurrentCar() {
+		if(currentCar==null){
+			Preferences prefs = Gdx.app
+					.getPreferences(GamePreferences.CAR_PREF_STR);
+
+			String inputString = prefs
+					.getString(
+							GamePreferences.CAR_MAP_STR,
+							Globals.defualt_car);
+			currentCar = inputString;
+		}
+		
+		return currentCar;
+	}
+
+
+
+
+	public void setCurrentCar(String currentCar) {
+		Preferences prefs = Gdx.app
+				.getPreferences(GamePreferences.CAR_PREF_STR);
+
+		prefs.putString(GamePreferences.CAR_MAP_STR, currentCar);
+		prefs.flush();
+		
+		System.out.println("wrting current car in user "+currentCar);
+		
+		this.currentCar = currentCar;
+	}
+
+
+
+
+	public String getCurrentTrack() {
+		return currentTrack;
+	}
+
+
+
+
+	public void setCurrentTrack(String currentTrack) {
+		this.currentTrack = currentTrack;
+	}
+
+
+
 
 	public Integer getLevel(String partName) {
 

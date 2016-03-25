@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import wrapper.BaseActor;
 import wrapper.CameraManager;
-import wrapper.GamePreferences;
 import wrapper.GamePhysicalState;
 import wrapper.Globals;
 import Component.Component;
@@ -21,11 +21,10 @@ import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import JSONifier.JSONJoint;
 import JSONifier.JSONParentClass;
-import JSONifier.JSONTrack;
 import JSONifier.JSONParentClass.JSONParentType;
+import JSONifier.JSONTrack;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -45,17 +44,17 @@ public class Assembler {
 
 	final private static short CAR = -2;
 
-	public static AssembledObject assembleObject(GamePhysicalState gameState) {
+	public static AssembledObject assembleObject(GamePhysicalState gameState, String inputString) {
 		Integer jointType = 0;
 		
 		AssembledObject obj = new AssembledObject();
-		Preferences prefs = Gdx.app
+		/*Preferences prefs = Gdx.app
 				.getPreferences(GamePreferences.CAR_PREF_STR);
 
 		String inputString = prefs
 				.getString(
 						GamePreferences.CAR_MAP_STR,
-						"{\"jointList\":[{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"3\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"3\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"3\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"2\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"2\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"1\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"1\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"0\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"0\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_TR_\",\"ComponentId\":\"0\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"3\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"4\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"2\",\"MountId\":\"0\"},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"3\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"2\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"0\",\"MountId\":\"0\",\"Level\":1},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"1\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"1\",\"MountId\":\"2\"},\"m2\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_UP_\",\"ComponentId\":\"0\",\"MountId\":\"0\",\"Level\":1}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"0\"},\"m2\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"2\",\"MountId\":\"2\"}},{\"m1\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"2\"},\"m2\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"1\",\"MountId\":\"0\"}},{\"m1\":{\"BaseName\":\"_LF_\",\"ComponentId\":\"0\",\"MountId\":\"0\"},\"m2\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"1\"}}],\"componentList\":[{\"cN\":{\"BaseName\":\"_LF_\",\"SubName\":\"_CMF_\",\"ComponentId\":\"0\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"0.0,0.0\"}},{\"cN\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"0\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"0.008904815,-0.97968745\"}},{\"cN\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"1\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"-30.0\",\"PS\":\"2.2528849,-1.5554688\"}},{\"cN\":{\"BaseName\":\"_B3_\",\"ComponentId\":\"2\",\"MountId\":\"*\",\"Level\":1},\"props\":{\"RT\":\"30.0\",\"PS\":\"-2.2172656,-1.5726564\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"0\"},\"props\":{\"RT\":\"-35.744865\",\"PS\":\"3.2702003,-2.1663425\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"1\"},\"props\":{\"RT\":\"-88.88195\",\"PS\":\"2.480349,-3.350538\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"2\"},\"props\":{\"RT\":\"-91.22624\",\"PS\":\"0.9702445,-3.3822753\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"3\"},\"props\":{\"RT\":\"40.948753\",\"PS\":\"-3.2291574,-2.2037032\"}},{\"cN\":{\"BaseName\":\"_SPJ_\",\"SubName\":\"_LO_\",\"ComponentId\":\"4\"},\"props\":{\"RT\":\"-90.689224\",\"PS\":\"-0.5786072,-3.3631654\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"0\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"2.5933516,-3.3783803\",\"MT\":\"1\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"1\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"0.9976059,-3.4091816\",\"MT\":\"1\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"2\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"-0.59686476,-3.3681068\",\"MT\":\"1\"}},{\"cN\":{\"BaseName\":\"_AX_\",\"ComponentId\":\"3\",\"Level\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"-2.1917672,-3.3857064\",\"MT\":\"1\"}}],\"jointTypeList\":{\"_TR__0_0\":1,\"_SPJ___UP__3_0\":0,\"_SPJ___LO__3_0\":1,\"_TR__2_0\":0,\"_LF__0_0\":0,\"_SPJ___UP__0_0\":0,\"_TR__3_0\":1,\"_SPJ___UP__4_0\":0,\"_B3__2_2\":0,\"_B3__2_1\":0,\"_TR__1_0\":0,\"_SPJ___UP__1_0\":1,\"_B3__2_0\":0,\"_SPJ___LO__0_0\":1,\"_SPJ___UP__2_0\":0,\"_B3__0_0\":0,\"_SPJ___LO__1_0\":0,\"_SPJ___LO__2_0\":0,\"_B3__0_2\":0,\"_SPJ___LO__4_0\":1,\"_B3__0_1\":0,\"_B3__1_0\":0,\"_B3__1_2\":0}}");//
+						Globals.defualt_car);*/
 
 		JSONCar source = new JSONCar();
 		source = JSONCar.objectify(inputString);
@@ -68,11 +67,13 @@ public class Assembler {
 		Iterator<JSONJoint> JointIter = jcomponents.iterator();
 		JSONJoint join;
 		
-		HashMap<String, Integer> jointTypeList = source.getJointTypeList();
-		System.out.println("Assembler : jointType" + jointTypeList);
+		Map<String, Integer> jointTypeList = source.getJointTypeList();
+		//System.out.println("Assembler : jointType" + jointTypeList);
 
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
+			
+			if(join == null || join.getMount1() == null || join.getMount2() == null) continue;
 
 			/*String componentAName = Globals.parseName(join.m1)[0];
 			// System.out.println(componentAName);
@@ -80,7 +81,7 @@ public class Assembler {
 			int componentAMountId = Globals.getMountId(join.m1);*/
 			
 			String componentAName = join.getMount1().getId();
-			System.out.println("Assembler : componentA " + join.getMount1().getMountedId());
+			//System.out.println("Assembler : componentA " + join.getMount1().getMountedId());
 			
 			//if(parts.get(componentAName) == null) continue;
 			
@@ -97,7 +98,7 @@ public class Assembler {
 			int componentBMountId = Globals.getMountId(join.m2);*/
 			
 			String componentBName = join.getMount2().getId();
-			System.out.println("Assembler : componentB " + join.getMount2().getMountedId());
+			//System.out.println("Assembler : componentB " + join.getMount2().getMountedId());
 			//if(parts.get(componentBName) == null) continue;
 			
 			BaseActor bodyB = parts.get(componentBName).getObject();
@@ -105,7 +106,7 @@ public class Assembler {
 			
 			jointType = jointTypeList.get(join.getMount1().getMountedId());
 
-			if(jointType == 1){
+			if(jointType != null && jointType == Globals.ROTATABLE_JOINT){
 				
 				  RevoluteJointDef rJoint = new RevoluteJointDef();
 				  
@@ -136,7 +137,7 @@ public class Assembler {
 		return obj;
 	}
 
-	public static TextureRegion assembleObjectImage(GameLoader gameLoader) {
+	public static TextureRegion assembleObjectImage(GameLoader gameLoader, String inputString) {
 		
 		World tempWorld = new World(new Vector2(0, 0f), false);
 		tempWorld.setWarmStarting(true);
@@ -150,7 +151,7 @@ public class Assembler {
 				1);
 		camera.update();
 
-		AssembledObject object = assembleObject(gameState);
+		AssembledObject object = assembleObject(gameState,inputString);
 		object.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
 
 		tempWorld.step(10, 100, 100);
@@ -206,6 +207,11 @@ public class Assembler {
 			//componentName = Globals.getComponentName(sourceComponent
 			//		.getComponentName());
 			componentName = sourceComponent.getjComponentName();
+			
+			if(componentName==null) continue;
+			
+			//System.out.println(componentName);
+			
 			Integer partLevel = componentName.getLevel() == null ? 1 : componentName.getLevel();
 
 			
@@ -291,7 +297,7 @@ public class Assembler {
 				}
 				//-----------------------------------------------
 				
-				System.out.println("Assembler : sourceComponet: " + componentName);
+				//System.out.println("Assembler : sourceComponet: " + componentName);
 				
 				component = ComponentBuilder.buildComponent(componentName.getBaseName(), partLevel,
 						gameState);
@@ -329,7 +335,7 @@ public class Assembler {
 		
 		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
 		
-		System.out.println("AssembleTrack: " + mapString);
+		//System.out.println("AssembleTrack: " + mapString);
 	
 		HashMap<String, Component> parts = extractComponents(jsonTrack, gameState);
 		Collection<Component> partsCollection = parts.values();
@@ -345,7 +351,7 @@ public class Assembler {
 		ArrayList<JSONJoint> jcomponents = jsonTrack.getJointList();
 		
 		HashMap<String, Integer> jointTypeList = jsonTrack.getComponentJointTypes();
-		System.out.println("Assembler : jointType" + jointTypeList);
+		//System.out.println("Assembler : jointType" + jointTypeList);
 
 		for  (JSONJoint join : jcomponents) {
 
@@ -356,7 +362,7 @@ public class Assembler {
 			int componentAMountId = Globals.getMountId(join.m1);*/
 			
 			String componentAName = join.getMount1().getId();
-			System.out.println("Assembler : componentA " + join.getMount1().getMountedId());
+			//System.out.println("Assembler : componentA " + join.getMount1().getMountedId());
 			
 			//if(parts.get(componentAName) == null) continue;
 			
@@ -373,7 +379,7 @@ public class Assembler {
 			int componentBMountId = Globals.getMountId(join.m2);*/
 			
 			String componentBName = join.getMount2().getId();
-			System.out.println("Assembler : componentB " + join.getMount2().getMountedId());
+			//System.out.println("Assembler : componentB " + join.getMount2().getMountedId());
 			//if(parts.get(componentBName) == null) continue;
 			
 			BaseActor bodyB = parts.get(componentBName).getObject();
@@ -381,7 +387,7 @@ public class Assembler {
 			
 			jointType = jointTypeList.get(join.getMount1().getMountedId());
 
-			if(jointType == 1){
+			if(jointType == Globals.ROTATABLE_JOINT){
 				
 				  RevoluteJointDef rJoint = new RevoluteJointDef();
 				  

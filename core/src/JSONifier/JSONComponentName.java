@@ -6,70 +6,70 @@ import com.badlogic.gdx.utils.Json;
 
 public class JSONComponentName {
 
-	private String BaseName;
-	private String SubName;
-	private String ComponentId = null;
-	private String MountId;
-	private Integer Level;
+	private String B;//BaseName;
+	private String S;//SubName;
+	private String C;//ComponentId = null;
+	private String M;//MountId;
+	private Integer L;//Level;
 
 	public Integer getLevel() {
-		return Level;
+		return L;
 	}
 
 	public void setLevel(Integer level) {
-		Level = level;
+		L = level;
 	}
 
 	public String getBaseName() {
-		return BaseName;
+		return B;
 	}
 
 	public void setBaseName(String baseName) {
-		BaseName = baseName;
+		B = baseName;
 	}
 
 	public String getSubName() {
-		return SubName;
+		return S;
 	}
 
 	public void setSubName(String subName) {
-		SubName = subName;
+		S = subName;
 	}
 
 	public String getComponentId() {
-		return ComponentId;
+		return C;
 	}
 
 	public void setComponentId(String componentId) {
-		ComponentId = componentId;
+		C = componentId;
 	}
 
 	public String getMountId() {
-		return MountId;
+		return M;
 	}
 
 	public void setMountId(String mountId) {
-		MountId = mountId;
+		M = mountId;
 	}
 
 	public String getBaseId() {
-		return BaseName + "_" + ComponentId;
+		return B + "_" + C;
 	}
 	
 	public String getMountedId() {
-		if (BaseName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			return BaseName + "_" + SubName + "_" + ComponentId + "_" + MountId;
+		if (B.compareTo(ComponentNames.SPRINGJOINT) == 0) {
+			return B + "_" + S + "_" + C + "_" + M;
 		} else {
-			return BaseName + "_" + ComponentId + "_" + MountId;
+			return B + "_" + C + "_" + M;
 		}
 
 	}
 
 	public String getId() {
-		if (BaseName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			return BaseName + "_" + SubName + "_" + ComponentId;
+		if (B.compareTo(ComponentNames.SPRINGJOINT) == 0) {
+			return B + "_" + S + "_" + C;
 		} else {
-			return BaseName + "_" + ComponentId;
+			return B + "_" + C;
 		}
 
 	}

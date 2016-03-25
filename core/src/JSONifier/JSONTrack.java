@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ public class JSONTrack extends JSONParentClass {
 		if(componentList == null) return;
 		
 		for (JSONComponent component : componentList) {
-			HashMap<String, String> originalProperties = component
+			Map<String, String> originalProperties = component
 					.getProperties();
 			Set<Entry<String, String>> props = originalProperties.entrySet();
 

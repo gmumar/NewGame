@@ -98,6 +98,7 @@ public class PopQueManager {
 	private void createLoadingDialog() {
 		dialog = new TextDialog("Loading", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
+		dialog.setZIndex(1);
 		dialog.show(stage);
 	}
 

@@ -1,6 +1,7 @@
 package JSONifier;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.utils.Json;
 
@@ -8,7 +9,7 @@ public class JSONComponent {
 
 	//private String cN;//componentName
 	private JSONComponentName cN;
-	private HashMap<String, String> props;
+	private Map<String, String> props;
 
 	public String jsonify() {
 		Json json = new Json();
@@ -57,11 +58,11 @@ public class JSONComponent {
 		return cN.getMountId();
 	}
 	
-	public HashMap<String, String> getProperties() {
+	public Map<String, String> getProperties() {
 		return props;
 	}
 
-	public void setProperties(HashMap<String, String> properties) {
+	public void setProperties(Map<String, String> properties) {
 		this.props = properties;
 	}
 

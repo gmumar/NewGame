@@ -1,7 +1,9 @@
 package com.gudesigns.climber;
 
-import wrapper.GameAssetManager;
+import java.util.ArrayList;
+
 import wrapper.Globals;
+import JSONifier.JSONCar;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
@@ -15,12 +17,12 @@ public class GameLoader extends Game {
 	private LoaderScreen loadScreen;
 	
 	public AssetManager Assets;
+	public ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
 	
 	@Override
 	public void create() {
 		Globals.updateScreenInfo();
-		Assets = new GameAssetManager();
-		
+		Assets = new AssetManager();//new GameAssetManager();
 		//gamePlayScreen = new GamePlayScreen(this);
 		//builderScreen = new BuilderScreen(this);
 		//menuScreen = new MainMenuScreen(this);

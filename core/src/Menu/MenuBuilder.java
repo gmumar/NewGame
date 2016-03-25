@@ -66,6 +66,7 @@ public class MenuBuilder {
 	private boolean mouseJoined = false;
 
 	private ArrayList<Component> parts = new ArrayList<Component>();
+	private HashMap<String, Component> lastSelectedMapping = new HashMap<String, Component>();
 	private JSONCompiler compiler = new JSONCompiler();
 	private AssemblyRules assemblyRules = new AssemblyRules();
 	private HashMap<String, Integer> jointTypes = new HashMap<String, Integer>();
@@ -80,6 +81,7 @@ public class MenuBuilder {
 
 	private BackendFunctions backend;
 
+	private User user;
 	volatile private int partLevel = 1;
 	
 	// private FixtureDef mouseFixture;
@@ -95,6 +97,7 @@ public class MenuBuilder {
 		this.stage = stage;
 		this.camera = secondCamera;
 		this.mouseJoined = false;
+		this.user = user;
 		// this.user = user;
 		MenuBuilder.fixtureRenderer = shapeRenderer;
 
@@ -144,6 +147,7 @@ public class MenuBuilder {
 				System.out.println("MenuBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
+				//lastSelected = parts.get(parts.size()-1).getObject().getPhysicsBody();
 			}
 		};
 
@@ -170,6 +174,7 @@ public class MenuBuilder {
 				System.out.println("MenuBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
+				//lastSelected = parts.get(parts.size()-1).getObject().getPhysicsBody();
 			}
 		};
 
@@ -196,6 +201,7 @@ public class MenuBuilder {
 				System.out.println("MenuBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
+				//lastSelected = parts.get(parts.size()-1).getObject().getPhysicsBody();
 			}
 		};
 
@@ -234,34 +240,8 @@ public class MenuBuilder {
 					world.destroyBody(fixture.getBody());
 					return;
 				}
-
-				for (Component part : parts) {
-					// ----------------------- HACK ----------------------
-					if (part.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
-
-						String swappedId = part
-								.getjComponentName()
-								.getId()
-								.replace(ComponentNames.AXLE,
-										ComponentNames.TIRE);
-						if (swappedId.compareTo(((JSONComponentName) fixture
-								.getUserData()).getId()) == 0) {
-							parts.remove(part);
-							break;
-						}
-					}
-					// --------------------------------------------------
-					else {
-						if (part.getjComponentName()
-								.getId()
-								.compareTo(
-										((JSONComponentName) fixture
-												.getUserData()).getId()) == 0) {
-							parts.remove(part);
-							break;
-						}
-					}
-				}
+				
+				parts.remove(lookupPart(lastSelected));
 
 				Array<JointEdge> joints = lastSelected.getJointList();
 
@@ -323,7 +303,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				if (buildCar()) {
-					backend.uploadCar();
+					backend.uploadCar(user.getCurrentCar());
 				}
 			}
 
@@ -385,10 +365,17 @@ public class MenuBuilder {
 					if (partLevel >= 15) {
 						partLevel = 15;
 					}
+					
+					Component c = lookupPart(lastSelected);
+					
+					c.setPartLevel(partLevel);
+					
 					((JSONComponentName) lastSelected.getUserData())
 							.setLevel(partLevel);
 
-					Array<JointEdge> joints = lastSelected.getJointList();
+					System.out.println("MenuBulder: " + c.getjComponentName());
+					
+					Array<JointEdge> joints = c.getObject().getPhysicsBody().getJointList();
 
 					for (JointEdge joint : joints) {
 						((JSONComponentName) joint.other.getUserData())
@@ -414,10 +401,18 @@ public class MenuBuilder {
 						partLevel = 1;
 					}
 
+					
+					
+					Component c = lookupPart(lastSelected);
+					
+					c.setPartLevel(partLevel);
+					
 					((JSONComponentName) lastSelected.getUserData())
 							.setLevel(partLevel);
+
+					System.out.println("MenuBulder: " + c.getjComponentName());
 					
-					Array<JointEdge> joints = lastSelected.getJointList();
+					Array<JointEdge> joints = c.getObject().getPhysicsBody().getJointList();
 
 					for (JointEdge joint : joints) {
 						((JSONComponentName) joint.other.getUserData())
@@ -427,16 +422,16 @@ public class MenuBuilder {
 			}
 		};
 
+		levelDown.setPosition(Globals.ScreenWidth - 75, 200);
+		levelDown.setHeight(50);
+		levelDown.setWidth(50);
+		stage.addActor(levelDown);
+		
 		partLevelText = new TextBox("1");
 		partLevelText.setPosition(Globals.ScreenWidth - 75, 250);
 		partLevelText.setHeight(50);
 		partLevelText.setWidth(50);
 		stage.addActor(partLevelText);
-
-		levelDown.setPosition(Globals.ScreenWidth - 75, 200);
-		levelDown.setHeight(50);
-		levelDown.setWidth(50);
-		stage.addActor(levelDown);
 
 		exit = new Button("exit") {
 			@Override
@@ -460,6 +455,56 @@ public class MenuBuilder {
 
 	}
 	
+	private Component lookupPart(Body last) {
+		
+		Array<Fixture> fixtures = lastSelected.getFixtureList();
+		Fixture fixture = null;
+
+		for (Fixture fixtureIter : fixtures) {
+			if (fixtureIter.getUserData() == null)
+				continue;
+			fixture = fixtureIter;
+			break;
+		}
+
+		if (fixture == null){
+			return null;
+		}
+		
+		if (fixture.getUserData() == null) {
+			return null;
+		}
+		
+		for (Component part : parts) {
+			// ----------------------- HACK ----------------------
+			if (part.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+
+				String swappedId = part
+						.getjComponentName()
+						.getId()
+						.replace(ComponentNames.AXLE,
+								ComponentNames.TIRE);
+				if (swappedId.compareTo(((JSONComponentName) fixture
+						.getUserData()).getId()) == 0) {
+					return (part);
+				}
+			}
+			// --------------------------------------------------
+			else {
+				if (part.getjComponentName()
+						.getId()
+						.compareTo(
+								((JSONComponentName) fixture
+										.getUserData()).getId()) == 0) {
+					return (part);
+					
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public void drawForBuilder(SpriteBatch batch) {
 
 
@@ -467,11 +512,11 @@ public class MenuBuilder {
 		
 		String name = ((JSONComponentName)lastSelected.getUserData()).getBaseId();
 
-		for (Component part : parts) {
+		/*for (Component part : parts) {
 			if(part.getjComponentName().getBaseId().compareTo(name)==0){
 				part.draw(batch);
 			}
-		}
+		}*/
 
 	}
 
@@ -604,7 +649,7 @@ public class MenuBuilder {
 
 	private boolean buildCar() {
 		if (assemblyRules.checkBuild(world, baseObject, parts)) {
-			compiler.compile(world, parts, jointTypes);
+			user.setCurrentCar(compiler.compile(world, parts, jointTypes));
 			return true;
 		} else {
 			return false;
@@ -869,7 +914,7 @@ public class MenuBuilder {
 
 			jointTypes.put(key, count);
 		} else {
-			jointTypes.put(key, 0);
+			jointTypes.put(key, Globals.LOCKED_JOINT);
 		}
 
 	}

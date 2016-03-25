@@ -1,6 +1,5 @@
 package Component;
 
-import JSONifier.JSONComponentName;
 
 public class ComponentProperties {
 	

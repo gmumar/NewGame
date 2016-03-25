@@ -1,33 +1,36 @@
 package JSONifier;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
-public class JSONCar extends JSONParentClass{
+public class JSONCar extends JSONParentClass {
 
 	private ArrayList<JSONJoint> jointList = null;
 	private ArrayList<JSONComponent> componentList = null;
-	private HashMap<String,Integer> jointTypeList = null;
-	
-	public String jsonify(){
-		Json obj = new Json();
-		obj.setIgnoreUnknownFields(true);
+	private Map<String, Integer> jointTypeList = null;
+	private static JsonParser parser = new JsonParser();
+
+	public String jsonify() {
+		Gson obj = new Gson();
+		//obj.setIgnoreUnknownFields(true);
 		return obj.toJson(this);
 	}
-	
-	public static JSONCar objectify(String str){
-		Json json = new Json();
-		json.setIgnoreUnknownFields(true);
-		return json.fromJson(JSONCar.class, str);
+
+	public static JSONCar objectify(String str) {
+		Gson json = new Gson();
+		//json.setIgnoreUnknownFields(true);
+		return json.fromJson(str, JSONCar.class);
 	}
-	
+
 	public ArrayList<JSONJoint> getJointList() {
 		return jointList;
 	}
-	
+
 	@Override
 	public ArrayList<JSONComponent> getComponentList() {
 		return componentList;
@@ -36,38 +39,42 @@ public class JSONCar extends JSONParentClass{
 	public void setComponentList(ArrayList<JSONComponent> parts) {
 		componentList = parts;
 	}
-	
+
 	public void setJointList(ArrayList<JSONJoint> joints) {
 		jointList = joints;
 	}
 
-	public HashMap<String, Integer> getJointTypeList() {
+	public Map<String, Integer> getJointTypeList() {
 		return jointTypeList;
 	}
 
-	public void setJointTypeList(HashMap<String, Integer> jointTypeList) {
+	public void setJointTypeList(Map<String, Integer> jointTypeList) {
 		this.jointTypeList = jointTypeList;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return (this.jsonify().compareTo(((JSONCar)obj).jsonify())==0);
+
+		JsonElement o1 = parser.parse(this.jsonify());
+		JsonElement o2 = parser.parse(((JSONCar) obj).jsonify());
+
+		return o1.equals(o2);
 	}
-	
-	public String getId(){
+
+	public String getId() {
 		String ret = "";
 		Iterator<JSONJoint> jointIter = jointList.iterator();
-		while(jointIter.hasNext()){
+		while (jointIter.hasNext()) {
 			JSONJoint joint = jointIter.next();
 			ret += joint.jsonify();
 		}
-		
+
 		Iterator<JSONComponent> componentIter = componentList.iterator();
-		while(componentIter.hasNext()){
+		while (componentIter.hasNext()) {
 			JSONComponent component = componentIter.next();
 			ret += component.jsonify();
 		}
-		
+
 		return ret;
 	}
 
@@ -75,5 +82,5 @@ public class JSONCar extends JSONParentClass{
 	public JSONParentType getParentType() {
 		return JSONParentType.CAR;
 	}
-	
+
 }

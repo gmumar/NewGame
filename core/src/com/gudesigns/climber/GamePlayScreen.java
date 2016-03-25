@@ -98,7 +98,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		//debugRenderer = new Box2DDebugRenderer();
 		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
-				this.gameLoader));
+				this.gameLoader), gameState.getUser().getCurrentCar());
 		builtCar.setPosition(0, 50);
 
 		initShader();

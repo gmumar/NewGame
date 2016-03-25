@@ -105,8 +105,8 @@ public class GroundBuilder {
 		createFloor();
 		decor = new GroundDecor(gameState);
 
-		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, null);
-		// System.out.println(mapString);
+		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, Globals.default_track);
+
 		if (mapString == null) {
 			infinate = true;
 		} else {

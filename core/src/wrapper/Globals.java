@@ -12,7 +12,7 @@ public class Globals {
 	static public int ScreenHeight;
 	static public int ScreenWidth;
 	static public float AspectRatio;
-
+	
 	final static public int GameHeight = 480;
 	final static public int GameWidth = 720;
 	
@@ -32,6 +32,9 @@ public class Globals {
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
 	final public static int VERSION = 4;
+	
+	final public static int ROTATABLE_JOINT = 1;
+	final public static int LOCKED_JOINT = 0;
 	
 
 	public static void  runOnUIThread(Runnable runnable){
@@ -92,5 +95,8 @@ public class Globals {
 		}
 		return false;
 	}
+	
+	public static final String defualt_car = "{\"jointList\":[],\"componentList\":[{\"cN\":{\"B\":\"LF\",\"S\":\"CMF\",\"C\":\"0\",\"M\":\"*\",\"L\":1},\"props\":{\"RT\":\"0.0\",\"PS\":\"0.0,0.0\"}}],\"jointTypeList\":{}}";
+	final public static String default_track = "{points:[{x:2},{x:2},{x:2},{x:4,y:0.5999994},{x:6,y:0.5999994},{x:8,y:0.5999994},{x:10,y:0.5999994},{x:12,y:0.39999962},{x:14,y:0.39999962},{x:16,y:0.33333206},{x:18,y:0.06666756},{x:20},{x:22,y:-0.066666126}],componentList:[],componentJointList:[],componentJointTypes:{}}";
 
 }

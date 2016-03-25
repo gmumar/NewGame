@@ -61,7 +61,7 @@ public class MainMenuScreen implements Screen {
 		initWorld();
 		initShader();
 		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
-				this.gameLoader));
+				this.gameLoader), gameState.getUser().getCurrentCar());
 		builtCar.setPosition(4, 50);
 		builtCar.setMaxVelocity(20);
 		batch = new SpriteBatch();

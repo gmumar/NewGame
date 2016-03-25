@@ -3,8 +3,11 @@ package JSONifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import wrapper.GamePreferences;
+import wrapper.Globals;
 import Component.Component;
 import Component.Component.ComponentTypes;
 import GroundWorks.GroundUnitDescriptor;
@@ -23,8 +26,8 @@ public class JSONCompiler {
 			HashMap<String, Integer> jointTypes) {
 
 		JSONCar car = new JSONCar();
-		Preferences prefs = Gdx.app
-				.getPreferences(GamePreferences.CAR_PREF_STR);
+		/*Preferences prefs = Gdx.app
+				.getPreferences(GamePreferences.CAR_PREF_STR);*/
 
 		// component list
 		ArrayList<JSONComponent> JSONparts = new ArrayList<JSONComponent>();
@@ -34,6 +37,9 @@ public class JSONCompiler {
 					|| part.getComponentTypes() == ComponentTypes.JOINT) {
 				// JSONparts.add(part.toJSONComponent((String) part.getObject()
 				// .getPhysicsBody().getUserData()));
+				
+				System.out.println("JSONCompiler: "+part.getjComponentName());
+				
 				JSONparts.add(part.toJSONComponent(part.getjComponentName()));
 
 			}/*
@@ -89,14 +95,25 @@ public class JSONCompiler {
 				joints.add(joint);
 		}
 		car.setJointList(joints);
+		
+		HashMap<String, Integer> shortJointTypes = new HashMap<String, Integer>();
+		Set<Entry<String, Integer>> jointTypesIter = jointTypes.entrySet();
+		
+		for(Entry<String, Integer> jointType : jointTypesIter){
+			if(jointType.getValue()==Globals.ROTATABLE_JOINT){
+				shortJointTypes.put(jointType.getKey(), jointType.getValue());
+			}
+		}
 
-		car.setJointTypeList(jointTypes);
+		car.setJointTypeList(shortJointTypes);
 
-		prefs.putString(GamePreferences.CAR_MAP_STR, car.jsonify());
+		/*prefs.putString(GamePreferences.CAR_MAP_STR, car.jsonify());
 		prefs.flush();
 
 		System.out.println("JSONCompiler :car str "
-				+ prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
+				+ prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));*/
+		
+		
 
 		return car.jsonify();
 	}
