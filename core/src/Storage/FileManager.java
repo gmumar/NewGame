@@ -12,6 +12,7 @@ import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
 
 import JSONifier.JSONCar;
+import JSONifier.JSONTrack;
 import RESTWrapper.Gzip;
 
 import com.badlogic.gdx.Gdx;
@@ -23,6 +24,7 @@ public class FileManager {
 
 	public final static String FILE_NAME = "myfile.txt";
 	public final static String CAR_FILE_NAME = "mycarfile.txt";
+	public final static String TRACK_FILE_NAME = "mytrackfile.txt";
 
 	public static void writeToFile(FileObject objectIn) {
 
@@ -65,12 +67,31 @@ public class FileManager {
 
 	}
 
-	public static void writeToFileGson(ArrayList<JSONCar> objectIn) {
+	public static void writeCarsToFileGson(ArrayList<JSONCar> objectIn) {
 
 		Gson json = new Gson();
 		String strToWrite;
 
 		FileHandle handle = Gdx.files.external(CAR_FILE_NAME);
+
+		strToWrite = json.toJson(objectIn);
+		// handle.writeString(strToWrite, false);
+
+		try {
+			handle.writeBytes(Gzip.compress(strToWrite), false);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	public static void writeTracksToFileGson(ArrayList<JSONTrack> objectIn) {
+
+		Gson json = new Gson();
+		String strToWrite;
+
+		FileHandle handle = Gdx.files.external(TRACK_FILE_NAME);
 
 		strToWrite = json.toJson(objectIn);
 		// handle.writeString(strToWrite, false);

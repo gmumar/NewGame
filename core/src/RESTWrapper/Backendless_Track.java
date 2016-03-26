@@ -26,8 +26,6 @@ public class Backendless_Track implements Json.Serializable {
 
 		JsonValue localData = jsonData.get("data");
 		
-		//System.out.println(totalObjects);
-
 		JsonIterator iter = localData.iterator();
 		while (iter.hasNext()) {
 			JsonValue item = iter.next();
@@ -43,7 +41,6 @@ public class Backendless_Track implements Json.Serializable {
 				e.printStackTrace();
 			}
 
-			//System.out.println(car);
 			data.add(track);
 		}
 

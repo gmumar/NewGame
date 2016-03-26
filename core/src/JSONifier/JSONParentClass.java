@@ -10,5 +10,6 @@ public abstract class JSONParentClass {
 	public abstract void setJointList(ArrayList<JSONJoint> joints) ;
 	public abstract JSONParentType getParentType() ;
 	public abstract ArrayList<JSONJoint> getJointList() ;
+	public abstract String jsonify();
 
 }

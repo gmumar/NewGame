@@ -5,16 +5,14 @@ import java.util.Random;
 
 import wrapper.CameraManager;
 import wrapper.GamePhysicalState;
-import wrapper.GamePreferences;
 import wrapper.Globals;
 import Assembly.AssembledTrack;
 import Assembly.Assembler;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 import Shader.GameMesh;
+import User.User;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -69,9 +67,6 @@ public class GroundBuilder {
 
 	private ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
 
-	private Preferences prefs = Gdx.app
-			.getPreferences(GamePreferences.CAR_PREF_STR);
-
 	private Assembler assembler = new Assembler();
 
 	private Integer lastDrawnPointer = 0;
@@ -95,7 +90,7 @@ public class GroundBuilder {
 
 	public GroundBuilder(GamePhysicalState gameState,
 			final CameraManager camera, ShaderProgram shader,
-			ShaderProgram colorShader, boolean forMainMenu) {
+			ShaderProgram colorShader, boolean forMainMenu, User user) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
@@ -105,7 +100,7 @@ public class GroundBuilder {
 		createFloor();
 		decor = new GroundDecor(gameState);
 
-		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, Globals.default_track);
+		String mapString = user.getCurrentTrack();
 
 		if (mapString == null) {
 			infinate = true;

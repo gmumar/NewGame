@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
 
 public class JSONTrack extends JSONParentClass {
 
@@ -87,9 +88,9 @@ public class JSONTrack extends JSONParentClass {
 	}
 
 	public static JSONTrack objectify(String str) {
-		Json json = new Json();
-		json.setIgnoreUnknownFields(true);
-		return json.fromJson(JSONTrack.class, str);
+		Gson json = new Gson();
+		//json.setIgnoreUnknownFields(true);
+		return json.fromJson(str, JSONTrack.class);
 	}
 
 	@Override

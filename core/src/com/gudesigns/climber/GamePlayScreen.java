@@ -70,8 +70,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	boolean paused = true;
 
 	private PopQueManager popQueManager;
-	
-	//private Box2DDebugRenderer debugRenderer ;
+
+	// private Box2DDebugRenderer debugRenderer ;
 
 	// ---- Game Play ----
 	private float progress = 0;
@@ -81,6 +81,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private float gameOverOffset = 0;
 	private GameContactListener contactListener = new GameContactListener();
 	private int slowMoFactor = 1;
+
 	// -------------------
 
 	public GamePlayScreen(GameState gameState) {
@@ -96,14 +97,15 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.add(new TouchUnit());
 		}
 
-		//debugRenderer = new Box2DDebugRenderer();
+		// debugRenderer = new Box2DDebugRenderer();
 		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
 				this.gameLoader), gameState.getUser().getCurrentCar());
 		builtCar.setPosition(0, 50);
 
 		initShader();
 		ground = new GroundBuilder(new GamePhysicalState(this.world,
-				this.gameLoader), camera, shader, colorShader, false);
+				this.gameLoader), camera, shader, colorShader, false,
+				gameState.getUser());
 
 		currentTrackLen = ground.getTotalTrackLength();
 		initHud();
@@ -199,7 +201,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
-		
+
 		renderWorld(delta);
 
 		scrollingBackground.draw();
@@ -216,8 +218,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		stage.draw();
 		popQueManager.update(delta);
-		
-		//debugRenderer.render(world, camera.combined);
+
+		// debugRenderer.render(world, camera.combined);
 
 	}
 
@@ -229,7 +231,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 		}
 
-		if (gameLost){
+		if (gameLost) {
 			slowMoFactor = slowMoFactor < 4 ? slowMoFactor + 1 : slowMoFactor;
 			return;
 		}
@@ -261,7 +263,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	final private void renderWorld(float delta) {
 
-		dlTime = delta / (1.1f );
+		dlTime = delta / (1.1f);
 
 		fixedStep += dlTime;
 
@@ -286,7 +288,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 
 			if (!ground.loading) {
-				world.step(fixedStep/slowMoFactor, 40, 20);
+				world.step(fixedStep / slowMoFactor, 40, 20);
 			}
 
 			if (timePassed > 2) {

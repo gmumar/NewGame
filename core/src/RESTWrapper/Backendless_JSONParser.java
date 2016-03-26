@@ -7,7 +7,7 @@ public class Backendless_JSONParser {
 	public static Backendless_Car processDownloadedCars(String input){
 		Json json = new Json();
 		
-		Backendless_Car obj = json.fromJson(Backendless_Car.class, input);
+		Backendless_Car obj = json.fromJson(Backendless_Car.class,input);
 		
 		//System.out.println(obj.getTotalObjects());
 		
@@ -18,7 +18,7 @@ public class Backendless_JSONParser {
 	public static Backendless_Track processDownloadedTrack(String input){
 		Json json = new Json();
 		
-		Backendless_Track obj = json.fromJson(Backendless_Track.class, input);
+		Backendless_Track obj = json.fromJson(Backendless_Track.class,input);
 		
 		//System.out.println(obj.getTotalObjects());
 		
