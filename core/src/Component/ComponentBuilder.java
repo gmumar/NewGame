@@ -62,8 +62,8 @@ public class ComponentBuilder {
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.BAR3);
 
-		int textureLevel = (int) Math.ceil(level/3f);
-		
+		int textureLevel = (int) Math.ceil(level / 3f);
+
 		properties.setDensity(10 * 15 / level);
 		properties.setTexture("bar/level" + textureLevel + ".png");
 
@@ -122,7 +122,6 @@ public class ComponentBuilder {
 		properties.setFriction(0.1f);
 		properties.setDensity(100);
 		properties.setTexture("temp_tire_2.png");
-
 		componentName.setBaseName(ComponentNames.WHEEL);
 		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
 		CircleShape shape = new CircleShape();
@@ -134,7 +133,9 @@ public class ComponentBuilder {
 		shape.setRadius(tmpActor.getWidth() / 2);
 		tmpActor.setShapeBase(shape);
 		componentName.setBaseName(ComponentNames.AXLE);
-		BaseActor fixture = new BaseActor(componentName, gameState);
+		ComponentProperties axleProperties = new ComponentProperties();
+		BaseActor fixture = new BaseActor(componentName, axleProperties,
+				gameState);
 		// fixture.setPosition(tmpActor.getCenter().x, tmpActor.getCenter().y);
 		// fixture.setMounts(mounts, 0.0f);
 		fixture.setScale(0.3f);
@@ -182,7 +183,11 @@ public class ComponentBuilder {
 
 		ComponentProperties properties = new ComponentProperties();
 		properties.setDensity(10);
-		properties.setTexture("suspension_lower.png");
+		if (forBuilder) {
+			properties.setTexture("suspension_upper.png");
+		} else {
+			properties.setTexture("suspension_lower.png");
+		}
 
 		float springHeight = 1.5f;
 		float springTravel = 0.5f;
@@ -193,28 +198,8 @@ public class ComponentBuilder {
 			springHeight = 1.1f;
 		}
 
-		// Setup mounts, shape
-		/*
-		 * BaseActor tmpActor = new BaseActor(ComponentNames.springJoint.name(),
-		 * "temp_spring.png", world);
-		 * 
-		 * tmpActor.setPosition(0, 0); tmpActor.setSensor();
-		 * 
-		 * 
-		 * ArrayList<Vector2> mounts = new ArrayList<Vector2>(); mounts.add(new
-		 * Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y - height));
-		 * mounts.add(new Vector2(tmpActor.getCenter().x, tmpActor.getCenter().y
-		 * + height)); tmpActor.destroy();
-		 */
-
-		/*
-		 * BaseActor topFixture = new BaseActor( ComponentNames.SPRINGJOINT +
-		 * Assembler.NAME_SUBNAME_SPLIT + ComponentSubNames.UPPER,
-		 * "suspension_lower.png", gameState);
-		 */
-
-		BaseActor topFixture = new BaseActor(componentNameUpper,
-				"suspension_lower.png", gameState);
+		BaseActor topFixture = new BaseActor(componentNameUpper, properties,
+				gameState);
 
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(topFixture.getCenter());
@@ -243,10 +228,14 @@ public class ComponentBuilder {
 		JSONComponentName componentNameLower = new JSONComponentName();
 		componentNameLower.setBaseName(ComponentNames.SPRINGJOINT);
 		componentNameLower.setSubName(ComponentSubNames.LOWER);
-		properties.setTexture("suspension_upper.png");
-
-		BaseActor botFixture = new BaseActor(componentNameLower,
-				"suspension_upper.png", gameState);
+		if(forBuilder){
+			properties.setTexture("suspension_lower.png");
+		}else {
+			properties.setTexture("suspension_upper.png");
+		}
+		
+		BaseActor botFixture = new BaseActor(componentNameLower, properties,
+				gameState);
 
 		/*
 		 * BaseActor botFixture = new BaseActor( ComponentNames.SPRINGJOINT +
@@ -351,12 +340,11 @@ public class ComponentBuilder {
 
 		tmpActor.setDensity(5);
 		tmpActor.setScale(0.6f);
-		
-		
-		if(!forBuilder){
+
+		if (!forBuilder) {
 			CircleShape shape = new CircleShape();
 			shape.setRadius(0.5f);
-			
+
 			tmpActor.setShapeBase(shape);
 		}
 
@@ -440,7 +428,7 @@ public class ComponentBuilder {
 	public static Component buildTrackPost(GamePhysicalState gamePhysicalState,
 			int partLevel, boolean forBuilder) {
 
-		//System.out.println("ComponentBuilder: building Post");
+		// System.out.println("ComponentBuilder: building Post");
 
 		ComponentProperties properties = new ComponentProperties();
 		JSONComponentName componentName = new JSONComponentName();
@@ -505,7 +493,7 @@ public class ComponentBuilder {
 
 		return tmpComponent;
 	}
-	
+
 	public static Component buildTrackBall(GamePhysicalState gamePhysicalState,
 			int partLevel, boolean forBuilder) {
 
@@ -523,8 +511,8 @@ public class ComponentBuilder {
 				gamePhysicalState);
 
 		CircleShape shape = new CircleShape();
-		shape.setRadius(0.2f );
-		
+		shape.setRadius(0.2f);
+
 		tmpActor.setShapeBase(shape);
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				componentName);

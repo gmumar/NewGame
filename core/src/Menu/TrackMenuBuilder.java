@@ -78,7 +78,6 @@ public class TrackMenuBuilder {
 		this.backend = new BackendFunctions();
 		this.gameLoader = gamePhysicalState.getGameLoader();
 		this.world = gamePhysicalState.getWorld();
-		this.fixtureRenderer = fixtureRenderer;
 
 		compiler = new JSONCompiler();
 
@@ -524,8 +523,6 @@ public class TrackMenuBuilder {
 				if (hitBodyName.getBaseName().compareTo(ComponentNames.LIFE) == 0) {
 					return true;
 				}
-
-				int partLevel = 1;// hitBodyName.getLevel();
 
 				mouseJoined = true;
 

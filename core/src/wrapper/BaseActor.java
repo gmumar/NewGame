@@ -3,7 +3,6 @@ package wrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import Component.ComponentNames;
 import Component.ComponentProperties;
 import JSONifier.JSONComponentName;
 
@@ -121,7 +120,12 @@ public class BaseActor {
 		this.friction = (properties.getFriction() == -1) ? this.friction  : properties.getFriction();
 		this.setFixtureData = properties.isSetFixtureData();
 		
-		this.texture = gameState.getGameLoader().Assets.get(textureStr,Texture.class);
+		if(textureStr!=null){
+			this.texture = gameState.getGameLoader().Assets.get(textureStr,Texture.class);
+		} else {
+			this.onlyPhysicBody = true;
+		}
+		
 		this.name = name;
 		this.world = gameState.getWorld();
 	

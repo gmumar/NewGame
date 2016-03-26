@@ -3,7 +3,6 @@ package Storage;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -130,7 +129,6 @@ public class FileManager {
 		if (!handle.exists())
 			return null;
 
-		InputStream input = handle.read();
 		Reader reader = null;
 		try {
 

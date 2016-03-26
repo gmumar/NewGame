@@ -56,7 +56,7 @@ public class MenuBuilder {
 	private Button but, tire_but, spring_but, zoomIn, zoomOut, rotateLeft,
 			rotateRight, build, exit, upload, levelUp, levelDown, delete;
 
-	private TextBox partLevelText;
+	private TextBox partLevelText, moneyBox;
 
 	private Vector3 mousePoint = new Vector3();
 	private Body hitBody, lastSelected = null, baseObject;
@@ -66,7 +66,6 @@ public class MenuBuilder {
 	private boolean mouseJoined = false;
 
 	private ArrayList<Component> parts = new ArrayList<Component>();
-	private HashMap<String, Component> lastSelectedMapping = new HashMap<String, Component>();
 	private JSONCompiler compiler = new JSONCompiler();
 	private AssemblyRules assemblyRules = new AssemblyRules();
 	private HashMap<String, Integer> jointTypes = new HashMap<String, Integer>();
@@ -83,7 +82,9 @@ public class MenuBuilder {
 
 	private User user;
 	volatile private int partLevel = 1;
-	
+
+	private MenuBuilder instance;
+
 	// private FixtureDef mouseFixture;
 	// BaseActor mouseActor;
 
@@ -98,12 +99,13 @@ public class MenuBuilder {
 		this.camera = secondCamera;
 		this.mouseJoined = false;
 		this.user = user;
+		this.instance = this;
 		// this.user = user;
 		MenuBuilder.fixtureRenderer = shapeRenderer;
 
 		BodyDef bodyDef = new BodyDef();
 		world.createBody(bodyDef);
-		
+
 		drawBox(LIMIT_BOX_X, LIMIT_BOX_Y, LIMIT_BOX_X_LEN, LIMIT_BOX_Y_LEN);
 
 		// Add life regardless
@@ -147,7 +149,8 @@ public class MenuBuilder {
 				System.out.println("MenuBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
-				//lastSelected = parts.get(parts.size()-1).getObject().getPhysicsBody();
+				// lastSelected =
+				// parts.get(parts.size()-1).getObject().getPhysicsBody();
 			}
 		};
 
@@ -174,7 +177,17 @@ public class MenuBuilder {
 				System.out.println("MenuBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
-				//lastSelected = parts.get(parts.size()-1).getObject().getPhysicsBody();
+
+				// --------------- HACK ------------------
+				if (((JSONComponentName) lastSelected.getUserData())
+						.getBaseName().compareTo(ComponentNames.TIRE) == 0) {
+					((JSONComponentName) lastSelected.getUserData())
+							.setBaseName(ComponentNames.AXLE);
+				}
+				// ---------------------------------------
+
+				// lastSelected =
+				// parts.get(parts.size()-1).getObject().getPhysicsBody();
 			}
 		};
 
@@ -201,7 +214,8 @@ public class MenuBuilder {
 				System.out.println("MenuBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				parts.add(c);
-				//lastSelected = parts.get(parts.size()-1).getObject().getPhysicsBody();
+				// lastSelected =
+				// parts.get(parts.size()-1).getObject().getPhysicsBody();
 			}
 		};
 
@@ -240,8 +254,8 @@ public class MenuBuilder {
 					world.destroyBody(fixture.getBody());
 					return;
 				}
-				
-				parts.remove(lookupPart(lastSelected));
+
+				parts.remove(lookupLastPart());
 
 				Array<JointEdge> joints = lastSelected.getJointList();
 
@@ -351,36 +365,32 @@ public class MenuBuilder {
 			public void Clicked() {
 
 				if (lastSelected != null) {
-					int level = user.getLevel(((JSONComponentName) lastSelected
-							.getUserData()).getBaseName());
+					JSONComponentName lastSelectName = (JSONComponentName) lastSelected
+							.getUserData();
+					int level = user.getLevel(lastSelectName.getBaseName());
 
-					if (partLevel + 1 > level) {
+					if (partLevel + 1 > level
+							&& !(partLevel >= User.getMaxLevel(lastSelectName
+									.getBaseName()))) {
+
 						((JSONComponentName) lastSelected.getUserData())
 								.setLevel(partLevel);
-						popQueManager.push(new PopQueObject(PopQueObjectType.BUY));
+						popQueManager
+								.push(new PopQueObject(PopQueObjectType.BUY,
+										lastSelectName.getBaseName(),
+										partLevel + 1, instance));
 						return;
 					}
 
 					partLevel += 1;
-					if (partLevel >= 15) {
-						partLevel = 15;
-					}
-					
-					Component c = lookupPart(lastSelected);
-					
-					c.setPartLevel(partLevel);
-					
-					((JSONComponentName) lastSelected.getUserData())
-							.setLevel(partLevel);
 
-					System.out.println("MenuBulder: " + c.getjComponentName());
-					
-					Array<JointEdge> joints = c.getObject().getPhysicsBody().getJointList();
-
-					for (JointEdge joint : joints) {
-						((JSONComponentName) joint.other.getUserData())
-								.setLevel(partLevel);
+					if (partLevel >= User.getMaxLevel(lastSelectName
+							.getBaseName())) {
+						partLevel = User.getMaxLevel(lastSelectName
+								.getBaseName());
 					}
+
+					setLastSelectedLevel(partLevel);
 
 				}
 			}
@@ -401,23 +411,7 @@ public class MenuBuilder {
 						partLevel = 1;
 					}
 
-					
-					
-					Component c = lookupPart(lastSelected);
-					
-					c.setPartLevel(partLevel);
-					
-					((JSONComponentName) lastSelected.getUserData())
-							.setLevel(partLevel);
-
-					System.out.println("MenuBulder: " + c.getjComponentName());
-					
-					Array<JointEdge> joints = c.getObject().getPhysicsBody().getJointList();
-
-					for (JointEdge joint : joints) {
-						((JSONComponentName) joint.other.getUserData())
-								.setLevel(partLevel);
-					}
+					setLastSelectedLevel(partLevel);
 				}
 			}
 		};
@@ -426,12 +420,18 @@ public class MenuBuilder {
 		levelDown.setHeight(50);
 		levelDown.setWidth(50);
 		stage.addActor(levelDown);
-		
+
 		partLevelText = new TextBox("1");
 		partLevelText.setPosition(Globals.ScreenWidth - 75, 250);
 		partLevelText.setHeight(50);
 		partLevelText.setWidth(50);
 		stage.addActor(partLevelText);
+
+		moneyBox = new TextBox("1");
+		moneyBox.setPosition(Globals.ScreenWidth / 2 - 25, 0);
+		moneyBox.setHeight(50);
+		moneyBox.setWidth(50);
+		stage.addActor(moneyBox);
 
 		exit = new Button("exit") {
 			@Override
@@ -454,73 +454,65 @@ public class MenuBuilder {
 		// mouseActor.getPhysicsBody().createFixture(mouseFixture);
 
 	}
-	
-	private Component lookupPart(Body last) {
-		
-		Array<Fixture> fixtures = lastSelected.getFixtureList();
-		Fixture fixture = null;
 
-		for (Fixture fixtureIter : fixtures) {
-			if (fixtureIter.getUserData() == null)
-				continue;
-			fixture = fixtureIter;
-			break;
-		}
+	private Component lookupLastPart() {
 
-		if (fixture == null){
-			return null;
-		}
-		
-		if (fixture.getUserData() == null) {
-			return null;
-		}
-		
+		/*
+		 * Array<Fixture> fixtures = lastSelected.getFixtureList(); Fixture
+		 * fixture = null;
+		 * 
+		 * System.out.println("here " + (JSONComponentName)
+		 * lastSelected.getUserData() + " connected size " + fixtures.size);
+		 * 
+		 * for (Fixture fixtureIter : fixtures) {
+		 * 
+		 * 
+		 * if (fixtureIter.getUserData() == null) continue; fixture =
+		 * fixtureIter; break; }
+		 * 
+		 * if (fixture == null) { //return null; }
+		 * 
+		 * if (fixture.getUserData() == null) { //return null; }
+		 */
+
+		System.out.println("Set "
+				+ (JSONComponentName) lastSelected.getUserData());
+
 		for (Component part : parts) {
-			// ----------------------- HACK ----------------------
-			if (part.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
 
-				String swappedId = part
-						.getjComponentName()
-						.getId()
-						.replace(ComponentNames.AXLE,
-								ComponentNames.TIRE);
-				if (swappedId.compareTo(((JSONComponentName) fixture
-						.getUserData()).getId()) == 0) {
-					return (part);
-				}
+			if (part.getjComponentName()
+					.getBaseId()
+					.compareTo(
+							((JSONComponentName) lastSelected.getUserData())
+									.getBaseId()) == 0) {
+
+				return part;
+
 			}
-			// --------------------------------------------------
-			else {
-				if (part.getjComponentName()
-						.getId()
-						.compareTo(
-								((JSONComponentName) fixture
-										.getUserData()).getId()) == 0) {
-					return (part);
-					
-				}
-			}
+
 		}
-		
+
 		return null;
 	}
-	
+
 	public void drawForBuilder(SpriteBatch batch) {
 
+		if (lastSelected == null)
+			return;
 
-		if(lastSelected == null) return;
-		
-		String name = ((JSONComponentName)lastSelected.getUserData()).getBaseId();
+		String name = ((JSONComponentName) lastSelected.getUserData())
+				.getBaseId();
 
-		/*for (Component part : parts) {
-			if(part.getjComponentName().getBaseId().compareTo(name)==0){
+		for (Component part : parts) {
+			if (part.getjComponentName().getBaseId().compareTo(name) == 0) {
 				part.draw(batch);
 			}
-		}*/
+		}
 
 	}
 
 	public void draw(SpriteBatch batch) {
+
 		Iterator<Component> iter = parts.iterator();
 
 		while (iter.hasNext()) {
@@ -530,9 +522,45 @@ public class MenuBuilder {
 
 	}
 
+	private void setLastSelectedLevel(Integer level) {
+		partLevel = level;
+		Component c = lookupLastPart();
+
+		c.setPartLevel(level);
+
+		((JSONComponentName) lastSelected.getUserData()).setLevel(level);
+
+		System.out
+				.println("MenuBulder: setting level " + c.getjComponentName());
+
+		Array<JointEdge> joints = c.getObject().getPhysicsBody().getJointList();
+
+		for (JointEdge joint : joints) {
+			((JSONComponentName) joint.other.getUserData()).setLevel(level);
+		}
+
+	}
+
+	public void successfulBuy() {
+		System.out.println("buy successfull");
+		setLastSelectedLevel(user.getLevel(((JSONComponentName) lastSelected
+				.getUserData()).getBaseName()));
+	}
+
+	public void failedBuy() {
+
+	}
+
 	public void drawShapes(SpriteBatch batch) {
 
 		partLevelText.setText(Integer.toString(partLevel));
+		moneyBox.setText(user.getMoney().toString());
+
+		// if(clickedLevelUpBuy){
+		//
+		// clickedLevelUpBuy = false;
+		// }
+
 		Integer jointType;
 
 		ArrayList<String> drawIds = new ArrayList<String>();
@@ -662,7 +690,7 @@ public class MenuBuilder {
 			return false;
 		}
 
-		if((jsonComponentName.getMountId().contains("*"))){
+		if ((jsonComponentName.getMountId().contains("*"))) {
 			return false;
 		}
 		/*
@@ -802,7 +830,7 @@ public class MenuBuilder {
 		if (!isJoined()) {
 			return;
 		}
-		lastSelected = hitBody;
+		// lastSelected = hitBody;
 		hitBody = null;
 		mouseJoined = false;
 	}
@@ -814,27 +842,39 @@ public class MenuBuilder {
 			processJointClick(fixture);
 
 			if (fixture.testPoint(mousePoint.x, mousePoint.y)) {
+				Body tmpBody = fixture.getBody();
 
-				/*
-				 * if(((String)fixture.getBody().getUserData()).contains(
-				 * ComponentNames.LIFE) ||
-				 * ((String)fixture.getBody().getUserData
-				 * ()).contains(ComponentNames.AXLE) |
-				 * ((String)fixture.getBody()
-				 * .getUserData()).contains(ComponentNames.TIRE)){ return true;
-				 * }
-				 */
+				if (((JSONComponentName) tmpBody.getUserData()).getBaseName()
+						.contains(ComponentNames.LIFE)
+						|| (((JSONComponentName) tmpBody.getUserData())
+								.getBaseName().contains(ComponentNames.TIRE) && fixture
+								.getUserData() == null)) {
 
-				hitBody = fixture.getBody();
-
-				JSONComponentName hitBodyName = ((JSONComponentName) hitBody
-						.getUserData());
-
-				if (hitBodyName.getBaseName().compareTo(ComponentNames.LIFE) == 0) {
 					return true;
 				}
 
-				partLevel = hitBodyName.getLevel();
+				hitBody = fixture.getBody();
+				// --------------- HACK ------------------
+				if (((JSONComponentName) hitBody.getUserData()).getBaseName()
+						.compareTo(ComponentNames.TIRE) == 0) {
+					((JSONComponentName) hitBody.getUserData())
+							.setBaseName(ComponentNames.AXLE);
+				}
+				// ---------------------------------------
+				lastSelected = hitBody;
+
+				System.out.println("mouse: "
+						+ ((JSONComponentName) hitBody.getUserData())
+								.getBaseName());
+
+				// JSONComponentName hitBodyName = ((JSONComponentName) hitBody
+				// .getUserData());
+				partLevel = lookupLastPart().getPartLevel();// hitBodyName.getLevel();
+
+				// if (hitBodyName.getBaseName().compareTo(ComponentNames.LIFE)
+				// == 0) {
+				// return true;
+				// }
 
 				mouseJoined = true;
 

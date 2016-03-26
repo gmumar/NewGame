@@ -1,6 +1,5 @@
 package JSONifier;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.utils.Json;

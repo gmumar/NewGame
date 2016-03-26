@@ -294,10 +294,17 @@ public class Component {
 
 	public void setPartLevel(Integer level) {
 		jComponentName.setLevel(level);
+		object.getjName().setLevel(level);
+		
+		if(jointBodies!=null){
+			for (BaseActor body : jointBodies){
+				body.getjName().setLevel(level);
+			}
+		}
 	}
 
 	public Integer getPartLevel() {
-		return jComponentName.getLevel();
+		return object.getjName().getLevel();
 	}
 
 	public String getBaseName() {

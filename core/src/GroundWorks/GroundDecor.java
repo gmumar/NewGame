@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import wrapper.BaseActor;
 import wrapper.GamePhysicalState;
 import Component.ComponentNames;
-import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

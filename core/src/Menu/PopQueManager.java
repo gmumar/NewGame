@@ -2,9 +2,9 @@ package Menu;
 
 import java.util.ArrayList;
 
+import Dialog.BuyDialog;
 import Dialog.DialogBase;
 import Dialog.Skins;
-import Dialog.TestDialog;
 import Dialog.TextDialog;
 import Menu.PopQueObject.PopQueObjectType;
 
@@ -57,52 +57,52 @@ public class PopQueManager {
 	private void handlePop(PopQueObject popQueObject) {
 
 		if (popQueObject.getType() == PopQueObjectType.TEST) {
-			createDialog();
+			createDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.LOADING) {
-			createLoadingDialog();
+			createLoadingDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.DELETE) {
 			dialog.hide();
 		} else if (popQueObject.getType() == PopQueObjectType.BUY) {
-			createBuyDialog();
+			createBuyDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.WIN) {
-			createWinDialog();
+			createWinDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.KILLED) {
-			createLostDialog();
+			createLostDialog(popQueObject);
 		}
 	}
 
-	private void createBuyDialog() {
+	private void createBuyDialog(PopQueObject popQueObject) {
 		/*Skin skin = Skins.loadDefault();
 
 		dialog = new Text2ButtonDialog("Buy", skin, "default");
 		dialog.setTouchable(Touchable.enabled);
 		dialog.show(stage);*/
 		
-		dialog = TestDialog.CreateDialog();
+		dialog = BuyDialog.CreateDialog(popQueObject);
 		dialog.show(stage);
 		
 		
 	}
-	private void createLostDialog() {
+	private void createLostDialog(PopQueObject popQueObject) {
 		dialog = new TextDialog("Killed", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
 	
-	private void createWinDialog() {
+	private void createWinDialog(PopQueObject popQueObject) {
 		dialog = new TextDialog("Win", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
 
-	private void createLoadingDialog() {
+	private void createLoadingDialog(PopQueObject popQueObject) {
 		dialog = new TextDialog("Loading", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.setZIndex(1);
 		dialog.show(stage);
 	}
 
-	private void createDialog() {
+	private void createDialog(PopQueObject popQueObject) {
 
 		dialog = new TextDialog("blaa", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
