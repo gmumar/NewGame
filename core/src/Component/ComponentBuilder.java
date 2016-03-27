@@ -39,6 +39,8 @@ public class ComponentBuilder {
 			return buildTrackBar(gameState, level, false);
 		} else if (name.compareTo(ComponentNames.TRACKBALL) == 0) {
 			return buildTrackBall(gameState, level, false);
+		} else if (name.compareTo(ComponentNames.TRACKCOIN) == 0) {
+			return buildTrackCoin(gameState, level, false);
 		}
 
 		return null;
@@ -58,7 +60,7 @@ public class ComponentBuilder {
 	public static Component buildBar3(GamePhysicalState gameState, int level,
 			boolean forBuilder) {
 
-		ComponentProperties properties = new ComponentProperties();
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.BAR3);
 
@@ -117,7 +119,7 @@ public class ComponentBuilder {
 			boolean forBuilder) {
 		// Setup mounts, shape
 		JSONComponentName componentName = new JSONComponentName();
-		ComponentProperties properties = new ComponentProperties();
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 
 		properties.setFriction(0.1f);
 		properties.setDensity(100);
@@ -133,7 +135,7 @@ public class ComponentBuilder {
 		shape.setRadius(tmpActor.getWidth() / 2);
 		tmpActor.setShapeBase(shape);
 		componentName.setBaseName(ComponentNames.AXLE);
-		ComponentProperties axleProperties = new ComponentProperties();
+		ComponentPhysicsProperties axleProperties = new ComponentPhysicsProperties();
 		BaseActor fixture = new BaseActor(componentName, axleProperties,
 				gameState);
 		// fixture.setPosition(tmpActor.getCenter().x, tmpActor.getCenter().y);
@@ -181,7 +183,7 @@ public class ComponentBuilder {
 		componentNameUpper.setBaseName(ComponentNames.SPRINGJOINT);
 		componentNameUpper.setSubName(ComponentSubNames.UPPER);
 
-		ComponentProperties properties = new ComponentProperties();
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 		properties.setDensity(10);
 		if (forBuilder) {
 			properties.setTexture("suspension_upper.png");
@@ -329,7 +331,7 @@ public class ComponentBuilder {
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.LIFE);
 
-		ComponentProperties properties = new ComponentProperties();
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 
 		properties.setDensity(5);
 		properties.setTexture("life_small.png");
@@ -430,7 +432,7 @@ public class ComponentBuilder {
 
 		// System.out.println("ComponentBuilder: building Post");
 
-		ComponentProperties properties = new ComponentProperties();
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.POST);
 
@@ -462,7 +464,7 @@ public class ComponentBuilder {
 	public static Component buildTrackBar(GamePhysicalState gamePhysicalState,
 			int partLevel, boolean forBuilder) {
 
-		ComponentProperties properties = new ComponentProperties();
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.TRACKBAR);
 
@@ -497,7 +499,7 @@ public class ComponentBuilder {
 	public static Component buildTrackBall(GamePhysicalState gamePhysicalState,
 			int partLevel, boolean forBuilder) {
 
-		ComponentProperties properties = new ComponentProperties();
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.TRACKBALL);
 
@@ -514,6 +516,42 @@ public class ComponentBuilder {
 		shape.setRadius(0.2f);
 
 		tmpActor.setShapeBase(shape);
+		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
+				componentName);
+
+		if (forBuilder) {
+
+		}
+
+		return tmpComponent;
+	}
+	
+	public static Component buildTrackCoin(GamePhysicalState gamePhysicalState,
+			int partLevel, boolean forBuilder) {
+
+		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
+		JSONComponentName componentName = new JSONComponentName();
+		componentName.setBaseName(ComponentNames.TRACKCOIN);
+
+		properties.setDensity(8);
+		properties.setRestituition(0.6f);
+		properties.setFriction(0.7f);
+		properties.setTexture("coin.png");
+		properties.setSetFixtureData(true);
+
+		// Setup mounts, shape
+		BaseActor tmpActor = new BaseActor(componentName, properties,
+				gamePhysicalState);
+		
+		tmpActor.setScale(2);
+
+		CircleShape shape = new CircleShape();
+		shape.setRadius(0.3f);
+
+		tmpActor.setShapeBase(shape);
+		
+		tmpActor.setSensor();
+		tmpActor.setBodyType(BodyType.StaticBody);
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				componentName);
 

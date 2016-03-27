@@ -1,25 +1,21 @@
 package RESTWrapper;
 
-import java.io.IOException;
-import java.util.ArrayList;
 
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonValue.JsonIterator;
+public class Backendless_Car extends Backendless_Parent {
 
-public class Backendless_Car implements Json.Serializable {
-
-	private int totalObjects;
-	private int offset;
-	private ArrayList<String> data = new ArrayList<String>();
-
-	@Override
+	//private int totalObjects;
+	//private int offset;
+	//private ArrayList<String> data = new ArrayList<String>();
+	
+	/*@Override
 	public void write(Json json) {
 
 	}
 
 	@Override
 	public void read(Json json, JsonValue jsonData) {
+		
+		System.out.println("");
 
 		totalObjects = jsonData.getInt("totalObjects");
 		offset = jsonData.getInt("offset");
@@ -47,9 +43,9 @@ public class Backendless_Car implements Json.Serializable {
 			data.add(car);
 		}
 
-	}
+	}*/
 
-	public int getTotalObjects() {
+	/*public int getTotalObjects() {
 		return totalObjects;
 	}
 	
@@ -60,5 +56,43 @@ public class Backendless_Car implements Json.Serializable {
 	public ArrayList<String> getData() {
 		return data;
 	}
+
+	@Override
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
+	@Override
+	public void setData(ArrayList<String> data) {
+		this.data = data;
+		
+	}
+
+	@Override
+	public void setTotalObjects(int totalObjs) {
+		this.totalObjects = totalObjs;
+	}
+
+	@Override
+	public Backendless_Car deserialize(JsonElement json, Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
+
+		JsonObject obj = json.getAsJsonObject();
+		
+		totalObjects = obj.get("totalObjects").getAsInt();
+		offset = obj.get("offset").getAsInt();
+		
+		JsonArray localData = obj.get("data").getAsJsonArray();
+		
+		Iterator<JsonElement> iter = localData.iterator();
+		while (iter.hasNext()) {
+			JsonObject item = iter.next().getAsJsonObject();
+			String car = item.get(RESTProperties.CAR_JSON).getAsString();//(RESTProperties.CAR_JSON, "UTF-8");
+			
+			data.add(car);
+		}
+		
+		return this;
+	}*/
 
 }

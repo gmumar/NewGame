@@ -29,13 +29,13 @@ public class FileManager {
 	public static void writeToFile(FileObject objectIn) {
 
 		FileObject objectCur = null;
-		Json json = new Json();
+		Gson json = new Gson();
 		String strToWrite;
 
 		FileHandle handle = Gdx.files.external(FILE_NAME);
 
 		if (handle != null && handle.exists()) {
-			objectCur = json.fromJson(FileObject.class, handle.readString());
+			objectCur = json.fromJson(handle.readString(), FileObject.class);
 			objectCur.append(objectIn);
 			strToWrite = json.toJson(objectCur);
 		} else {
@@ -130,12 +130,12 @@ public class FileManager {
 	public static FileObject readFromFile() {
 
 		FileObject objectCur = new FileObject();
-		Json json = new Json();
+		Gson json = new Gson();
 
 		FileHandle handle = Gdx.files.external(FILE_NAME);
 
 		if (handle != null && handle.exists()) {
-			objectCur = json.fromJson(FileObject.class, handle.readString());
+			objectCur = json.fromJson(handle.readString(), FileObject.class);
 			return objectCur;
 
 		}

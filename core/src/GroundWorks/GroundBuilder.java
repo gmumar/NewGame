@@ -101,6 +101,8 @@ public class GroundBuilder {
 		decor = new GroundDecor(gameState);
 
 		String mapString = user.getCurrentTrack();
+		
+		System.out.println(mapString);
 
 		if (mapString == null) {
 			infinate = true;
@@ -139,6 +141,11 @@ public class GroundBuilder {
 		// float w = Gdx.graphics.getWidth();
 		// float h = Gdx.graphics.getHeight() - 300;
 		floor = world.createBody(bodyDef2);
+		
+		JSONComponentName floorName = new JSONComponentName();
+		floorName.setBaseName(ComponentNames.GROUND);
+		
+		floor.setUserData(floorName);
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-60
 				* UNIT_LENGTH, TRACK_HEIGHT), new Vector2(-5 * UNIT_LENGTH,
@@ -371,6 +378,11 @@ public class GroundBuilder {
 
 	public float getTotalTrackLength() {
 		return track.getTotalTrackLength();
+	}
+
+	public void destroyComponent(JSONComponentName name) {
+		track.destroyComponent(name);
+		
 	}
 
 }

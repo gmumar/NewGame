@@ -12,6 +12,7 @@ import Component.Component;
 import Component.Component.ComponentTypes;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONTrack.TrackType;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -118,12 +119,12 @@ public class JSONCompiler {
 		return car.jsonify();
 	}
 
-	public void compile(World world, ArrayList<GroundUnitDescriptor> mapList,
+	public String compile(World world, ArrayList<GroundUnitDescriptor> mapList,
 			ArrayList<Component> parts, HashMap<String, Integer> jointTypes) {
 		JSONTrack track = new JSONTrack();
 
-		Preferences prefs = Gdx.app
-				.getPreferences(GamePreferences.CAR_PREF_STR);
+		//Preferences prefs = Gdx.app
+		//		.getPreferences(GamePreferences.CAR_PREF_STR);
 
 		// component list
 		ArrayList<JSONComponent> JSONparts = new ArrayList<JSONComponent>();
@@ -189,12 +190,15 @@ public class JSONCompiler {
 
 		track.setPoints(trackArray);
 		track.setType(TrackType.NORMAL);
+		
+		User.getInstance().setCurrentTrack(track.jsonify());
 
-		prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
-		prefs.flush();
+		//prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
+		//prefs.flush();
 
-		System.out.println(prefs.getString(GamePreferences.TRACK_MAP_STR,
-				"Error"));
+		System.out.println(track.jsonify());
+		
+		return track.jsonify();
 
 	}
 }

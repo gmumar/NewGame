@@ -3,6 +3,7 @@ package JSONifier;
 import java.util.HashMap;
 
 import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
 
 public class JSONJoint {
 
@@ -13,17 +14,17 @@ public class JSONJoint {
 		public HashMap<String, String> props;
 		
 		public String jsonify(){
-			Json json = new Json();
-			json.setIgnoreUnknownFields(true);
+			Gson json = new Gson();
+			//json.setIgnoreUnknownFields(true);
 			return json.toJson(this);
 		}
 		
 		public static JSONJoint objectify(String str){
 			
-			Json json = new Json();
-			json.setIgnoreUnknownFields(true);
-			JSONJoint comp = json.fromJson(JSONJoint.class, str);
-			return comp;
+			Gson json = new Gson();
+			//json.setIgnoreUnknownFields(true);
+			//JSONJoint comp = json.fromJson(JSONJoint.class, str);
+			return json.fromJson(str, JSONJoint.class);
 			
 		}
 

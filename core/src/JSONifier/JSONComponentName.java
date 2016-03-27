@@ -2,7 +2,7 @@ package JSONifier;
 
 import Component.ComponentNames;
 
-import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
 
 public class JSONComponentName {
 
@@ -89,7 +89,7 @@ public class JSONComponentName {
 
 	@Override
 	public String toString() {
-		Json json = new Json();
+		Gson json = new Gson();
 		return json.toJson(this);
 	}
 

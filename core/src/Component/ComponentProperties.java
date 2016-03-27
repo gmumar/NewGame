@@ -1,44 +1,45 @@
 package Component;
 
+import Component.Component.ComponentTypes;
 
 public class ComponentProperties {
-	
-	private float restituition = -1;
-	private float friction = -1;
-	private float density = -1;
-	private boolean setFixtureData = false;
-	private String texture = null;
-	
-	public float getRestituition() {
-		return restituition;
-	}
-	public void setRestituition(float restituition) {
-		this.restituition = restituition;
-	}
-	public float getFriction() {
-		return friction;
-	}
-	public void setFriction(float friction) {
-		this.friction = friction;
-	}
-	public float getDensity() {
-		return density;
-	}
-	public void setDensity(float density) {
-		this.density = density;
-	}
-	public String getTexture() {
-		return texture;
-	}
-	public void setTexture(String texture) {
-		this.texture = texture;
-	}
-	public boolean isSetFixtureData() {
-		return setFixtureData;
-	}
-	public void setSetFixtureData(boolean setFixtureData) {
-		this.setFixtureData = setFixtureData;
-	}
-	
 
+	private String r = "0";
+	private String X = "0";
+	private String Y = "0";
+	private ComponentTypes t = ComponentTypes.PART;
+	private boolean m = false;
+	
+	public String getRotation() {
+		return r;
+	}
+
+	public String getPositionX() {
+		return X;
+	}
+
+	public String getPositionY() {
+		return Y;
+	}
+	
+	public void setPositionX(String posX) {
+		X = posX;
+	}
+
+	public void setPositionY(String posY) {
+		Y = posY;
+	}
+
+	public boolean isMotor() {
+		return m;
+	}
+
+	public void setProperties (String rotation, String positionX, String positionY, boolean isMotor, ComponentTypes type){
+		this.r = rotation;
+		this.X = positionX;
+		this.Y = positionY;
+		this.m = isMotor;
+		this.t = type;
+	}
+	
 }

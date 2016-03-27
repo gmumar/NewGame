@@ -24,7 +24,7 @@ public class BackendFunctions {
 
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				//System.out.println(httpResponse.getResultAsString());
+				System.out.println(httpResponse.getResultAsString());
 
 			}
 
@@ -43,11 +43,8 @@ public class BackendFunctions {
 
 	}
 
-	public void uploadTrack() {
-		Preferences prefs = Gdx.app
-				.getPreferences(GamePreferences.CAR_PREF_STR);
+	public void uploadTrack(String mapString) {
 
-		String mapString = prefs.getString(GamePreferences.TRACK_MAP_STR, null);
 		
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.TRACK_POINTS_JSON,mapString);

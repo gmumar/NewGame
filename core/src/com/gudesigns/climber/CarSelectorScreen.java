@@ -111,11 +111,14 @@ public class CarSelectorScreen extends SelectorScreen{
 						}
 						@Override
 						public void failed(Throwable t) {
+							System.out.println("failed");
+							t.printStackTrace();
 							loaderSemaphore.release();
 						}
 
 						@Override
 						public void cancelled() {
+							System.out.println("cancelled");
 							loaderSemaphore.release();
 						}
 

@@ -3,7 +3,7 @@ package wrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import Component.ComponentProperties;
+import Component.ComponentPhysicsProperties;
 import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -111,7 +111,7 @@ public class BaseActor {
 		initBody();
 	}
 
-	public BaseActor(JSONComponentName name, ComponentProperties properties,
+	public BaseActor(JSONComponentName name, ComponentPhysicsProperties properties,
 			GamePhysicalState gameState) {
 		
 		this.textureStr = (properties.getTexture() == null) ? this.textureStr  : properties.getTexture();

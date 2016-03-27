@@ -2,6 +2,7 @@ package Menu;
 
 import wrapper.GameState;
 import wrapper.Globals;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,8 +13,9 @@ import com.gudesigns.climber.MainMenuScreen;
 public class HUDBuilder {
 
 	private Button exit, restart;
-	private TextBox fps, version;
+	private TextBox fps, version, money;
 	private ProgressBarW mapProgress;
+	private User user;
 
 	private boolean init = false;
 	private GameLoader gameLoader;
@@ -22,6 +24,7 @@ public class HUDBuilder {
 	public HUDBuilder(Stage stage, final GameState gameState) {
 
 		this.gameLoader = gameState.getGameLoader();
+		this.user = gameState.getUser();
 
 
 		//Buttons
@@ -54,6 +57,10 @@ public class HUDBuilder {
 		version = new TextBox("Version:" + Globals.VERSION);
 		version.setPosition(0, Globals.ScreenHeight - 25);
 		stage.addActor(version);
+		
+		money = new TextBox("Version:" + Globals.VERSION);
+		money.setPosition(0, Globals.ScreenHeight - 75);
+		stage.addActor(money);
 
 		//Progress Bars
 		mapProgress = new ProgressBarW(0, 100, 0.01f, false,  "mapProgress");
@@ -67,6 +74,8 @@ public class HUDBuilder {
 	}
 
 	public void update(float delta, float progress) {
+		money.setTextBoxString(user.getMoney());
+		
 		fps.setTextBoxString("fps: " + Gdx.graphics.getFramesPerSecond());
 		if (!init) {
 			version.setTextBoxString("Version:" + Globals.VERSION);

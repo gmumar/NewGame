@@ -1,14 +1,8 @@
 package RESTWrapper;
 
-import java.io.IOException;
-import java.util.ArrayList;
 
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonValue.JsonIterator;
-
-public class Backendless_Track implements Json.Serializable {
-
+public class Backendless_Track extends Backendless_Parent {//implements Json.Serializable {
+/*
 	private int totalObjects;
 	private int offset;
 	private ArrayList<String> data = new ArrayList<String>();
@@ -57,5 +51,21 @@ public class Backendless_Track implements Json.Serializable {
 	public ArrayList<String> getData() {
 		return data;
 	}
+	
+	@Override
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
+	@Override
+	public void setData(ArrayList<String> data) {
+		this.data = data;
+		
+	}
+
+	@Override
+	public void setTotalObjects(int totalObjs) {
+		this.totalObjects = totalObjs;
+	}*/
 
 }

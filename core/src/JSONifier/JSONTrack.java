@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import Component.ComponentProperties;
+
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
 
 public class JSONTrack extends JSONParentClass {
@@ -26,7 +26,7 @@ public class JSONTrack extends JSONParentClass {
 	private TrackType type = TrackType.NORMAL;
 
 	public void applyOffset(Vector2 offset) {
-		float newX = 0, newY = 0;
+		Float newX, newY;
 
 		for (Vector2 point : points) {
 			point.x += offset.x;
@@ -36,9 +36,20 @@ public class JSONTrack extends JSONParentClass {
 		if(componentList == null) return;
 		
 		for (JSONComponent component : componentList) {
-			Map<String, String> originalProperties = component
+			ComponentProperties originalProperties = component
 					.getProperties();
-			Set<Entry<String, String>> props = originalProperties.entrySet();
+			
+			newX = Float.parseFloat(originalProperties.getPositionX()) + offset.x;
+			newY = Float.parseFloat(originalProperties.getPositionY()) + offset.y;
+			
+			
+			
+			originalProperties.setPositionX(newX.toString());
+			originalProperties.setPositionY(newY.toString());
+			
+			
+			
+			/*Set<Entry<String, String>> props = originalProperties.entrySet();
 
 			for (Entry<String, String> property : props) {
 				if (property.getKey().compareTo(Properties.POSITION) == 0) {
@@ -49,7 +60,10 @@ public class JSONTrack extends JSONParentClass {
 			}
 
 			originalProperties.put(Properties.POSITION,
-					Properties.makePostionString(newX, newY));
+					Properties.makePostionString(newX, newY));*/
+			
+			
+			
 			component.setProperties(originalProperties);
 
 		}
@@ -82,8 +96,8 @@ public class JSONTrack extends JSONParentClass {
 	}
 
 	public String jsonify() {
-		Json json = new Json();
-		json.setIgnoreUnknownFields(true);
+		Gson json = new Gson();
+		//json.setIgnoreUnknownFields(true);
 		return json.toJson(this);
 	}
 

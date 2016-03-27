@@ -1,6 +1,7 @@
 package com.gudesigns.climber;
 
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import wrapper.CameraManager;
 import wrapper.GameContactListener;
@@ -13,6 +14,7 @@ import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
+import JSONifier.JSONComponentName;
 import Menu.HUDBuilder;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -31,6 +33,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -79,8 +82,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private boolean gameWon = false, gameLost = false;
 	private TouchUnit fakeTouch = new TouchUnit();
 	private float gameOverOffset = 0;
-	private GameContactListener contactListener = new GameContactListener();
+	private GameContactListener contactListener;
 	private int slowMoFactor = 1;
+	private ArrayBlockingQueue<Body> destoryQue = new ArrayBlockingQueue<Body>(10);
 
 	// -------------------
 
@@ -92,6 +96,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
+
+		contactListener = new GameContactListener(this);
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
@@ -196,7 +202,15 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	final private void initHud() {
 
 		hud = new HUDBuilder(stage, gameState);
+	}
 
+	public void destroyBody(Body body) {
+		try {
+			destoryQue.put(body);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//.addFirst(body);
 	}
 
 	@Override
@@ -218,6 +232,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		stage.draw();
 		popQueManager.update(delta);
+
+		while (!destoryQue.isEmpty()) {
+			Body body = destoryQue.poll();//.removeFirst();
+			//body.setTransform(new Vector2(-5, -5), 0);
+			
+			System.out.println("destroying " + ((JSONComponentName)body.getUserData()));
+			
+			ground.destroyComponent((JSONComponentName)body.getUserData());
+			
+			//world.destroyBody(body);
+		}
 
 		// debugRenderer.render(world, camera.combined);
 

@@ -67,6 +67,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("temp_background1.png", Texture.class);
 		gameLoader.Assets.load("temp_background2.png", Texture.class);
 		gameLoader.Assets.load("temp_post.png", Texture.class);
+		gameLoader.Assets.load("coin.png", Texture.class);
 
 		// // Bars
 		gameLoader.Assets.load("bar/level1.png", Texture.class);

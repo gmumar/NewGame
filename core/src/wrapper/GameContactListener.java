@@ -2,15 +2,22 @@ package wrapper;
 
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
+import User.User;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.gudesigns.climber.GamePlayScreen;
 
 public class GameContactListener implements ContactListener {
 
 	private boolean killed = false;
+	private GamePlayScreen instance;
+
+	public GameContactListener(GamePlayScreen gamePlayScreen) {
+		this.instance = gamePlayScreen;
+	}
 
 	@Override
 	public void beginContact(Contact contact) {
@@ -19,18 +26,29 @@ public class GameContactListener implements ContactListener {
 			return;
 
 		JSONComponentName nameBodyA = ((JSONComponentName) contact
-				.getFixtureA().getUserData());
+				.getFixtureA().getBody().getUserData());
 		JSONComponentName nameBodyB = ((JSONComponentName) contact
-				.getFixtureB().getUserData());
+				.getFixtureB().getBody().getUserData());
 
 		if (nameBodyA == null) {
 			return;
 		}
 		String nameA = nameBodyA.getBaseName();
+
+		if (nameA.compareTo(ComponentNames.TRACKCOIN) == 0) {
+			instance.destroyBody(contact.getFixtureA().getBody());
+			User.getInstance().addCoin(10);
+		}
+
 		if (nameBodyB == null) {
 			return;
 		}
 		String nameB = nameBodyB.getBaseName();
+
+		if (nameB.compareTo(ComponentNames.TRACKCOIN) == 0) {
+			User.getInstance().addCoin(10);
+			instance.destroyBody(contact.getFixtureB().getBody());
+		}
 
 		if (nameA.compareTo(ComponentNames.LIFE) == 0
 				&& nameB.compareTo(ComponentNames.GROUND) == 0

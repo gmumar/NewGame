@@ -55,7 +55,31 @@ public class Component {
 		this.jointBodies = jointBodies;
 	}
 
-	public void applyProperties(Map<String, String> propertiesIn,
+	public void applyProperties(ComponentProperties propertiesIn,
+			PropertyTypes type) {
+		
+		if (propertiesIn == null)
+			return;
+		
+		
+		
+		if (type == PropertyTypes.ABSOLUTE || type == PropertyTypes.BOTH) {
+
+			this.object.setRotation(Float.parseFloat(propertiesIn.getRotation()));
+			this.Motor = propertiesIn.isMotor();
+		}
+
+		if (type == PropertyTypes.RELATIVE || type == PropertyTypes.BOTH) {
+
+				this.setPosition(Float.parseFloat(propertiesIn.getPositionX()),
+						Float.parseFloat(propertiesIn.getPositionY()));
+			
+		}
+		
+
+	}
+	
+	public void OLD_applyProperties(Map<String, String> propertiesIn,
 			PropertyTypes type) {
 		if (propertiesIn.isEmpty())
 			return;
@@ -184,7 +208,24 @@ public class Component {
 		// jComponent.setComponentName(name);
 		jComponent.setjComponentName(name);
 
-		HashMap<String, String> prop = new HashMap<String, String>();
+		
+		boolean isMotor = false;
+		ComponentTypes type = ComponentTypes.PART;
+		ComponentProperties props = new ComponentProperties();
+		
+		if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+			isMotor = true;
+		}
+		
+		props.setProperties(
+				Float.toString(this.getObject().getRotation()* MathUtils.radiansToDegrees),
+				Float.toString(this.getObject().getPosition().x), 
+				Float.toString(this.getObject().getPosition().y),
+				isMotor, type);
+		
+		
+		
+		/*Map<String, String> prop = new HashMap<String, String>();
 		prop.put(
 				Properties.ROTATION,
 				Float.toString(this.getObject().getRotation()
@@ -192,21 +233,12 @@ public class Component {
 		prop.put(Properties.POSITION, Properties.makePostionString(this
 				.getObject().getPosition().x, this.getObject().getPosition().y));
 
-		// .POSITION,
-		// + "," + this.getObject().getPosition().y); // "-10,5"
-
-		/*
-		 * if (name.contains(ComponentNames.TIRE)) { prop.put(Properties.MOTOR,
-		 * "1"); } else if (name.contains(ComponentNames.SPRINGJOINT)) {
-		 * prop.put(Properties.TYPE, ComponentNames.SPRINGJOINT); }
-		 */
-
 		if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
 			prop.put(Properties.MOTOR, "1");
 		} else if (name.getBaseName().compareTo(ComponentNames.SPRINGJOINT) == 0) {
 			prop.put(Properties.TYPE, ComponentNames.SPRINGJOINT);
-		}
-		jComponent.setProperties(prop);
+		}*/
+		jComponent.setProperties(props);
 
 		return jComponent;
 	}
@@ -214,17 +246,24 @@ public class Component {
 	// public JSONComponent toJSONComponent(String name, BaseActor body) {
 	public JSONComponent toJSONComponent(JSONComponentName name, BaseActor body) {
 		JSONComponent jComponent = new JSONComponent();
-		// jComponent.setComponentName(name);
 		jComponent.setjComponentName(name);
 
-		HashMap<String, String> prop = new HashMap<String, String>();
+		/*HashMap<String, String> prop = new HashMap<String, String>();
 		prop.put(Properties.ROTATION,
 				Float.toString(body.getRotation() * MathUtils.radiansToDegrees));// In
 																					// radians
 		prop.put(Properties.POSITION,
-				body.getPosition().x + "," + body.getPosition().y); // "-10,5"
+				body.getPosition().x + "," + body.getPosition().y); // "-10,5"*/
+		
+		ComponentProperties props = new ComponentProperties();
 
-		jComponent.setProperties(prop);
+		props.setProperties(
+				Float.toString(this.getObject().getRotation()* MathUtils.radiansToDegrees),
+				Float.toString(this.getObject().getPosition().x), 
+				Float.toString(this.getObject().getPosition().y),
+				false, ComponentTypes.PART);
+
+		jComponent.setProperties(props);
 
 		return jComponent;
 	}

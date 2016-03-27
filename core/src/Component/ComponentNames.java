@@ -17,5 +17,6 @@ public class ComponentNames {
 	public static final String POST = TRACK_NAME_PREFIX + "P";
 	public static final String TRACKBAR = TRACK_NAME_PREFIX + "B";
 	public static final String TRACKBALL = "BA";
+	public static final String TRACKCOIN = "CN";
 	
 }

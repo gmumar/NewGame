@@ -12,6 +12,7 @@ import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.async.AsyncTask;
+import com.google.gson.Gson;
 
 public class REST {
 
@@ -62,9 +63,12 @@ public class REST {
 	public static void postData(String path,
 			HashMap<String, String> parameters, HttpResponseListener listener) {
 		HttpRequest request = getRequest(path, HttpMethods.POST);
-		request.setContent(Backendless_JsonifyParameters(parameters));
+		Gson json = new Gson();
+		//json.toJson(parameters);
+		request.setContent(json.toJson(parameters));
+		//(Backendless_JsonifyParameters(parameters));
 		
-		//System.out.println(request.getContent());
+		System.out.println(request.getContent());
 
 		Gdx.net.sendHttpRequest(request, listener);
 	}

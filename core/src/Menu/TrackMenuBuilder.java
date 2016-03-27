@@ -45,7 +45,7 @@ public class TrackMenuBuilder {
 	// private final float ROTATION_SIZE = 30;
 
 	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload,
-			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildBall;
+			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildBall, buildCoin;
 	private TextBox currentMode;
 
 	private CameraManager camera;
@@ -110,9 +110,9 @@ public class TrackMenuBuilder {
 			public void Clicked() {
 				compiler.compile(world, trackBuilder.getMapList(), parts,
 						jointTypes);
-				gameLoader.setScreen(new GamePlayScreen(new GameState(
-						gameLoader, user)));
-				Destroy();
+				//gameLoader.setScreen(new GamePlayScreen(new GameState(
+					//	gameLoader, user)));
+				//Destroy();
 			}
 
 		};
@@ -123,9 +123,9 @@ public class TrackMenuBuilder {
 		upload = new Button("/\\") {
 			@Override
 			public void Clicked() {
-				compiler.compile(world, trackBuilder.getMapList(), parts,
-						jointTypes);
-				backend.uploadTrack();
+				
+				backend.uploadTrack(compiler.compile(world, trackBuilder.getMapList(), parts,
+						jointTypes));
 			}
 
 		};
@@ -378,9 +378,40 @@ public class TrackMenuBuilder {
 
 		buildBar.setPosition(500, 0);
 		buildBar.setHeight(50);
-		stage.addActor(buildBar);//buildBall
+		stage.addActor(buildBar);//buildCoin
 		
-		buildBall = new Button("buildBall") {
+		buildCoin = new Button("buildCoin") {
+			@Override
+			public void Clicked() {
+				drawTrack = false;
+				int partLevel = 1;
+				incrementCount(ComponentNames.TRACKCOIN);
+				Component c = ComponentBuilder.buildTrackCoin(
+						new GamePhysicalState(world, gameLoader), partLevel,
+						true);
+				// c.setUpForBuilder(ComponentNames.BAR3
+				// + Assembler.NAME_ID_SPLIT
+				// + componentCounts.get(ComponentNames.BAR3));
+				JSONComponentName name = new JSONComponentName();
+				name.setBaseName(ComponentNames.TRACKCOIN);
+				name.setComponentId(Integer.toString(componentCounts
+						.get(ComponentNames.TRACKCOIN)));
+				name.setMountId("*");
+				name.setLevel(partLevel);
+				c.setUpForBuilder(name, partLevel);
+				System.out.println("TrackBuilder: " + name);
+				lastSelected = c.getObject().getPhysicsBody();
+				c.setPosition(camera.position.x, camera.position.y);
+				parts.add(c);
+
+			}
+		};
+
+		buildCoin.setPosition(500, 50);
+		buildCoin.setHeight(50);
+		stage.addActor(buildCoin);
+		
+		/*buildBall = new Button("buildBall") {
 			@Override
 			public void Clicked() {
 				drawTrack = false;
@@ -409,7 +440,7 @@ public class TrackMenuBuilder {
 
 		buildBall.setPosition(500, 50);
 		buildBall.setHeight(50);
-		stage.addActor(buildBall);
+		stage.addActor(buildBall);*/
 
 	}
 

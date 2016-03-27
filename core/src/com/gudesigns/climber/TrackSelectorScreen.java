@@ -139,6 +139,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 						@Override
 						public void failed(Throwable t) {
 							loaderSemaphore.release();
+							t.printStackTrace();
 						}
 
 						@Override

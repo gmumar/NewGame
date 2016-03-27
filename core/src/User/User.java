@@ -109,6 +109,11 @@ public class User {
 
 		return -1;
 	}
+	
+	public Integer addCoin(Integer value){
+		money += value;
+		return money;
+	}
 
 	public Integer getSmallBarLevel() {
 		if (smallBarLevel <= 1) {

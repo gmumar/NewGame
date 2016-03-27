@@ -2,9 +2,11 @@ package Assembly;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import Component.Component;
 import GroundWorks.GroundUnitDescriptor;
+import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -24,6 +26,22 @@ public class AssembledTrack {
 	private float calculateTotalTrackLength() {
 		GroundUnitDescriptor lastPos = points.get(points.size() - 1);
 		return lastPos.getEnd().dst(0, lastPos.getEnd().y);
+	}
+	
+	public void destroyComponent(JSONComponentName name) {
+		
+		Iterator<Component> iter = parts.iterator();
+		Component part;
+		
+		
+		while(iter.hasNext()){
+			part = iter.next();
+			
+			if(part.getjComponentName().getId().compareTo(name.getId())==0){
+				part.destroyObject();
+				iter.remove();
+			}
+		}
 	}
 
 	public float getTotalTrackLength() {
@@ -55,5 +73,6 @@ public class AssembledTrack {
 			part.draw(batch);
 		}
 	}
+
 
 }

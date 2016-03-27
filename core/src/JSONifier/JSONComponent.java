@@ -1,27 +1,26 @@
 package JSONifier;
 
-import java.util.Map;
+import Component.ComponentProperties;
 
-import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
 
 public class JSONComponent {
 
 	//private String cN;//componentName
 	private JSONComponentName cN;
-	private Map<String, String> props;
-
+	private ComponentProperties props;
+	
 	public String jsonify() {
-		Json json = new Json();
-		json.setIgnoreUnknownFields(true);
+		Gson json = new Gson();
+		//json.setIgnoreUnknownFields(true);
 		return json.toJson(this);
 	}
 
 	public static JSONComponent objectify(String str) {
 
-		Json json = new Json();
-		json.setIgnoreUnknownFields(true);
-		JSONComponent comp = json.fromJson(JSONComponent.class, str);
-		return comp;
+		Gson json = new Gson();
+		//json.setIgnoreUnknownFields(true);
+		return json.fromJson(str, JSONComponent.class);
 
 	}
 
@@ -56,13 +55,21 @@ public class JSONComponent {
 	public String getMountId() {
 		return cN.getMountId();
 	}
-	
-	public Map<String, String> getProperties() {
+
+	public ComponentProperties getProperties() {
 		return props;
 	}
 
-	public void setProperties(Map<String, String> properties) {
-		this.props = properties;
+	public void setProperties(ComponentProperties props) {
+		this.props = props;
 	}
+	
+	//public Map<String, String> getProperties() {
+	//	return props;
+	//}
+	
+	/*public void setProperties(Map<String, String> properties) {
+		this.props = properties;
+	}*/
 
 }
