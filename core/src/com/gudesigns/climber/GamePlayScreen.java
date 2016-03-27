@@ -233,14 +233,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		stage.draw();
 		popQueManager.update(delta);
 
-		while (!destoryQue.isEmpty()) {
+		if (!destoryQue.isEmpty()) {
 			Body body = destoryQue.poll();//.removeFirst();
 			//body.setTransform(new Vector2(-5, -5), 0);
 			
 			System.out.println("destroying " + ((JSONComponentName)body.getUserData()));
 			
-			ground.destroyComponent((JSONComponentName)body.getUserData());
-			
+			if(body.getUserData()==null){
+				;
+			} else{
+				ground.destroyComponent((JSONComponentName)body.getUserData());
+			}
 			//world.destroyBody(body);
 		}
 

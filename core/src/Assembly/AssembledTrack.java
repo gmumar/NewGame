@@ -28,7 +28,12 @@ public class AssembledTrack {
 		return lastPos.getEnd().dst(0, lastPos.getEnd().y);
 	}
 	
-	public void destroyComponent(JSONComponentName name) {
+	public boolean destroyComponent(JSONComponentName name) {
+		
+		if(name == null ) {
+			System.out.println("premature");
+			return false;
+		}
 		
 		Iterator<Component> iter = parts.iterator();
 		Component part;
@@ -37,11 +42,20 @@ public class AssembledTrack {
 		while(iter.hasNext()){
 			part = iter.next();
 			
-			if(part.getjComponentName().getId().compareTo(name.getId())==0){
+			if(part
+					.getjComponentName()
+					.getId()
+					.compareTo(
+							name
+							.getId())==0){
 				part.destroyObject();
 				iter.remove();
+				
+				return true;
 			}
 		}
+		
+		return false;
 	}
 
 	public float getTotalTrackLength() {

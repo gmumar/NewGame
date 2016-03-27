@@ -380,8 +380,8 @@ public class GroundBuilder {
 		return track.getTotalTrackLength();
 	}
 
-	public void destroyComponent(JSONComponentName name) {
-		track.destroyComponent(name);
+	public boolean destroyComponent(JSONComponentName name) {
+		return track.destroyComponent(name);
 		
 	}
 
