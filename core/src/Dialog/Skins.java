@@ -25,5 +25,20 @@ public class Skins {
 
 		return skin;
 	}
+	
+	public static Skin loadButton() {
+		Skin skin;
+
+		FileHandle skinFile = Gdx.files.internal("skins/uiskin.json");
+		skin = new Skin(new TextureAtlas("skins/uiskin.atlas"));
+
+		BitmapFont font = FontManager.GenerateScaledFont("fonts/simpleFont.ttf", 4,
+				Color.WHITE,30, 2.5f);
+		skin.add("default-font", font);
+
+		skin.load(skinFile);
+
+		return skin;
+	}
 
 }

@@ -41,4 +41,30 @@ public class FontManager {
 		}
 	}
 
+	public static BitmapFont GenerateScaledFont(String fontFile, int size, Color color, int Scale, float boader) {
+	String key = color + "_" + fontFile + "_" +Scale;
+		
+		if(fonts.containsKey(key)){
+			return fonts.get(key);
+		}else{
+			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontFile));
+	
+			FreeTypeFontParameter parameters = new FreeTypeFontParameter();
+			parameters.size =  size * Scale;
+			//parameters.kerning = true;
+			//parameters.borderStraight = true;
+			//parameters.genMipMaps = true;
+			//parameters.incremental = true;
+			parameters.magFilter = TextureFilter.Linear;
+			parameters.minFilter = TextureFilter.Nearest;
+			parameters.borderWidth = boader;
+			parameters.borderColor = color;
+			parameters.color = color;
+			BitmapFont bfont = generator.generateFont(parameters);// new BitmapFont();
+			bfont.getData().setScale((float)size/Scale);
+			fonts.put(key, bfont);
+			return bfont;
+		}
+	}
+
 }

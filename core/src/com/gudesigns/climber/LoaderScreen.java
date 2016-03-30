@@ -11,6 +11,8 @@ import Storage.FileManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -75,6 +77,11 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("bar/level3.png", Texture.class);
 		gameLoader.Assets.load("bar/level4.png", Texture.class);
 		gameLoader.Assets.load("bar/level5.png", Texture.class);
+		
+		// Sounds
+		gameLoader.Assets.load("soundfx/coin.wav", Sound.class);
+		gameLoader.Assets.load("soundfx/idle.wav", Sound.class);
+		gameLoader.Assets.load("music/track1.mp3", Music.class);
 
 	}
 

@@ -71,7 +71,13 @@ public class AssemblyRules {
 
 					joint = new SimpleJoint();
 					joint.bodyA = contact.getFixtureA().getBody();
+					if(((JSONComponentName)contact.getFixtureA().getUserData()).getMountedId().contains("*")){
+						continue;
+					}
 					joint.bodyB = contact.getFixtureB().getBody();
+					if(((JSONComponentName)contact.getFixtureB().getUserData()).getMountedId().contains("*")){
+						continue; 
+					}
 
 				}
 			}

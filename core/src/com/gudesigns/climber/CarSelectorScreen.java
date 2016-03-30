@@ -44,6 +44,7 @@ public class CarSelectorScreen extends SelectorScreen{
 				}
 
 				loaderSemaphore.release();
+				localLoading.release();
 
 				return null;
 			}

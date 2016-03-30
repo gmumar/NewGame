@@ -36,8 +36,7 @@ public class GameContactListener implements ContactListener {
 		String nameA = nameBodyA.getBaseName();
 
 		if (nameA.compareTo(ComponentNames.TRACKCOIN) == 0) {
-			instance.destroyBody(contact.getFixtureA().getBody());
-			User.getInstance().addCoin(10);
+			instance.coinCollected(contact.getFixtureA().getBody());
 		}
 
 		if (nameBodyB == null) {
@@ -46,8 +45,7 @@ public class GameContactListener implements ContactListener {
 		String nameB = nameBodyB.getBaseName();
 
 		if (nameB.compareTo(ComponentNames.TRACKCOIN) == 0) {
-			User.getInstance().addCoin(10);
-			instance.destroyBody(contact.getFixtureB().getBody());
+			instance.coinCollected(contact.getFixtureB().getBody());
 		}
 
 		if (nameA.compareTo(ComponentNames.LIFE) == 0

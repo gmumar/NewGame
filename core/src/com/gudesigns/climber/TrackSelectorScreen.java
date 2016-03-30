@@ -45,6 +45,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 				if (stream == null) {
 					System.out.println("first release local");
 					loaderSemaphore.release();
+					localLoading.release();
 					return null;
 				}
 
@@ -69,6 +70,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 					e.printStackTrace();
 				} finally {
 					loaderSemaphore.release();
+					localLoading.release();
 					System.out.println("second release local");
 				}
 				return null;

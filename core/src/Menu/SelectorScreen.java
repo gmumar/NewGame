@@ -46,6 +46,7 @@ public abstract class SelectorScreen implements Screen {
 	private Button exit, nextPage, prevPage;
 
 	public boolean resultsRemaining = true;
+	private boolean loadingComplete = false;
 	public volatile boolean stall = true;
 	protected int currentOffset = 0;
 	protected AsyncExecutor ae = new AsyncExecutor(6);
@@ -53,6 +54,7 @@ public abstract class SelectorScreen implements Screen {
 	public Semaphore loaderSemaphore = new Semaphore(2);
 	public Lock uniqueListLock = new ReentrantLock();
 	private Semaphore loadingLock = new Semaphore(1);
+	public Semaphore localLoading = new Semaphore(1);
 
 	private int pageNumber = 0;
 	private static final int MAX_CARS_PER_PAGE = 6;
@@ -80,6 +82,7 @@ public abstract class SelectorScreen implements Screen {
 
 		try {
 			loaderSemaphore.acquire(2);
+			localLoading.acquire();
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -325,17 +328,18 @@ public abstract class SelectorScreen implements Screen {
 
 			uniqueListLock.unlock();
 		}
-	
-		if (loadedCount <= currentPageEnd) {
-			if (isLoading()) {
-				;// loading
-			} else {
-				// done loading
-				showCars();
-			}
-		} else {
+
+		if (!isLoading() && !loadingComplete) {
+			// refresh the page when loading complete
+			loadingComplete = true;
+			pageDisplayed = false;
+		} 
+		
+		if(localLoading.tryAcquire() || loadedCount >= currentPageEnd){
 			showCars();
+			localLoading.release();
 		}
+		
 
 	}
 
@@ -369,7 +373,9 @@ public abstract class SelectorScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		//ae.dispose();
+		batch.dispose();
+		stage.dispose();
+		
 	}
 }

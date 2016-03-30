@@ -88,7 +88,7 @@ public class Assembler {
 			BaseActor bodyA = parts.get(componentAName).
 							getObject();
 			
-			//if(join.getMount1().getMountId().contains("*")) continue;
+			//if(join.getMount1().getMountId().contains("*")) return false;
 			
 			int componentAMountId = Integer.parseInt(join.getMount1().getMountId());
 
@@ -96,6 +96,7 @@ public class Assembler {
 			// System.out.println(componentBName);
 			BaseActor bodyB = parts.get(componentBName).getObject();
 			int componentBMountId = Globals.getMountId(join.m2);*/
+			//if(join.getMount2().getMountId().contains("*")) return false;
 			
 			String componentBName = join.getMount2().getId();
 			//System.out.println("Assembler : componentB " + join.getMount2().getMountedId());

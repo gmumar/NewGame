@@ -21,11 +21,15 @@ import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import ParallexBackground.ScrollingBackground;
 import Shader.GameMesh;
+import Sounds.SoundManager;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -33,7 +37,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -73,6 +76,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	boolean paused = true;
 
 	private PopQueManager popQueManager;
+	
+	private User user;
 
 	// private Box2DDebugRenderer debugRenderer ;
 
@@ -85,18 +90,25 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private GameContactListener contactListener;
 	private int slowMoFactor = 1;
 	private ArrayBlockingQueue<Body> destoryQue = new ArrayBlockingQueue<Body>(10);
-
+	private float mapTime = 0;
 	// -------------------
+	
+	// ---- Sound FX ----
+	private Sound coinCollected;
+	private Music bgMusic;
+	// ------------------
 
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
 		this.gameLoader = gameState.getGameLoader();
 		Globals.updateScreenInfo();
+		
+		this.user = gameState.getUser();
 
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
-
+		
 		contactListener = new GameContactListener(this);
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
@@ -106,6 +118,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// debugRenderer = new Box2DDebugRenderer();
 		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
 				this.gameLoader), gameState.getUser().getCurrentCar());
+		builtCar.initSound(this.gameLoader);
 		builtCar.setPosition(0, 50);
 
 		initShader();
@@ -139,7 +152,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 					currentTime = System.nanoTime();
 
 					if (currentTime - prevTime >= 1 / 60f) {
-						hud.update(1 / 60f, progress);
+						hud.update(1 / 60f, progress, mapTime);
 
 						prevTime = currentTime;
 
@@ -179,6 +192,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	}
 
+	private void initSounds() {
+		coinCollected = gameLoader.Assets.get("soundfx/coin.wav");
+		bgMusic = gameLoader.Assets.get("music/track1.mp3");
+		
+		SoundManager.loopMusic(bgMusic);
+		builtCar.startSound();
+	}
+
 	final private void initShader() {
 		String vertexShader = Gdx.files.internal("shaders/vertex.glsl")
 				.readString();
@@ -204,6 +225,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		hud = new HUDBuilder(stage, gameState);
 	}
 
+	public void coinCollected(Body body) {
+		user.addCoin(10);
+		destroyBody(body);
+		SoundManager.playFXSound(coinCollected);
+	}
+	
 	public void destroyBody(Body body) {
 		try {
 			destoryQue.put(body);
@@ -217,6 +244,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 
 		renderWorld(delta);
+		
+		builtCar.updateSound();
 
 		scrollingBackground.draw();
 
@@ -231,13 +260,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch.end();
 
 		stage.draw();
+		stage.act();
 		popQueManager.update(delta);
 
 		if (!destoryQue.isEmpty()) {
-			Body body = destoryQue.poll();//.removeFirst();
-			//body.setTransform(new Vector2(-5, -5), 0);
-			
-			System.out.println("destroying " + ((JSONComponentName)body.getUserData()));
+			Body body = destoryQue.poll();
 			
 			if(body.getUserData()==null){
 				;
@@ -307,15 +334,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		} else if (fixedStep >= 1 / 85f) {
 
-			if (gameWon) {
-				handleInput(fakeTouches);
-			} else if (gameLost) {
-				;
-			} else {
-				handleInput(touches);
-			}
-
 			if (!ground.loading) {
+				
+				if (gameWon) {
+					handleInput(fakeTouches);
+				} else if (gameLost) {
+					;
+				} else {
+					handleInput(touches);
+					mapTime += fixedStep;
+				}
+				
 				world.step(fixedStep / slowMoFactor, 40, 20);
 			}
 
@@ -438,6 +467,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void show() {
 		initInputs();
+		initSounds();
 		Globals.updateScreenInfo();
 		GameMesh.create(camera, shader);
 		paused = false;
@@ -449,6 +479,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(null);
 		ground.destory();
 		stage.dispose();
+		builtCar.stopSound();
+		
 		GameMesh.destroy();
 
 	}
@@ -457,7 +489,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void dispose() {
 		running = false;
 		paused = true;
-
+		
+		SoundManager.stopMusic(bgMusic);
 		batch.dispose();
 		builtCar.dispose();
 		world.dispose();

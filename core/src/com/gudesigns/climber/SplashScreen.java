@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class SplashScreen implements Screen {
@@ -36,6 +37,7 @@ public class SplashScreen implements Screen {
 
 		@Override
 		public void draw(Batch batch, float alpha) {
+			batch.setColor(getColor());
 			batch.draw(texture, this.getX(), getY(), getWidth(), getHeight());
 		}
 	}
@@ -50,14 +52,16 @@ public class SplashScreen implements Screen {
 				Globals.ScreenWidth * 1 / 6);
 		splashActor.setX(Globals.ScreenWidth * 5 / 12);
 		splashActor.setY(Globals.ScreenHeight * 2 / 5 - 20);
+		splashActor.setColor(1, 1, 1, 0);;
 
 		MoveToAction moveAction = new MoveToAction();
 		moveAction.setPosition(Globals.ScreenWidth * 5 / 12,
 				Globals.ScreenHeight * 2 / 5);
-		moveAction.setDuration(0.5f);
+		moveAction.setDuration(0.8f);
 
-		splashActor.addAction(Actions.sequence(Actions.fadeOut(0.1f),
-				moveAction, Actions.fadeIn(1.5f)));
+		ParallelAction pa = new ParallelAction(moveAction,Actions.fadeIn(0.8f));
+		splashActor.addAction(pa);
+		
 
 		stage.addActor(splashActor);
 
@@ -97,7 +101,7 @@ public class SplashScreen implements Screen {
 		renderWorld();
 
 		time += delta;
-		if (time > 0.1f) {
+		if (time > 1f) {
 			gameLoader.setScreen(new MainMenuScreen(gameLoader));
 		}
 

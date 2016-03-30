@@ -34,7 +34,7 @@ public class BuyDialog {
 				+ " for "
 				+ itemCost.toString());
 		
-		TextButton yesButton = new TextButton("Yes",Skins.loadDefault());//new tebutton("Yes");
+		TextButton yesButton = new TextButton("Yes",Skins.loadButton(),"yesButton");
 		yesButton.addListener(new ClickListener(){
 
 			@Override
@@ -46,9 +46,9 @@ public class BuyDialog {
 			}
 			
 		});
-		base.getButtonTable().add(yesButton).height(60).width(60);
+		base.getButtonTable().add(yesButton).height(60).width(120).pad(-2.5f);
 
-		TextButton noButton = new TextButton("No",Skins.loadDefault());//new tebutton("Yes");
+		TextButton noButton = new TextButton("No",Skins.loadButton(),"noButton");
 		noButton.addListener(new ClickListener(){
 
 			@Override
@@ -59,7 +59,9 @@ public class BuyDialog {
 			}
 			
 		});
-		base.getButtonTable().add(noButton).height(60).width(60);
+		base.getButtonTable().add(noButton).height(60).width(120).pad(-2.5f);
+		
+		
 		
 		int size = 50;
 
@@ -71,7 +73,12 @@ public class BuyDialog {
 		base.getContentTable().row();
 
 		// How to resize stuff
-		base.getContentTable().add(i).height(size*ratio).width(size);
+		base.getContentTable().add(i).height(size*ratio).width(size).padBottom(5);
+		
+		// Make it look rite
+		base.getButtonTable().pad(-2);
+		base.getContentTable().pad(3);
+		base.pad(0);
 
 		return base;
 	}

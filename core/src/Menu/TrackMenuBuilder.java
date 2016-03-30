@@ -45,7 +45,7 @@ public class TrackMenuBuilder {
 	// private final float ROTATION_SIZE = 30;
 
 	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload,
-			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildBall, buildCoin;
+			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildCoin;
 	private TextBox currentMode;
 
 	private CameraManager camera;
@@ -62,7 +62,7 @@ public class TrackMenuBuilder {
 	private Vector2 relativeVector = new Vector2();
 	private boolean mouseJoined = false;
 	private HashMap<String, Integer> jointTypes = new HashMap<String, Integer>();
-	private static ShapeRenderer fixtureRenderer;
+	private ShapeRenderer fixtureRenderer;
 	private boolean drawTrack = true;
 
 
@@ -78,6 +78,7 @@ public class TrackMenuBuilder {
 		this.backend = new BackendFunctions();
 		this.gameLoader = gamePhysicalState.getGameLoader();
 		this.world = gamePhysicalState.getWorld();
+		this.fixtureRenderer = fixtureRenderer;
 
 		compiler = new JSONCompiler();
 
@@ -110,9 +111,9 @@ public class TrackMenuBuilder {
 			public void Clicked() {
 				compiler.compile(world, trackBuilder.getMapList(), parts,
 						jointTypes);
-				//gameLoader.setScreen(new GamePlayScreen(new GameState(
-					//	gameLoader, user)));
-				//Destroy();
+				gameLoader.setScreen(new GamePlayScreen(new GameState(
+						gameLoader, user)));
+				Destroy();
 			}
 
 		};
@@ -733,6 +734,7 @@ public class TrackMenuBuilder {
 			vec.set(shape.getPosition());
 			transform.mul(vec);
 			// Gdx.gl.glLineWidth(20 / camera.zoom);
+			
 			fixtureRenderer.setColor(c);
 			fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 45);
 

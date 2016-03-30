@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -80,5 +81,13 @@ public class Button extends TextButton {
 
 		return tbs;
 	}
+
+	@Override
+	public void draw(Batch batch, float parentAlpha) {
+		batch.setColor(super.getColor());
+		super.draw(batch, parentAlpha);
+	}
+	
+	
 
 }

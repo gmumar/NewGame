@@ -5,14 +5,18 @@ import java.util.Iterator;
 
 import wrapper.BaseActor;
 import wrapper.Globals;
+import wrapper.RollingAverage;
 import wrapper.TouchUnit;
 import Component.Component;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
+import Sounds.SoundManager;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.gudesigns.climber.GameLoader;
 
 public class AssembledObject {
 
@@ -20,12 +24,16 @@ public class AssembledObject {
 	private ArrayList<BaseActor> driveList;
 	private Body cameraFocusPart, basePart;
 	private Body driveBody ;
+	private Sound idle;
+	private long idleId;
+	private RollingAverage rotationSpeed;
 	//private Component leftMost, rightMost;
 	// private int basePartIndex;
 
 	private final float ANGULAR_DAMPING = 1f;
 	// private final float ROTATION_FORCE = 4000;
 	private float MAX_VELOCITY = 45f;
+	private final static float MAX_IDLE_RATIO = 8;
 
 	private int direction;
 
@@ -47,6 +55,15 @@ public class AssembledObject {
 	
 	public Vector2 getSpeed(){
 		return getCameraFocusPart().getLinearVelocity();
+	}
+	
+	public void startSound(){
+		idleId = SoundManager.loopFXSound(idle);
+	}
+	
+	public void initSound(GameLoader gameLoader) {
+		idle = gameLoader.Assets.get("soundfx/idle.wav");
+		rotationSpeed = new RollingAverage(2);
 	}
 
 	/*
@@ -160,6 +177,17 @@ public class AssembledObject {
 		
 		
 	}
+	
+	public void updateSound(){
+		float ratio = (float) (Math.abs((rotationSpeed.getAverage())/MAX_IDLE_RATIO)) + 1.3f;
+		//System.out.println((ratio/6)*SoundManager.FX_VOLUME);
+		idle.setVolume(idleId, (ratio/6)*SoundManager.FX_VOLUME );
+		idle.setPitch(idleId, ratio);
+	}
+	
+	public void stopSound(){
+		SoundManager.stop(idle);
+	}
 
 	public void draw(SpriteBatch batch) {
 
@@ -258,12 +286,15 @@ public class AssembledObject {
 		for (BaseActor comp : driveList) {
 
 			driveBody = comp.getPhysicsBody();
+			float anguleVelocity = driveBody.getAngularVelocity();
 
 			driveBody.applyAngularImpulse(resultantForce,true);
 			
-			if (driveBody.getAngularVelocity() > MAX_VELOCITY) {
+			if(rotationSpeed!=null) rotationSpeed.add(anguleVelocity);
+			
+			if (anguleVelocity > MAX_VELOCITY) {
 				driveBody.setAngularVelocity(MAX_VELOCITY);
-			} else if (driveBody.getAngularVelocity() < -MAX_VELOCITY) {
+			} else if (anguleVelocity < -MAX_VELOCITY) {
 				driveBody.setAngularVelocity(-MAX_VELOCITY);
 			}
 		}
@@ -276,4 +307,5 @@ public class AssembledObject {
 	public void setMaxVelocity(float maxVelocity){
 		MAX_VELOCITY = maxVelocity;
 	}
+
 }
