@@ -56,7 +56,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private RollingAverage rollingAvg;
 	private float speedZoom = 0;
-	private float dlTime;
+	//private float dlTime;
 
 	public static final float CAMERA_OFFSET = 12;
 
@@ -76,7 +76,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	boolean paused = true;
 
 	private PopQueManager popQueManager;
-	
+
 	private User user;
 
 	// private Box2DDebugRenderer debugRenderer ;
@@ -89,26 +89,28 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private float gameOverOffset = 0;
 	private GameContactListener contactListener;
 	private int slowMoFactor = 1;
-	private ArrayBlockingQueue<Body> destoryQue = new ArrayBlockingQueue<Body>(10);
+	private ArrayBlockingQueue<Body> destoryQue = new ArrayBlockingQueue<Body>(
+			10);
 	private float mapTime = 0;
 	// -------------------
-	
+
 	// ---- Sound FX ----
 	private Sound coinCollected;
 	private Music bgMusic;
+
 	// ------------------
 
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
 		this.gameLoader = gameState.getGameLoader();
 		Globals.updateScreenInfo();
-		
+
 		this.user = gameState.getUser();
 
 		batch = new SpriteBatch();
 		initStage();
 		initWorld();
-		
+
 		contactListener = new GameContactListener(this);
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
@@ -137,7 +139,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
 
-		popQueManager = new PopQueManager(stage);
+		popQueManager = new PopQueManager(gameLoader,stage);
+		popQueManager.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
 
 		runner.submit(new AsyncTask<String>() {
 
@@ -150,9 +153,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				while (running) {
 
 					currentTime = System.nanoTime();
+					
+					Thread.sleep(100);
 
-					if (currentTime - prevTime >= 1 / 60f) {
-						hud.update(1 / 60f, progress, mapTime);
+					if (currentTime - prevTime >= 100000) {
+						hud.update(Globals.STEP, progress, mapTime);
 
 						prevTime = currentTime;
 
@@ -184,17 +189,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 		});
 
-		fakeTouch.screenX = 5000;
+		fakeTouch.screenX = 500;
 		fakeTouch.touched = true;
 		fakeTouches.add(fakeTouch);
 
 		world.setContactListener(contactListener);
 
+		// popQueManager.push(new PopQueObject(PopQueObjectType.WIN, this));
 	}
 
 	private void initSounds() {
-		coinCollected = gameLoader.Assets.get("soundfx/coin.wav");
-		bgMusic = gameLoader.Assets.get("music/track1.mp3");
+		//coinCollected = gameLoader.Assets.get("soundfx/coin.mp3", Sound.class);
+		coinCollected = Gdx.audio.newSound(Gdx.files.internal("soundfx/coin.mp3"));
+		//bgMusic = gameLoader.Assets.get("music/track1.ogg", Music.class);
+		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/track1.ogg"));
 		
 		SoundManager.loopMusic(bgMusic);
 		builtCar.startSound();
@@ -230,20 +238,61 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		destroyBody(body);
 		SoundManager.playFXSound(coinCollected);
 	}
-	
+
 	public void destroyBody(Body body) {
 		try {
 			destoryQue.put(body);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}//.addFirst(body);
+		}// .addFirst(body);
 	}
 
 	@Override
 	public void render(float delta) {
 
-		renderWorld(delta);
+		//renderWorld(delta);
+
+		//dlTime = delta;
+
+		fixedStep += delta;
+
+		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
+				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		// Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
+
+		batch.setProjectionMatrix(camera.combined);
+
+		 if (fixedStep >= Globals.STEP) {
+
+			if (!ground.loading) {
+
+				if (gameWon) {
+					handleInput(fakeTouches);
+				} else if (gameLost) {
+					;
+				} else {
+					handleInput(touches);
+					mapTime += fixedStep;
+				}
+
+				world.step(Globals.STEP / slowMoFactor, 80, 40);
+				//builtCar.step();
+			}
+
+			if (timePassed > 2) {
+
+				jointLimits.enableJointLimits(1 / fixedStep);
+
+			} else {
+				if (!ground.loading) {
+					timePassed += fixedStep;
+				}
+			}
+
+			fixedStep -= Globals.STEP;
+		}
 		
 		builtCar.updateSound();
 
@@ -265,13 +314,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		if (!destoryQue.isEmpty()) {
 			Body body = destoryQue.poll();
-			
-			if(body.getUserData()==null){
+
+			if (body.getUserData() == null) {
 				;
-			} else{
-				ground.destroyComponent((JSONComponentName)body.getUserData());
+			} else {
+				ground.destroyComponent((JSONComponentName) body.getUserData());
 			}
-			//world.destroyBody(body);
+			// world.destroyBody(body);
 		}
 
 		// debugRenderer.render(world, camera.combined);
@@ -299,11 +348,22 @@ public class GamePlayScreen implements Screen, InputProcessor {
 					: CAMERA_OFFSET + 0.05f;
 
 			if (!gameWon) {
-				popQueManager.push(new PopQueObject(PopQueObjectType.WIN));
+				popQueManager
+						.push(new PopQueObject(PopQueObjectType.WIN, this));
+				hud.hideMenu();
 				gameWon = true;
+
 			}
 		}
 
+	}
+
+	public void restart() {
+		gameLoader.setScreen(new GamePlayScreen(gameState));
+	}
+
+	public void exit() {
+		gameLoader.setScreen(new MainMenuScreen(gameLoader));
 	}
 
 	private boolean gameOver() {
@@ -316,7 +376,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	float fixedStep = 0;
 
-	final private void renderWorld(float delta) {
+	/*final private void renderWorld(float delta) {
 
 		dlTime = delta / (1.1f);
 
@@ -330,12 +390,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		batch.setProjectionMatrix(camera.combined);
 
 		if (fixedStep >= 1 / 30f) {
-			fixedStep = 1 / 100f;
+			fixedStep = 1 / 86f;
 
 		} else if (fixedStep >= 1 / 85f) {
 
 			if (!ground.loading) {
-				
+
 				if (gameWon) {
 					handleInput(fakeTouches);
 				} else if (gameLost) {
@@ -344,8 +404,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 					handleInput(touches);
 					mapTime += fixedStep;
 				}
-				
-				world.step(fixedStep / slowMoFactor, 40, 20);
+
+				world.step(fixedStep / slowMoFactor, 80, 40);
 			}
 
 			if (timePassed > 2) {
@@ -360,7 +420,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 			fixedStep = 0;
 		}
-	}
+	}*/
 
 	final private void attachCameraTo(Body actor) {
 		// System.out.println();
@@ -480,7 +540,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		ground.destory();
 		stage.dispose();
 		builtCar.stopSound();
-		
+
 		GameMesh.destroy();
 
 	}
@@ -490,9 +550,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		running = false;
 		paused = true;
 		
-		SoundManager.stopMusic(bgMusic);
-		batch.dispose();
-		builtCar.dispose();
+		SoundManager.disposeSound(bgMusic);
+		SoundManager.disposeSound(coinCollected);
 		world.dispose();
 		camera = null;
 		hud.dispose();

@@ -7,18 +7,23 @@ import java.util.concurrent.Semaphore;
 import wrapper.CameraManager;
 import wrapper.Globals;
 import JSONifier.JSONCar;
+import Menu.FontManager;
 import Storage.FileManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -77,11 +82,18 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("bar/level3.png", Texture.class);
 		gameLoader.Assets.load("bar/level4.png", Texture.class);
 		gameLoader.Assets.load("bar/level5.png", Texture.class);
-		
+
 		// Sounds
-		gameLoader.Assets.load("soundfx/coin.wav", Sound.class);
-		gameLoader.Assets.load("soundfx/idle.wav", Sound.class);
-		gameLoader.Assets.load("music/track1.mp3", Music.class);
+		//gameLoader.Assets.load("music/track1.ogg", Music.class);
+		//gameLoader.Assets.load("soundfx/coin.mp3", Sound.class);
+		//gameLoader.Assets.load("soundfx/idle.mp3", Sound.class);
+
+		ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
+		BitmapFont font = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
+				Color.BLACK);
+		resources.put("game-font", font);
+		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
+				new SkinParameter("skins/uiskin.atlas", resources));
 
 	}
 

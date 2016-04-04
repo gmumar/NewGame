@@ -8,7 +8,7 @@ public class TestDialog  {
 
 	public static DialogBase CreateDialog() {
 		
-		DialogBase base = new DialogBase("",  Skins.loadDefault(), "default");
+		/*DialogBase base = new DialogBase("",  Skins.loadDefault(0), "default");
 
 		base.setMovable(false);
 		base.setModal(true);
@@ -27,9 +27,9 @@ public class TestDialog  {
 		Image i = new Image(tr);
 		
 		// How to resize stuff
-		base.getContentTable().add(i).height(20).width(20);
+		base.getContentTable().add(i).height(20).width(20);*/
 
-		return base;
+		return null;
 	}
 
 	

@@ -58,7 +58,7 @@ public class GameMesh {
 	public static final int MAX_TRIS = 1;
 
 	// The maximum number of vertices our mesh will hold
-	public static final int MAX_VERTS = 7000;// MAX_TRIS * 3;
+	public static final int MAX_VERTS = 1500;// MAX_TRIS * 3;
 
 	// The array which holds all the data, interleaved like so:
 	// x, y, r, g, b, a
@@ -261,11 +261,7 @@ public class GameMesh {
 	 */
 
 	private static short[] getIndices(int vertexCount) {
-
-		if (prevVectexCount == vertexCount) {
-			return solvedIndices;
-		}
-
+		
 		prevVectexCount = vertexCount;
 		//int indicesLength = vertexCount ;
 		solvedIndices = new short[vertexCount];

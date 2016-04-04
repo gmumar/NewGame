@@ -1,5 +1,7 @@
 package Menu;
 
+import com.gudesigns.climber.GamePlayScreen;
+
 public class PopQueObject {
 	
 	public enum PopQueObjectType { TEST, DELETE, LOADING, BUY, WIN, KILLED };
@@ -7,7 +9,8 @@ public class PopQueObject {
 	private PopQueObjectType type;
 	private Integer nextLevel;
 	private String componentName;
-	private MenuBuilder callingInstance;
+	private MenuBuilder menuBuilderInstance;
+	private GamePlayScreen gamePlayScreenInstance;
 	
 	public PopQueObject(PopQueObjectType type){
 		this.type = type;
@@ -18,11 +21,17 @@ public class PopQueObject {
 		this.type = type;
 		this.nextLevel = nextLevel;
 		this.componentName = componentName;
-		this.callingInstance = instance;
+		this.menuBuilderInstance = instance;
 	}
-
+	
+	public PopQueObject(PopQueObjectType type, GamePlayScreen instance){
+		if(type!=PopQueObjectType.WIN) return;
+		this.type = type;
+		this.gamePlayScreenInstance = instance;
+	}
+	
 	public MenuBuilder getCallingInstance(){
-		return callingInstance;
+		return menuBuilderInstance;
 	}
 	
 	public Integer getNextLevel() {
@@ -47,6 +56,10 @@ public class PopQueObject {
 
 	public void setType(PopQueObjectType type) {
 		this.type = type;
+	}
+
+	public GamePlayScreen getGamePlayInstance() {
+		return gamePlayScreenInstance;
 	}
 	
 	

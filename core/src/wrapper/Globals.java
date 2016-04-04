@@ -31,10 +31,14 @@ public class Globals {
 
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
-	final public static int VERSION = 4;
+	final public static int VERSION = 5;
 	
 	final public static int ROTATABLE_JOINT = 1;
 	final public static int LOCKED_JOINT = 0;
+	
+	final public static short GROUND_GROUP = -3;
+	
+	final public static float STEP = 1/60f;
 	
 
 	public static void  runOnUIThread(Runnable runnable){

@@ -33,55 +33,6 @@ public class TrackSelectorScreen extends SelectorScreen {
 	}
 
 	@Override
-	protected void loadLocalItems() {
-		ae.submit(new AsyncTask<String>() {
-
-			@Override
-			public String call() throws Exception {
-				Gson gson = new Gson();
-				Reader stream = FileManager
-						.getFileStream(FileManager.TRACK_FILE_NAME);
-
-				if (stream == null) {
-					System.out.println("first release local");
-					loaderSemaphore.release();
-					localLoading.release();
-					return null;
-				}
-
-				JsonReader reader = new JsonReader(stream);
-				try {
-					reader.beginArray();
-					while (reader.hasNext()) {
-						while (reader.hasNext()) {
-							final JSONTrack track = gson.fromJson(reader,
-									JSONTrack.class);
-
-							addItemToList(track);
-							break;
-						}
-
-					}
-
-					reader.close();
-
-					System.out.println("loaded " + items.size());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					loaderSemaphore.release();
-					localLoading.release();
-					System.out.println("second release local");
-				}
-				return null;
-			}
-		});
-		
-
-		 //refreshAllButtons();
-	}
-
-	@Override
 	protected void downloadItems() {
 		resultsRemaining = true;
 		currentOffset = 0;
@@ -165,7 +116,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	}
 
-	@Override
+	/*@Override
 	protected void writeItemsToFile() {
 		ae.submit(new AsyncTask<String>() {
 
@@ -173,8 +124,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 			public String call() throws Exception {
 
 				try {
-					while (isLoading())
-						Thread.sleep(5);
+					while (isLoading());
+						//Thread.sleep(5);
 					// loaderSemaphore.acquire(2);
 
 					// Iterator<String> iter = cars.iterator();
@@ -202,7 +153,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 			}
 		});
 
-	}
+	}*/
 
 	@Override
 	protected void addButton(final String text) {
@@ -225,6 +176,62 @@ public class TrackSelectorScreen extends SelectorScreen {
 		buttons.add(b);
 
 		refreshAllButtons();
+	}
+
+	@Override
+	protected void writeObjectsToFile() {
+		ArrayList<JSONTrack> list = new ArrayList<JSONTrack>();
+		for (JSONParentClass track : items) {
+			// String car = iter.next();
+			list.add((JSONTrack) track);
+		}
+
+		System.out.println("writing " + list.size());
+
+		FileObject fileObject = new FileObject();
+		fileObject.setTracks(list);
+
+		FileManager.writeTracksToFileGson(list);
+	}
+
+	@Override
+	protected void addSpecificItemToList() {
+		Gson gson = new Gson();
+		Reader stream = FileManager
+				.getFileStream(FileManager.TRACK_FILE_NAME);
+
+		if (stream == null) {
+			System.out.println("first release local");
+			loaderSemaphore.release();
+			localLoading.release();
+			return;
+		}
+
+		JsonReader reader = new JsonReader(stream);
+		try {
+			reader.beginArray();
+			while (reader.hasNext()) {
+				while (reader.hasNext()) {
+					final JSONTrack track = gson.fromJson(reader,
+							JSONTrack.class);
+
+					addItemToList(track);
+					break;
+				}
+
+			}
+
+			reader.close();
+
+			System.out.println("loaded " + items.size());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			loaderSemaphore.release();
+			localLoading.release();
+			System.out.println("second release local");
+		}
+		return;
 	}
 
 }

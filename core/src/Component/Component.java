@@ -1,7 +1,6 @@
 package Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -404,7 +403,24 @@ public class Component {
 		}
 
 	}
+	
+	public void step() {
+		if (getJointBodies() == null) {
+			this.getObject().step();
+		} else {
+			/*
+			 * Iterator<BaseActor> iter = getJointBodies().iterator(); while
+			 * (iter.hasNext()) { BaseActor body = iter.next();
+			 * body.draw(batch); }
+			 */
 
+			for (BaseActor body : getJointBodies()) {
+				body.step();
+			}
+		}
+	}
+
+	
 	public void draw(SpriteBatch batch) {
 		if (getJointBodies() == null) {
 			this.getObject().draw(batch);

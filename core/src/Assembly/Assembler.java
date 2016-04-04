@@ -240,6 +240,8 @@ public class Assembler {
 					Component localComponent = it.next();
 					if(source.getParentType() == JSONParentType.CAR){
 						localComponent.setGroup(CAR);
+					} else {
+						localComponent.setGroup(Globals.GROUND_GROUP);
 					}
 					// localComponent.applyProperties(sourceComponent.getProperties());
 
@@ -308,6 +310,8 @@ public class Assembler {
 				}
 				if(source.getParentType() == JSONParentType.CAR){
 					component.setGroup(CAR);
+				} else {
+					component.setGroup(Globals.GROUND_GROUP);
 				}
 				//component.setComponentName(sourceComponent.getComponentName());
 				//String[] nameList = component.getComponentName().split(

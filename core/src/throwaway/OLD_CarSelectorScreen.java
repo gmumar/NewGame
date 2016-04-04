@@ -92,7 +92,7 @@ public class OLD_CarSelectorScreen implements Screen {
 
 		initNavigationButtons();
 
-		popQueManager = new PopQueManager(stage);
+		//popQueManager = new PopQueManager(stage);
 
 		if (loadingLock.tryAcquire()) {
 			popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));

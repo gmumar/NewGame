@@ -76,7 +76,7 @@ public class MainMenuScreen implements Screen {
 				this.gameLoader), carCamera, shader, colorShader, true,
 				gameState.getUser());
 
-		world.step(10, 40, 20);
+		world.step(10, 100, 120);
 		// -------------------------------------------------------
 
 	}
@@ -124,16 +124,13 @@ public class MainMenuScreen implements Screen {
 	private void carAnimationStep(float delta) {
 		batch.setProjectionMatrix(carCamera.combined);
 
-		timeCounter += delta / 1.1f;
+		timeCounter += delta;
 
-		if (timeCounter >= 1 / 30f) {
-			timeCounter = 1 / 100f;
+		 if (timeCounter >= Globals.STEP) {
 
-		} else if (timeCounter >= 1 / 85f) {
+			world.step(Globals.STEP, 80, 40);
 
-			world.step(timeCounter, 40, 20);
-
-			timeCounter = 0;
+			timeCounter -= Globals.STEP;
 		}
 
 		attachCameraTo(builtCar.getCameraFocusPart());
@@ -226,7 +223,7 @@ public class MainMenuScreen implements Screen {
 		// batch = new SpriteBatch();
 		stage = new Stage(vp);
 
-		popQueManager = new PopQueManager(stage);
+		popQueManager = new PopQueManager(gameLoader,stage);
 
 	}
 

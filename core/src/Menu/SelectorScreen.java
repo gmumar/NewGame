@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
+import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -65,6 +66,14 @@ public abstract class SelectorScreen implements Screen {
 	// private Integer previousSize = 0;
 
 	public GameState gameState;
+	
+	abstract protected void addButton(final String text); 
+
+	abstract protected void downloadItems();
+	
+	abstract protected void writeObjectsToFile();
+	
+	abstract protected void addSpecificItemToList();
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
@@ -74,7 +83,7 @@ public abstract class SelectorScreen implements Screen {
 
 		initNavigationButtons();
 
-		popQueManager = new PopQueManager(stage);
+		popQueManager = new PopQueManager(gameLoader,stage);
 
 		if (loadingLock.tryAcquire()) {
 			popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
@@ -92,6 +101,25 @@ public abstract class SelectorScreen implements Screen {
 		downloadItems();
 
 		writeItemsToFile();
+
+	}
+	
+	protected void loadLocalItems(){
+		ae.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+
+				/*for (JSONCar car : gameLoader.cars) {
+					addItemToList(car);
+				}*/	
+
+				addSpecificItemToList();
+
+
+				return null;
+			}
+		});
 
 	}
 
@@ -163,27 +191,6 @@ public abstract class SelectorScreen implements Screen {
 
 	}
 
-	abstract protected void loadLocalItems(); /*{
-
-		ae.submit(new AsyncTask<String>() {
-
-			@Override
-			public String call() throws Exception {
-
-				for (JSONCar car : gameLoader.cars) {
-					addCarToList(car);
-				}
-
-				loaderSemaphore.release();
-
-				return null;
-			}
-		});
-
-	}*/
-
-	abstract protected void downloadItems();
-
 	protected void addItemToList(final JSONParentClass item) {
 
 		uniqueListLock.lock();
@@ -219,7 +226,34 @@ public abstract class SelectorScreen implements Screen {
 
 	}
 
-	abstract protected void writeItemsToFile() ;
+	protected void writeItemsToFile() {
+		ae.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+
+				try {
+					while (isLoading());
+						//Thread.sleep(5);
+					// loaderSemaphore.acquire(2);
+
+					// Iterator<String> iter = cars.iterator();
+
+
+					writeObjectsToFile();
+
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					// loaderSemaphore.release(2);
+				}
+
+				return null;
+
+			}
+		});
+	}
 
 	private void initCarSelector() {
 		tracksTable = new TableW();
@@ -268,8 +302,6 @@ public abstract class SelectorScreen implements Screen {
 
 		initNavigationButtons();
 	}
-
-	abstract protected void addButton(final String text); 
 
 	private void initStage() {
 

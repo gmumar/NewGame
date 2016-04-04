@@ -29,7 +29,7 @@ public class BaseActor {
 	private Sprite sprite;
 	private Body body;
 
-	//private String name, textureStr;
+	// private String name, textureStr;
 	private JSONComponentName name;
 	private String textureStr;
 	private Texture texture;
@@ -60,9 +60,11 @@ public class BaseActor {
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
 
-	public BaseActor(JSONComponentName name, String texture, GamePhysicalState gameState) {
+	public BaseActor(JSONComponentName name, String texture,
+			GamePhysicalState gameState) {
 
-		this.texture = gameState.getGameLoader().Assets.get(texture,Texture.class);
+		this.texture = gameState.getGameLoader().Assets.get(texture,
+				Texture.class);
 		this.name = name;
 		this.world = gameState.getWorld();
 		this.textureStr = texture;
@@ -111,24 +113,28 @@ public class BaseActor {
 		initBody();
 	}
 
-	public BaseActor(JSONComponentName name, ComponentPhysicsProperties properties,
-			GamePhysicalState gameState) {
-		
-		this.textureStr = (properties.getTexture() == null) ? this.textureStr  : properties.getTexture();
-		this.density = (properties.getDensity() == -1) ? this.density  : properties.getDensity();
-		this.restitution = (properties.getRestituition() == -1) ? this.restitution  : properties.getRestituition();
-		this.friction = (properties.getFriction() == -1) ? this.friction  : properties.getFriction();
+	public BaseActor(JSONComponentName name,
+			ComponentPhysicsProperties properties, GamePhysicalState gameState) {
+
+		this.textureStr = (properties.getTexture() == null) ? this.textureStr
+				: properties.getTexture();
+		this.density = (properties.getDensity() == -1) ? this.density
+				: properties.getDensity();
+		this.restitution = (properties.getRestituition() == -1) ? this.restitution
+				: properties.getRestituition();
+		this.friction = (properties.getFriction() == -1) ? this.friction
+				: properties.getFriction();
 		this.setFixtureData = properties.isSetFixtureData();
-		
-		if(textureStr!=null){
-			this.texture = gameState.getGameLoader().Assets.get(textureStr,Texture.class);
+
+		if (textureStr != null) {
+			this.texture = gameState.getGameLoader().Assets.get(textureStr,
+					Texture.class);
 		} else {
 			this.onlyPhysicBody = true;
 		}
-		
+
 		this.name = name;
 		this.world = gameState.getWorld();
-	
 
 		initSprite();
 		initBody();
@@ -142,7 +148,15 @@ public class BaseActor {
 			sprite.draw(batch);
 		}
 	}
-	
+
+	public void step() {
+		// if (!onlyPhysicBody) {
+		// sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2,
+		// body.getPosition().y - sprite.getHeight() / 2);
+		// sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+		// }
+	}
+
 	public Sprite getSprite() {
 		if (!onlyPhysicBody) {
 
@@ -181,17 +195,18 @@ public class BaseActor {
 
 		body = world.createBody(bodyDef);
 		fixture = body.createFixture(fixtureDef);
-		if(setFixtureData) fixture.setUserData(name);
+		if (setFixtureData)
+			fixture.setUserData(name);
 		fixture.setSensor(false);
 
 		body.setUserData(name);
 	}
-	
-	public Fixture getFixture(){
+
+	public Fixture getFixture() {
 		return fixture;
 	}
-	
-	public void setFixtureData(Object userData){
+
+	public void setFixtureData(Object userData) {
 		fixture.setUserData(userData);
 	}
 
@@ -221,21 +236,21 @@ public class BaseActor {
 
 		initBody();
 	}
-	
-	public void setOrigin(Vector2 vec){
+
+	public void setOrigin(Vector2 vec) {
 		if (!onlyPhysicBody) {
 			sprite.setOrigin(vec.x, vec.y);
 		}
 	}
-	
-	public float getOriginX(){
+
+	public float getOriginX() {
 		if (!onlyPhysicBody) {
 			return sprite.getOriginX();
 		}
 		return 0;
 	}
-	
-	public float getOriginY(){
+
+	public float getOriginY() {
 		if (!onlyPhysicBody) {
 			return sprite.getOriginY();
 		}
@@ -263,14 +278,15 @@ public class BaseActor {
 		while (rot > 2 * Math.PI) {
 			System.out.println("resetting");
 			rot -= (2 * Math.PI);
-			setRotation(rot*MathUtils.radiansToDegrees);
+			setRotation(rot * MathUtils.radiansToDegrees);
 		}
-		
+
 		while (rot < -2 * Math.PI) {
 			System.out.println("resetting");
 			rot += (2 * Math.PI);
-			setRotation(rot*MathUtils.radiansToDegrees);
-			//setRotation((float)(body.getAngle() + 2 * Math.PI)*MathUtils.radiansToDegrees);
+			setRotation(rot * MathUtils.radiansToDegrees);
+			// setRotation((float)(body.getAngle() + 2 *
+			// Math.PI)*MathUtils.radiansToDegrees);
 		}
 
 		return rot;
@@ -285,7 +301,7 @@ public class BaseActor {
 		}
 		initBody();
 	}
-	
+
 	public void setScaleY(float y) {
 		scaleY = y;
 		if (!onlyPhysicBody) {
@@ -327,8 +343,8 @@ public class BaseActor {
 		this.mounts = mounts;
 		this.mountDistance = f;
 	}
-	
-	public float getMountDistance(){
+
+	public float getMountDistance() {
 		return mountDistance;
 	}
 
@@ -379,10 +395,10 @@ public class BaseActor {
 		this.body = body;
 	}
 
-	//public String getName() {
-	//	return name;
-	//}
-	
+	// public String getName() {
+	// return name;
+	// }
+
 	public JSONComponentName getjName() {
 		return name;
 	}
@@ -393,7 +409,7 @@ public class BaseActor {
 		}
 		return null;
 	}
-	
+
 	public Texture getTexture() {
 		if (!onlyPhysicBody) {
 			return texture;
@@ -402,7 +418,7 @@ public class BaseActor {
 	}
 
 	public void destroy() {
-		//destroyTexture();
+		// destroyTexture();
 
 		if (body != null && world != null && world.getBodyCount() > 0) {
 			if (world == null)
@@ -410,8 +426,8 @@ public class BaseActor {
 			world.destroyBody(body);
 		}
 	}
-	
-	public void destroyTexture(){
+
+	public void destroyTexture() {
 		if (!onlyPhysicBody) {
 			texture.dispose();
 		}
@@ -428,17 +444,17 @@ public class BaseActor {
 	public void setDensity(float density) {
 		this.density = density;
 		fixture.setDensity(density);
-		//body.resetMassData();
-		
+		// body.resetMassData();
+
 	}
-	
-	public void setMassScale(float scale){
+
+	public void setMassScale(float scale) {
 		this.massScale = scale;
 		MassData data = body.getMassData();
 		data.mass *= scale;
 		body.setMassData(data);
 	}
-	
+
 	public float getDensity() {
 		return fixture.getDensity();
 	}

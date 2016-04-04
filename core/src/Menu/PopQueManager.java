@@ -6,11 +6,14 @@ import Dialog.BuyDialog;
 import Dialog.DialogBase;
 import Dialog.Skins;
 import Dialog.TextDialog;
+import Dialog.WinDialog;
 import Menu.PopQueObject.PopQueObjectType;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.gudesigns.climber.GameLoader;
 
 public class PopQueManager {
 
@@ -21,11 +24,20 @@ public class PopQueManager {
 	private DialogBase dialog;
 	private PopQueObject currentMsg;
 	
-	Skin skin = Skins.loadDefault();
+	private Table winTable;
+	
+	Skin skin ;
+	
+	GameLoader gameLoader;
 
-	public PopQueManager(Stage stage) {
+	public PopQueManager(GameLoader gameLoader, Stage stage) {
 		this.stage = stage;
-		skin = Skins.loadDefault();
+		this.gameLoader = gameLoader;
+		skin = Skins.loadDefault(gameLoader,0);
+	}
+	
+	public void initWinTable(PopQueObject popQueObject){
+		winTable = WinDialog.CreateDialog(gameLoader,popQueObject);
 	}
 
 	public void update(float delta) {
@@ -78,8 +90,8 @@ public class PopQueManager {
 		dialog.setTouchable(Touchable.enabled);
 		dialog.show(stage);*/
 		
-		dialog = BuyDialog.CreateDialog(popQueObject);
-		dialog.show(stage);
+		dialog = BuyDialog.CreateDialog(gameLoader,popQueObject);
+		dialog.show(stage).top();
 		
 		
 	}
@@ -90,9 +102,13 @@ public class PopQueManager {
 	}
 	
 	private void createWinDialog(PopQueObject popQueObject) {
-		dialog = new TextDialog("Win", skin, "default");
+		/*dialog = new TextDialog("Win", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
-		dialog.show(stage);
+		dialog.show(stage);*/
+		
+		//Table t = WinDialog.CreateDialog(popQueObject);
+		
+		stage.addActor(winTable);
 	}
 
 	private void createLoadingDialog(PopQueObject popQueObject) {

@@ -12,6 +12,7 @@ import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 import Sounds.SoundManager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -62,7 +63,7 @@ public class AssembledObject {
 	}
 	
 	public void initSound(GameLoader gameLoader) {
-		idle = gameLoader.Assets.get("soundfx/idle.wav");
+		idle = Gdx.audio.newSound(Gdx.files.internal("soundfx/idle.mp3"));
 		rotationSpeed = new RollingAverage(2);
 	}
 
@@ -186,7 +187,15 @@ public class AssembledObject {
 	}
 	
 	public void stopSound(){
-		SoundManager.stop(idle);
+		SoundManager.disposeSound(idle);
+	}
+	
+	public void step() {
+
+		for (Component part : partList){
+			part.step();
+		}
+
 	}
 
 	public void draw(SpriteBatch batch) {
@@ -301,7 +310,10 @@ public class AssembledObject {
 	}
 
 	public void dispose() {
-		// comp.destroy();
+		if(idle!=null) {
+			idle.stop();
+			idle.dispose();
+		}
 	}
 	
 	public void setMaxVelocity(float maxVelocity){

@@ -33,26 +33,6 @@ public class CarSelectorScreen extends SelectorScreen{
 	}
 
 	@Override
-	protected void loadLocalItems() {
-		ae.submit(new AsyncTask<String>() {
-
-			@Override
-			public String call() throws Exception {
-
-				for (JSONCar car : gameLoader.cars) {
-					addItemToList(car);
-				}
-
-				loaderSemaphore.release();
-				localLoading.release();
-
-				return null;
-			}
-		});
-
-	}
-
-	@Override
 	protected void downloadItems() {
 		resultsRemaining = true;
 		currentOffset = 0;
@@ -138,7 +118,7 @@ public class CarSelectorScreen extends SelectorScreen{
 		});
 	}
 
-	@Override
+/*	@Override
 	protected void writeItemsToFile() {
 		ae.submit(new AsyncTask<String>() {
 
@@ -146,8 +126,8 @@ public class CarSelectorScreen extends SelectorScreen{
 			public String call() throws Exception {
 
 				try {
-					while (isLoading())
-						Thread.sleep(5);
+					while (isLoading());
+						//Thread.sleep(5);
 					// loaderSemaphore.acquire(2);
 
 					// Iterator<String> iter = cars.iterator();
@@ -175,7 +155,7 @@ public class CarSelectorScreen extends SelectorScreen{
 			}
 		});
 		
-	}
+	}*/
 
 	@Override
 	protected void addButton(final String text) {
@@ -227,6 +207,32 @@ public class CarSelectorScreen extends SelectorScreen{
 
 		refreshAllButtons();
 		
+	}
+
+	@Override
+	protected void writeObjectsToFile() {
+		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
+		for (JSONParentClass car : items) {
+			// String car = iter.next();
+			list.add((JSONCar) car);
+		}
+
+		System.out.println("writing " + list.size());
+
+		FileObject fileObject = new FileObject();
+		fileObject.setCars(list);
+
+		FileManager.writeCarsToFileGson(list);
+		
+	}
+
+	@Override
+	protected void addSpecificItemToList() {
+		for (JSONCar car : gameLoader.cars) {
+			addItemToList(car);
+		}
+		loaderSemaphore.release();
+		localLoading.release();
 	}
 
 }

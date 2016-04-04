@@ -230,12 +230,12 @@ public class ComponentBuilder {
 		JSONComponentName componentNameLower = new JSONComponentName();
 		componentNameLower.setBaseName(ComponentNames.SPRINGJOINT);
 		componentNameLower.setSubName(ComponentSubNames.LOWER);
-		if(forBuilder){
+		if (forBuilder) {
 			properties.setTexture("suspension_lower.png");
-		}else {
+		} else {
 			properties.setTexture("suspension_upper.png");
 		}
-		
+
 		BaseActor botFixture = new BaseActor(componentNameLower, properties,
 				gameState);
 
@@ -479,11 +479,11 @@ public class ComponentBuilder {
 		float mountHeight = tmpActor.getCenter().y;
 
 		ArrayList<Vector2> mounts = new ArrayList<Vector2>();
-		mounts.add(new Vector2(
-				tmpActor.getCenter().x - tmpActor.getWidth() / 2, mountHeight));
+		mounts.add(new Vector2(tmpActor.getCenter().x - tmpActor.getWidth() / 2
+				+ 0.1f, mountHeight));
 		mounts.add(new Vector2(tmpActor.getCenter().x, mountHeight));
-		mounts.add(new Vector2(
-				tmpActor.getCenter().x + tmpActor.getWidth() / 2, mountHeight));
+		mounts.add(new Vector2(tmpActor.getCenter().x + tmpActor.getWidth() / 2
+				- 0.1f, mountHeight));
 		tmpActor.setMounts(mounts, tmpActor.getWidth() / 2);
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
@@ -525,7 +525,7 @@ public class ComponentBuilder {
 
 		return tmpComponent;
 	}
-	
+
 	public static Component buildTrackCoin(GamePhysicalState gamePhysicalState,
 			int partLevel, boolean forBuilder) {
 
@@ -542,14 +542,14 @@ public class ComponentBuilder {
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(componentName, properties,
 				gamePhysicalState);
-		
+
 		tmpActor.setScale(2);
 
 		CircleShape shape = new CircleShape();
 		shape.setRadius(0.3f);
 
 		tmpActor.setShapeBase(shape);
-		
+
 		tmpActor.setSensor();
 		tmpActor.setBodyType(BodyType.StaticBody);
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,

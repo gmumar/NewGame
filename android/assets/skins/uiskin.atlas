@@ -1,6 +1,6 @@
 
 uiskin.png
-size: 1623,127
+size: 1656,127
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -59,7 +59,7 @@ default-rect-pad
   index: -1
 default-pane-noborder
   rotate: false
-  xy: 1612, 107
+  xy: 1563, 80
   size: 1, 1
   split: 0, 0, 0, 0
   orig: 1, 1
@@ -67,7 +67,7 @@ default-pane-noborder
   index: -1
 default-rect
   rotate: false
-  xy: 1563, 79
+  xy: 1578, 93
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -108,7 +108,7 @@ default-round-large
   index: -1
 default-scroll
   rotate: false
-  xy: 1591, 107
+  xy: 1622, 107
   size: 20, 20
   split: 2, 2, 2, 2
   orig: 20, 20
@@ -124,7 +124,7 @@ default-select
   index: -1
 default-select-selection
   rotate: false
-  xy: 1578, 94
+  xy: 1653, 124
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -132,7 +132,7 @@ default-select-selection
   index: -1
 default-slider
   rotate: false
-  xy: 1591, 98
+  xy: 1622, 98
   size: 8, 8
   split: 2, 2, 2, 2
   orig: 8, 8
@@ -140,7 +140,7 @@ default-slider
   index: -1
 default-slider-knob
   rotate: false
-  xy: 1612, 109
+  xy: 1643, 109
   size: 9, 18
   orig: 9, 18
   offset: 0, 0
@@ -163,7 +163,7 @@ default-splitpane-vertical
   index: -1
 default-window
   rotate: false
-  xy: 1563, 98
+  xy: 1594, 98
   size: 27, 29
   split: 4, 3, 20, 3
   orig: 27, 29
@@ -175,6 +175,14 @@ default_button
   size: 134, 62
   split: 32, 33, 14, 15
   orig: 134, 62
+  offset: 0, 0
+  index: -1
+fadedGrey
+  rotate: false
+  xy: 1563, 97
+  size: 30, 30
+  split: 6, 7, 6, 7
+  orig: 30, 30
   offset: 0, 0
   index: -1
 font_laksaman-_bold_italic_16pt
@@ -217,7 +225,7 @@ red
   index: -1
 selection
   rotate: false
-  xy: 1622, 126
+  xy: 1643, 107
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -231,14 +239,14 @@ tree-minus
   index: -1
 tree-plus
   rotate: false
-  xy: 1563, 83
+  xy: 1563, 82
   size: 14, 14
   orig: 14, 14
   offset: 0, 0
   index: -1
 white
   rotate: false
-  xy: 1600, 105
+  xy: 1631, 105
   size: 1, 1
   orig: 1, 1
   offset: 0, 0

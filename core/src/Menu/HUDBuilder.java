@@ -6,6 +6,8 @@ import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.MainMenuScreen;
@@ -99,6 +101,15 @@ public class HUDBuilder {
 		mapProgress.setValue(progress > 100 ? 100 : progress);
 		mapProgress.act(delta);
 
+	}
+	
+	public void hideMenu(){
+		ParallelAction fadeAndSide = new ParallelAction(Actions.fadeOut(0.8f),Actions.moveBy(110,0, 0.6f));
+		ParallelAction fadeAndSide1 = new ParallelAction(Actions.fadeOut(0.8f),Actions.moveBy(110,0, 0.8f));
+		
+		exit.addAction(fadeAndSide);
+		restart.addAction(fadeAndSide1);
+		mapProgress.addAction(Actions.fadeOut(0.8f));
 	}
 
 	public void dispose() {

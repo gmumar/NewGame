@@ -52,7 +52,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		initStage();
 		initWorld();
 		
-		popQueManager = new PopQueManager(stage);
+		popQueManager = new PopQueManager(gameState.getGameLoader(),stage);
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());

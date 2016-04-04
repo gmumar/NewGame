@@ -68,7 +68,7 @@ public class OLD_TrackSelectorScreen implements Screen {
 
 		initNavigationButtons();
 
-		popQueManager = new PopQueManager(stage);
+		//popQueManager = new PopQueManager(stage);
 		popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
 
 		//loadLocalTracks();

@@ -33,5 +33,15 @@ public class SoundManager {
 		//clip.pause();
 		bgMusic.stop();
 	}
+	
+	public static void disposeSound(Music clip){
+		clip.stop();
+		clip.dispose();
+	}
+	
+	public static void disposeSound(Sound clip){
+		clip.stop();
+		clip.dispose();
+	}
 
 }

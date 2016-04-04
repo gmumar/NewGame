@@ -10,12 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.gudesigns.climber.GameLoader;
 
 public class BuyDialog {
 
-	public static DialogBase CreateDialog(final PopQueObject popQueObject) {
+	public static DialogBase CreateDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
 
-		final DialogBase base = new DialogBase("", Skins.loadDefault(), "default");
+		final DialogBase base = new DialogBase("", Skins.loadDefault(gameLoader,0), "default");
 
 		base.setMovable(false);
 		base.setModal(true);
@@ -34,7 +35,7 @@ public class BuyDialog {
 				+ " for "
 				+ itemCost.toString());
 		
-		TextButton yesButton = new TextButton("Yes",Skins.loadButton(),"yesButton");
+		TextButton yesButton = new TextButton("Yes",Skins.loadDefault(gameLoader,1),"yesButton");
 		yesButton.addListener(new ClickListener(){
 
 			@Override
@@ -48,7 +49,7 @@ public class BuyDialog {
 		});
 		base.getButtonTable().add(yesButton).height(60).width(120).pad(-2.5f);
 
-		TextButton noButton = new TextButton("No",Skins.loadButton(),"noButton");
+		TextButton noButton = new TextButton("No",Skins.loadDefault(gameLoader,1),"noButton");
 		noButton.addListener(new ClickListener(){
 
 			@Override

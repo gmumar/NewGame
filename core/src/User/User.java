@@ -22,28 +22,30 @@ public class User {
 
 	private static User instance;
 
+	private Preferences prefs = null;
+
 	private User() {
+		if (prefs == null) {
+			prefs = Gdx.app.getPreferences(GamePreferences.CAR_PREF_STR);
+		}
+
 		currentCar = (Globals.defualt_car);
 		currentTrack = (Globals.default_track);
 	}
 
 	public String getCurrentCar() {
-		if (currentCar == null) {
-			Preferences prefs = Gdx.app
-					.getPreferences(GamePreferences.CAR_PREF_STR);
-
-			String inputString = prefs.getString(GamePreferences.CAR_MAP_STR,
-					Globals.defualt_car);
-			currentCar = inputString;
-		}
+		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR,
+				Globals.defualt_car);
+		currentCar = inputString;
 
 		return currentCar;
 	}
 
 	public void setCurrentCar(String currentCar) {
-		Preferences prefs = Gdx.app
-				.getPreferences(GamePreferences.CAR_PREF_STR);
+		// Preferences prefs = Gdx.app
+		// .getPreferences(GamePreferences.CAR_PREF_STR);
 
+		//prefs.clear();
 		prefs.putString(GamePreferences.CAR_MAP_STR, currentCar);
 		prefs.flush();
 
@@ -53,10 +55,27 @@ public class User {
 	}
 
 	public String getCurrentTrack() {
+		String inputString = prefs.getString(GamePreferences.TRACK_MAP_STR,
+				Globals.default_track);
+		
+		if(inputString.compareTo(Globals.default_track)==0){
+			System.out.println("defaulted");
+		}
+		
+		currentTrack = inputString;
+		
 		return currentTrack;
 	}
 
 	public void setCurrentTrack(String currentTrack) {
+		
+		//prefs.clear();
+		prefs.putString(GamePreferences.TRACK_MAP_STR, currentTrack);
+		
+		System.out.println("current trakc set");
+		
+		prefs.flush();
+		
 		this.currentTrack = currentTrack;
 	}
 
@@ -109,8 +128,8 @@ public class User {
 
 		return -1;
 	}
-	
-	public Integer addCoin(Integer value){
+
+	public Integer addCoin(Integer value) {
 		money += value;
 		return money;
 	}

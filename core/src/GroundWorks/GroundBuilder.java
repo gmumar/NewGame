@@ -100,7 +100,11 @@ public class GroundBuilder {
 		createFloor();
 		decor = new GroundDecor(gameState);
 
-		String mapString = user.getCurrentTrack();
+		String mapString = null;
+		
+		if(!forMainMenu){
+			mapString = user.getCurrentTrack();
+		}
 		
 		System.out.println(mapString);
 
@@ -354,6 +358,7 @@ public class GroundBuilder {
 		// fixtureDef.density = 1;
 		fixtureDef.friction = 1;
 		fixtureDef.restitution = 0.5f;
+		fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
 
 		groundFixture = floor.createFixture(fixtureDef);
 		groundFixture.setUserData(groundFixtureName);
