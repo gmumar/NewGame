@@ -25,7 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncTask;
 
-public class CarSelectorScreen extends SelectorScreen{
+public class CarSelectorScreen extends SelectorScreen {
 
 	public CarSelectorScreen(GameState gameState) {
 		super(gameState);
@@ -36,78 +36,98 @@ public class CarSelectorScreen extends SelectorScreen{
 	protected void downloadItems() {
 		resultsRemaining = true;
 		currentOffset = 0;
-
+		
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
-			public String call() {
+			public String call() throws Exception  {
 
-				while (resultsRemaining) {
-					stall = true;
+				while (resultsRemaining && !killThreads) {
+					//stall = true;
+					
+					if(killThreads) {
+						loaderSemaphore.release();
+						resultsRemaining = false;
+						return null;
+					}
+					
 
-					REST.getData(RESTPaths.CARS
-							+ RESTProperties.URL_ARG_SPLITTER
-							+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
-							+ RESTProperties.PROP_ARG_SPLITTER
-							+ RESTProperties.OFFSET + currentOffset
-							+ RESTProperties.PROP_ARG_SPLITTER
-							+ RESTProperties.PROPS + RESTProperties.CREATED
-							+ RESTProperties.PROP_PROP_SPLITTER
-							+ RESTProperties.CAR_JSON
-
-					, new HttpResponseListener() {
-
-						@Override
-						public void handleHttpResponse(HttpResponse httpResponse) {
-							Backendless_Car obj = Backendless_JSONParser
-									.processDownloadedCars(httpResponse
-											.getResultAsString());
-
-							Iterator<String> iter = obj.getData().iterator();
-
-							while (iter.hasNext()) {
-
-								// carLock.lock();
-
-								final String car = iter.next();
-								final JSONCar carJson = JSONCar.objectify(car);
-								// System.out.println("adding from cloud");
-
-								addItemToList(carJson);
-
-								uniqueListLock.lock();
-								uniqueListLock.unlock();
-
-								// carLock.unlock();
-
+					while(stallSemaphore.tryAcquire()){
+						downloadRequest = REST.getData(RESTPaths.CARS
+								+ RESTProperties.URL_ARG_SPLITTER
+								+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
+								+ RESTProperties.PROP_ARG_SPLITTER
+								+ RESTProperties.OFFSET + currentOffset
+								+ RESTProperties.PROP_ARG_SPLITTER
+								+ RESTProperties.PROPS + RESTProperties.CREATED
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.CAR_JSON
+	
+						, new HttpResponseListener() {
+	
+							@Override
+							public void handleHttpResponse(HttpResponse httpResponse) {
+								Backendless_Car obj = Backendless_JSONParser
+										.processDownloadedCars(httpResponse
+												.getResultAsString());
+	
+								Iterator<String> iter = obj.getData().iterator();
+	
+								while (iter.hasNext()) {
+	
+									// carLock.lock();
+	
+									final String car = iter.next();
+									final JSONCar carJson = JSONCar.objectify(car);
+									// System.out.println("adding from cloud");
+	
+									addItemToList(carJson);
+	
+									uniqueListLock.lock();
+									uniqueListLock.unlock();
+	
+									// carLock.unlock();
+	
+								}
+	
+								if (obj.getTotalObjects() - obj.getOffset() > 0) {
+									resultsRemaining = true;
+								} else {
+									resultsRemaining = false;
+								}
+								stallSemaphore.release();
+								//stall = false;
+	
 							}
-
-							if (obj.getTotalObjects() - obj.getOffset() > 0) {
-								resultsRemaining = true;
-							} else {
+							@Override
+							public void failed(Throwable t) {
+								System.out.println("failed");
+								t.printStackTrace();
+								loaderSemaphore.release();
+								//stallSemaphore.release();
+								//stall = false;
 								resultsRemaining = false;
+								return;
 							}
-							stall = false;
+	
+							@Override
+							public void cancelled() {
+								System.out.println("cancelled");
+								loaderSemaphore.release();
+								//stallSemaphore.release();
+								//stall = false;
+								resultsRemaining = false;
+								return;
+							}
+	
+						});
+						currentOffset += REST.PAGE_SIZE;
+					}
+					
+					//while (stall)
+						//;
 
-						}
-						@Override
-						public void failed(Throwable t) {
-							System.out.println("failed");
-							t.printStackTrace();
-							loaderSemaphore.release();
-						}
-
-						@Override
-						public void cancelled() {
-							System.out.println("cancelled");
-							loaderSemaphore.release();
-						}
-
-					});
-					while (stall)
-						;
-
-					currentOffset += REST.PAGE_SIZE;
+					
 				}
 
 				System.out.println("release download");
@@ -118,44 +138,34 @@ public class CarSelectorScreen extends SelectorScreen{
 		});
 	}
 
-/*	@Override
-	protected void writeItemsToFile() {
-		ae.submit(new AsyncTask<String>() {
-
-			@Override
-			public String call() throws Exception {
-
-				try {
-					while (isLoading());
-						//Thread.sleep(5);
-					// loaderSemaphore.acquire(2);
-
-					// Iterator<String> iter = cars.iterator();
-					ArrayList<JSONCar> list = new ArrayList<JSONCar>();
-					for (JSONParentClass car : items) {
-						// String car = iter.next();
-						list.add((JSONCar) car);
-					}
-
-					System.out.println("writing " + list.size());
-
-					FileObject fileObject = new FileObject();
-					fileObject.setCars(list);
-
-					FileManager.writeCarsToFileGson(list);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					// loaderSemaphore.release(2);
-				}
-
-				return null;
-
-			}
-		});
-		
-	}*/
+	/*
+	 * @Override protected void writeItemsToFile() { ae.submit(new
+	 * AsyncTask<String>() {
+	 * 
+	 * @Override public String call() throws Exception {
+	 * 
+	 * try { while (isLoading()); //Thread.sleep(5); //
+	 * loaderSemaphore.acquire(2);
+	 * 
+	 * // Iterator<String> iter = cars.iterator(); ArrayList<JSONCar> list = new
+	 * ArrayList<JSONCar>(); for (JSONParentClass car : items) { // String car =
+	 * iter.next(); list.add((JSONCar) car); }
+	 * 
+	 * System.out.println("writing " + list.size());
+	 * 
+	 * FileObject fileObject = new FileObject(); fileObject.setCars(list);
+	 * 
+	 * FileManager.writeCarsToFileGson(list);
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); } finally { //
+	 * loaderSemaphore.release(2); }
+	 * 
+	 * return null;
+	 * 
+	 * } });
+	 * 
+	 * }
+	 */
 
 	@Override
 	protected void addButton(final String text) {
@@ -188,7 +198,6 @@ public class CarSelectorScreen extends SelectorScreen{
 		// b.setPosition(100, 100);
 		b.setSize(100, 100);
 
-
 		b.addListener(new ClickListener() {
 
 			@Override
@@ -206,7 +215,7 @@ public class CarSelectorScreen extends SelectorScreen{
 		buttons.add(b);
 
 		refreshAllButtons();
-		
+
 	}
 
 	@Override
@@ -218,12 +227,14 @@ public class CarSelectorScreen extends SelectorScreen{
 		}
 
 		System.out.println("writing " + list.size());
+		
+		if(list.isEmpty()) return;
 
 		FileObject fileObject = new FileObject();
 		fileObject.setCars(list);
 
 		FileManager.writeCarsToFileGson(list);
-		
+
 	}
 
 	@Override

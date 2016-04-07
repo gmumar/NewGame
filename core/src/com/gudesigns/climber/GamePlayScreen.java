@@ -550,8 +550,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		running = false;
 		paused = true;
 		
+		runner.dispose();
+		
 		SoundManager.disposeSound(bgMusic);
 		SoundManager.disposeSound(coinCollected);
+		popQueManager.dispose();
 		world.dispose();
 		camera = null;
 		hud.dispose();

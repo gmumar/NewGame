@@ -13,6 +13,7 @@ import JSONifier.JSONParentClass;
 import Menu.PopQueObject.PopQueObjectType;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -46,11 +47,14 @@ public abstract class SelectorScreen implements Screen {
 
 	private Button exit, nextPage, prevPage;
 
-	public boolean resultsRemaining = true;
+	public volatile boolean resultsRemaining = true;
 	private boolean loadingComplete = false;
-	public volatile boolean stall = true;
+	//public volatile boolean stall = true;
 	protected int currentOffset = 0;
-	protected AsyncExecutor ae = new AsyncExecutor(6);
+	protected AsyncExecutor ae = new AsyncExecutor(2);
+	protected HttpRequest downloadRequest;
+	protected Semaphore stallSemaphore = new Semaphore(1);
+	protected volatile boolean killThreads = false;
 
 	public Semaphore loaderSemaphore = new Semaphore(2);
 	public Lock uniqueListLock = new ReentrantLock();
@@ -66,24 +70,26 @@ public abstract class SelectorScreen implements Screen {
 	// private Integer previousSize = 0;
 
 	public GameState gameState;
-	
-	abstract protected void addButton(final String text); 
+
+	abstract protected void addButton(final String text);
 
 	abstract protected void downloadItems();
-	
+
 	abstract protected void writeObjectsToFile();
-	
+
 	abstract protected void addSpecificItemToList();
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
+		
+		//ae = Globals.getTaskRunner();
 		this.gameState = gameState;
 		this.gameLoader = this.gameState.getGameLoader();
 		initStage();
 
 		initNavigationButtons();
 
-		popQueManager = new PopQueManager(gameLoader,stage);
+		popQueManager = new PopQueManager(gameLoader, stage);
 
 		if (loadingLock.tryAcquire()) {
 			popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
@@ -103,19 +109,18 @@ public abstract class SelectorScreen implements Screen {
 		writeItemsToFile();
 
 	}
-	
-	protected void loadLocalItems(){
+
+	protected void loadLocalItems() {
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
 			public String call() throws Exception {
 
-				/*for (JSONCar car : gameLoader.cars) {
-					addItemToList(car);
-				}*/	
+				/*
+				 * for (JSONCar car : gameLoader.cars) { addItemToList(car); }
+				 */
 
 				addSpecificItemToList();
-
 
 				return null;
 			}
@@ -196,7 +201,7 @@ public abstract class SelectorScreen implements Screen {
 		uniqueListLock.lock();
 
 		JsonElement catElem = parser.parse(item.jsonify());
-		
+
 		if (!uniquenessButtonList.contains(catElem)) {
 			items.add(item);
 			uniquenessButtonList.add(catElem);
@@ -233,15 +238,14 @@ public abstract class SelectorScreen implements Screen {
 			public String call() throws Exception {
 
 				try {
-					while (isLoading());
-						//Thread.sleep(5);
+					while (isLoading())
+						;
+					// Thread.sleep(5);
 					// loaderSemaphore.acquire(2);
 
 					// Iterator<String> iter = cars.iterator();
 
-
 					writeObjectsToFile();
-
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -365,13 +369,12 @@ public abstract class SelectorScreen implements Screen {
 			// refresh the page when loading complete
 			loadingComplete = true;
 			pageDisplayed = false;
-		} 
-		
-		if(localLoading.tryAcquire() || loadedCount >= currentPageEnd){
+		}
+
+		if (localLoading.tryAcquire() || loadedCount >= currentPageEnd) {
 			showCars();
 			localLoading.release();
 		}
-		
 
 	}
 
@@ -405,9 +408,14 @@ public abstract class SelectorScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		//ae.dispose();
+		if(downloadRequest!=null) Gdx.net.cancelHttpRequest(downloadRequest);	
+		
+		killThreads = true;
+
+		ae.dispose();
+
 		batch.dispose();
 		stage.dispose();
-		
+
 	}
 }

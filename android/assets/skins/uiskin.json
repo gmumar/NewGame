@@ -18,20 +18,20 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		disabledFontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 },
 		up: default-round,
 		down: default-round-down
 	},
 	noButton: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		up: red,
 		down: grey
 	},
 	toggle: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		downFontColor: { a: 1, r: 1 },
 		up: default-round,
@@ -39,7 +39,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		checked: default-round-down
 	},
 	yesButton: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		up: green,
 		down: grey
@@ -61,24 +61,24 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
 		background: default-round,
-		titleFont: game-font,
+		titleFont: default-font,
 		titleFontColor: { a: 1, b: 1, g: 1, r: 1 }
 	},
 	winDialog: {
-		titleFont: game-font,
+		titleFont: default-font,
 		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
 		stageBackground: dialogDim
 	},
 	dialog: {
 		background: default-round,
-		titleFont: game-font,
+		titleFont: default-font,
 		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
 		stageBackground: dialogDim
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		background: textfield,
 		cursor: cursor,
@@ -96,31 +96,31 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	optional: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 0.7, g: 0.7, r: 0.7 }
 	},
 	default: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 }
 	},
 	error: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, r: 1 }
 	},
 	title: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 }
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
-		font: game-font,
+		font: default-font,
 		fontColorSelected: { a: 1, b: 1, g: 1, r: 1 },
 		fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
 		selection: selection
 	},
 	dimmed: {
-		font: game-font,
+		font: default-font,
 		fontColorSelected: { a: 1, b: 1, g: 1, r: 1 },
 		fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
 		selection: selection,
@@ -131,7 +131,7 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 	default: {
 		checkboxOn: check-on,
 		checkboxOff: check-off,
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 }
 	}
 },
@@ -144,7 +144,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
-		font: game-font,
+		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		background: default-select,
 		scrollStyle: default,

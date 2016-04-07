@@ -57,6 +57,8 @@ public class AssemblyRules {
 
 	public ArrayList<Body> getLifeConnectedParts(World world, Body baseObject,
 			ArrayList<Component> parts) {
+		
+		System.out.println("life connected parts");
 
 		ArrayList<SimpleJoint> joints = new ArrayList<SimpleJoint>();
 
@@ -68,17 +70,24 @@ public class AssemblyRules {
 			if (contact.isTouching()) {
 				if (contact.getFixtureA().getUserData() != null
 						&& contact.getFixtureB().getUserData() != null) {
-
-					joint = new SimpleJoint();
-					joint.bodyA = contact.getFixtureA().getBody();
+					
+					System.out.println(((JSONComponentName)contact.getFixtureA().getUserData()).getMountedId());
+					
 					if(((JSONComponentName)contact.getFixtureA().getUserData()).getMountedId().contains("*")){
+						System.out.println("contining");
 						continue;
 					}
-					joint.bodyB = contact.getFixtureB().getBody();
-					if(((JSONComponentName)contact.getFixtureB().getUserData()).getMountedId().contains("*")){
+					
+					System.out.println(((JSONComponentName)contact.getFixtureB().getUserData()).getMountedId());
+					
+					if(((JSONComponentName)contact.getFixtureB().getUserData()).getMountedId().contains("*")){	
+						System.out.println("contining");
 						continue; 
 					}
 
+					joint = new SimpleJoint();
+					joint.bodyA = contact.getFixtureA().getBody();
+					joint.bodyB = contact.getFixtureB().getBody();
 				}
 			}
 			if (joint != null)

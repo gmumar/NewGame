@@ -60,7 +60,7 @@ public class REST {
 		
 	}
 	
-	public static void postData(String path,
+	public static HttpRequest postData(String path,
 			HashMap<String, String> parameters, HttpResponseListener listener) {
 		HttpRequest request = getRequest(path, HttpMethods.POST);
 		Gson json = new Gson();
@@ -71,15 +71,19 @@ public class REST {
 		System.out.println(request.getContent());
 
 		Gdx.net.sendHttpRequest(request, listener);
+		
+		return request;
 	}
 
-	public static void getData(String path, final HttpResponseListener listener) {
+	public static HttpRequest getData(String path, final HttpResponseListener listener) {
 		final HttpRequest request = getRequest(path, HttpMethods.GET);
 		request.setContent("");
 		
-		//System.out.println(path);
+		System.out.println(path);
 
 		Gdx.net.sendHttpRequest(request, listener);
+		
+		return request;
 		
 	}
 

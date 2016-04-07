@@ -42,69 +42,89 @@ public class TrackSelectorScreen extends SelectorScreen {
 			@Override
 			public String call() throws Exception {
 
-				while (resultsRemaining) {
-					stall = true;
-
-					REST.getData(RESTPaths.MAPS
-							+ RESTProperties.URL_ARG_SPLITTER
-							+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
-							+ RESTProperties.PROP_ARG_SPLITTER
-							+ RESTProperties.OFFSET + currentOffset
-							+ RESTProperties.PROP_ARG_SPLITTER
-							+ RESTProperties.PROPS + RESTProperties.CREATED
-							+ RESTProperties.PROP_PROP_SPLITTER
-							+ RESTProperties.TRACK_POINTS_JSON
-
-					, new HttpResponseListener() {
-
-						@Override
-						public void handleHttpResponse(HttpResponse httpResponse) {
-							System.out.println("got a reply ");
-							Backendless_Track obj = Backendless_JSONParser
-									.processDownloadedTrack(httpResponse
-											.getResultAsString());
-
-							
-
-							Iterator<String> iter = obj.getData().iterator();
-
-							while (iter.hasNext()) {
-								final String track = iter.next();
-								final JSONTrack trackJson = JSONTrack
-										.objectify(track);
-
-								addItemToList(trackJson);
-
-								uniqueListLock.lock();
-								uniqueListLock.unlock();
-
+				while (resultsRemaining && !killThreads) {
+					//stall = true;
+					
+					if(killThreads) {
+						loaderSemaphore.release();
+						resultsRemaining = false;
+						
+						return null;
+					}
+					
+					while(stallSemaphore.tryAcquire()){
+						downloadRequest = REST.getData(RESTPaths.MAPS
+								+ RESTProperties.URL_ARG_SPLITTER
+								+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
+								+ RESTProperties.PROP_ARG_SPLITTER
+								+ RESTProperties.OFFSET + currentOffset
+								+ RESTProperties.PROP_ARG_SPLITTER
+								+ RESTProperties.PROPS + RESTProperties.CREATED
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.TRACK_POINTS_JSON
+	
+						, new HttpResponseListener() {
+	
+							@Override
+							public void handleHttpResponse(HttpResponse httpResponse) {
+								System.out.println("got a reply ");
+								Backendless_Track obj = Backendless_JSONParser
+										.processDownloadedTrack(httpResponse
+												.getResultAsString());
+	
+								
+	
+								Iterator<String> iter = obj.getData().iterator();
+	
+								while (iter.hasNext()) {
+									final String track = iter.next();
+									final JSONTrack trackJson = JSONTrack
+											.objectify(track);
+	
+									addItemToList(trackJson);
+	
+									uniqueListLock.lock();
+									uniqueListLock.unlock();
+	
+								}
+	
+								if (obj.getTotalObjects() - obj.getOffset() > 0) {
+									resultsRemaining = true;
+								} else {
+									resultsRemaining = false;
+								}
+								stallSemaphore.release();
+								//stall = false;
+	
 							}
-
-							if (obj.getTotalObjects() - obj.getOffset() > 0) {
-								resultsRemaining = true;
-							} else {
+	
+							@Override
+							public void failed(Throwable t) {
+								loaderSemaphore.release();
+								t.printStackTrace();
+								System.out.println("track failed");
+								//stallSemaphore.release();
+								//stall = false;
 								resultsRemaining = false;
+								//return;
 							}
-							stall = false;
+	
+							@Override
+							public void cancelled() {
+								loaderSemaphore.release();
+								System.out.println("track concelled");
+								//stallSemaphore.release();
+								//stall = false;
+								resultsRemaining = false;
+								//return;
+							}
+	
+						});
+						currentOffset += REST.PAGE_SIZE;
+					}
+					//while (stall);
 
-						}
-
-						@Override
-						public void failed(Throwable t) {
-							loaderSemaphore.release();
-							t.printStackTrace();
-						}
-
-						@Override
-						public void cancelled() {
-							loaderSemaphore.release();
-						}
-
-					});
-					while (stall)
-						;
-
-					currentOffset += REST.PAGE_SIZE;
+					
 				}
 
 				System.out.println("released download");
@@ -187,6 +207,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 		}
 
 		System.out.println("writing " + list.size());
+		
+		if(list.isEmpty()) return;
 
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);

@@ -88,12 +88,12 @@ public class LoaderScreen implements Screen {
 		//gameLoader.Assets.load("soundfx/coin.mp3", Sound.class);
 		//gameLoader.Assets.load("soundfx/idle.mp3", Sound.class);
 
-		ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
+		/*ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
 		BitmapFont font = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
 				Color.BLACK);
 		resources.put("game-font", font);
 		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
-				new SkinParameter("skins/uiskin.atlas", resources));
+				new SkinParameter("skins/uiskin.atlas", resources));*/
 
 	}
 

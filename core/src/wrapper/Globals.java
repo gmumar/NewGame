@@ -6,6 +6,7 @@ import JSONifier.JSONJoint;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
 
 public class Globals {
 
@@ -40,7 +41,6 @@ public class Globals {
 	
 	final public static float STEP = 1/60f;
 	
-
 	public static void  runOnUIThread(Runnable runnable){
 		Gdx.app.postRunnable(runnable);
 	}

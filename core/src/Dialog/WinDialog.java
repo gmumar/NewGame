@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -16,15 +17,18 @@ public class WinDialog {
 	//reference : https://github.com/EsotericSoftware/tablelayout
 
 	public static Table CreateDialog(GameLoader gameLoader,final PopQueObject popQueObject) {
+		
+		Skin skin = Skins.loadDefault(gameLoader,0);
+		
 
-		final Table base = new Table( Skins.loadDefault(gameLoader,0));
+		final Table base = new Table(skin);
 		//base.debugAll();
 		base.setColor(1, 1, 1, 0);
 		base.setBackground("dialogDim");
 		base.setFillParent(true);
 		base.addAction(Actions.fadeIn(0.5f));
 		
-		TextButton restart = new TextButton("restart",Skins.loadDefault(gameLoader,1),"noButton");
+		TextButton restart = new TextButton("restart",skin,"noButton");
 		restart.addListener(new ClickListener(){
 
 			@Override
@@ -36,7 +40,7 @@ public class WinDialog {
 			
 		});
 		
-		TextButton exit = new TextButton("exit",Skins.loadDefault(gameLoader,1),"noButton");
+		TextButton exit = new TextButton("exit",skin,"noButton");
 		exit.addListener(new ClickListener(){
 
 			@Override
@@ -54,10 +58,10 @@ public class WinDialog {
 		base.add(text).expandY().center();
 		base.row();
 		
-		Table bottomBar = new Table(Skins.loadDefault(gameLoader,1));
+		Table bottomBar = new Table(skin);
 		bottomBar.setBackground("dialogDim");
 		
-		Table bottomWrapper = new Table(Skins.loadDefault(gameLoader,1));
+		Table bottomWrapper = new Table(skin);
 		
 		bottomWrapper.add(exit).width(90).pad(2);
 		bottomWrapper.add(restart).width(90);

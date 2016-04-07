@@ -124,4 +124,9 @@ public class PopQueManager {
 		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
+	
+	public void dispose(){
+		winTable.clear();
+		//skin.dispose();
+	}
 }
