@@ -1,12 +1,6 @@
 package Dialog;
 
 import Menu.PopQueObject;
-import MenuComponentBuilders.DialogStyleBuilder;
-import MenuComponentBuilders.TextBoxBuilder;
-import MenuComponentBuilders.DialogStyleBuilder.DialogStyleType;
-import MenuComponentBuilders.TextButtonStyleBuilder;
-import MenuComponentBuilders.TextBoxBuilder.TextBoxStyles;
-import MenuComponentBuilders.TextButtonStyleBuilder.TextButtonTypes;
 import User.Costs;
 import User.User;
 
@@ -14,14 +8,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.GameLoader;
 
 public class BuyDialog {
 
-	public static DialogStyleBuilder CreateDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
+	public static DialogBase CreateDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
 
-		final DialogStyleBuilder base = new DialogStyleBuilder("", DialogStyleType.BUY);
+		final DialogBase base = new DialogBase("", Skins.loadDefault(gameLoader,0), "default");
 
 		base.setMovable(false);
 		base.setModal(true);
@@ -32,26 +27,15 @@ public class BuyDialog {
 		
 		final Integer itemCost = Costs.lookup(popQueObject.getComponentName(),
 				popQueObject.getNextLevel());
-		
-		TextBoxBuilder mainLine = new TextBoxBuilder("mainLine", TextBoxStyles.WHITE);
-		
-		mainLine.setText("Buy level:"
-				+ popQueObject.getNextLevel()
-				+ " of "
-				+ popQueObject.getComponentName()
-				+ " for \n" 
-				+ itemCost.toString());
-		
-		base.getContentTable().add(mainLine);
 
-		/*base.text("Buy level:"
+		base.text("Buy level:"
 				+ popQueObject.getNextLevel()
 				+ " of "
 				+ popQueObject.getComponentName()
 				+ " for "
-				+ itemCost.toString());*/
+				+ itemCost.toString());
 		
-		TextButtonStyleBuilder yesButton = new TextButtonStyleBuilder("Yes",TextButtonTypes.YES);
+		TextButton yesButton = new TextButton("Yes",Skins.loadDefault(gameLoader,1),"yesButton");
 		yesButton.addListener(new ClickListener(){
 
 			@Override
@@ -65,7 +49,7 @@ public class BuyDialog {
 		});
 		base.getButtonTable().add(yesButton).height(60).width(120).pad(-2.5f);
 
-		TextButtonStyleBuilder noButton = new TextButtonStyleBuilder("No",TextButtonTypes.NO);
+		TextButton noButton = new TextButton("No",Skins.loadDefault(gameLoader,1),"noButton");
 		noButton.addListener(new ClickListener(){
 
 			@Override

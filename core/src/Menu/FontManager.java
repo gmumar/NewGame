@@ -10,48 +10,61 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 public class FontManager {
-
+	
 	private static final int SCALE = 10;
-
-	private static HashMap<String, BitmapFont> fonts = new HashMap<String, BitmapFont>();
-
-	public static BitmapFont GenerateDefaultFont() {
+	
+	private static HashMap<String,BitmapFont> fonts = new HashMap<String,BitmapFont>();
+	
+	public static BitmapFont GenerateFont(String fontFile, int size, Color color){
 		
-		String fontFile = "fonts/simpleFont.ttf";
-		int size = 4;
-		Color color = Color.BLACK;
-
-		String key = color.toString() + "_" + size + "_" + fontFile;
-
-		if (fonts.containsKey(key)) {
+		String key = color + "_" + fontFile;
+		
+		if(fonts.containsKey(key)){
 			return fonts.get(key);
-		} else {
-			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-					Gdx.files.internal(fontFile));
-
+		}else{
+			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontFile));
+	
 			FreeTypeFontParameter parameters = new FreeTypeFontParameter();
-			parameters.size = size * SCALE;
-			// parameters.borderStraight = false;
-			// parameters.genMipMaps = true;
-			// parameters.incremental = true;
+			parameters.size =  size * SCALE;
+			//parameters.borderStraight = false;
+			//parameters.genMipMaps = true;
+			//parameters.incremental = true;
 			parameters.magFilter = TextureFilter.Linear;
 			parameters.minFilter = TextureFilter.Linear;
-			//parameters.borderWidth = 1f;
-			//parameters.borderColor = color;
-			//parameters.color = color;
-			BitmapFont bfont = generator.generateFont(parameters);// new
-
-			generator.dispose(); // BitmapFont();
-			bfont.getData().setScale((float) size / SCALE);
-
-			//bfont.setColor(color);
-
+			parameters.borderWidth = 1f;
+			parameters.borderColor = color;
+			parameters.color = color;
+			BitmapFont bfont = generator.generateFont(parameters);// new BitmapFont();
+			bfont.getData().setScale((float)size/SCALE);
 			fonts.put(key, bfont);
-
 			return bfont;
 		}
 	}
 
-
+	public static BitmapFont GenerateScaledFont(String fontFile, int size, Color color, int Scale, float boader) {
+	String key = color + "_" + fontFile + "_" +Scale;
+		
+		if(fonts.containsKey(key)){
+			return fonts.get(key);
+		}else{
+			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontFile));
+	
+			FreeTypeFontParameter parameters = new FreeTypeFontParameter();
+			parameters.size =  size * Scale;
+			//parameters.kerning = true;
+			//parameters.borderStraight = true;
+			//parameters.genMipMaps = true;
+			//parameters.incremental = true;
+			parameters.magFilter = TextureFilter.Linear;
+			parameters.minFilter = TextureFilter.Nearest;
+			parameters.borderWidth = boader;
+			parameters.borderColor = color;
+			parameters.color = color;
+			BitmapFont bfont = generator.generateFont(parameters);// new BitmapFont();
+			bfont.getData().setScale((float)size/Scale);
+			fonts.put(key, bfont);
+			return bfont;
+		}
+	}
 
 }

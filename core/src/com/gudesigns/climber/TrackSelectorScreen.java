@@ -106,7 +106,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 								//stallSemaphore.release();
 								//stall = false;
 								resultsRemaining = false;
-								return;
+								//return;
 							}
 	
 							@Override
@@ -116,7 +116,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 								//stallSemaphore.release();
 								//stall = false;
 								resultsRemaining = false;
-								return;
+								//return;
 							}
 	
 						});
