@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+import Component.ComponentProperties;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -14,6 +16,7 @@ public class JSONCar extends JSONParentClass {
 	private ArrayList<JSONComponent> componentList = null;
 	private Map<String, Integer> jointTypeList = null;
 	private static JsonParser parser = new JsonParser();
+	private ArrayList<JSONComponent> addComponents = null;
 
 	public String jsonify() {
 		Gson obj = new Gson();
@@ -25,6 +28,14 @@ public class JSONCar extends JSONParentClass {
 		Gson json = new Gson();
 		//json.setIgnoreUnknownFields(true);
 		return json.fromJson(str, JSONCar.class);
+	}
+
+	public ArrayList<JSONComponent> getAddComponents() {
+		return addComponents;
+	}
+
+	public void setAddComponents(ArrayList<JSONComponent> addComponents) {
+		this.addComponents = addComponents;
 	}
 
 	public ArrayList<JSONJoint> getJointList() {

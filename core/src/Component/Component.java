@@ -318,6 +318,13 @@ public class Component {
 		jComponentName.setBaseName(baseName);
 	}
 
+	public void setLevel(Integer level) {
+		jComponentName.setLevel(level);
+	}
+	public Integer getLevel() {
+		return jComponentName.getLevel();
+	}
+	
 	public void setSubName(String subName) {
 		jComponentName.setSubName(subName);
 	}

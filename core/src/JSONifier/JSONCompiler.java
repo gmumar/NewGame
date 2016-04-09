@@ -9,6 +9,7 @@ import java.util.Set;
 import wrapper.Globals;
 import Component.Component;
 import Component.Component.ComponentTypes;
+import Component.ComponentProperties;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONTrack.TrackType;
 import User.User;
@@ -24,21 +25,32 @@ public class JSONCompiler {
 			HashMap<String, Integer> jointTypes) {
 
 		JSONCar car = new JSONCar();
-		/*Preferences prefs = Gdx.app
-				.getPreferences(GamePreferences.CAR_PREF_STR);*/
+		/*
+		 * Preferences prefs = Gdx.app
+		 * .getPreferences(GamePreferences.CAR_PREF_STR);
+		 */
 
 		// component list
 		ArrayList<JSONComponent> JSONparts = new ArrayList<JSONComponent>();
+		JSONComponent JSONPart;
+		
+		//AdditionalProperties
+		ArrayList<JSONComponent> addParts = new ArrayList<JSONComponent>();
 
 		for (Component part : parts) {
 			if (part.getComponentTypes() == ComponentTypes.PART
 					|| part.getComponentTypes() == ComponentTypes.JOINT) {
 				// JSONparts.add(part.toJSONComponent((String) part.getObject()
 				// .getPhysicsBody().getUserData()));
+				JSONPart = part.toJSONComponent(part.getjComponentName());
 				
-				System.out.println("JSONCompiler: "+part.getjComponentName());
-				
-				JSONparts.add(part.toJSONComponent(part.getjComponentName()));
+				if (part.getjComponentName().getLevel() == Globals.DISABLE_LEVEL) {
+					addParts.add(JSONPart);
+				} else {
+					System.out.println("JSONCompiler: "
+							+ part.getjComponentName());
+					JSONparts.add(JSONPart);
+				}
 
 			}/*
 			 * else if (part.getComponentTypes() == ComponentTypes.JOINT) {
@@ -53,6 +65,10 @@ public class JSONCompiler {
 			 * JSONparts.add(part.toJSONComponent(part.getjComponentName(),
 			 * body)); }
 			 */
+		}
+		
+		if(!addParts.isEmpty()){
+			car.setAddComponents(addParts);
 		}
 		car.setComponentList(JSONparts);
 
@@ -93,25 +109,25 @@ public class JSONCompiler {
 				joints.add(joint);
 		}
 		car.setJointList(joints);
-		
+
 		HashMap<String, Integer> shortJointTypes = new HashMap<String, Integer>();
 		Set<Entry<String, Integer>> jointTypesIter = jointTypes.entrySet();
-		
-		for(Entry<String, Integer> jointType : jointTypesIter){
-			if(jointType.getValue()==Globals.ROTATABLE_JOINT){
+
+		for (Entry<String, Integer> jointType : jointTypesIter) {
+			if (jointType.getValue() == Globals.ROTATABLE_JOINT) {
 				shortJointTypes.put(jointType.getKey(), jointType.getValue());
 			}
 		}
 
 		car.setJointTypeList(shortJointTypes);
 
-		/*prefs.putString(GamePreferences.CAR_MAP_STR, car.jsonify());
-		prefs.flush();
-
-		System.out.println("JSONCompiler :car str "
-				+ prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));*/
-		
-		
+		/*
+		 * prefs.putString(GamePreferences.CAR_MAP_STR, car.jsonify());
+		 * prefs.flush();
+		 * 
+		 * System.out.println("JSONCompiler :car str " +
+		 * prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
+		 */
 
 		return car.jsonify();
 	}
@@ -120,8 +136,8 @@ public class JSONCompiler {
 			ArrayList<Component> parts, HashMap<String, Integer> jointTypes) {
 		JSONTrack track = new JSONTrack();
 
-		//Preferences prefs = Gdx.app
-		//		.getPreferences(GamePreferences.CAR_PREF_STR);
+		// Preferences prefs = Gdx.app
+		// .getPreferences(GamePreferences.CAR_PREF_STR);
 
 		// component list
 		ArrayList<JSONComponent> JSONparts = new ArrayList<JSONComponent>();
@@ -134,7 +150,7 @@ public class JSONCompiler {
 			}
 		}
 		track.setComponentList(JSONparts);
-		
+
 		// joint list
 		ArrayList<JSONJoint> joints = new ArrayList<JSONJoint>();
 
@@ -172,9 +188,9 @@ public class JSONCompiler {
 				joints.add(joint);
 		}
 		track.setJointList(joints);
-		
+
 		track.setComponentJointTypes(jointTypes);
-		
+
 		Iterator<GroundUnitDescriptor> iter = mapList.iterator();
 		ArrayList<Vector2> trackArray = new ArrayList<Vector2>();
 
@@ -187,14 +203,14 @@ public class JSONCompiler {
 
 		track.setPoints(trackArray);
 		track.setType(TrackType.NORMAL);
-		
+
 		User.getInstance().setCurrentTrack(track.jsonify());
 
-		//prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
-		//prefs.flush();
+		// prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
+		// prefs.flush();
 
 		System.out.println(track.jsonify());
-		
+
 		return track.jsonify();
 
 	}

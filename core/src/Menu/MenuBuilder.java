@@ -16,9 +16,9 @@ import Assembly.AssemblyRules;
 import Component.Component;
 import Component.ComponentBuilder;
 import Component.ComponentNames;
-import Component.Component.PropertyTypes;
 import JSONifier.JSONCar;
 import JSONifier.JSONCompiler;
+import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import Menu.PopQueObject.PopQueObjectType;
 import RESTWrapper.BackendFunctions;
@@ -392,7 +392,7 @@ public class MenuBuilder {
 
 	}
 	
-	private Component addLife() {
+	private ArrayList<Component> addLife() {
 		incrementCount(ComponentNames.LIFE);
 		Component c = ComponentBuilder.buildLife(new GamePhysicalState(world,
 				gameLoader), 1, true);
@@ -410,10 +410,12 @@ public class MenuBuilder {
 		baseObject = c.getObject().getPhysicsBody();// lastSelected =
 		parts.add(c);
 		
-		return c;
+		ArrayList<Component> tmp = new ArrayList<Component>();
+		tmp.add(c);
+		return tmp;
 	}
 
-	private Component addSmallBar() {
+	private ArrayList<Component> addSmallBar() {
 		partLevel = user.getSmallBarLevel();
 		incrementCount(ComponentNames.BAR3);
 		Component c = ComponentBuilder.buildBar3(new GamePhysicalState(
@@ -433,10 +435,12 @@ public class MenuBuilder {
 		parts.add(c);
 		// lastSelected =
 		// parts.get(parts.size()-1).getObject().getPhysicsBody();
-		return c;
+		ArrayList<Component> tmp = new ArrayList<Component>();
+		tmp.add(c);
+		return tmp;
 	}
 	
-	private Component addTire() {
+	private ArrayList<Component> addTire() {
 		partLevel = user.getTireLevel();
 		incrementCount(ComponentNames.TIRE);
 		Component c = ComponentBuilder.buildTire(new GamePhysicalState(
@@ -465,15 +469,20 @@ public class MenuBuilder {
 
 		// lastSelected =
 		// parts.get(parts.size()-1).getObject().getPhysicsBody();
-		return c;
+		ArrayList<Component> tmp = new ArrayList<Component>();
+		tmp.add(c);
+		return tmp;
 	}
 	
-	private Component addSpring(){
+	private ArrayList<Component> addSpring(){
 		partLevel = user.getSpringLevel();
 		incrementCount(ComponentNames.SPRINGJOINT);
-		Component c = ComponentBuilder.buildSpringJoint(
+		
+		ArrayList<Component> list = ComponentBuilder.buildSpringJoint(
 				new GamePhysicalState(world, gameLoader), partLevel,
-				true).get(0);
+				true);
+		
+		Component c = list.get(0);
 		// c.setUpForBuilder(Assembler.NAME_ID_SPLIT
 		// + componentCounts.get(ComponentNames.SPRINGJOINT));
 		JSONComponentName name = new JSONComponentName();
@@ -486,9 +495,16 @@ public class MenuBuilder {
 		System.out.println("MenuBuilder: " + name);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
+		
+		Component otherComponent = list.get(1);
+		otherComponent.setComponentId(Integer.toString(componentCounts
+				.get(ComponentNames.SPRINGJOINT)));
+		otherComponent.setLevel(Globals.DISABLE_LEVEL);
+		
+		parts.add(list.get(1));
 		// lastSelected =
 		// parts.get(parts.size()-1).getObject().getPhysicsBody();
-		return c;
+		return list;
 	}
 
 	private void setUpPreBuiltCar() {
@@ -501,7 +517,8 @@ public class MenuBuilder {
 		//tmpWorld.dispose();
 		
 		ArrayList<String> seenComponents = new ArrayList<String>();
-		Component addedComponent = null;
+		ArrayList<Component> addedComponents = null;
+		ArrayList<JSONComponent> additionalComps = currentCarJson.getAddComponents();
 		
 		for(Entry<String, Component> part : carPartsSet){
 			Component comp = part.getValue();
@@ -515,25 +532,39 @@ public class MenuBuilder {
 				seenComponents.add(key);
 				
 				if(name.getBaseName().compareTo(ComponentNames.TIRE)==0 ){
-					addedComponent = addTire();
+					addedComponents = addTire();
 				} else if(name.getBaseName().compareTo(ComponentNames.SPRINGJOINT)==0) {
-					addedComponent = addSpring();
+					addedComponents = addSpring();
 				} else if(name.getBaseName().compareTo(ComponentNames.LIFE)==0){
-					addedComponent = addLife();
-					baseObject = addedComponent.getObject().getPhysicsBody();
+					addedComponents = addLife();
+					baseObject = addedComponents.get(0).getObject().getPhysicsBody();
 				} else if(name.getBaseName().compareTo(ComponentNames.BAR3)==0){
-					addedComponent = addSmallBar();
+					addedComponents = addSmallBar();
 				} else {
 					System.out.println("Missing: ------- " + key);
 				}
 				
-				System.out.println("Setting position " + comp.getObject().getRotation());
-				//addedComponent.applyProperties(
-					//	comp.get, PropertyTypes.BOTH);
-	
-				
-				addedComponent.setPosition(comp.getObject().getPosition().x, comp.getObject().getPosition().y);
-				addedComponent.getObject().setRotation(comp.getObject().getRotation()*MathUtils.radiansToDegrees);
+				for (Component addedComponent : addedComponents){
+					if(addedComponent.getLevel()==Globals.DISABLE_LEVEL){
+						if(additionalComps !=null){
+						for (JSONComponent addcomp : additionalComps){
+							if(name.getBaseId().compareTo(addcomp.getjComponentName().getBaseId())==0){
+								System.out.println("Setting position " + addcomp.getProperties().getPositionX() + ", " + addcomp.getProperties().getPositionY());
+								System.out.println("matched: " + name.getBaseId());
+								addedComponent.getObject().setPosition(
+										Float.parseFloat(addcomp.getProperties().getPositionX()), 
+										Float.parseFloat(addcomp.getProperties().getPositionY()));
+								//addedComponent.getObject().setRotation(
+									//	Float.parseFloat(addcomp.getProperties().getRotation()));
+							}
+						}
+						}
+					} else {
+						System.out.println("Setting position " + comp.getObject().getPosition());
+						addedComponent.setPosition(comp.getObject().getPosition().x, comp.getObject().getPosition().y);
+						addedComponent.getObject().setRotation(comp.getObject().getRotation()*MathUtils.radiansToDegrees);
+					}
+				}
 				
 			}
 			
@@ -555,8 +586,7 @@ public class MenuBuilder {
 		}
 		
 		
-		
-		
+			
 	}
 
 	private Component lookupLastPart() {
