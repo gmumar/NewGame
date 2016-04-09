@@ -27,6 +27,12 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		up: default-round,
 		down: default-round-down
 	},
+	noButton: {
+		font: default-font,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 },
+		up: red,
+		down: grey
+	},
 	toggle: {
 		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
@@ -34,6 +40,12 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		up: default-round,
 		down: default-round-down,
 		checked: default-round-down
+	},
+	yesButton: {
+		font: default-font,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 },
+		up: green,
+		down: grey
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {

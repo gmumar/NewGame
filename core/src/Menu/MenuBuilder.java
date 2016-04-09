@@ -16,6 +16,8 @@ import Component.ComponentNames;
 import JSONifier.JSONCompiler;
 import JSONifier.JSONComponentName;
 import Menu.PopQueObject.PopQueObjectType;
+import MenuComponentBuilders.TextBoxBuilder;
+import MenuComponentBuilders.TextBoxBuilder.TextBoxStyles;
 import RESTWrapper.BackendFunctions;
 import User.User;
 
@@ -56,7 +58,7 @@ public class MenuBuilder {
 	private Button but, tire_but, spring_but, zoomIn, zoomOut, rotateLeft,
 			rotateRight, build, exit, upload, levelUp, levelDown, delete;
 
-	private TextBox partLevelText, moneyBox;
+	private TextBoxBuilder partLevelText, moneyBox;
 
 	private Vector3 mousePoint = new Vector3();
 	private Body hitBody, lastSelected = null, baseObject;
@@ -421,13 +423,13 @@ public class MenuBuilder {
 		levelDown.setWidth(50);
 		stage.addActor(levelDown);
 
-		partLevelText = new TextBox("1");
+		partLevelText = new TextBoxBuilder("1", TextBoxStyles.WHITE);
 		partLevelText.setPosition(Globals.ScreenWidth - 75, 250);
 		partLevelText.setHeight(50);
 		partLevelText.setWidth(50);
 		stage.addActor(partLevelText);
 
-		moneyBox = new TextBox("1");
+		moneyBox = new TextBoxBuilder("1", TextBoxStyles.WHITE);
 		moneyBox.setPosition(Globals.ScreenWidth / 2 - 25, 0);
 		moneyBox.setHeight(50);
 		moneyBox.setWidth(50);

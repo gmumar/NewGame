@@ -1,5 +1,9 @@
 package Dialog;
 
+import MenuComponentBuilders.TextBoxBuilder;
+import MenuComponentBuilders.TextButtonStyleBuilder;
+import MenuComponentBuilders.TextBoxBuilder.TextBoxStyles;
+import MenuComponentBuilders.TextButtonStyleBuilder.TextButtonTypes;
 import Menu.PopQueObject;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -10,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gudesigns.climber.GameLoader;
 
 public class WinDialog {
@@ -18,17 +23,20 @@ public class WinDialog {
 
 	public static Table CreateDialog(GameLoader gameLoader,final PopQueObject popQueObject) {
 		
-		Skin skin = Skins.loadDefault(gameLoader,0);
+		Skin skin = Skins.loadDefault();
 		
 
-		final Table base = new Table(skin);
+		System.out.println("making table");
+		final Table base = new Table();
 		//base.debugAll();
-		base.setColor(1, 1, 1, 0);
-		base.setBackground("dialogDim");
+		//base.setColor(1, 1, 1, 0);
+		base.setBackground(skin.get("dialogDim", Drawable.class));
 		base.setFillParent(true);
 		base.addAction(Actions.fadeIn(0.5f));
 		
-		TextButton restart = new TextButton("restart",skin,"noButton");
+		System.out.println("making restart button");
+		
+		TextButtonStyleBuilder restart = new TextButtonStyleBuilder("restart", TextButtonTypes.RESTART);
 		restart.addListener(new ClickListener(){
 
 			@Override
@@ -40,7 +48,8 @@ public class WinDialog {
 			
 		});
 		
-		TextButton exit = new TextButton("exit",skin,"noButton");
+		System.out.println("making exit button");
+		TextButtonStyleBuilder exit = new TextButtonStyleBuilder("exit", TextButtonTypes.EXIT);
 		exit.addListener(new ClickListener(){
 
 			@Override
@@ -52,7 +61,9 @@ public class WinDialog {
 			
 		});
 		
-		Label text = new Label("Win!",Skins.loadDefault(gameLoader,1));
+		System.out.println("making text box");
+		
+		TextBoxBuilder text = new TextBoxBuilder("Win!", TextBoxStyles.WHITE);
 		//text.setTextBoxString("Win!");
 		
 		base.add(text).expandY().center();

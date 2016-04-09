@@ -15,6 +15,8 @@ import Component.ComponentNames;
 import GroundWorks.TrackBuilder;
 import JSONifier.JSONCompiler;
 import JSONifier.JSONComponentName;
+import MenuComponentBuilders.TextBoxBuilder;
+import MenuComponentBuilders.TextBoxBuilder.TextBoxStyles;
 import RESTWrapper.BackendFunctions;
 import User.User;
 
@@ -46,7 +48,7 @@ public class TrackMenuBuilder {
 
 	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload,
 			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildCoin;
-	private TextBox currentMode;
+	private TextBoxBuilder currentMode;
 
 	private CameraManager camera;
 	private JSONCompiler compiler;
@@ -227,7 +229,7 @@ public class TrackMenuBuilder {
 		moveMultiple.setHeight(50);
 		stage.addActor(moveMultiple);
 		
-		currentMode = new TextBox("Mode");
+		currentMode = new TextBoxBuilder("Mode", TextBoxStyles.TEST);
 		currentMode.setPosition(0, Globals.ScreenHeight - 25);
 		stage.addActor(currentMode);
 

@@ -71,7 +71,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private JointLimits jointLimits;
 
-	private final AsyncExecutor runner = new AsyncExecutor(4);
+	private final AsyncExecutor runner = new AsyncExecutor(2);
 	boolean running = true;
 	boolean paused = true;
 
@@ -140,9 +140,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
 
 		popQueManager = new PopQueManager(gameLoader,stage);
-		popQueManager.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
+		
 
-		runner.submit(new AsyncTask<String>() {
+		/*runner.submit(new AsyncTask<String>() {
 
 			@Override
 			public String call() throws Exception {
@@ -165,7 +165,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				}
 				return null;
 			}
-		});
+		});*/
 
 		runner.submit(new AsyncTask<String>() {
 
@@ -274,20 +274,21 @@ public class GamePlayScreen implements Screen, InputProcessor {
 					;
 				} else {
 					handleInput(touches);
-					mapTime += fixedStep;
+					mapTime += Globals.STEP;
 				}
 
 				world.step(Globals.STEP / slowMoFactor, 80, 40);
+				hud.update(Globals.STEP, progress, mapTime);
 				//builtCar.step();
 			}
 
 			if (timePassed > 2) {
 
-				jointLimits.enableJointLimits(1 / fixedStep);
+				jointLimits.enableJointLimits(Globals.STEP_INVERSE);
 
 			} else {
 				if (!ground.loading) {
-					timePassed += fixedStep;
+					timePassed += Globals.STEP;
 				}
 			}
 
@@ -348,6 +349,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 					: CAMERA_OFFSET + 0.05f;
 
 			if (!gameWon) {
+				popQueManager.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
 				popQueManager
 						.push(new PopQueObject(PopQueObjectType.WIN, this));
 				hud.hideMenu();
@@ -375,52 +377,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	float fixedStep = 0;
-
-	/*final private void renderWorld(float delta) {
-
-		dlTime = delta / (1.1f);
-
-		fixedStep += dlTime;
-
-		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
-				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		// Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
-
-		batch.setProjectionMatrix(camera.combined);
-
-		if (fixedStep >= 1 / 30f) {
-			fixedStep = 1 / 86f;
-
-		} else if (fixedStep >= 1 / 85f) {
-
-			if (!ground.loading) {
-
-				if (gameWon) {
-					handleInput(fakeTouches);
-				} else if (gameLost) {
-					;
-				} else {
-					handleInput(touches);
-					mapTime += fixedStep;
-				}
-
-				world.step(fixedStep / slowMoFactor, 80, 40);
-			}
-
-			if (timePassed > 2) {
-
-				jointLimits.enableJointLimits(1 / fixedStep);
-
-			} else {
-				if (!ground.loading) {
-					timePassed += dlTime;
-				}
-			}
-
-			fixedStep = 0;
-		}
-	}*/
 
 	final private void attachCameraTo(Body actor) {
 		// System.out.println();

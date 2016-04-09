@@ -8,16 +8,12 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
-import org.boon.json.JsonFactory;
-import org.boon.json.ObjectMapper;
-
 import JSONifier.JSONCar;
 import JSONifier.JSONTrack;
 import RESTWrapper.Gzip;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
 
 public class FileManager {
@@ -47,7 +43,7 @@ public class FileManager {
 		handle.writeString(strToWrite, false);
 	}
 
-	public static void writeToFileBoon(ArrayList<JSONCar> objectIn) {
+	/*public static void writeToFileBoon(ArrayList<JSONCar> objectIn) {
 
 		JSONCarList carList = new JSONCarList();
 		carList.carList = objectIn;
@@ -65,7 +61,7 @@ public class FileManager {
 			e.printStackTrace();
 		}
 
-	}
+	}*/
 
 	public static void writeCarsToFileGson(ArrayList<JSONCar> objectIn) {
 

@@ -2,6 +2,8 @@ package Menu;
 
 import wrapper.GameState;
 import wrapper.Globals;
+import MenuComponentBuilders.TextBoxBuilder;
+import MenuComponentBuilders.TextBoxBuilder.TextBoxStyles;
 import User.User;
 
 import com.badlogic.gdx.Gdx;
@@ -15,7 +17,7 @@ import com.gudesigns.climber.MainMenuScreen;
 public class HUDBuilder {
 
 	private Button exit, restart;
-	private TextBox fps, version, money, time;
+	private TextBoxBuilder fps, version, money, time;
 	private ProgressBarW mapProgress;
 	private User user;
 
@@ -50,19 +52,19 @@ public class HUDBuilder {
 		stage.addActor(restart);
 
 		// Text Feilds
-		fps = new TextBox("fps");
+		fps = new TextBoxBuilder("fps", TextBoxStyles.TEST);
 		fps.setPosition(0, Globals.ScreenHeight - 50);
 		stage.addActor(fps);
 
-		version = new TextBox("Version:" + Globals.VERSION);
+		version = new TextBoxBuilder("Version:" + Globals.VERSION, TextBoxStyles.TEST);
 		version.setPosition(0, Globals.ScreenHeight - 25);
 		stage.addActor(version);
 
-		money = new TextBox("Version:" + Globals.VERSION);
+		money = new TextBoxBuilder("Version:" + Globals.VERSION, TextBoxStyles.TEST);
 		money.setPosition(0, Globals.ScreenHeight - 75);
 		stage.addActor(money);
 
-		time = new TextBox("Version:" + Globals.VERSION);
+		time = new TextBoxBuilder("Version:" + Globals.VERSION, TextBoxStyles.TEST);
 		time.setPosition(0, Globals.ScreenHeight - 100);
 		stage.addActor(time);
 

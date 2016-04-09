@@ -7,23 +7,16 @@ import java.util.concurrent.Semaphore;
 import wrapper.CameraManager;
 import wrapper.Globals;
 import JSONifier.JSONCar;
-import Menu.FontManager;
 import Storage.FileManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -91,7 +84,7 @@ public class LoaderScreen implements Screen {
 		/*ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
 		BitmapFont font = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
 				Color.BLACK);
-		resources.put("game-font", font);
+		resources.put("default-font", font);
 		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
 				new SkinParameter("skins/uiskin.atlas", resources));*/
 
