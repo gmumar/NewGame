@@ -310,4 +310,10 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		return false;
 	}
 
+	@Override
+	public void pinchStop() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
