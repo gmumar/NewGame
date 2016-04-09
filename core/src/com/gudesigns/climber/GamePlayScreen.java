@@ -119,7 +119,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		// debugRenderer = new Box2DDebugRenderer();
 		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
-				this.gameLoader), gameState.getUser().getCurrentCar());
+				this.gameLoader), gameState.getUser().getCurrentCar(), false);
 		builtCar.initSound(this.gameLoader);
 		builtCar.setPosition(0, 50);
 
@@ -248,6 +248,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}// .addFirst(body);
 	}
 
+	private float fixedStep = 0;
+	
 	@Override
 	public void render(float delta) {
 
@@ -375,53 +377,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		builtCar.handleInput(touchesIn);
 	}
 
-	float fixedStep = 0;
-
-	/*final private void renderWorld(float delta) {
-
-		dlTime = delta / (1.1f);
-
-		fixedStep += dlTime;
-
-		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
-				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		// Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
-
-		batch.setProjectionMatrix(camera.combined);
-
-		if (fixedStep >= 1 / 30f) {
-			fixedStep = 1 / 86f;
-
-		} else if (fixedStep >= 1 / 85f) {
-
-			if (!ground.loading) {
-
-				if (gameWon) {
-					handleInput(fakeTouches);
-				} else if (gameLost) {
-					;
-				} else {
-					handleInput(touches);
-					mapTime += fixedStep;
-				}
-
-				world.step(fixedStep / slowMoFactor, 80, 40);
-			}
-
-			if (timePassed > 2) {
-
-				jointLimits.enableJointLimits(1 / fixedStep);
-
-			} else {
-				if (!ground.loading) {
-					timePassed += dlTime;
-				}
-			}
-
-			fixedStep = 0;
-		}
-	}*/
 
 	final private void attachCameraTo(Body actor) {
 		// System.out.println();

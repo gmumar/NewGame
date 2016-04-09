@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import wrapper.GameState;
 import Assembly.Assembler;
+import Dialog.Skins;
 import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
 import Menu.SelectorScreen;
@@ -21,6 +22,8 @@ import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncTask;
@@ -170,35 +173,19 @@ public class CarSelectorScreen extends SelectorScreen {
 	@Override
 	protected void addButton(final String text) {
 
-		/*
-		 * Button b = new Button("bla"){
-		 * 
-		 * @Override public void Clicked() {
-		 * prefs.putString(GamePreferences.CAR_MAP_STR, text); prefs.flush();
-		 * 
-		 * super.Clicked(); }
-		 * 
-		 * };
-		 */
+		Table wrapper = new Table();
 
-		/*
-		 * String prevString = prefs .getString( GamePreferences.CAR_MAP_STR,
-		 * "{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}"
-		 * );//
-		 * 
-		 * prefs.putString(GamePreferences.CAR_MAP_STR, text); prefs.flush();
-		 */
-
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text);
+		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text, false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(200);
 		trd.setMinHeight(140);
-		ImageButton b = new ImageButton(trd);
-		b.setZIndex(100);
+		
+		ImageButton image = new ImageButton(trd);
+		image.setZIndex(100);
 		// b.setPosition(100, 100);
-		b.setSize(100, 100);
+		image.setSize(100, 100);
 
-		b.addListener(new ClickListener() {
+		image.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -209,10 +196,50 @@ public class CarSelectorScreen extends SelectorScreen {
 			}
 
 		});
+		
+		//image.row();
+		
+		wrapper.add(image);
+		
+		wrapper.row();
+		
+		Table buttonsWrapper = new Table();
+		
+		TextButton play = new TextButton("play", Skins.loadDefault(gameLoader, 0), "default");
+		play.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+
+				gameState.getUser().setCurrentCar(text);
+				gameLoader.setScreen(new GamePlayScreen(gameState));
+				super.clicked(event, x, y);
+			}
+
+		});
+		buttonsWrapper.add(play).colspan(20).expand().fill();
+		
+		TextButton edit = new TextButton("edit", Skins.loadDefault(gameLoader, 0), "default");
+		edit.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+
+				gameState.getUser().setCurrentCar(text);
+				gameLoader.setScreen(new BuilderScreen(gameState));
+				super.clicked(event, x, y);
+			}
+
+		});
+		buttonsWrapper.add(edit).colspan(1).expand().fill();
+		
+		wrapper.add(buttonsWrapper).expand().fill();
+		
+		wrapper.pad(5);
 
 		// b.setBackground(trd);
 
-		buttons.add(b);
+		buttons.add(wrapper);
 
 		refreshAllButtons();
 

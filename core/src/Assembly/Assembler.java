@@ -44,7 +44,7 @@ public class Assembler {
 
 	final private static short CAR = -2;
 
-	public static AssembledObject assembleObject(GamePhysicalState gameState, String inputString) {
+	public static AssembledObject assembleObject(GamePhysicalState gameState, String inputString,boolean forBuilder) {
 		Integer jointType = 0;
 		
 		AssembledObject obj = new AssembledObject();
@@ -60,7 +60,7 @@ public class Assembler {
 		source = JSONCar.objectify(inputString);
 
 		//HashMap<String, Component> parts = extractComponents(source, gameState);
-		HashMap<String, Component> parts = extractComponents(source, gameState);
+		HashMap<String, Component> parts = extractComponents(source, gameState,forBuilder);
 		//System.out.println("Assembler :" + parts);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
@@ -138,7 +138,7 @@ public class Assembler {
 		return obj;
 	}
 
-	public static TextureRegion assembleObjectImage(GameLoader gameLoader, String inputString) {
+	public static TextureRegion assembleObjectImage(GameLoader gameLoader, String inputString, boolean forBuilder) {
 		
 		World tempWorld = new World(new Vector2(0, 0f), false);
 		tempWorld.setWarmStarting(true);
@@ -152,7 +152,7 @@ public class Assembler {
 				1);
 		camera.update();
 
-		AssembledObject object = assembleObject(gameState,inputString);
+		AssembledObject object = assembleObject(gameState,inputString,forBuilder);
 		object.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
 
 		tempWorld.step(10, 100, 100);
@@ -165,7 +165,7 @@ public class Assembler {
 		batch.setProjectionMatrix(camera.combined);
 
 		frameBufferObject.begin();
-		Gdx.gl20.glClearColor(0f, 0f, 0f, 0f); // transparent black
+		Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 0.2f); // transparent black
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear the color buffer
 
 		batch.begin();
@@ -188,8 +188,8 @@ public class Assembler {
 
 	}
 
-	static private HashMap<String, Component> extractComponents(
-			JSONParentClass source, GamePhysicalState gameState) {
+	static public HashMap<String, Component> extractComponents(
+			JSONParentClass source, GamePhysicalState gameState, boolean forBuilder) {
 		//HashMap<String, Component> ret = new HashMap<String, Component>();
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
@@ -223,7 +223,7 @@ public class Assembler {
 			
 			if (componentName.getBaseName().compareTo(ComponentNames.SPRINGJOINT)==0) {
 				componentList = ComponentBuilder.buildJointComponent(
-						componentName.getBaseName(), partLevel, gameState);
+						componentName.getBaseName(), partLevel, gameState, forBuilder);
 				
 				
 
@@ -303,7 +303,7 @@ public class Assembler {
 				//System.out.println("Assembler : sourceComponet: " + componentName);
 				
 				component = ComponentBuilder.buildComponent(componentName.getBaseName(), partLevel,
-						gameState);
+						gameState,forBuilder);
 
 				if (sourceComponent.getProperties() != null) {
 					component.applyProperties(sourceComponent.getProperties(), PropertyTypes.BOTH);
@@ -342,7 +342,7 @@ public class Assembler {
 		
 		//System.out.println("AssembleTrack: " + mapString);
 	
-		HashMap<String, Component> parts = extractComponents(jsonTrack, gameState);
+		HashMap<String, Component> parts = extractComponents(jsonTrack, gameState, buildForMainMenu);
 		Collection<Component> partsCollection = parts.values();
 		
 		if(buildForMainMenu){

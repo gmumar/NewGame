@@ -20,37 +20,37 @@ import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 public class ComponentBuilder {
 
 	public static Component buildComponent(String name, int level,
-			GamePhysicalState gameState) {
+			GamePhysicalState gameState, boolean forBuilder) {
 
 		if (name.compareTo(ComponentNames.BAR3) == 0) {
-			return buildBar3(gameState, level, false);
+			return buildBar3(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.SOLIDJOINT) == 0) {
-			return buildSolidJoint(gameState, level, false);
+			return buildSolidJoint(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.TIRE) == 0
 				|| name.compareTo(ComponentNames.AXLE) == 0) {
-			return buildTire(gameState, level, false);
+			return buildTire(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			return buildSpringJoint(gameState, level, false).get(0);
+			return buildSpringJoint(gameState, level, forBuilder).get(0);
 		} else if (name.compareTo(ComponentNames.LIFE) == 0) {
-			return buildLife(gameState, level, false);
+			return buildLife(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.POST) == 0) {
-			return buildTrackPost(gameState, level, false);
+			return buildTrackPost(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.TRACKBAR) == 0) {
-			return buildTrackBar(gameState, level, false);
+			return buildTrackBar(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.TRACKBALL) == 0) {
-			return buildTrackBall(gameState, level, false);
+			return buildTrackBall(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.TRACKCOIN) == 0) {
-			return buildTrackCoin(gameState, level, false);
+			return buildTrackCoin(gameState, level, forBuilder);
 		}
 
 		return null;
 	}
 
 	public static ArrayList<Component> buildJointComponent(String name,
-			int level, GamePhysicalState gameState) {
+			int level, GamePhysicalState gameState, boolean forBuilder) {
 
 		if (name.compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			return buildSpringJoint(gameState, level, false);
+			return buildSpringJoint(gameState, level, forBuilder);
 		}
 
 		return null;

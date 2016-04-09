@@ -437,7 +437,7 @@ public class OLD_CarSelectorScreen implements Screen {
 		 * prefs.putString(GamePreferences.CAR_MAP_STR, text); prefs.flush();
 		 */
 
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text);
+		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text, false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(200);
 		trd.setMinHeight(140);
