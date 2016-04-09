@@ -49,10 +49,6 @@ public class Button extends TextButton {
 
 	}
 
-	public Button(String string, Skin skin, String string2) {
-		super(string, skin, string2);
-	}
-
 	public void Clicked() {
 		;
 	}
@@ -71,16 +67,17 @@ public class Button extends TextButton {
 
 		skin.add("white", new Texture(pixmap));
 
-		//BitmapFont bfont =
+		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
+				Color.WHITE);
 
-		//skin.add("default", bfont);
+		skin.add("default", bfont);
 
 		tbs.up = skin.newDrawable("white", Color.DARK_GRAY);
 		tbs.down = skin.newDrawable("white", Color.GREEN);
 		// tbs.checked = skin.newDrawable("white", Color.BLUE);
 		tbs.over = skin.newDrawable("white", Color.LIGHT_GRAY);
 
-		tbs.font =  FontManager.GenerateDefaultFont();
+		tbs.font = skin.getFont("default");
 
 		return tbs;
 	}

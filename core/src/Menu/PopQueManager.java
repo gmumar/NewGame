@@ -3,11 +3,11 @@ package Menu;
 import java.util.ArrayList;
 
 import Dialog.BuyDialog;
+import Dialog.DialogBase;
 import Dialog.Skins;
 import Dialog.TextDialog;
 import Dialog.WinDialog;
 import Menu.PopQueObject.PopQueObjectType;
-import MenuComponentBuilders.DialogStyleBuilder;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -21,7 +21,7 @@ public class PopQueManager {
 	private static float timePassed = 0;
 	private Stage stage;
 
-	private DialogStyleBuilder dialog;
+	private DialogBase dialog;
 	private PopQueObject currentMsg;
 	
 	private Table winTable;
@@ -33,7 +33,7 @@ public class PopQueManager {
 	public PopQueManager(GameLoader gameLoader, Stage stage) {
 		this.stage = stage;
 		this.gameLoader = gameLoader;
-		skin = Skins.loadDefault();
+		skin = Skins.loadDefault(gameLoader,0);
 	}
 	
 	public void initWinTable(PopQueObject popQueObject){
@@ -96,7 +96,7 @@ public class PopQueManager {
 		
 	}
 	private void createLostDialog(PopQueObject popQueObject) {
-		dialog = new TextDialog("Killed");
+		dialog = new TextDialog("Killed", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
@@ -112,7 +112,7 @@ public class PopQueManager {
 	}
 
 	private void createLoadingDialog(PopQueObject popQueObject) {
-		dialog = new TextDialog("Loading");
+		dialog = new TextDialog("Loading", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.setZIndex(1);
 		dialog.show(stage);
@@ -120,13 +120,13 @@ public class PopQueManager {
 
 	private void createDialog(PopQueObject popQueObject) {
 
-		dialog = new TextDialog("blaa");
+		dialog = new TextDialog("blaa", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.show(stage);
 	}
 	
 	public void dispose(){
-		//winTable.clear();
+		winTable.clear();
 		//skin.dispose();
 	}
 }

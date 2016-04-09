@@ -1,18 +1,18 @@
 package Dialog;
 
-import MenuComponentBuilders.DialogStyleBuilder;
-import MenuComponentBuilders.TextBoxBuilder;
-import MenuComponentBuilders.TextBoxBuilder.TextBoxStyles;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class TextDialog extends DialogStyleBuilder {
+public class TextDialog extends DialogBase {
 	
+	private String title;
 
-	public TextDialog(String title) {
-		super("", DialogStyleType.TEXT);
-		
-		TextBoxBuilder line = new TextBoxBuilder(title, TextBoxStyles.WHITE);
-		line.setText(title);
-		this.add(line).center();
+	public TextDialog(String title, Skin skin, String name) {
+		super(title, skin, name);
+		this.title = title;
+	}
+
+	{
+		text(title);
 		
 	}
 
