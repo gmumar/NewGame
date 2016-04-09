@@ -1,26 +1,19 @@
 package Dialog;
 
-import Menu.FontManager;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.gudesigns.climber.GameLoader;
 
 public class Skins {
 
+	static Skin skin = null;
 	public static Skin loadDefault(GameLoader gameLoader, int quality) {
 		
-		Skin skin;
-		/*if (gameLoader.Assets.isLoaded("skins/uiskin.json")) {
+
+		if(skin == null){
 
 			skin = gameLoader.Assets.get("skins/uiskin.json");
-		} else {*/
 
-			FileHandle skinFile = Gdx.files.internal("skins/uiskin.json");
+			/*FileHandle skinFile = Gdx.files.internal("skins/uiskin.json");
 			skin = new Skin(new TextureAtlas("skins/uiskin.atlas"));
 
 			//skin.remove("game-font",
@@ -38,9 +31,9 @@ public class Skins {
 						com.badlogic.gdx.graphics.g2d.BitmapFont.class);
 			}
 
-			skin.load(skinFile);
+			skin.load(skinFile);*/
 
-		//}
+		}
 		return skin;
 	}
 

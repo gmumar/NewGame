@@ -71,7 +71,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private JointLimits jointLimits;
 
-	private final AsyncExecutor runner = new AsyncExecutor(4);
+	private final AsyncExecutor runner = new AsyncExecutor(2);
 	boolean running = true;
 	boolean paused = true;
 
@@ -142,7 +142,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		popQueManager = new PopQueManager(gameLoader,stage);
 		popQueManager.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
 
-		runner.submit(new AsyncTask<String>() {
+		/*runner.submit(new AsyncTask<String>() {
 
 			@Override
 			public String call() throws Exception {
@@ -165,7 +165,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				}
 				return null;
 			}
-		});
+		});*/
 
 		runner.submit(new AsyncTask<String>() {
 
@@ -274,20 +274,21 @@ public class GamePlayScreen implements Screen, InputProcessor {
 					;
 				} else {
 					handleInput(touches);
-					mapTime += fixedStep;
+					mapTime += Globals.STEP;
 				}
 
 				world.step(Globals.STEP / slowMoFactor, 80, 40);
+				hud.update(Globals.STEP, progress, mapTime);
 				//builtCar.step();
 			}
 
 			if (timePassed > 2) {
 
-				jointLimits.enableJointLimits(1 / fixedStep);
+				jointLimits.enableJointLimits(Globals.STEP_INVERSE);
 
 			} else {
 				if (!ground.loading) {
-					timePassed += fixedStep;
+					timePassed += Globals.STEP;
 				}
 			}
 

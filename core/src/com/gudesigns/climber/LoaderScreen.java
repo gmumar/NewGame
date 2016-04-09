@@ -13,8 +13,6 @@ import Storage.FileManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -88,12 +86,12 @@ public class LoaderScreen implements Screen {
 		//gameLoader.Assets.load("soundfx/coin.mp3", Sound.class);
 		//gameLoader.Assets.load("soundfx/idle.mp3", Sound.class);
 
-		/*ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
+		ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
 		BitmapFont font = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
 				Color.BLACK);
-		resources.put("game-font", font);
+		resources.put("default-font", font);
 		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
-				new SkinParameter("skins/uiskin.atlas", resources));*/
+				new SkinParameter("skins/uiskin.atlas", resources));
 
 	}
 
