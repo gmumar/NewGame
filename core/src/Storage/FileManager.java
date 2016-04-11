@@ -8,9 +8,9 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
+import Encryption.Gzip;
 import JSONifier.JSONCar;
 import JSONifier.JSONTrack;
-import RESTWrapper.Gzip;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

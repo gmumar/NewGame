@@ -3,9 +3,11 @@ package User;
 import wrapper.GamePreferences;
 import wrapper.Globals;
 import Component.ComponentNames;
+import Encryption.TrippleDes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.google.gson.Gson;
 
 public class User {
 
@@ -13,14 +15,12 @@ public class User {
 	public static final Integer MAX_TIRE_LEVEL = 5;
 	public static final Integer MAX_SPRING_LEVEL = 15;
 
-	private Integer smallBarLevel = 1;
-	private Integer tireLevel = 1;
-	private Integer springLevel = 1;
-	private Integer money = 10000;
+	private UserState userState = new UserState();
 	private String currentCar = null;
 	private String currentTrack = null;
 
 	private static User instance;
+	private TrippleDes encryptor = new TrippleDes();
 
 	private Preferences prefs = null;
 
@@ -31,6 +31,29 @@ public class User {
 
 		currentCar = (Globals.defualt_car);
 		currentTrack = (Globals.default_track);
+		
+		restoreUserState();
+	}
+	
+	private void saveUserState() {
+		
+		Gson json = new Gson();
+
+		String encrypted = encryptor.encrypt(json.toJson(userState));
+
+		prefs.putString(GamePreferences.USR_STR, encrypted);
+		prefs.flush();
+
+	}
+	
+	private void restoreUserState(){
+		String inputString = prefs.getString(GamePreferences.USR_STR,
+				"cveSuvxEjX1GNBw7FDuABebTQF0Dz9fsJxrLH/Mwy7GrJkIonjtO0icayx/zMMuxSm9j+vdJQwq6typf+G0FHw==");		
+
+		Gson json = new Gson();
+		userState = json.fromJson(encryptor.decrypt(inputString), UserState.class);
+
+		System.out.println("Restored: " + json.toJson(userState));
 	}
 
 	public String getCurrentCar() {
@@ -42,14 +65,8 @@ public class User {
 	}
 
 	public void setCurrentCar(String currentCar) {
-		// Preferences prefs = Gdx.app
-		// .getPreferences(GamePreferences.CAR_PREF_STR);
-
-		//prefs.clear();
 		prefs.putString(GamePreferences.CAR_MAP_STR, currentCar);
 		prefs.flush();
-
-		System.out.println("wrting current car in user " + currentCar);
 
 		this.currentCar = currentCar;
 	}
@@ -57,10 +74,6 @@ public class User {
 	public String getCurrentTrack() {
 		String inputString = prefs.getString(GamePreferences.TRACK_MAP_STR,
 				Globals.default_track);
-		
-		if(inputString.compareTo(Globals.default_track)==0){
-			System.out.println("defaulted");
-		}
 		
 		currentTrack = inputString;
 		
@@ -71,8 +84,6 @@ public class User {
 		
 		//prefs.clear();
 		prefs.putString(GamePreferences.TRACK_MAP_STR, currentTrack);
-		
-		System.out.println("current trakc set");
 		
 		prefs.flush();
 		
@@ -104,6 +115,8 @@ public class User {
 		} else if (itemName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
 			incrementSpringLevel();
 		}
+		
+		saveUserState();
 
 		return true;
 	}
@@ -130,80 +143,62 @@ public class User {
 	}
 
 	public Integer addCoin(Integer value) {
-		money += value;
-		return money;
+		userState.money += value;
+		saveUserState();
+		return userState.money;
 	}
 
 	public Integer getSmallBarLevel() {
-		if (smallBarLevel <= 1) {
+		if (userState.smallBarLevel <= 1) {
 			return 1;
 		}
-		return new Integer(smallBarLevel);
+		return new Integer(userState.smallBarLevel);
 	}
 
-	public void incrementSmallBarLevel() {
-		smallBarLevel++;
-		if (smallBarLevel >= MAX_BAR3_LEVEL) {
-			smallBarLevel = MAX_BAR3_LEVEL;
+	private void incrementSmallBarLevel() {
+		userState.smallBarLevel++;
+		if (userState.smallBarLevel >= MAX_BAR3_LEVEL) {
+			userState.smallBarLevel = MAX_BAR3_LEVEL;
 		}
-	}
-
-	public void decrementSmallBarLevel() {
-		smallBarLevel--;
-		if (smallBarLevel <= 1) {
-			smallBarLevel = 1;
-		}
+		saveUserState();
 	}
 
 	public Integer getTireLevel() {
-		if (tireLevel <= 1) {
+		if (userState.tireLevel <= 1) {
 			return 1;
 		}
-		return new Integer(tireLevel);
+		return new Integer(userState.tireLevel);
 	}
 
-	public void setTireLevel(Integer tireLevel) {
-		this.tireLevel = tireLevel;
-	}
-
-	public void incrementTireLevel() {
-		tireLevel++;
-		if (tireLevel >= MAX_TIRE_LEVEL) {
-			tireLevel = MAX_TIRE_LEVEL;
+	private void incrementTireLevel() {
+		userState.tireLevel++;
+		if (userState.tireLevel >= MAX_TIRE_LEVEL) {
+			userState.tireLevel = MAX_TIRE_LEVEL;
 		}
+		saveUserState();
 	}
 
 	public Integer getSpringLevel() {
-		if (springLevel <= 1) {
+		if (userState.springLevel <= 1) {
 			return 1;
 		}
-		return new Integer(springLevel);
+		return new Integer(userState.springLevel);
 	}
 
-	public void incrementSpringLevel() {
-		springLevel++;
-		if (springLevel >= MAX_SPRING_LEVEL) {
-			springLevel = MAX_SPRING_LEVEL;
+	private void incrementSpringLevel() {
+		userState.springLevel++;
+		if (userState.springLevel >= MAX_SPRING_LEVEL) {
+			userState.springLevel = MAX_SPRING_LEVEL;
 		}
-	}
-
-	public void setSpringLevel(Integer springLevel) {
-		this.springLevel = springLevel;
-	}
-
-	public void decrementSpringLevel() {
-		springLevel--;
-		if (springLevel <= 1) {
-			springLevel = 1;
-		}
+		saveUserState();
 	}
 
 	public Integer getMoney() {
-		return money;
+		return userState.money;
 	}
 
-	public void decrementMoney(Integer value) {
-		this.money -= value;
+	private void decrementMoney(Integer value) {
+		this.userState.money -= value;
 	}
 
 }

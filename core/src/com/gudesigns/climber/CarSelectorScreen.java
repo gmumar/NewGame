@@ -39,23 +39,22 @@ public class CarSelectorScreen extends SelectorScreen {
 	protected void downloadItems() {
 		resultsRemaining = true;
 		currentOffset = 0;
-		
+
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
-			public String call() throws Exception  {
+			public String call() throws Exception {
 
 				while (resultsRemaining && !killThreads) {
-					//stall = true;
-					
-					if(killThreads) {
+					// stall = true;
+
+					if (killThreads) {
 						loaderSemaphore.release();
 						resultsRemaining = false;
 						return null;
 					}
-					
 
-					while(stallSemaphore.tryAcquire()){
+					while (stallSemaphore.tryAcquire()) {
 						downloadRequest = REST.getData(RESTPaths.CARS
 								+ RESTProperties.URL_ARG_SPLITTER
 								+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
@@ -65,72 +64,75 @@ public class CarSelectorScreen extends SelectorScreen {
 								+ RESTProperties.PROPS + RESTProperties.CREATED
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.CAR_JSON
-	
+
 						, new HttpResponseListener() {
-	
+
 							@Override
-							public void handleHttpResponse(HttpResponse httpResponse) {
+							public void handleHttpResponse(
+									HttpResponse httpResponse) {
 								Backendless_Car obj = Backendless_JSONParser
 										.processDownloadedCars(httpResponse
 												.getResultAsString());
-	
-								Iterator<String> iter = obj.getData().iterator();
-	
+
+								Iterator<String> iter = obj.getData()
+										.iterator();
+
 								while (iter.hasNext()) {
-	
+
 									// carLock.lock();
-	
+
 									final String car = iter.next();
-									final JSONCar carJson = JSONCar.objectify(car);
+									final JSONCar carJson = JSONCar
+											.objectify(car);
 									// System.out.println("adding from cloud");
-	
+
 									addItemToList(carJson);
-	
+
 									uniqueListLock.lock();
 									uniqueListLock.unlock();
-	
+
 									// carLock.unlock();
-	
+
 								}
-	
+
 								if (obj.getTotalObjects() - obj.getOffset() > 0) {
 									resultsRemaining = true;
 								} else {
 									resultsRemaining = false;
 								}
 								stallSemaphore.release();
-								//stall = false;
-	
+								// stall = false;
+
 							}
+
 							@Override
 							public void failed(Throwable t) {
 								System.out.println("failed");
 								t.printStackTrace();
 								loaderSemaphore.release();
-								//stallSemaphore.release();
-								//stall = false;
+								// stallSemaphore.release();
+								// stall = false;
 								resultsRemaining = false;
 								return;
 							}
-	
+
 							@Override
 							public void cancelled() {
 								System.out.println("cancelled");
 								loaderSemaphore.release();
-								//stallSemaphore.release();
-								//stall = false;
+								// stallSemaphore.release();
+								// stall = false;
 								resultsRemaining = false;
 								return;
 							}
-	
+
 						});
 						currentOffset += REST.PAGE_SIZE;
 					}
-					
-					//while (stall)
-						//;
 
-					
+					// while (stall)
+					// ;
+
 				}
 
 				System.out.println("release download");
@@ -175,11 +177,12 @@ public class CarSelectorScreen extends SelectorScreen {
 
 		Table wrapper = new Table();
 
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text, false);
+		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text,
+				false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(200);
 		trd.setMinHeight(140);
-		
+
 		ImageButton image = new ImageButton(trd);
 		image.setZIndex(100);
 		// b.setPosition(100, 100);
@@ -196,16 +199,17 @@ public class CarSelectorScreen extends SelectorScreen {
 			}
 
 		});
-		
-		//image.row();
-		
+
+		// image.row();
+
 		wrapper.add(image);
-		
+
 		wrapper.row();
-		
+
 		Table buttonsWrapper = new Table();
-		
-		TextButton play = new TextButton("play", Skins.loadDefault(gameLoader, 0), "default");
+
+		TextButton play = new TextButton("play", Skins.loadDefault(gameLoader,
+				0), "noButton");
 		play.addListener(new ClickListener() {
 
 			@Override
@@ -217,9 +221,10 @@ public class CarSelectorScreen extends SelectorScreen {
 			}
 
 		});
-		buttonsWrapper.add(play).colspan(20).expand().fill();
-		
-		TextButton edit = new TextButton("edit", Skins.loadDefault(gameLoader, 0), "default");
+		buttonsWrapper.add(play).height(10).colspan(20).expand().fill();
+
+		TextButton edit = new TextButton("edit", Skins.loadDefault(gameLoader,
+				0), "noButton");
 		edit.addListener(new ClickListener() {
 
 			@Override
@@ -231,10 +236,10 @@ public class CarSelectorScreen extends SelectorScreen {
 			}
 
 		});
-		buttonsWrapper.add(edit).colspan(1).expand().fill();
-		
+		buttonsWrapper.add(edit).height(10).colspan(1).expand().fill();
+
 		wrapper.add(buttonsWrapper).expand().fill();
-		
+
 		wrapper.pad(5);
 
 		// b.setBackground(trd);
@@ -254,8 +259,9 @@ public class CarSelectorScreen extends SelectorScreen {
 		}
 
 		System.out.println("writing " + list.size());
-		
-		if(list.isEmpty()) return;
+
+		if (list.isEmpty())
+			return;
 
 		FileObject fileObject = new FileObject();
 		fileObject.setCars(list);

@@ -25,7 +25,7 @@ public class AssemblyRules {
 	public boolean checkBuild(World world, Body baseObject,
 			ArrayList<Component> parts) {
 		ArrayList<Body> partsConnectedToLife = getLifeConnectedParts(world,
-				baseObject, parts);
+				baseObject);
 
 		if (!checkDanglingParts(partsConnectedToLife, parts)) {
 			return false;
@@ -42,6 +42,7 @@ public class AssemblyRules {
 		Iterator<Component> allPartsIter = allParts.iterator();
 		while (allPartsIter.hasNext()) {
 			Body allPart = allPartsIter.next().getObject().getPhysicsBody();
+			if(allPart.getUserData()==null) continue;
 			if (connectedParts.contains(allPart)) {
 				;
 			} else {
@@ -55,11 +56,8 @@ public class AssemblyRules {
 
 	}
 
-	public ArrayList<Body> getLifeConnectedParts(World world, Body baseObject,
-			ArrayList<Component> parts) {
+	public ArrayList<Body> getLifeConnectedParts(World world, Body baseObject) {
 		
-		System.out.println("life connected parts");
-
 		ArrayList<SimpleJoint> joints = new ArrayList<SimpleJoint>();
 
 		Array<Contact> contacts = world.getContactList();
@@ -71,17 +69,11 @@ public class AssemblyRules {
 				if (contact.getFixtureA().getUserData() != null
 						&& contact.getFixtureB().getUserData() != null) {
 					
-					System.out.println(((JSONComponentName)contact.getFixtureA().getUserData()).getMountedId());
-					
 					if(((JSONComponentName)contact.getFixtureA().getUserData()).getMountedId().contains("*")){
-						System.out.println("contining");
 						continue;
 					}
 					
-					System.out.println(((JSONComponentName)contact.getFixtureB().getUserData()).getMountedId());
-					
 					if(((JSONComponentName)contact.getFixtureB().getUserData()).getMountedId().contains("*")){	
-						System.out.println("contining");
 						continue; 
 					}
 

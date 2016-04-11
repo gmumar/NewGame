@@ -195,6 +195,14 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		camera.update();
 		return true;
 	}
+	
+	@Override
+	public boolean zoom(float initialDistance, float distance) {
+		camera.zoom += (initialDistance - distance)/500000;
+		camera.update();
+		
+		return true;
+	}
 
 	@Override
 	public void show() {
@@ -293,12 +301,6 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	@Override
 	public boolean panStop(float x, float y, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean zoom(float initialDistance, float distance) {
 		// TODO Auto-generated method stub
 		return false;
 	}

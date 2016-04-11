@@ -30,7 +30,7 @@ public class ComponentBuilder {
 				|| name.compareTo(ComponentNames.AXLE) == 0) {
 			return buildTire(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			return buildSpringJoint(gameState, level, forBuilder).get(0);
+			return buildSpringJoint(gameState, level, forBuilder, false).get(0);
 		} else if (name.compareTo(ComponentNames.LIFE) == 0) {
 			return buildLife(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.POST) == 0) {
@@ -50,7 +50,7 @@ public class ComponentBuilder {
 			int level, GamePhysicalState gameState, boolean forBuilder) {
 
 		if (name.compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			return buildSpringJoint(gameState, level, forBuilder);
+			return buildSpringJoint(gameState, level, forBuilder, false);
 		}
 
 		return null;
@@ -177,7 +177,7 @@ public class ComponentBuilder {
 	}
 
 	public static ArrayList<Component> buildSpringJoint(
-			GamePhysicalState gameState, int level, boolean forBuilder) {
+			GamePhysicalState gameState, int level, boolean forBuilder, boolean HACK_sizingForPreASMcar) {
 
 		JSONComponentName componentNameUpper = new JSONComponentName();
 		componentNameUpper.setBaseName(ComponentNames.SPRINGJOINT);
@@ -215,7 +215,7 @@ public class ComponentBuilder {
 		// topFixture.setScaleY(0.5f);
 		//
 
-		if (forBuilder) {
+		if (forBuilder && !HACK_sizingForPreASMcar) {
 			topFixture.setPosition(0, height);
 			/*
 			 * FixtureDef fixtureDef = new FixtureDef(); PolygonShape shape =
@@ -256,7 +256,7 @@ public class ComponentBuilder {
 		botFixture.setDensity(1);
 		// botFixture.setScaleY(0.5f);
 
-		if (forBuilder) {
+		if (forBuilder && !HACK_sizingForPreASMcar) {
 			botFixture.setPosition(0, -height);
 			/*
 			 * FixtureDef fixtureDef = new FixtureDef(); PolygonShape shape =

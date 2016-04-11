@@ -3,17 +3,15 @@ package Menu;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import wrapper.BaseActor;
 import wrapper.CameraManager;
 import wrapper.GamePhysicalState;
 import wrapper.GameState;
 import wrapper.Globals;
-import Assembly.Assembler;
 import Assembly.AssemblyRules;
 import Component.Component;
+import Component.Component.PropertyTypes;
 import Component.ComponentBuilder;
 import Component.ComponentNames;
 import JSONifier.JSONCar;
@@ -43,6 +41,7 @@ import com.badlogic.gdx.physics.box2d.Shape.Type;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
@@ -112,14 +111,11 @@ public class MenuBuilder {
 		world.createBody(bodyDef);
 
 		drawBox(LIMIT_BOX_X, LIMIT_BOX_Y, LIMIT_BOX_X_LEN, LIMIT_BOX_Y_LEN);
-		
 
 		setUpPreBuiltCar();
-		
-		
 
 		// Add life regardless
-		//addLife();
+		// addLife();
 		/**/
 
 		//
@@ -127,7 +123,7 @@ public class MenuBuilder {
 		but = new Button("Small bar") {
 			@Override
 			public void Clicked() {
-				addSmallBar();
+				addSmallBar(-1);
 			}
 
 		};
@@ -138,11 +134,10 @@ public class MenuBuilder {
 		tire_but = new Button("tire") {
 			@Override
 			public void Clicked() {
-				addTire();
-				
+				addTire(-1);
+
 			}
 
-			
 		};
 
 		tire_but.setPosition(0, 0);
@@ -151,8 +146,8 @@ public class MenuBuilder {
 		spring_but = new Button("spring") {
 			@Override
 			public void Clicked() {
-				addSpring();
-			
+				addSpring(-1);
+
 			}
 		};
 
@@ -365,6 +360,7 @@ public class MenuBuilder {
 		stage.addActor(partLevelText);
 
 		moneyBox = new TextBox("1");
+		moneyBox.setTouchable(Touchable.disabled);
 		moneyBox.setPosition(Globals.ScreenWidth / 2 - 25, 0);
 		moneyBox.setHeight(50);
 		moneyBox.setWidth(50);
@@ -391,7 +387,7 @@ public class MenuBuilder {
 		// mouseActor.getPhysicsBody().createFixture(mouseFixture);
 
 	}
-	
+
 	private ArrayList<Component> addLife() {
 		incrementCount(ComponentNames.LIFE);
 		Component c = ComponentBuilder.buildLife(new GamePhysicalState(world,
@@ -409,17 +405,22 @@ public class MenuBuilder {
 
 		baseObject = c.getObject().getPhysicsBody();// lastSelected =
 		parts.add(c);
-		
+
 		ArrayList<Component> tmp = new ArrayList<Component>();
 		tmp.add(c);
 		return tmp;
 	}
 
-	private ArrayList<Component> addSmallBar() {
-		partLevel = user.getSmallBarLevel();
+	private ArrayList<Component> addSmallBar(Integer inLevel) {
+		if (inLevel == -1) {
+			partLevel = user.getSmallBarLevel();
+		} else {
+			partLevel = inLevel;
+		}
+		System.out.println(partLevel);
 		incrementCount(ComponentNames.BAR3);
-		Component c = ComponentBuilder.buildBar3(new GamePhysicalState(
-				world, gameLoader), partLevel, true);
+		Component c = ComponentBuilder.buildBar3(new GamePhysicalState(world,
+				gameLoader), partLevel, true);
 		// c.setUpForBuilder(ComponentNames.BAR3
 		// + Assembler.NAME_ID_SPLIT
 		// + componentCounts.get(ComponentNames.BAR3));
@@ -439,12 +440,18 @@ public class MenuBuilder {
 		tmp.add(c);
 		return tmp;
 	}
-	
-	private ArrayList<Component> addTire() {
-		partLevel = user.getTireLevel();
+
+	private ArrayList<Component> addTire(Integer inLevel) {
+		if (inLevel == -1) {
+			partLevel = user.getTireLevel();
+		} else {
+			partLevel = inLevel;
+		}
+
+		System.out.println(partLevel);
 		incrementCount(ComponentNames.TIRE);
-		Component c = ComponentBuilder.buildTire(new GamePhysicalState(
-				world, gameLoader), partLevel, true);
+		Component c = ComponentBuilder.buildTire(new GamePhysicalState(world,
+				gameLoader), partLevel, true);
 		// c.setUpForBuilder(ComponentNames.TIRE
 		// + Assembler.NAME_ID_SPLIT
 		// + componentCounts.get(ComponentNames.TIRE));
@@ -460,8 +467,8 @@ public class MenuBuilder {
 		parts.add(c);
 
 		// --------------- HACK ------------------
-		if (((JSONComponentName) lastSelected.getUserData())
-				.getBaseName().compareTo(ComponentNames.TIRE) == 0) {
+		if (((JSONComponentName) lastSelected.getUserData()).getBaseName()
+				.compareTo(ComponentNames.TIRE) == 0) {
 			((JSONComponentName) lastSelected.getUserData())
 					.setBaseName(ComponentNames.AXLE);
 		}
@@ -473,15 +480,21 @@ public class MenuBuilder {
 		tmp.add(c);
 		return tmp;
 	}
-	
-	private ArrayList<Component> addSpring(){
-		partLevel = user.getSpringLevel();
+
+	private ArrayList<Component> addSpring(Integer inLevel) {
+		boolean hack = false;
+		
+		if (inLevel == -1) {
+			partLevel = user.getSpringLevel();
+		} else {
+			hack = true;
+			partLevel = inLevel;
+		}
 		incrementCount(ComponentNames.SPRINGJOINT);
-		
+
 		ArrayList<Component> list = ComponentBuilder.buildSpringJoint(
-				new GamePhysicalState(world, gameLoader), partLevel,
-				true);
-		
+				new GamePhysicalState(world, gameLoader), partLevel, true, hack);
+
 		Component c = list.get(0);
 		// c.setUpForBuilder(Assembler.NAME_ID_SPLIT
 		// + componentCounts.get(ComponentNames.SPRINGJOINT));
@@ -495,12 +508,12 @@ public class MenuBuilder {
 		System.out.println("MenuBuilder: " + name);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
-		
+
 		Component otherComponent = list.get(1);
 		otherComponent.setComponentId(Integer.toString(componentCounts
 				.get(ComponentNames.SPRINGJOINT)));
 		otherComponent.setLevel(Globals.DISABLE_LEVEL);
-		
+
 		parts.add(list.get(1));
 		// lastSelected =
 		// parts.get(parts.size()-1).getObject().getPhysicsBody();
@@ -508,85 +521,113 @@ public class MenuBuilder {
 	}
 
 	private void setUpPreBuiltCar() {
-		World tmpWorld = new World(new Vector2(),false);
+		//World tmpWorld = new World(new Vector2(), false);
 		JSONCar currentCarJson = new JSONCar();
 		currentCarJson = JSONCar.objectify(user.getCurrentCar());
-		HashMap<String, Component> carParts = Assembler.extractComponents(currentCarJson, new GamePhysicalState(tmpWorld,gameLoader),true);
-		Set<Entry<String, Component>> carPartsSet = carParts.entrySet();
-		
-		//tmpWorld.dispose();
-		
+		// HashMap<String, Component> carParts =
+		// Assembler.extractComponents(currentCarJson, new
+		// GamePhysicalState(tmpWorld,gameLoader),true);
+
+		ArrayList<JSONComponent> jcomponents = currentCarJson
+				.getComponentList();
+
+		// Set<Entry<String, Component>> carPartsSet = carParts.entrySet();
+
+		// tmpWorld.dispose();
+
 		ArrayList<String> seenComponents = new ArrayList<String>();
 		ArrayList<Component> addedComponents = null;
-		ArrayList<JSONComponent> additionalComps = currentCarJson.getAddComponents();
-		
-		for(Entry<String, Component> part : carPartsSet){
-			Component comp = part.getValue();
-			JSONComponentName name = comp.getjComponentName();
-			String key =  name.getBaseId();
-			
-			if(seenComponents.contains(key)){
-				
+		ArrayList<JSONComponent> additionalComps = currentCarJson
+				.getAddComponents();
+
+		// for(Entry<String, Component> part : carPartsSet){
+		for (JSONComponent jcomponent : jcomponents) {
+			// Component comp = part.getValue();
+			JSONComponentName name = jcomponent.getjComponentName();// comp.getjComponentName();
+			String key = name.getBaseId();
+
+			System.out.println("---------------" + name.toString());
+
+			if (seenComponents.contains(key)) {
+
 			} else {
-				
+
 				seenComponents.add(key);
-				
-				if(name.getBaseName().compareTo(ComponentNames.TIRE)==0 ){
-					addedComponents = addTire();
-				} else if(name.getBaseName().compareTo(ComponentNames.SPRINGJOINT)==0) {
-					addedComponents = addSpring();
-				} else if(name.getBaseName().compareTo(ComponentNames.LIFE)==0){
+
+				if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+					addedComponents = addTire(name.getLevel());
+				} else if (name.getBaseName().compareTo(
+						ComponentNames.SPRINGJOINT) == 0) {
+					addedComponents = addSpring(name.getLevel());
+				} else if (name.getBaseName().compareTo(ComponentNames.LIFE) == 0) {
 					addedComponents = addLife();
-					baseObject = addedComponents.get(0).getObject().getPhysicsBody();
-				} else if(name.getBaseName().compareTo(ComponentNames.BAR3)==0){
-					addedComponents = addSmallBar();
+					baseObject = addedComponents.get(0).getObject()
+							.getPhysicsBody();
+				} else if (name.getBaseName().compareTo(ComponentNames.BAR3) == 0) {
+					addedComponents = addSmallBar(name.getLevel());
 				} else {
-					System.out.println("Missing: ------- " + key);
+					System.out.println("Item did not match");
+					System.exit(1);
 				}
-				
-				for (Component addedComponent : addedComponents){
-					if(addedComponent.getLevel()==Globals.DISABLE_LEVEL){
-						if(additionalComps !=null){
-						for (JSONComponent addcomp : additionalComps){
-							if(name.getBaseId().compareTo(addcomp.getjComponentName().getBaseId())==0){
-								System.out.println("Setting position " + addcomp.getProperties().getPositionX() + ", " + addcomp.getProperties().getPositionY());
-								System.out.println("matched: " + name.getBaseId());
-								addedComponent.getObject().setPosition(
-										Float.parseFloat(addcomp.getProperties().getPositionX()), 
-										Float.parseFloat(addcomp.getProperties().getPositionY()));
-								//addedComponent.getObject().setRotation(
-									//	Float.parseFloat(addcomp.getProperties().getRotation()));
+
+				for (Component addedComponent : addedComponents) {
+					if (addedComponent.getLevel() == Globals.DISABLE_LEVEL) {
+						if (additionalComps != null) {
+							for (JSONComponent addcomp : additionalComps) {
+								if (name.getBaseId()
+										.compareTo(
+												addcomp.getjComponentName()
+														.getBaseId()) == 0) {
+
+									addedComponent.getObject().setPosition(
+											Float.parseFloat(addcomp
+													.getProperties()
+													.getPositionX()),
+											Float.parseFloat(addcomp
+													.getProperties()
+													.getPositionY() ));
+									 addedComponent.getObject().setRotation(
+									 Float.parseFloat(addcomp.getProperties().getRotation()));
+								}
 							}
 						}
-						}
 					} else {
-						System.out.println("Setting position " + comp.getObject().getPosition());
-						addedComponent.setPosition(comp.getObject().getPosition().x, comp.getObject().getPosition().y);
-						addedComponent.getObject().setRotation(comp.getObject().getRotation()*MathUtils.radiansToDegrees);
+
+						// addedComponent.setPosition(comp.getObject().getPosition().x,
+						// comp.getObject().getPosition().y);
+						// addedComponent.getObject().setRotation(comp.getObject().getRotation()*MathUtils.radiansToDegrees);
+						if (jcomponent.getProperties() != null) {
+							addedComponent.applyProperties(
+									jcomponent.getProperties(),
+									PropertyTypes.BOTH);
+						}
+						// componentList.get(1)
+						// .applyProperties(sourceComponent.getProperties(),
+						// PropertyTypes.ABSOLUTE);
 					}
 				}
-				
+
 			}
-			
-			
-			/*Component comp = part.getValue();
-			
-			if(comp.getBaseName().compareTo(ComponentNames.LIFE)==0){
-				baseObject = comp.getObject().getPhysicsBody();
-			}
-			
-			incrementCount(comp.getBaseName());
-			comp.setComponentId(Integer.toString(componentCounts
-					.get(comp.getBaseName())));
-			comp.setUpForBuilder(
-					comp.getjComponentName(),
-					comp.getPartLevel() == null ? 1 : comp.getPartLevel() );
-			lastSelected = comp.getObject().getPhysicsBody();
-			parts.add(comp);*/
+
+			// tmpWorld.dispose();
+
+			/*
+			 * Component comp = part.getValue();
+			 * 
+			 * if(comp.getBaseName().compareTo(ComponentNames.LIFE)==0){
+			 * baseObject = comp.getObject().getPhysicsBody(); }
+			 * 
+			 * incrementCount(comp.getBaseName());
+			 * comp.setComponentId(Integer.toString(componentCounts
+			 * .get(comp.getBaseName()))); comp.setUpForBuilder(
+			 * comp.getjComponentName(), comp.getPartLevel() == null ? 1 :
+			 * comp.getPartLevel() ); lastSelected =
+			 * comp.getObject().getPhysicsBody(); parts.add(comp);
+			 */
 		}
-		
-		
-			
+
+		//tmpWorld.dispose();
+
 	}
 
 	private Component lookupLastPart() {
@@ -824,7 +865,8 @@ public class MenuBuilder {
 			return false;
 		}
 
-		if (jsonComponentName.getMountId()==null || jsonComponentName.getMountId().contains("*")) {
+		if (jsonComponentName.getMountId() == null
+				|| jsonComponentName.getMountId().contains("*")) {
 			return false;
 		}
 		/*
