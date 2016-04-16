@@ -45,11 +45,11 @@ public abstract class SelectorScreen implements Screen {
 	private PopQueManager popQueManager;
 	public GameLoader gameLoader;
 
-	private Button exit, nextPage, prevPage;
+	private Button exit, nextPage, prevPage, quickNext;
 
 	public volatile boolean resultsRemaining = true;
 	private boolean loadingComplete = false;
-	//public volatile boolean stall = true;
+	// public volatile boolean stall = true;
 	protected int currentOffset = 0;
 	protected AsyncExecutor ae = new AsyncExecutor(2);
 	protected HttpRequest downloadRequest;
@@ -60,6 +60,9 @@ public abstract class SelectorScreen implements Screen {
 	public Lock uniqueListLock = new ReentrantLock();
 	private Semaphore loadingLock = new Semaphore(1);
 	public Semaphore localLoading = new Semaphore(1);
+	protected Semaphore localLoadedCounter = new Semaphore(0);
+	protected Semaphore totalLoadedCounter = new Semaphore(0);
+	public volatile boolean downloadCancelled = false;
 
 	private int pageNumber = 0;
 	private static final int MAX_CARS_PER_PAGE = 6;
@@ -78,11 +81,13 @@ public abstract class SelectorScreen implements Screen {
 	abstract protected void writeObjectsToFile();
 
 	abstract protected void addSpecificItemToList();
+	
+	abstract protected void goNext();
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
-		
-		//ae = Globals.getTaskRunner();
+
+		 ae = Globals.globalRunner;
 		this.gameState = gameState;
 		this.gameLoader = this.gameState.getGameLoader();
 		initStage();
@@ -129,9 +134,23 @@ public abstract class SelectorScreen implements Screen {
 	}
 
 	private void initNavigationButtons() {
+		quickNext = new Button("Next") {
+			@Override
+			public void Clicked() {
+				exit();
+				goNext();
+
+			}
+		};
+		quickNext.setPosition(Globals.ScreenWidth-150, 25);
+		quickNext.setHeight(75);
+		quickNext.setWidth(75);
+		stage.addActor(quickNext);
+		
 		exit = new Button("exit") {
 			@Override
 			public void Clicked() {
+				exit();
 				gameLoader.setScreen(new MainMenuScreen(gameLoader));
 			}
 		};
@@ -204,6 +223,7 @@ public abstract class SelectorScreen implements Screen {
 
 		if (!uniquenessButtonList.contains(catElem)) {
 			items.add(item);
+			totalLoadedCounter.release();
 			uniquenessButtonList.add(catElem);
 		}
 
@@ -245,6 +265,17 @@ public abstract class SelectorScreen implements Screen {
 
 					// Iterator<String> iter = cars.iterator();
 
+					if(downloadCancelled){
+						return null;
+					}
+					
+					System.out.println("SelectorScreen: " + localLoadedCounter.availablePermits() +  " " + totalLoadedCounter.availablePermits());
+					
+					if(localLoadedCounter.availablePermits()>=totalLoadedCounter.availablePermits()){
+						return null;
+					}
+					
+					
 					writeObjectsToFile();
 
 				} catch (Exception e) {
@@ -351,7 +382,7 @@ public abstract class SelectorScreen implements Screen {
 	}
 
 	public boolean isLoading() {
-		return loaderSemaphore.availablePermits() != 2;
+		return loaderSemaphore.availablePermits() < 2;
 	}
 
 	@Override
@@ -403,17 +434,31 @@ public abstract class SelectorScreen implements Screen {
 	@Override
 	public void hide() {
 		Gdx.input.setInputProcessor(null);
+		exit();
 
+	}
+	
+	private void exit(){
+		killThreads = true;
+		if(downloadRequest!=null) Gdx.net.cancelHttpRequest(downloadRequest);
 	}
 
 	@Override
 	public void dispose() {
-		if(downloadRequest!=null) Gdx.net.cancelHttpRequest(downloadRequest);	
-		
+		exit();
+
 		killThreads = true;
+		
+		/*Globals.globalRunner.submit(new AsyncTask<String>() {
 
-		ae.dispose();
-
+			@Override
+			public String call() throws Exception {
+				ae.dispose();
+				return null;
+			}
+			
+		});*/
+		
 		batch.dispose();
 		stage.dispose();
 

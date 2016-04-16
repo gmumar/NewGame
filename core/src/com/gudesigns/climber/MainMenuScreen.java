@@ -36,7 +36,7 @@ public class MainMenuScreen implements Screen {
 	private PopQueManager popQueManager;
 	private User user;
 
-	private Button builder, playGame, buildTrack, selectTrack, selectCar;
+	private Button builder, playGame, buildTrack, selectTrack, selectCar, quickNext;
 
 	// -------------- Car running animation ------------------
 	private World world;
@@ -168,6 +168,18 @@ public class MainMenuScreen implements Screen {
 
 		builder.setPosition(0, 0);
 		stage.addActor(builder);
+		
+		quickNext = new Button("Next") {
+			@Override
+			public void Clicked() {
+				gameLoader.setScreen(new TrackSelectorScreen(gameState));
+			}
+		};
+
+		quickNext.setPosition(Globals.ScreenWidth-150, 25);
+		quickNext.setWidth(75);
+		quickNext.setHeight(75);
+		stage.addActor(quickNext);
 
 		playGame = new Button("playGame") {
 			@Override

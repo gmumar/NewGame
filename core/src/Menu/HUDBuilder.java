@@ -99,7 +99,7 @@ public class HUDBuilder {
 		}
 
 		mapProgress.setValue(progress > 100 ? 100 : progress);
-		mapProgress.act(delta);
+		//mapProgress.act(delta);
 
 	}
 	

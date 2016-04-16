@@ -324,14 +324,14 @@ public class GameMesh {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-		if (texture == null) {
+		
 
 			// update the projection matrix so our triangles are rendered in 2D
 			//shader.setUniformMatrix("u_projTrans", cam.combined);
 			// render the mesh
 			//mesh.render(shader, GL20.GL_TRIANGLES);
 
-		} else {
+		if (texture != null) {
 			// no need for depth...
 			// Gdx.gl.glDepthMask(false);
 
@@ -350,7 +350,7 @@ public class GameMesh {
 			// update the projection matrix so our triangles are rendered in 2D
 			//shader.setUniformMatrix("u_projTrans", cam.combined);
 
-			shader.setUniformi("u_texture", 0);
+			
 
 			// render the mesh
 			

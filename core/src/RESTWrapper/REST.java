@@ -70,7 +70,7 @@ public class REST {
 		request.setContent(json.toJson(parameters));
 		//(Backendless_JsonifyParameters(parameters));
 		
-		System.out.println(request.getContent());
+		//System.out.println(request.getContent());
 
 		Gdx.net.sendHttpRequest(request, listener);
 		
@@ -81,7 +81,7 @@ public class REST {
 		final HttpRequest request = getRequest(path, HttpMethods.GET);
 		request.setContent("");
 		
-		System.out.println(path);
+		//System.out.println(path);
 
 		Gdx.net.sendHttpRequest(request, listener);
 		

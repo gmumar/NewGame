@@ -28,6 +28,7 @@ public class AssembledObject {
 	private Sound idle;
 	private long idleId;
 	private RollingAverage rotationSpeed;
+	private float ratio ;
 	//private Component leftMost, rightMost;
 	// private int basePartIndex;
 
@@ -64,6 +65,7 @@ public class AssembledObject {
 	
 	public void initSound(GameLoader gameLoader) {
 		idle = Gdx.audio.newSound(Gdx.files.internal("soundfx/idle.mp3"));
+		//idle = gameLoader.Assets.get("soundfx/idle.mp3", Sound.class);
 		rotationSpeed = new RollingAverage(2);
 	}
 
@@ -180,7 +182,7 @@ public class AssembledObject {
 	}
 	
 	public void updateSound(){
-		float ratio = (float) (Math.abs((rotationSpeed.getAverage())/MAX_IDLE_RATIO)) + 1.3f;
+		ratio = (float) (Math.abs((rotationSpeed.getAverage())/MAX_IDLE_RATIO)) + 1.3f;
 		//System.out.println((ratio/6)*SoundManager.FX_VOLUME);
 		idle.setVolume(idleId, (ratio/6)*SoundManager.FX_VOLUME );
 		idle.setPitch(idleId, ratio);

@@ -79,6 +79,7 @@ public class GroundBuilder {
 
 	private static ShaderProgram shader;
 	private static ShaderProgram colorShader;
+	private static int vertexCount;
 
 	private int initial = 0 * 8;
 	public boolean loading = true;
@@ -106,7 +107,7 @@ public class GroundBuilder {
 			mapString = user.getCurrentTrack();
 		}
 		
-		System.out.println(mapString);
+		//System.out.println(mapString);
 
 		if (mapString == null) {
 			infinate = true;
@@ -331,10 +332,11 @@ public class GroundBuilder {
 		 * groundItem.drawShapes(cam,shader); }
 		 */
 
-		int vertexCount = (shaderEnd - shaderStart) * 2;
+		vertexCount = (shaderEnd - shaderStart) * 2;
 
 		shader.begin();
 		shader.setUniformMatrix("u_projTrans", camera.combined);
+		//shader.setUniformi("u_texture", 0);
 		GameMesh.drawLayer(camera, shader, shaderStart, shaderEnd,
 				groundFiller, 30, Color.WHITE, 0f, 0, vertexCount);
 		shader.end();
@@ -345,8 +347,8 @@ public class GroundBuilder {
 				0.8f, Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
 		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
 				0.6f, Globals.GREEN, 0.5f, 2, vertexCount);
-		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
-				0.1f, Globals.GREEN1, 0.6f, 3, vertexCount);
+		//GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
+			//	0.1f, Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();
 
 	}

@@ -32,7 +32,6 @@ public class CarSelectorScreen extends SelectorScreen {
 
 	public CarSelectorScreen(GameState gameState) {
 		super(gameState);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -43,7 +42,7 @@ public class CarSelectorScreen extends SelectorScreen {
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
-			public String call() throws Exception {
+			public String call() {
 
 				while (resultsRemaining && !killThreads) {
 					// stall = true;
@@ -84,7 +83,6 @@ public class CarSelectorScreen extends SelectorScreen {
 									final String car = iter.next();
 									final JSONCar carJson = JSONCar
 											.objectify(car);
-									// System.out.println("adding from cloud");
 
 									addItemToList(carJson);
 
@@ -107,22 +105,23 @@ public class CarSelectorScreen extends SelectorScreen {
 
 							@Override
 							public void failed(Throwable t) {
-								System.out.println("failed");
+								System.out.println("CarSelectorScreen: download failed Stack printing");
 								t.printStackTrace();
 								loaderSemaphore.release();
 								// stallSemaphore.release();
 								// stall = false;
 								resultsRemaining = false;
+								downloadCancelled = true;
 								return;
 							}
 
 							@Override
 							public void cancelled() {
-								System.out.println("cancelled");
 								loaderSemaphore.release();
 								// stallSemaphore.release();
 								// stall = false;
 								resultsRemaining = false;
+								downloadCancelled = true;
 								return;
 							}
 
@@ -135,7 +134,6 @@ public class CarSelectorScreen extends SelectorScreen {
 
 				}
 
-				System.out.println("release download");
 				loaderSemaphore.release();
 				return null;
 			}
@@ -253,12 +251,15 @@ public class CarSelectorScreen extends SelectorScreen {
 	@Override
 	protected void writeObjectsToFile() {
 		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
+		gameLoader.cars.clear();
+		
 		for (JSONParentClass car : items) {
 			// String car = iter.next();
 			list.add((JSONCar) car);
+			gameLoader.cars.add((JSONCar) car);
 		}
-
-		System.out.println("writing " + list.size());
+		
+		System.out.println("CarSelectorScreen: written " + list.size());
 
 		if (list.isEmpty())
 			return;
@@ -274,9 +275,16 @@ public class CarSelectorScreen extends SelectorScreen {
 	protected void addSpecificItemToList() {
 		for (JSONCar car : gameLoader.cars) {
 			addItemToList(car);
+			localLoadedCounter.release();
 		}
 		loaderSemaphore.release();
 		localLoading.release();
+		
+	}
+
+	@Override
+	protected void goNext() {
+		gameLoader.setScreen(new GamePlayScreen(gameState));
 	}
 
 }

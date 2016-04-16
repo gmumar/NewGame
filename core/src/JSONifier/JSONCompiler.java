@@ -47,8 +47,8 @@ public class JSONCompiler {
 				if (part.getjComponentName().getLevel() == Globals.DISABLE_LEVEL) {
 					addParts.add(JSONPart);
 				} else {
-					System.out.println("JSONCompiler: "
-							+ part.getjComponentName());
+					//System.out.println("JSONCompiler: "
+						//	+ part.getjComponentName());
 					JSONparts.add(JSONPart);
 				}
 
@@ -91,12 +91,12 @@ public class JSONCompiler {
 					 * contact.getFixtureB() .getUserData());
 					 */
 
-					System.out.println("JSONCompiler fixtureA:"
-							+ (JSONComponentName) contact.getFixtureA()
-									.getUserData());
-					System.out.println("JSONCompiler fixtureB:"
-							+ (JSONComponentName) contact.getFixtureB()
-									.getUserData());
+					//System.out.println("JSONCompiler fixtureA:"
+						//	+ (JSONComponentName) contact.getFixtureA()
+							//		.getUserData());
+					//System.out.println("JSONCompiler fixtureB:"
+						//	+ (JSONComponentName) contact.getFixtureB()
+							//		.getUserData());
 
 					joint.setMount1((JSONComponentName) contact.getFixtureA()
 							.getUserData());
@@ -170,12 +170,12 @@ public class JSONCompiler {
 					 * contact.getFixtureB() .getUserData());
 					 */
 
-					System.out.println("JSONCompiler fixtureA:"
-							+ (JSONComponentName) contact.getFixtureA()
-									.getUserData());
-					System.out.println("JSONCompiler fixtureB:"
-							+ (JSONComponentName) contact.getFixtureB()
-									.getUserData());
+					//System.out.println("JSONCompiler fixtureA:"
+						//	+ (JSONComponentName) contact.getFixtureA()
+							//		.getUserData());
+					//System.out.println("JSONCompiler fixtureB:"
+						//	+ (JSONComponentName) contact.getFixtureB()
+							//		.getUserData());
 
 					joint.setMount1((JSONComponentName) contact.getFixtureA()
 							.getUserData());
@@ -209,7 +209,7 @@ public class JSONCompiler {
 		// prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
 		// prefs.flush();
 
-		System.out.println(track.jsonify());
+		//System.out.println(track.jsonify());
 
 		return track.jsonify();
 

@@ -40,7 +40,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
-			public String call() throws Exception {
+			public String call() {
 
 				while (resultsRemaining && !killThreads) {
 					//stall = true;
@@ -67,7 +67,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	
 							@Override
 							public void handleHttpResponse(HttpResponse httpResponse) {
-								System.out.println("got a reply ");
+								System.out.println("TrackSelectorScreen: got a reply ");
 								Backendless_Track obj = Backendless_JSONParser
 										.processDownloadedTrack(httpResponse
 												.getResultAsString());
@@ -82,6 +82,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 											.objectify(track);
 	
 									addItemToList(trackJson);
+									
 	
 									uniqueListLock.lock();
 									uniqueListLock.unlock();
@@ -100,22 +101,23 @@ public class TrackSelectorScreen extends SelectorScreen {
 	
 							@Override
 							public void failed(Throwable t) {
-								loaderSemaphore.release();
+								System.out.println("TrackSelectorScreen: download failed Stack printing");
 								t.printStackTrace();
-								System.out.println("track failed");
+								loaderSemaphore.release();
 								//stallSemaphore.release();
 								//stall = false;
 								resultsRemaining = false;
+								downloadCancelled = true;
 								//return;
 							}
 	
 							@Override
 							public void cancelled() {
 								loaderSemaphore.release();
-								System.out.println("track concelled");
 								//stallSemaphore.release();
 								//stall = false;
 								resultsRemaining = false;
+								downloadCancelled = true;
 								//return;
 							}
 	
@@ -126,8 +128,6 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 					
 				}
-
-				System.out.println("released download");
 				loaderSemaphore.release();
 
 				return null;
@@ -204,9 +204,10 @@ public class TrackSelectorScreen extends SelectorScreen {
 		for (JSONParentClass track : items) {
 			// String car = iter.next();
 			list.add((JSONTrack) track);
+			
 		}
-
-		System.out.println("writing " + list.size());
+		
+		System.out.println("TrackSelectorScreen: writting " + list.size());
 		
 		if(list.isEmpty()) return;
 
@@ -223,7 +224,6 @@ public class TrackSelectorScreen extends SelectorScreen {
 				.getFileStream(FileManager.TRACK_FILE_NAME);
 
 		if (stream == null) {
-			System.out.println("first release local");
 			loaderSemaphore.release();
 			localLoading.release();
 			return;
@@ -237,6 +237,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 					final JSONTrack track = gson.fromJson(reader,
 							JSONTrack.class);
 
+					localLoadedCounter.release();
 					addItemToList(track);
 					break;
 				}
@@ -245,15 +246,18 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 			reader.close();
 
-			System.out.println("loaded " + items.size());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			loaderSemaphore.release();
 			localLoading.release();
-			System.out.println("second release local");
 		}
 		return;
+	}
+	
+	@Override
+	protected void goNext() {
+		gameLoader.setScreen(new CarSelectorScreen(gameState));
 	}
 
 }

@@ -31,7 +31,6 @@ public class AssembledTrack {
 	public boolean destroyComponent(JSONComponentName name) {
 		
 		if(name == null ) {
-			System.out.println("premature");
 			return false;
 		}
 		

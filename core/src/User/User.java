@@ -53,7 +53,7 @@ public class User {
 		Gson json = new Gson();
 		userState = json.fromJson(encryptor.decrypt(inputString), UserState.class);
 
-		System.out.println("Restored: " + json.toJson(userState));
+		//System.out.println("Restored: " + json.toJson(userState));
 	}
 
 	public String getCurrentCar() {

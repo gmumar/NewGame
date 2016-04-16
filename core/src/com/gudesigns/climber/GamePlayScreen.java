@@ -56,7 +56,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private RollingAverage rollingAvg;
 	private float speedZoom = 0;
-	//private float dlTime;
+	// private float dlTime;
 
 	public static final float CAMERA_OFFSET = 12;
 
@@ -71,7 +71,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private JointLimits jointLimits;
 
-	private final AsyncExecutor runner = new AsyncExecutor(2);
+	private final AsyncExecutor runner = Globals.globalRunner;// = new
+																// AsyncExecutor(2);
 	boolean running = true;
 	boolean paused = true;
 
@@ -139,33 +140,29 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
 
-		popQueManager = new PopQueManager(gameLoader,stage);
-		popQueManager.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
+		popQueManager = new PopQueManager(gameLoader, stage);
+		popQueManager
+				.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
 
-		/*runner.submit(new AsyncTask<String>() {
-
-			@Override
-			public String call() throws Exception {
-				// float timePassed = 0;
-				long prevTime = System.nanoTime();
-				long currentTime = prevTime;
-
-				while (running) {
-
-					currentTime = System.nanoTime();
-					
-					Thread.sleep(100);
-
-					if (currentTime - prevTime >= 100000) {
-						hud.update(Globals.STEP, progress, mapTime);
-
-						prevTime = currentTime;
-
-					}
-				}
-				return null;
-			}
-		});*/
+		/*
+		 * runner.submit(new AsyncTask<String>() {
+		 * 
+		 * @Override public String call() throws Exception { // float timePassed
+		 * = 0; long prevTime = System.nanoTime(); long currentTime = prevTime;
+		 * 
+		 * while (running) {
+		 * 
+		 * currentTime = System.nanoTime();
+		 * 
+		 * Thread.sleep(100);
+		 * 
+		 * if (currentTime - prevTime >= 100000) { hud.update(Globals.STEP,
+		 * progress, mapTime);
+		 * 
+		 * prevTime = currentTime;
+		 * 
+		 * } } return null; } });
+		 */
 
 		runner.submit(new AsyncTask<String>() {
 
@@ -200,10 +197,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private void initSounds() {
 		//coinCollected = gameLoader.Assets.get("soundfx/coin.mp3", Sound.class);
-		coinCollected = Gdx.audio.newSound(Gdx.files.internal("soundfx/coin.mp3"));
+		coinCollected = Gdx.audio.newSound(Gdx.files
+				.internal("soundfx/coin.mp3"));
 		//bgMusic = gameLoader.Assets.get("music/track1.ogg", Music.class);
 		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/track1.ogg"));
-		
+
 		SoundManager.loopMusic(bgMusic);
 		builtCar.startSound();
 	}
@@ -249,13 +247,13 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	private float fixedStep = 0;
-	
+
 	@Override
 	public void render(float delta) {
 
-		//renderWorld(delta);
+		// renderWorld(delta);
 
-		//dlTime = delta;
+		// dlTime = delta;
 
 		fixedStep += delta;
 
@@ -266,9 +264,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		 if (fixedStep >= Globals.STEP) {
+		if (fixedStep >= Globals.STEP) {
 
-			if (!ground.loading) {
+			//if (!ground.loading) {
 
 				if (gameWon) {
 					handleInput(fakeTouches);
@@ -281,22 +279,22 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 				world.step(Globals.STEP / slowMoFactor, 80, 40);
 				hud.update(Globals.STEP, progress, mapTime);
-				//builtCar.step();
-			}
+				// builtCar.step();
+			//}
 
 			if (timePassed > 2) {
 
 				jointLimits.enableJointLimits(Globals.STEP_INVERSE);
 
 			} else {
-				if (!ground.loading) {
+				//if (!ground.loading) {
 					timePassed += Globals.STEP;
-				}
+				//}
 			}
 
 			fixedStep -= Globals.STEP;
 		}
-		
+
 		builtCar.updateSound();
 
 		scrollingBackground.draw();
@@ -376,7 +374,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	final private void handleInput(ArrayList<TouchUnit> touchesIn) {
 		builtCar.handleInput(touchesIn);
 	}
-
 
 	final private void attachCameraTo(Body actor) {
 		// System.out.println();
@@ -505,9 +502,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void dispose() {
 		running = false;
 		paused = true;
-		
-		runner.dispose();
-		
+
+		// runner.dispose();
+
 		SoundManager.disposeSound(bgMusic);
 		SoundManager.disposeSound(coinCollected);
 		popQueManager.dispose();

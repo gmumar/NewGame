@@ -13,6 +13,8 @@ import Storage.FileManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -82,9 +84,9 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("bar/level5.png", Texture.class);
 
 		// Sounds
-		//gameLoader.Assets.load("music/track1.ogg", Music.class);
-		//gameLoader.Assets.load("soundfx/coin.mp3", Sound.class);
-		//gameLoader.Assets.load("soundfx/idle.mp3", Sound.class);
+		gameLoader.Assets.load("music/track1.ogg", Music.class);
+		gameLoader.Assets.load("soundfx/coin.mp3", Sound.class);
+		gameLoader.Assets.load("soundfx/idle.mp3", Sound.class);
 
 		ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
 		BitmapFont font = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
@@ -95,9 +97,9 @@ public class LoaderScreen implements Screen {
 
 	}
 
-	private void loadLocalCars() {
+	public void loadLocalCars() {
 		carLoader.tryAcquire();
-
+		
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
@@ -107,7 +109,6 @@ public class LoaderScreen implements Screen {
 						.getFileStream(FileManager.CAR_FILE_NAME);
 
 				if (stream == null) {
-					System.out.println("first release local");
 					carLoader.release();
 					return null;
 				}
@@ -127,13 +128,10 @@ public class LoaderScreen implements Screen {
 					}
 
 					reader.close();
-
-					System.out.println("loaded " + gameLoader.cars.size());
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
 					carLoader.release();
-					System.out.println("second release local");
 				}
 				return null;
 			}
