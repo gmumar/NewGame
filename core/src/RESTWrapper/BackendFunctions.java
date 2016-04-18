@@ -2,12 +2,11 @@ package RESTWrapper;
 
 import java.util.HashMap;
 
-import wrapper.GamePreferences;
+import wrapper.Globals;
+import DataMutators.Compress;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.Preferences;
 
 public class BackendFunctions {
 
@@ -18,25 +17,24 @@ public class BackendFunctions {
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.CAR_JSON,// "hello"
 				//prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
-				inputString);
+				Compress.Car(inputString));
 
 		REST.postData(RESTPaths.CARS, parameters, new HttpResponseListener() {
 
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				System.out.println(httpResponse.getResultAsString());
-
+				//System.out.println(httpResponse.getResultAsString());
+				Globals.toast("Car uploaded");
 			}
 
 			@Override
 			public void failed(Throwable t) {
-				// TODO Auto-generated method stub
-
+				Globals.toast("Car uploaded failed");
 			}
 
 			@Override
 			public void cancelled() {
-				// TODO Auto-generated method stub
+				Globals.toast("Car uploaded cancelled");
 
 			}
 		});
@@ -47,26 +45,24 @@ public class BackendFunctions {
 
 		
 		HashMap<String, String> parameters = new HashMap<String, String>();
-		parameters.put(RESTProperties.TRACK_POINTS_JSON,mapString);
+		parameters.put(RESTProperties.TRACK_POINTS_JSON, Compress.Track(mapString));
 
 		REST.postData(RESTPaths.MAPS, parameters, new HttpResponseListener() {
 
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				//System.out.println(httpResponse.getResultAsString());
+				Globals.toast("track uploaded");
 
 			}
 
 			@Override
 			public void failed(Throwable t) {
-				// TODO Auto-generated method stub
-
+				Globals.toast("track uploaded failed");
 			}
 
 			@Override
 			public void cancelled() {
-				// TODO Auto-generated method stub
-
+				Globals.toast("track uploaded cancelled");
 			}
 		});
 

@@ -523,7 +523,7 @@ public class OLD_CarSelectorScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		popQueManager.update(delta);
+		popQueManager.update();
 
 		if (uniqueListLock.tryLock()) {
 			loadedCount = uniquenessButtonList.size();

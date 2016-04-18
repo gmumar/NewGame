@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import Component.ComponentProperties;
 
@@ -24,6 +22,17 @@ public class JSONTrack extends JSONParentClass {
 	private ArrayList<JSONJoint> componentJointList;
 	private HashMap<String, Integer> componentJointTypes;
 	private TrackType type = TrackType.NORMAL;
+	
+	private ArrayList<Float> smallPoints = null;
+
+	public ArrayList<Float> getSmallPoints() {
+		return smallPoints;
+	}
+
+	public void setSmallPoints(ArrayList<Float> smallPoints) {
+		this.smallPoints = smallPoints;
+		this.points = null;
+	}
 
 	public void applyOffset(Vector2 offset) {
 		Float newX, newY;
@@ -76,6 +85,7 @@ public class JSONTrack extends JSONParentClass {
 
 	public void setPoints(ArrayList<Vector2> points) {
 		this.points = points;
+		this.smallPoints = null;
 	}
 
 	public TrackType getType() {

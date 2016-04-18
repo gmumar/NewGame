@@ -122,7 +122,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 		shapeRenderer.end();
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		stage.draw();
-		popQueManager.update(delta);
+		popQueManager.update();
 	}
 
 	private void renderWorld() {

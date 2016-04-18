@@ -3,7 +3,7 @@ package User;
 import wrapper.GamePreferences;
 import wrapper.Globals;
 import Component.ComponentNames;
-import Encryption.TrippleDes;
+import DataMutators.TrippleDes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;

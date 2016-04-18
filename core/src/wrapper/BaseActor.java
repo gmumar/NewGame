@@ -59,6 +59,8 @@ public class BaseActor {
 
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
+	
+	private float spriteHalfHeight, spriteHalfWidth;
 
 	public BaseActor(JSONComponentName name, String texture,
 			GamePhysicalState gameState) {
@@ -140,10 +142,12 @@ public class BaseActor {
 		initBody();
 	}
 
+	private Vector2 pos;
 	public void draw(SpriteBatch batch) {
 		if (!onlyPhysicBody) {
-			sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2,
-					body.getPosition().y - sprite.getHeight() / 2);
+			pos = body.getPosition();
+			sprite.setPosition(pos.x - spriteHalfWidth,
+					pos.y - spriteHalfHeight);
 			sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 			sprite.draw(batch);
 		}
@@ -172,6 +176,8 @@ public class BaseActor {
 			sprite.setSize(Globals.PixelToMeters(texture.getWidth()),
 					Globals.PixelToMeters(texture.getHeight()));
 			sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+			spriteHalfHeight = sprite.getHeight() / 2;
+			spriteHalfWidth = sprite.getWidth() / 2;
 		}
 	}
 
@@ -240,6 +246,8 @@ public class BaseActor {
 	public void setOrigin(Vector2 vec) {
 		if (!onlyPhysicBody) {
 			sprite.setOrigin(vec.x, vec.y);
+			spriteHalfHeight = sprite.getHeight() / 2;
+			spriteHalfWidth = sprite.getWidth() / 2;
 		}
 	}
 
@@ -296,6 +304,8 @@ public class BaseActor {
 			sprite.setSize(sprite.getWidth() * scaleX, sprite.getHeight()
 					* scaleY);
 			sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+			spriteHalfHeight = sprite.getHeight() / 2;
+			spriteHalfWidth = sprite.getWidth() / 2;
 		}
 		initBody();
 	}
@@ -306,6 +316,8 @@ public class BaseActor {
 			sprite.setSize(sprite.getWidth() * scaleX, sprite.getHeight()
 					* scaleY);
 			sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+			spriteHalfHeight = sprite.getHeight() / 2;
+			spriteHalfWidth = sprite.getWidth() / 2;
 		}
 		initBody();
 	}

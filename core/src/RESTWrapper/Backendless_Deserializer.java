@@ -4,6 +4,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import DataMutators.Decompress;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -40,9 +42,9 @@ public class Backendless_Deserializer implements JsonDeserializer<Backendless_Pa
 			String actualDataStr = null;
 			
 			if(typeOfT.equals(Backendless_Car.class)){
-				actualDataStr = item.get(RESTProperties.CAR_JSON).getAsString();
+				actualDataStr = Decompress.Car(item.get(RESTProperties.CAR_JSON).getAsString());
 			} else if (typeOfT.equals(Backendless_Track.class)){
-				actualDataStr = item.get(RESTProperties.TRACK_POINTS_JSON).getAsString();
+				actualDataStr = Decompress.Track(item.get(RESTProperties.TRACK_POINTS_JSON).getAsString());
 			}
 			//(RESTProperties.CAR_JSON, "UTF-8");
 			

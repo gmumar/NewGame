@@ -18,7 +18,6 @@ import com.gudesigns.climber.GameLoader;
 public class PopQueManager {
 
 	private ArrayList<PopQueObject> que = new ArrayList<PopQueObject>();
-	private static float timePassed = 0;
 	private Stage stage;
 
 	private DialogBase dialog;
@@ -40,13 +39,7 @@ public class PopQueManager {
 		winTable = WinDialog.CreateDialog(gameLoader,popQueObject);
 	}
 
-	public void update(float delta) {
-
-		timePassed += delta;
-
-		if (timePassed > 5) {
-			timePassed = 0;
-		}
+	public void update() {
 
 		if (que.isEmpty()) {
 			return;

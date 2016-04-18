@@ -8,7 +8,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
-import Encryption.Gzip;
+import DataMutators.Gzip;
 import JSONifier.JSONCar;
 import JSONifier.JSONTrack;
 

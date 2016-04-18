@@ -2,7 +2,6 @@ package wrapper;
 
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
-import User.User;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;

@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 
 import wrapper.Globals;
+import AdsInterface.IActivityRequestHandler;
 import JSONifier.JSONCar;
 
 import com.badlogic.gdx.Game;
@@ -18,7 +19,12 @@ public class GameLoader extends Game {
 	
 	public AssetManager Assets;
 	public ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
-	
+
+	public GameLoader(IActivityRequestHandler handler) {
+		super();
+		Globals.nativeRequestHandler = handler;
+	}
+
 	@Override
 	public void create() {
 		Globals.updateScreenInfo();
@@ -29,8 +35,6 @@ public class GameLoader extends Game {
 		loadScreen = new LoaderScreen(this);
 		setScreen(loadScreen);
 	}
-	
-	
 	
 	@Override
 	public void setScreen(Screen screen) {

@@ -138,7 +138,7 @@ public class MainMenuScreen implements Screen {
 
 		batch.begin();
 
-		ground.draw(batch, true);
+		ground.drawMainMenu(batch);
 		builtCar.draw(batch);
 
 		batch.end();
@@ -277,7 +277,7 @@ public class MainMenuScreen implements Screen {
 
 		stepStage();
 
-		popQueManager.update(delta);
+		popQueManager.update();
 
 	}
 

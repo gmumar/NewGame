@@ -9,7 +9,6 @@ import java.util.Set;
 import wrapper.Globals;
 import Component.Component;
 import Component.Component.ComponentTypes;
-import Component.ComponentProperties;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONTrack.TrackType;
 import User.User;

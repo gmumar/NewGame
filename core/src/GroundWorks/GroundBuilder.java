@@ -30,7 +30,7 @@ import com.gudesigns.climber.GameLoader;
 
 public class GroundBuilder {
 
-	final static float UNIT_LENGTH = 2;
+	public final static float UNIT_LENGTH = 2;
 	final static float VARIATION = 1f;
 	final static float BIASING = 2f;
 	final static float PERIOD = 0.3f;
@@ -290,10 +290,10 @@ public class GroundBuilder {
 		return camera.getViewPortLeftEdge() - UNIT_LENGTH * BACK_EDGE_UNITS;
 	}
 
-	public void draw(SpriteBatch batch, boolean forMainMenu) {
+	public void draw(SpriteBatch batch) {
 
 		if (addFloorCount > ADD_FLOOR_COUNT) {
-			getNextFloorUnit(forMainMenu);
+			getNextFloorUnit(false);
 			addFloorUnitToMap();
 
 			addFloorCount = 0;
@@ -301,10 +301,9 @@ public class GroundBuilder {
 
 		++addFloorCount;
 
-		if (!forMainMenu) {
 			decor.draw(batch);
 			track.draw(batch);
-		}
+		
 
 
 		/*
@@ -320,6 +319,19 @@ public class GroundBuilder {
 		 * iter.next(); if (!groundItem.isFixtureDeleted())
 		 * groundItem.draw(batch); }
 		 */
+
+	}
+	
+	public void drawMainMenu(SpriteBatch batch) {
+
+		if (addFloorCount > ADD_FLOOR_COUNT) {
+			getNextFloorUnit(true);
+			addFloorUnitToMap();
+
+			addFloorCount = 0;
+		}
+
+		++addFloorCount;
 
 	}
 

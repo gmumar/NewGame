@@ -304,22 +304,22 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.begin();
 
-		ground.draw(batch, false);
+		ground.draw(batch);
 		builtCar.draw(batch);
 
 		batch.end();
 
 		stage.draw();
 		stage.act();
-		popQueManager.update(delta);
+		popQueManager.update();
 
 		if (!destoryQue.isEmpty()) {
-			Body body = destoryQue.poll();
+			JSONComponentName userData = (JSONComponentName) destoryQue.poll().getUserData();
 
-			if (body.getUserData() == null) {
+			if (userData == null) {
 				;
 			} else {
-				ground.destroyComponent((JSONComponentName) body.getUserData());
+				ground.destroyComponent(userData);
 			}
 			// world.destroyBody(body);
 		}

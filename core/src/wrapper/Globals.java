@@ -2,6 +2,7 @@ package wrapper;
 
 import java.util.ArrayList;
 
+import AdsInterface.IActivityRequestHandler;
 import JSONifier.JSONJoint;
 
 import com.badlogic.gdx.Gdx;
@@ -45,6 +46,14 @@ public class Globals {
 	public static final Integer DISABLE_LEVEL = -1;
 	
 	public static AsyncExecutor globalRunner = new AsyncExecutor(2); 
+	
+	public static IActivityRequestHandler nativeRequestHandler = null;
+	
+	public static void toast(String text){
+		if(nativeRequestHandler!=null){
+			nativeRequestHandler.Toast(text);
+		}
+	}
 	
 	public static void  runOnUIThread(Runnable runnable){
 		Gdx.app.postRunnable(runnable);

@@ -334,7 +334,7 @@ public class OLD_TrackSelectorScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		popQueManager.update(delta);
+		popQueManager.update();
 
 		/*
 		 * if(!buttonQue.isEmpty()){ while(!buttonQue.isEmpty()){
