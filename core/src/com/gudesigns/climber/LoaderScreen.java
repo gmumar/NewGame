@@ -32,10 +32,10 @@ import com.google.gson.stream.JsonReader;
 
 public class LoaderScreen implements Screen {
 
-	private static final float LOADER_X = Globals.ScreenWidth*3/4;
-	private static final float LOADER_Y = Globals.ScreenHeight*3/4;
+	private static final float LOADER_X = Globals.ScreenWidth*1/2;
+	private static final float LOADER_Y = Globals.ScreenHeight*1/2;
 	private static final float RADIUS = 45;
-	private static final float LOADER_LENGTH = Globals.GameWidth;
+	//private static final float LOADER_LENGTH = Globals.GameWidth;
 
 	private GameLoader gameLoader;
 	private CameraManager camera;
@@ -147,8 +147,7 @@ public class LoaderScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
-				camera);
+		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,	camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 
@@ -173,6 +172,7 @@ public class LoaderScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		renderWorld();
+	
 		progress = gameLoader.Assets.getProgress();
 
 		loaderBar.begin(ShapeRenderer.ShapeType.Line);
@@ -181,8 +181,8 @@ public class LoaderScreen implements Screen {
 		loaderBar.end();
 
 		loaderBar.begin(ShapeRenderer.ShapeType.Filled);
-		loaderBar.setColor(Color.GRAY);
-		loaderBar.arc(LOADER_X, LOADER_Y, RADIUS, 90, 360*progress);
+		loaderBar.setColor(Color.GOLD);
+		loaderBar.arc(LOADER_X, LOADER_Y, RADIUS, 90, 360*progress,100);
 		//loaderBar.rect(LOADER_X, LOADER_Y, LOADER_LENGTH * progress, 100);
 		loaderBar.end();
 
@@ -198,6 +198,7 @@ public class LoaderScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
+		loaderBar.setProjectionMatrix(camera.combined);
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
 

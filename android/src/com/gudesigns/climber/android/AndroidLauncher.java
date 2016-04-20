@@ -105,7 +105,8 @@ public class AndroidLauncher extends AndroidApplication implements IActivityRequ
 		RelativeLayout.LayoutParams adParams = new RelativeLayout.LayoutParams(
 				RelativeLayout.LayoutParams.WRAP_CONTENT,
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		adParams.addRule(RelativeLayout.ALIGN_BOTTOM);
+		adParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		
 		AdViewUnit ret = new AdViewUnit();
 		ret.view = adView;
