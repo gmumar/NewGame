@@ -1,6 +1,20 @@
 android {
     buildToolsVersion "23.0.3"
     compileSdkVersion 23
+    
+   signingConfigs {
+       mySignature {
+           storeFile     file('/home/eric/.android/debug.keystore')
+           storePassword 'android'
+           keyAlias      'androiddebugkey'
+           keyPassword   'android'
+       }
+   }
+    
+       defaultConfig {
+       signingConfig signingConfigs.mySignature
+   }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -10,11 +24,27 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
+            jniLibs.srcDir new File(buildDir, 'lib')
         }
 
         instrumentTest.setRoot('tests')
     }
+    
+   buildTypes {
+       release {
+           minifyEnabled true
+// use minifyEnabled instead of runProguard if your gradle plugin version is 0.14+
+           proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+           proguardFile 'proguard-project.txt'
+       }
+   }
 }
+
+// needed to add JNI shared libraries to APK when compiling on CLI
+//tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
+//   pkgTask.jniFolders = new HashSet<File>()
+//   pkgTask.jniFolders.add(new File(projectDir, 'libs'))
+//}
 
 
 // called every time gradle gets executed, takes the native dependencies of

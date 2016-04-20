@@ -102,6 +102,9 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "com.google.code.gson:gson:2.6.2"
         compile "io.fastjson:boon:0.33"
+        compile "com.badlogicgames.gdxpay:gdx-pay:0.9.2:library"
+        compile "com.badlogicgames.gdxpay:gdx-pay-client:0.9.2:library"
+        compile "com.badlogicgames.gdxpay:gdx-pay-android:0.9.2:library"
     }
     
 }

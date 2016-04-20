@@ -32,8 +32,9 @@ import com.google.gson.stream.JsonReader;
 
 public class LoaderScreen implements Screen {
 
-	private static final float LOADER_X = 0;
-	private static final float LOADER_Y = 0;
+	private static final float LOADER_X = Globals.ScreenWidth*3/4;
+	private static final float LOADER_Y = Globals.ScreenHeight*3/4;
+	private static final float RADIUS = 45;
 	private static final float LOADER_LENGTH = Globals.GameWidth;
 
 	private GameLoader gameLoader;
@@ -176,12 +177,13 @@ public class LoaderScreen implements Screen {
 
 		loaderBar.begin(ShapeRenderer.ShapeType.Line);
 		loaderBar.setColor(Color.BLACK);
-		loaderBar.rect(LOADER_X, LOADER_Y, LOADER_LENGTH, 100);
+		loaderBar.circle(LOADER_X, LOADER_Y, RADIUS, 100);
 		loaderBar.end();
 
 		loaderBar.begin(ShapeRenderer.ShapeType.Filled);
 		loaderBar.setColor(Color.GRAY);
-		loaderBar.rect(LOADER_X, LOADER_Y, LOADER_LENGTH * progress, 100);
+		loaderBar.arc(LOADER_X, LOADER_Y, RADIUS, 90, 360*progress);
+		//loaderBar.rect(LOADER_X, LOADER_Y, LOADER_LENGTH * progress, 100);
 		loaderBar.end();
 
 		if (gameLoader.Assets.update() && carLoader.tryAcquire()) {
