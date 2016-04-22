@@ -1,7 +1,7 @@
 package RESTWrapper;
 
 
-public class Backendless_Car extends Backendless_Parent {
+public class Backendless_Car extends Backendless_ParentContainer {
 
 	//private int totalObjects;
 	//private int offset;

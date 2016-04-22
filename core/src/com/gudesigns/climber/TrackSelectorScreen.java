@@ -3,7 +3,6 @@ package com.gudesigns.climber;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import wrapper.GameState;
 import JSONifier.JSONParentClass;
@@ -15,6 +14,7 @@ import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
 import RESTWrapper.RESTProperties;
+import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
 
@@ -62,7 +62,9 @@ public class TrackSelectorScreen extends SelectorScreen {
 								+ RESTProperties.PROPS + RESTProperties.CREATED
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.TRACK_POINTS_JSON
-	
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.OBJECT_ID
+								
 						, new HttpResponseListener() {
 	
 							@Override
@@ -72,15 +74,14 @@ public class TrackSelectorScreen extends SelectorScreen {
 										.processDownloadedTrack(httpResponse
 												.getResultAsString());
 	
-								
+								//Iterator<String> iter = obj.getData().iterator();
 	
-								Iterator<String> iter = obj.getData().iterator();
-	
-								while (iter.hasNext()) {
-									final String track = iter.next();
+								for (ServerDataUnit fromServer :  obj.getData()) {
+									
 									final JSONTrack trackJson = JSONTrack
-											.objectify(track);
-	
+											.objectify(fromServer.getData());
+									trackJson.setObjectId(fromServer.getObjectId());
+									
 									addItemToList(trackJson);
 									
 	
@@ -176,8 +177,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 	}*/
 
 	@Override
-	protected void addButton(final String text) {
-		Button b = new Button("bla");
+	protected void addButton(final JSONParentClass item) {
+		Button b = new Button(item.getObjectId().substring(0, 5));
 
 		b.setZIndex(100);
 		b.setSize(100, 100);
@@ -186,7 +187,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameState.getUser().setCurrentTrack(text);
+				gameState.getUser().setCurrentTrack(item.jsonify());
 				gameLoader.setScreen(new CarSelectorScreen(gameState));
 				super.clicked(event, x, y);
 			}

@@ -74,7 +74,7 @@ public abstract class SelectorScreen implements Screen {
 
 	public GameState gameState;
 
-	abstract protected void addButton(final String text);
+	abstract protected void addButton(final JSONParentClass jsonParentClass);
 
 	abstract protected void downloadItems();
 
@@ -241,7 +241,8 @@ public abstract class SelectorScreen implements Screen {
 			public void run() {
 
 				for (int i = from; i < actualTo; i++) {
-					addButton(items.get(i).jsonify());
+					System.out.println("SelectorScreen: " + items.get(i).jsonify());
+					addButton(items.get(i));
 				}
 
 				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));

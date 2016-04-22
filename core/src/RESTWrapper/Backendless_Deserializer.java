@@ -2,7 +2,6 @@ package RESTWrapper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import DataMutators.Decompress;
 
@@ -13,46 +12,52 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-public class Backendless_Deserializer implements JsonDeserializer<Backendless_Parent> {
+public class Backendless_Deserializer implements JsonDeserializer<Backendless_ParentContainer> {
 
 	@Override
-	public Backendless_Parent deserialize(JsonElement json, Type typeOfT,
+	public Backendless_ParentContainer deserialize(JsonElement json, Type typeOfT,
 			JsonDeserializationContext context) throws JsonParseException {
 		
-		Backendless_Parent ret = null;
+		// The dataSet contains the number of items, offset and each of the items data
+		Backendless_ParentContainer dataSet = null;
 	
 		if(typeOfT.equals(Backendless_Car.class)){
-			ret = new Backendless_Car();
+			dataSet = new Backendless_Car();
 		} else if (typeOfT.equals(Backendless_Track.class)){
-			ret = new Backendless_Track();
+			dataSet = new Backendless_Track();
 		}
 		
 		JsonObject obj = json.getAsJsonObject();
 		
-		ret.setTotalObjects(obj.get("totalObjects").getAsInt());
-		ret.setOffset(obj.get("offset").getAsInt());
+		dataSet.setTotalObjects(obj.get("totalObjects").getAsInt());
+		dataSet.setOffset(obj.get("offset").getAsInt());
 		
-		JsonArray localData = obj.get("data").getAsJsonArray();
+		JsonArray fromServerPack = obj.get("data").getAsJsonArray();
 		
-		Iterator<JsonElement> iter = localData.iterator();
-		ArrayList<String> tmp = new ArrayList<String>();
-		while (iter.hasNext()) {
-			JsonObject item = iter.next().getAsJsonObject();
+		//Iterator<JsonElement> iter = localData.iterator();
+		ArrayList<ServerDataUnit> tmp = new ArrayList<ServerDataUnit>();
+		//while (iter.hasNext()) {
+		for (JsonElement iter : fromServerPack){	
+			JsonObject fromServer = iter.getAsJsonObject();
 			
-			String actualDataStr = null;
+			String actualDataStr = null, objectId = null;
+			
+			//System.out.println("Backendless_Deserializer: " + fromServer);
 			
 			if(typeOfT.equals(Backendless_Car.class)){
-				actualDataStr = Decompress.Car(item.get(RESTProperties.CAR_JSON).getAsString());
+				actualDataStr = Decompress.Car(fromServer.get(RESTProperties.CAR_JSON).getAsString());
 			} else if (typeOfT.equals(Backendless_Track.class)){
-				actualDataStr = Decompress.Track(item.get(RESTProperties.TRACK_POINTS_JSON).getAsString());
+				actualDataStr = Decompress.Track(fromServer.get(RESTProperties.TRACK_POINTS_JSON).getAsString());
 			}
+			
+			objectId = fromServer.get(RESTProperties.OBJECT_ID).getAsString();
 			//(RESTProperties.CAR_JSON, "UTF-8");
 			
-			tmp.add(actualDataStr);
+			tmp.add(new ServerDataUnit(actualDataStr, objectId));
 		}
 		
-		ret.setData(tmp);
-		return ret;
+		dataSet.setData(tmp);
+		return dataSet;
 	}
 
 }

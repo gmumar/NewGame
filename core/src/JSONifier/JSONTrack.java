@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import Component.ComponentProperties;
+import RESTWrapper.ServerDataUnit;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.gson.Gson;
@@ -17,12 +18,11 @@ public class JSONTrack extends JSONParentClass {
 		NORMAL;
 	};
 
-	private ArrayList<Vector2> points;
-	private ArrayList<JSONComponent> componentList;
-	private ArrayList<JSONJoint> componentJointList;
-	private HashMap<String, Integer> componentJointTypes;
+	private ArrayList<Vector2> points = null;
+	private ArrayList<JSONComponent> componentList = null;
+	private ArrayList<JSONJoint> componentJointList = null;
+	private HashMap<String, Integer> componentJointTypes = null;
 	private TrackType type = TrackType.NORMAL;
-	
 	private ArrayList<Float> smallPoints = null;
 
 	public ArrayList<Float> getSmallPoints() {
@@ -111,10 +111,11 @@ public class JSONTrack extends JSONParentClass {
 		return json.toJson(this);
 	}
 
-	public static JSONTrack objectify(String str) {
+	public static JSONTrack objectify(String data) {
 		Gson json = new Gson();
+		System.out.println("JSONTrack: " + data);
 		//json.setIgnoreUnknownFields(true);
-		return json.fromJson(str, JSONTrack.class);
+		return  json.fromJson(data, JSONTrack.class);
 	}
 
 	@Override

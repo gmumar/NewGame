@@ -1,55 +1,9 @@
 package throwaway;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import wrapper.CameraManager;
-import wrapper.GameState;
-import wrapper.Globals;
-import Assembly.Assembler;
-import JSONifier.JSONCar;
-import Menu.Button;
-import Menu.PopQueManager;
-import Menu.PopQueObject;
-import Menu.PopQueObject.PopQueObjectType;
-import Menu.TableW;
-import RESTWrapper.Backendless_Car;
-import RESTWrapper.Backendless_JSONParser;
-import RESTWrapper.REST;
-import RESTWrapper.RESTPaths;
-import RESTWrapper.RESTProperties;
-import Storage.FileManager;
-import Storage.FileObject;
+public class OLD_CarSelectorScreen {// implements Screen {
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.HttpResponse;
-import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.async.AsyncExecutor;
-import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.gudesigns.climber.GameLoader;
-import com.gudesigns.climber.GamePlayScreen;
-import com.gudesigns.climber.MainMenuScreen;
-
-public class OLD_CarSelectorScreen implements Screen {
-
-	private CameraManager camera;
+	/*private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
 	private StretchViewport vp;
@@ -230,7 +184,7 @@ public class OLD_CarSelectorScreen implements Screen {
 									.processDownloadedCars(httpResponse
 											.getResultAsString());
 
-							Iterator<String> iter = obj.getData().iterator();
+							//Iterator<String> iter = obj.getData().iterator();
 
 							while (iter.hasNext()) {
 
@@ -418,7 +372,7 @@ public class OLD_CarSelectorScreen implements Screen {
 
 	private void addButton(final String text) {
 
-		/*
+		*
 		 * Button b = new Button("bla"){
 		 * 
 		 * @Override public void Clicked() {
@@ -427,15 +381,15 @@ public class OLD_CarSelectorScreen implements Screen {
 		 * super.Clicked(); }
 		 * 
 		 * };
-		 */
+		 *
 
-		/*
-		 * String prevString = prefs .getString( GamePreferences.CAR_MAP_STR,
-		 * "{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}"
+		
+		 String prevString = prefs .getString( GamePreferences.CAR_MAP_STR,
+		* "{jointList:[{mount1:springJoint=upper_1:0,mount2:tire_1:0},{mount1:bar3_0:0,mount2:springJoint=lower_1:0},{mount1:springJoint=upper_0:0,mount2:tire_0:0},{mount1:bar3_0:2,mount2:springJoint=lower_0:0}],componentList:[{componentName:bar3_0,properties:{ROTATION:0.0,POSITION:\"0.0,0.0\"}},{componentName:springJoint_0,properties:{ROTATION:1.4883224,POSITION:\"1.313098,-1.0663831\"}},{componentName:tire_0,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"1.25,-1.1499996\"}},{componentName:springJoint_1,properties:{ROTATION:-0.33204922,POSITION:\"-1.3914706,-1.3713517\"}},{componentName:tire_1,properties:{MOTOR:1,ROTATION:0.0,POSITION:\"-1.3499994,-1.3000002\"}}]}"
 		 * );//
 		 * 
 		 * prefs.putString(GamePreferences.CAR_MAP_STR, text); prefs.flush();
-		 */
+		
 
 		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text, false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
@@ -446,19 +400,19 @@ public class OLD_CarSelectorScreen implements Screen {
 		// b.setPosition(100, 100);
 		b.setSize(100, 100);
 		// stage.addActor(b);
-		/*
-		 * prefs.putString(GamePreferences.CAR_MAP_STR, prevString);
-		 * prefs.flush();
-		 */
+		
+		  prefs.putString(GamePreferences.CAR_MAP_STR, prevString);
+		  prefs.flush();
+		 
 
 		b.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				/*
+				*
 				 * prefs.putString(GamePreferences.CAR_MAP_STR, text);
 				 * prefs.flush();
-				 */
+				 *
 				gameState.getUser().setCurrentCar(text);
 				gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
@@ -542,27 +496,27 @@ public class OLD_CarSelectorScreen implements Screen {
 			showCars();
 		}
 
-		/*
-		 * carLock.lock(); //if (carLock.tryLock()) { if (previousSize !=
-		 * cars.size()) { previousSize = cars.size();
-		 * 
-		 * System.out.println("render" + cars.size());
-		 * 
-		 * for (JSONCar car : cars) { if
-		 * (!uniquenessButtonList.contains(car.getId())) {
-		 * addButton(car.jsonify()); uniquenessButtonList.add(car.getId()); } }
-		 * 
-		 * } carLock.unlock();
-		 */
+		
+		  carLock.lock(); //if (carLock.tryLock()) { if (previousSize !=
+		  cars.size()) { previousSize = cars.size();
+		  
+		  System.out.println("render" + cars.size());
+		  
+		  for (JSONCar car : cars) { if
+		  (!uniquenessButtonList.contains(car.getId())) {
+		  addButton(car.jsonify()); uniquenessButtonList.add(car.getId()); } }
+		  
+		  } carLock.unlock();
+		 
 		// }
 
-		/*
-		 * if(!buttonQue.isEmpty()){ while(!buttonQue.isEmpty()){
-		 * System.out.println("here"); tempButton = buttonQue.get(0);
-		 * buttonQue.remove(0); buttons.add(tempButton); }
-		 * 
-		 * reinitScroll(); }
-		 */
+		
+		  if(!buttonQue.isEmpty()){ while(!buttonQue.isEmpty()){
+		  System.out.println("here"); tempButton = buttonQue.get(0);
+		  buttonQue.remove(0); buttons.add(tempButton); }
+		  
+		  reinitScroll(); }
+		 
 
 	}
 
@@ -598,5 +552,5 @@ public class OLD_CarSelectorScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 }

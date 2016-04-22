@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+import RESTWrapper.ServerDataUnit;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -16,16 +18,17 @@ public class JSONCar extends JSONParentClass {
 	private static JsonParser parser = new JsonParser();
 	private ArrayList<JSONComponent> addComponents = null;
 
+
 	public String jsonify() {
 		Gson obj = new Gson();
 		//obj.setIgnoreUnknownFields(true);
 		return obj.toJson(this);
 	}
 
-	public static JSONCar objectify(String str) {
+	public static JSONCar objectify(String data) {
 		Gson json = new Gson();
 		//json.setIgnoreUnknownFields(true);
-		return json.fromJson(str, JSONCar.class);
+		return json.fromJson(data, JSONCar.class);
 	}
 
 	public ArrayList<JSONComponent> getAddComponents() {

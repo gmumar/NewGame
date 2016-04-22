@@ -19,11 +19,12 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.gudesigns.climber.GameLoader;
 
-public class AndroidLauncher extends AndroidApplication implements IActivityRequestHandler {
+public class AndroidLauncher extends AndroidApplication implements
+		IActivityRequestHandler {
 	protected AdView adView;
 	private final int SHOW_ADS = 1;
 	private final int HIDE_ADS = 0;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,12 +37,13 @@ public class AndroidLauncher extends AndroidApplication implements IActivityRequ
 		// Built Layout
 		RelativeLayout layout = new RelativeLayout(this);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().clearFlags(
+				WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+
 		// Build gameView
-		View gameView=initializeForView(new GameLoader(this),config);
+		View gameView = initializeForView(new GameLoader(this), config);
 
 		// Build AdView
 		AdViewUnit adViewUnit = initAdView();
@@ -50,52 +52,50 @@ public class AndroidLauncher extends AndroidApplication implements IActivityRequ
 
 		// Add views to layout
 		layout.addView(gameView);
-		layout.addView(adView,adParams);
-		
+		layout.addView(adView, adParams);
+
 		// Hide buttons
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			hideVirtualButtons();
 		}
 
-		//initialize(new GameLoader(), config);
+		// initialize(new GameLoader(), config);
 		setContentView(layout);
 	}
-	
+
 	@Override
 	public void showAds(boolean show) {
 		handler.sendEmptyMessage(show ? SHOW_ADS : HIDE_ADS);
 	}
-	
+
 	@Override
 	public void Toast(String text) {
-		android.widget.Toast.makeText(this, text, android.widget.Toast.LENGTH_SHORT).show();
+		android.widget.Toast.makeText(this, text,
+				android.widget.Toast.LENGTH_SHORT).show();
 	}
 
-    protected Handler handler = new Handler()
-    {
-        @Override
-        public void handleMessage(Message msg) {
-            switch(msg.what) {
-                case SHOW_ADS:
-                {
-                    adView.setVisibility(View.VISIBLE);
-                    break;
-                }
-                case HIDE_ADS:
-                {
-                    adView.setVisibility(View.GONE);
-                    break;
-                }
-            }
-        }
-    };
-	
+	protected Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_ADS: {
+				adView.setVisibility(View.VISIBLE);
+				break;
+			}
+			case HIDE_ADS: {
+				adView.setVisibility(View.GONE);
+				break;
+			}
+			}
+		}
+	};
+
 	private class AdViewUnit {
 		AdView view;
 		RelativeLayout.LayoutParams params;
 	}
-	
-	private AdViewUnit initAdView (){
+
+	private AdViewUnit initAdView() {
 		AdView adView = new AdView(this);
 		adView.setAdSize(AdSize.BANNER);
 		adView.setAdUnitId("ca-app-pub-6076836148998107/3630881938");
@@ -107,11 +107,11 @@ public class AndroidLauncher extends AndroidApplication implements IActivityRequ
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		adParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		
+
 		AdViewUnit ret = new AdViewUnit();
 		ret.view = adView;
-		ret.params =adParams;
-		
+		ret.params = adParams;
+
 		return ret;
 	}
 

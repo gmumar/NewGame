@@ -2,11 +2,11 @@ package RESTWrapper;
 
 import java.util.ArrayList;
 
-public class Backendless_Parent {
+public class Backendless_ParentContainer {
 	
 	private int totalObjects;
 	private int offset;
-	private ArrayList<String> data = new ArrayList<String>();
+	private ArrayList<ServerDataUnit> data = new ArrayList<ServerDataUnit>();
 	
 	public int getTotalObjects() {
 		return totalObjects;
@@ -20,10 +20,10 @@ public class Backendless_Parent {
 	public void setOffset(int offset) {
 		this.offset = offset;
 	}
-	public ArrayList<String> getData() {
+	public ArrayList<ServerDataUnit> getData() {
 		return data;
 	}
-	public void setData(ArrayList<String> data) {
+	public void setData(ArrayList<ServerDataUnit> data) {
 		this.data = data;
 	}
 

@@ -1,7 +1,7 @@
 package RESTWrapper;
 
 
-public class Backendless_Track extends Backendless_Parent {//implements Json.Serializable {
+public class Backendless_Track extends Backendless_ParentContainer {//implements Json.Serializable {
 /*
 	private int totalObjects;
 	private int offset;

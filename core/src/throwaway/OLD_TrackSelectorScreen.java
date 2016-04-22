@@ -37,9 +37,9 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.MainMenuScreen;
 
-public class OLD_TrackSelectorScreen implements Screen {
+public class OLD_TrackSelectorScreen {//Oimplements Screen {
 
-	private CameraManager camera;
+	/*private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
 	private StretchViewport vp;
@@ -149,7 +149,7 @@ public class OLD_TrackSelectorScreen implements Screen {
 									.processDownloadedTrack(httpResponse
 											.getResultAsString());
 
-							Iterator<String> iter = obj.getData().iterator();
+							//Iterator<String> iter = obj.getData().iterator();
 
 							while (iter.hasNext()) {
 								final String track = iter.next();
@@ -336,13 +336,13 @@ public class OLD_TrackSelectorScreen implements Screen {
 		renderWorld();
 		popQueManager.update();
 
-		/*
-		 * if(!buttonQue.isEmpty()){ while(!buttonQue.isEmpty()){
-		 * System.out.println("here"); tempButton = buttonQue.get(0);
-		 * buttonQue.remove(0); buttons.add(tempButton); }
-		 * 
-		 * reinitScroll(); }
-		 */
+		//
+		 // if(!buttonQue.isEmpty()){ while(!buttonQue.isEmpty()){
+		//  System.out.println("here"); tempButton = buttonQue.get(0);
+		 // buttonQue.remove(0); buttons.add(tempButton); }
+		  
+		 // reinitScroll(); }
+		 
 
 	}
 
@@ -378,5 +378,5 @@ public class OLD_TrackSelectorScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 }

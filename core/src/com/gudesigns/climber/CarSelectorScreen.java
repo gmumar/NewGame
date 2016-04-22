@@ -1,7 +1,6 @@
 package com.gudesigns.climber;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import wrapper.GameState;
 import Assembly.Assembler;
@@ -14,6 +13,7 @@ import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
 import RESTWrapper.RESTProperties;
+import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
 
@@ -63,6 +63,8 @@ public class CarSelectorScreen extends SelectorScreen {
 								+ RESTProperties.PROPS + RESTProperties.CREATED
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.CAR_JSON
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.OBJECT_ID
 
 						, new HttpResponseListener() {
 
@@ -73,16 +75,14 @@ public class CarSelectorScreen extends SelectorScreen {
 										.processDownloadedCars(httpResponse
 												.getResultAsString());
 
-								Iterator<String> iter = obj.getData()
-										.iterator();
 
-								while (iter.hasNext()) {
+								for (ServerDataUnit fromServer :  obj.getData()) {
 
 									// carLock.lock();
 
-									final String car = iter.next();
 									final JSONCar carJson = JSONCar
-											.objectify(car);
+											.objectify(fromServer.getData());
+									carJson.setObjectId(fromServer.getObjectId());
 
 									addItemToList(carJson);
 
@@ -171,11 +171,13 @@ public class CarSelectorScreen extends SelectorScreen {
 	 */
 
 	@Override
-	protected void addButton(final String text) {
+	protected void addButton(final JSONParentClass item) {
 
 		Table wrapper = new Table();
 
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, text,
+		final String itemJson = item.jsonify();
+		
+		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, itemJson,
 				false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(200);
@@ -191,7 +193,7 @@ public class CarSelectorScreen extends SelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				gameState.getUser().setCurrentCar(text);
+				gameState.getUser().setCurrentCar(itemJson);
 				gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
 			}
@@ -213,7 +215,7 @@ public class CarSelectorScreen extends SelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				gameState.getUser().setCurrentCar(text);
+				gameState.getUser().setCurrentCar(itemJson);
 				gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
 			}
@@ -228,7 +230,7 @@ public class CarSelectorScreen extends SelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				gameState.getUser().setCurrentCar(text);
+				gameState.getUser().setCurrentCar(itemJson);
 				gameLoader.setScreen(new BuilderScreen(gameState));
 				super.clicked(event, x, y);
 			}
