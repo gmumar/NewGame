@@ -14,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -55,7 +56,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 			touches.add(new TouchUnit());
 		}
 
-		trackBuilder = new TrackBuilder(world, camera);
+		trackBuilder = new TrackBuilder(world, camera, fixtureRenderer);
 		menu = new TrackMenuBuilder(new GamePhysicalState(world,
 				gameState.getGameLoader()), stage, camera, trackBuilder,
 				gameState.getUser(), fixtureRenderer);
@@ -105,10 +106,13 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 		}
 		
 		batch.begin();
-
-		trackBuilder.draw(batch);
 		
 		fixtureRenderer.begin(ShapeType.Line);
+		trackBuilder.draw(batch);
+		
+		
+		fixtureRenderer.setColor(Color.BLUE);
+		fixtureRenderer.circle(camera.position.x,camera.position.y, 0.3f);
 		menu.drawShapes(batch);
 		fixtureRenderer.end();
 		

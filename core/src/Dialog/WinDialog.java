@@ -1,6 +1,9 @@
 package Dialog;
 
+import wrapper.Globals;
 import Menu.PopQueObject;
+import RESTWrapper.BackendFunctions;
+import User.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -56,6 +59,22 @@ public class WinDialog {
 		//text.setTextBoxString("Win!");
 		
 		base.add(text).expandY().center();
+		
+		if(Globals.ADMIN_MODE){
+			TextButton upload = new TextButton("upload",skin,"yesButton");
+			upload.addListener(new ClickListener(){
+
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					BackendFunctions.uploadTrack(User.getInstance().getCurrentTrack(),popQueObject.getGamePlayInstance().getMapTime() );
+					super.clicked(event, x, y);
+				}
+				
+			});
+			base.row();
+			base.add(upload);
+		}
+		
 		base.row();
 		
 		Table bottomBar = new Table(skin);

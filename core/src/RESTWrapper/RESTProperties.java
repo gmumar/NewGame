@@ -5,6 +5,7 @@ public class RESTProperties {
 	public static final String CAR_JSON = "car_json";
 	public static final String TRACK_POINTS_JSON = "points";
 	public static final String OBJECT_ID = "objectId";
+	public static final String TRACK_BEST_TIME = "bestTime";
 	
 	public static final String CREATED = "created";
 	public static final String PROPS = "props=";

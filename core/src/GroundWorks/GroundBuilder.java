@@ -34,10 +34,13 @@ public class GroundBuilder {
 	final static float VARIATION = 1f;
 	final static float BIASING = 2f;
 	final static float PERIOD = 0.3f;
+	
+	// This is used to find the back edge of the camera
 	public final static int BACK_EDGE_UNITS = 30;
 
-	private final static int TRACK_HEIGHT = 30;
-	private final static int TRACK_WIDTH = 0;
+	private final static int TRACK_Y_OFFSET = 30;
+	// Change this offset to extend the initial flat ground
+	private final static int TRACK_X_OFFSET = 20;
 
 	private float variation = 0.5f, baising = 0.1f;
 
@@ -115,8 +118,8 @@ public class GroundBuilder {
 			infinate = false;
 			mapListCounter = 0;
 
-			track = assembler.assembleTrack(mapString, gameState, new Vector2(TRACK_WIDTH,
-					TRACK_HEIGHT),forMainMenu);
+			track = assembler.assembleTrack(mapString, gameState, new Vector2(TRACK_X_OFFSET,
+					TRACK_Y_OFFSET),forMainMenu);
 
 			preMadeMapList = track.getPoints();
 
@@ -153,8 +156,8 @@ public class GroundBuilder {
 		floor.setUserData(floorName);
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-60
-				* UNIT_LENGTH, TRACK_HEIGHT), new Vector2(-5 * UNIT_LENGTH,
-				TRACK_HEIGHT), true);// ,
+				* UNIT_LENGTH, TRACK_Y_OFFSET), new Vector2(-5 * UNIT_LENGTH,
+				TRACK_Y_OFFSET), true);// ,
 		// "temp_ground.png","temp_ground_filler_premade.png");
 		mapList.add(gud);
 		// gud.fixture = drawEdge(gud.start, gud.end);

@@ -15,7 +15,6 @@ import Component.ComponentNames;
 import GroundWorks.TrackBuilder;
 import JSONifier.JSONCompiler;
 import JSONifier.JSONComponentName;
-import RESTWrapper.BackendFunctions;
 import User.User;
 
 import com.badlogic.gdx.graphics.Color;
@@ -44,13 +43,12 @@ public class TrackMenuBuilder {
 	// private final float BOX_SIZE = 0.0001f;
 	// private final float ROTATION_SIZE = 30;
 
-	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload,
+	private Button zoomIn, zoomOut, panLeft, panRight, build, exit,
 			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildCoin;
 	private TextBox currentMode;
 
 	private CameraManager camera;
 	private JSONCompiler compiler;
-	private BackendFunctions backend;
 	private GameLoader gameLoader;
 
 	private World world;
@@ -58,7 +56,7 @@ public class TrackMenuBuilder {
 	private Body hitBody, lastSelected = null;
 	private HashMap<String, Integer> componentCounts = new HashMap<String, Integer>();
 	private Vector3 mousePoint = new Vector3();
-	private final static float BOX_SIZE = 0.3f;
+	private final static float ITEM_SELECT_BOX_SIZE = 0.3f;
 	private Vector2 relativeVector = new Vector2();
 	private boolean mouseJoined = false;
 	private HashMap<String, Integer> jointTypes = new HashMap<String, Integer>();
@@ -75,7 +73,6 @@ public class TrackMenuBuilder {
 
 		// this.stage = stage;
 		this.camera = secondCamera;
-		this.backend = new BackendFunctions();
 		this.gameLoader = gamePhysicalState.getGameLoader();
 		this.world = gamePhysicalState.getWorld();
 		this.fixtureRenderer = fixtureRenderer;
@@ -120,20 +117,6 @@ public class TrackMenuBuilder {
 
 		build.setPosition(200, 0);
 		stage.addActor(build);
-
-		upload = new Button("/\\") {
-			@Override
-			public void Clicked() {
-				
-				backend.uploadTrack(compiler.compile(world, trackBuilder.getMapList(), parts,
-						jointTypes));
-			}
-
-		};
-
-		upload.setPosition(Globals.ScreenWidth - 100,
-				Globals.ScreenHeight - 100);
-		stage.addActor(upload);
 
 		panLeft = new Button(">") {
 			@Override
@@ -456,9 +439,9 @@ public class TrackMenuBuilder {
 	public void handleClick(float f, float g) {
 		camera.unproject(mousePoint.set(f, g, 0));
 		// mousePoint.x += (mousePoint.x * Globals.AspectRatio)/6;
-		world.QueryAABB(mouseClickCallback, mousePoint.x - BOX_SIZE,
-				mousePoint.y - BOX_SIZE, mousePoint.x + BOX_SIZE, mousePoint.y
-						+ BOX_SIZE);
+		world.QueryAABB(mouseClickCallback, mousePoint.x - ITEM_SELECT_BOX_SIZE,
+				mousePoint.y - ITEM_SELECT_BOX_SIZE, mousePoint.x + ITEM_SELECT_BOX_SIZE, mousePoint.y
+						+ ITEM_SELECT_BOX_SIZE);
 
 	}
 

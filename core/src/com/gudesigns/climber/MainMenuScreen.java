@@ -191,6 +191,7 @@ public class MainMenuScreen implements Screen {
 		playGame.setPosition(100, 0);
 		stage.addActor(playGame);
 
+		if(Globals.ADMIN_MODE){
 		buildTrack = new Button("build track") {
 			@Override
 			public void Clicked() {
@@ -200,6 +201,7 @@ public class MainMenuScreen implements Screen {
 
 		buildTrack.setPosition(200, 0);
 		stage.addActor(buildTrack);
+		}
 
 		selectTrack = new Button("select track") {
 			@Override

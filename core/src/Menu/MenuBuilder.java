@@ -81,9 +81,7 @@ public class MenuBuilder {
 	private Vector2 relativeVector = new Vector2();
 
 	private static ShapeRenderer fixtureRenderer;
-
-	private BackendFunctions backend;
-
+	
 	private User user;
 	volatile private int partLevel = 1;
 
@@ -96,7 +94,6 @@ public class MenuBuilder {
 			CameraManager secondCamera, ShapeRenderer shapeRenderer,
 			final User user, final PopQueManager popQueManager) {
 
-		this.backend = new BackendFunctions();
 		this.world = gamePhysicalState.getWorld();
 		this.gameLoader = gamePhysicalState.getGameLoader();
 		this.stage = stage;
@@ -249,7 +246,7 @@ public class MenuBuilder {
 			@Override
 			public void Clicked() {
 				if (buildCar()) {
-					backend.uploadCar(user.getCurrentCar());
+					BackendFunctions.uploadCar(user.getCurrentCar());
 				}
 			}
 

@@ -122,7 +122,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
 				this.gameLoader), gameState.getUser().getCurrentCar(), false);
 		builtCar.initSound(this.gameLoader);
-		builtCar.setPosition(0, 50);
+		builtCar.setPosition(10, 50);
 
 		initShader();
 		ground = new GroundBuilder(new GamePhysicalState(this.world,
@@ -350,7 +350,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 			if (!gameWon) {
 				popQueManager
-						.push(new PopQueObject(PopQueObjectType.WIN, this));
+					.push(new PopQueObject(PopQueObjectType.WIN, this));
 				hud.hideMenu();
 				gameWon = true;
 
@@ -560,6 +560,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public boolean scrolled(int amount) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public float getMapTime() {
+		// TODO Auto-generated method stub
+		return mapTime;
 	}
 
 }

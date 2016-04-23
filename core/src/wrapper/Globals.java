@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 
 public class Globals {
+	
+	public final static boolean ADMIN_MODE = true;
 
 	static public int ScreenHeight;
 	static public int ScreenWidth;

@@ -7,6 +7,7 @@ import wrapper.CameraManager;
 import wrapper.TouchUnit;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -22,17 +23,19 @@ public class TrackBuilder {
 	private Body floor;
 	private EdgeShape edgeShape = new EdgeShape();
 	private FixtureDef fixtureDef = new FixtureDef();
-	private Body box = null;
+	private ShapeRenderer shapeRenderer ;
+	//private Body box = null;
 
 	private CameraManager camera;
 
-	private int SQUARE = 10;
+	private int VALID_DRAWABLE_SQUARE = 10;
 
 	private ArrayList<GroundUnitDescriptor> mapList = new ArrayList<GroundUnitDescriptor>();
 
-	public TrackBuilder(World world, CameraManager cam) {
+	public TrackBuilder(World world, CameraManager cam, ShapeRenderer fixtureRenderer) {
 		this.world = world;
 		this.camera = cam;
+		this.shapeRenderer = fixtureRenderer;
 
 		createFloor();
 	}
@@ -57,7 +60,7 @@ public class TrackBuilder {
 
 	}
 
-	public Fixture drawEdge(Vector2 v1, Vector2 v2) {
+	private Fixture drawEdge(Vector2 v1, Vector2 v2) {
 
 		edgeShape.set(v1, v2);
 		fixtureDef.shape = edgeShape;
@@ -70,7 +73,7 @@ public class TrackBuilder {
 		return f;
 	}
 
-	public Fixture drawEdge(Vector2 v1, Vector2 v2, Body body) {
+	private Fixture drawEdge(Vector2 v1, Vector2 v2, Body body) {
 		FixtureDef fixtureDef = new FixtureDef();
 
 		EdgeShape edgeShape = new EdgeShape();
@@ -86,7 +89,7 @@ public class TrackBuilder {
 		return f;
 	}
 
-	public Body drawBox(float x, float y, float sizex, float sizey) {
+	private Body drawBox(float x, float y, float sizex, float sizey) {
 		BodyDef box = new BodyDef();
 
 		box.type = BodyDef.BodyType.KinematicBody;
@@ -105,6 +108,10 @@ public class TrackBuilder {
 	}
 
 	public void draw(SpriteBatch batch) {
+		GroundUnitDescriptor lastObj = mapList.get(mapList.size() - 1);
+		
+		shapeRenderer.rect(lastObj.getEnd().x ,
+				lastObj.getEnd().y - VALID_DRAWABLE_SQUARE / 2, VALID_DRAWABLE_SQUARE/2,VALID_DRAWABLE_SQUARE);
 
 		/*Iterator<GroundUnitDescriptor> iter = mapList.iterator();
 
@@ -129,10 +136,10 @@ public class TrackBuilder {
 				camera.unproject(point.set(touch.screenX, touch.screenY, 0));
 				GroundUnitDescriptor lastObj = mapList.get(mapList.size() - 1);
 
-				if (point.y < lastObj.getEnd().y + SQUARE
-						&& point.y > lastObj.getEnd().y - SQUARE
+				if (point.y < lastObj.getEnd().y + VALID_DRAWABLE_SQUARE
+						&& point.y > lastObj.getEnd().y - VALID_DRAWABLE_SQUARE
 						&& point.x > lastObj.getEnd().x
-						&& point.x < lastObj.getEnd().x + SQUARE) {
+						&& point.x < lastObj.getEnd().x + VALID_DRAWABLE_SQUARE) {
 
 					GroundUnitDescriptor newObj = new GroundUnitDescriptor(
 							lastObj.getEnd(), new Vector2(lastObj.getEnd().x + GroundBuilder.UNIT_LENGTH, point.y), false);
@@ -144,16 +151,16 @@ public class TrackBuilder {
 					
 					//System.out.println(newObj.end + " " + point);
 
-					if (box != null) {
+					/*if (box != null) {
 						world.destroyBody(box);
 						box = null;
-					}
+					}*/
 				} else {
-					if (box == null) {
+					/*if (box == null) {
 						box = drawBox(lastObj.getEnd().x,
 								lastObj.getEnd().y - SQUARE / 2, (float) SQUARE / 2,
 								(float) SQUARE);
-					}
+					}*/
 				}
 
 			}

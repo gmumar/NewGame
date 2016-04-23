@@ -10,7 +10,7 @@ import com.badlogic.gdx.Net.HttpResponseListener;
 
 public class BackendFunctions {
 
-	public void uploadCar(String inputString) {
+	public static void uploadCar(String inputString) {
 		//Preferences prefs = Gdx.app
 			//	.getPreferences(GamePreferences.CAR_PREF_STR);
 
@@ -41,11 +41,11 @@ public class BackendFunctions {
 
 	}
 
-	public void uploadTrack(String mapString) {
+	public static void uploadTrack(String mapString, float mapTime) {
 
-		
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.TRACK_POINTS_JSON, Compress.Track(mapString));
+		parameters.put(RESTProperties.TRACK_BEST_TIME, Float.toString(mapTime));
 
 		REST.postData(RESTPaths.MAPS, parameters, new HttpResponseListener() {
 
