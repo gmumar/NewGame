@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import Component.ComponentProperties;
-import RESTWrapper.ServerDataUnit;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.gson.Gson;
@@ -24,6 +23,15 @@ public class JSONTrack extends JSONParentClass {
 	private HashMap<String, Integer> componentJointTypes = null;
 	private TrackType type = TrackType.NORMAL;
 	private ArrayList<Float> smallPoints = null;
+	private float bestTime = 0.0f;
+
+	public float getBestTime() {
+		return bestTime;
+	}
+
+	public void setBestTime(float bestTime) {
+		this.bestTime = bestTime;
+	}
 
 	public ArrayList<Float> getSmallPoints() {
 		return smallPoints;
@@ -42,37 +50,33 @@ public class JSONTrack extends JSONParentClass {
 			point.y += offset.y;
 		}
 
-		if(componentList == null) return;
-		
+		if (componentList == null)
+			return;
+
 		for (JSONComponent component : componentList) {
-			ComponentProperties originalProperties = component
-					.getProperties();
-			
-			newX = Float.parseFloat(originalProperties.getPositionX()) + offset.x;
-			newY = Float.parseFloat(originalProperties.getPositionY()) + offset.y;
-			
-			
-			
+			ComponentProperties originalProperties = component.getProperties();
+
+			newX = Float.parseFloat(originalProperties.getPositionX())
+					+ offset.x;
+			newY = Float.parseFloat(originalProperties.getPositionY())
+					+ offset.y;
+
 			originalProperties.setPositionX(newX.toString());
 			originalProperties.setPositionY(newY.toString());
-			
-			
-			
-			/*Set<Entry<String, String>> props = originalProperties.entrySet();
 
-			for (Entry<String, String> property : props) {
-				if (property.getKey().compareTo(Properties.POSITION) == 0) {
-					String[] values = property.getValue().split(",");
-					newX = Float.parseFloat(values[0]) + offset.x;
-					newY = Float.parseFloat(values[1]) + offset.y;
-				}
-			}
+			/*
+			 * Set<Entry<String, String>> props = originalProperties.entrySet();
+			 * 
+			 * for (Entry<String, String> property : props) { if
+			 * (property.getKey().compareTo(Properties.POSITION) == 0) {
+			 * String[] values = property.getValue().split(","); newX =
+			 * Float.parseFloat(values[0]) + offset.x; newY =
+			 * Float.parseFloat(values[1]) + offset.y; } }
+			 * 
+			 * originalProperties.put(Properties.POSITION,
+			 * Properties.makePostionString(newX, newY));
+			 */
 
-			originalProperties.put(Properties.POSITION,
-					Properties.makePostionString(newX, newY));*/
-			
-			
-			
 			component.setProperties(originalProperties);
 
 		}
@@ -107,15 +111,15 @@ public class JSONTrack extends JSONParentClass {
 
 	public String jsonify() {
 		Gson json = new Gson();
-		//json.setIgnoreUnknownFields(true);
+		// json.setIgnoreUnknownFields(true);
 		return json.toJson(this);
 	}
 
 	public static JSONTrack objectify(String data) {
 		Gson json = new Gson();
 		System.out.println("JSONTrack: " + data);
-		//json.setIgnoreUnknownFields(true);
-		return  json.fromJson(data, JSONTrack.class);
+		// json.setIgnoreUnknownFields(true);
+		return json.fromJson(data, JSONTrack.class);
 	}
 
 	@Override
@@ -147,7 +151,7 @@ public class JSONTrack extends JSONParentClass {
 	public void setJointList(ArrayList<JSONJoint> joints) {
 		componentJointList = joints;
 	}
-	
+
 	@Override
 	public ArrayList<JSONJoint> getJointList() {
 		return componentJointList;
@@ -157,10 +161,9 @@ public class JSONTrack extends JSONParentClass {
 		return componentJointTypes;
 	}
 
-	public void setComponentJointTypes(HashMap<String, Integer> componentJointTypes) {
+	public void setComponentJointTypes(
+			HashMap<String, Integer> componentJointTypes) {
 		this.componentJointTypes = componentJointTypes;
 	}
 
-	
-	
 }

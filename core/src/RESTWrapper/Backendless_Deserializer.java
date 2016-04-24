@@ -39,21 +39,24 @@ public class Backendless_Deserializer implements JsonDeserializer<Backendless_Pa
 		//while (iter.hasNext()) {
 		for (JsonElement iter : fromServerPack){	
 			JsonObject fromServer = iter.getAsJsonObject();
-			
-			String actualDataStr = null, objectId = null;
-			
-			//System.out.println("Backendless_Deserializer: " + fromServer);
+			ServerDataUnit unit = new ServerDataUnit();
+			String actualDataStr = null;
 			
 			if(typeOfT.equals(Backendless_Car.class)){
 				actualDataStr = Decompress.Car(fromServer.get(RESTProperties.CAR_JSON).getAsString());
 			} else if (typeOfT.equals(Backendless_Track.class)){
 				actualDataStr = Decompress.Track(fromServer.get(RESTProperties.TRACK_POINTS_JSON).getAsString());
 			}
+			unit.setObjectId(fromServer.get(RESTProperties.OBJECT_ID).getAsString());
+			unit.setData(actualDataStr);
 			
-			objectId = fromServer.get(RESTProperties.OBJECT_ID).getAsString();
-			//(RESTProperties.CAR_JSON, "UTF-8");
+			if(typeOfT.equals(Backendless_Car.class)){
+				;
+			} else if (typeOfT.equals(Backendless_Track.class)){
+				unit.setTrackBestTime( fromServer.get(RESTProperties.TRACK_BEST_TIME).getAsFloat());
+			}
 			
-			tmp.add(new ServerDataUnit(actualDataStr, objectId));
+			tmp.add(unit);
 		}
 		
 		dataSet.setData(tmp);

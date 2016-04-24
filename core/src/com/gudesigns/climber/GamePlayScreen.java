@@ -196,10 +196,11 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	private void initSounds() {
-		//coinCollected = gameLoader.Assets.get("soundfx/coin.mp3", Sound.class);
+		// coinCollected = gameLoader.Assets.get("soundfx/coin.mp3",
+		// Sound.class);
 		coinCollected = Gdx.audio.newSound(Gdx.files
 				.internal("soundfx/coin.mp3"));
-		//bgMusic = gameLoader.Assets.get("music/track1.ogg", Music.class);
+		// bgMusic = gameLoader.Assets.get("music/track1.ogg", Music.class);
 		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/track1.ogg"));
 
 		SoundManager.loopMusic(bgMusic);
@@ -266,30 +267,30 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		if (fixedStep >= Globals.STEP) {
 
-			//if (!ground.loading) {
+			// if (!ground.loading) {
 
-				if (gameWon) {
-					handleInput(fakeTouches);
-				} else if (gameLost) {
-					;
-				} else {
-					handleInput(touches);
-					mapTime += Globals.STEP;
-				}
+			if (gameWon) {
+				handleInput(fakeTouches);
+			} else if (gameLost) {
+				;
+			} else {
+				handleInput(touches);
+				mapTime += Globals.STEP;
+			}
 
-				world.step(Globals.STEP / slowMoFactor, 80, 40);
-				hud.update(Globals.STEP, progress, mapTime);
-				// builtCar.step();
-			//}
+			world.step(Globals.STEP / slowMoFactor, 80, 40);
+			hud.update(Globals.STEP, progress, mapTime);
+			// builtCar.step();
+			// }
 
 			if (timePassed > 2) {
 
 				jointLimits.enableJointLimits(Globals.STEP_INVERSE);
 
 			} else {
-				//if (!ground.loading) {
-					timePassed += Globals.STEP;
-				//}
+				// if (!ground.loading) {
+				timePassed += Globals.STEP;
+				// }
 			}
 
 			fixedStep -= Globals.STEP;
@@ -314,7 +315,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		popQueManager.update();
 
 		if (!destoryQue.isEmpty()) {
-			JSONComponentName userData = (JSONComponentName) destoryQue.poll().getUserData();
+			JSONComponentName userData = (JSONComponentName) destoryQue.poll()
+					.getUserData();
 
 			if (userData == null) {
 				;
@@ -350,7 +352,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 			if (!gameWon) {
 				popQueManager
-					.push(new PopQueObject(PopQueObjectType.WIN, this));
+						.push(new PopQueObject(PopQueObjectType.WIN, this));
 				hud.hideMenu();
 				gameWon = true;
 

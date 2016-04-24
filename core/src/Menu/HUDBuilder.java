@@ -77,25 +77,16 @@ public class HUDBuilder {
 
 	}
 
-	public static String makeTimeStr(float input) {
-
-		int mins = (int) (input / 60);
-		int seconds = (int) (input) - mins * 60;
-		int milli = (int) (input * 10) - seconds * 10 - mins * 60 * 10;
-
-		return Integer.toString(mins) + ":" + Integer.toString(seconds) + ":"
-				+ Integer.toString(milli);
-
-	}
-
 	public void update(float delta, float progress, float timeIn) {
 		money.setTextBoxString(user.getMoney());
-		time.setTextBoxString(makeTimeStr(timeIn));
-
-		fps.setTextBoxString("fps: " + Gdx.graphics.getFramesPerSecond());
-		if (!init) {
-			version.setTextBoxString("Version:" + Globals.VERSION);
-			init = true;
+		if(Globals.ADMIN_MODE){
+			time.setTextBoxString(Globals.makeTimeStr(timeIn));
+	
+			fps.setTextBoxString("fps: " + Gdx.graphics.getFramesPerSecond());
+			if (!init) {
+				version.setTextBoxString("Version:" + Globals.VERSION);
+				init = true;
+			}
 		}
 
 		mapProgress.setValue(progress > 100 ? 100 : progress);

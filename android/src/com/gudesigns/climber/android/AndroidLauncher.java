@@ -33,7 +33,11 @@ public class AndroidLauncher extends AndroidApplication implements
 		config.hideStatusBar = true;
 		config.touchSleepTime = 16;
 		Mesh.clearAllMeshes(this);
-
+		
+		GameLoader game = new GameLoader(this);
+		
+		game.setPlatformResolver(new GooglePlayResolver(game));
+		
 		// Built Layout
 		RelativeLayout layout = new RelativeLayout(this);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -43,7 +47,7 @@ public class AndroidLauncher extends AndroidApplication implements
 				WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
 		// Build gameView
-		View gameView = initializeForView(new GameLoader(this), config);
+		View gameView = initializeForView(game, config);
 
 		// Build AdView
 		AdViewUnit adViewUnit = initAdView();
@@ -61,6 +65,8 @@ public class AndroidLauncher extends AndroidApplication implements
 
 		// initialize(new GameLoader(), config);
 		setContentView(layout);
+		
+		game.getPlatformResolver().installIAP();
 	}
 
 	@Override
@@ -100,6 +106,7 @@ public class AndroidLauncher extends AndroidApplication implements
 		adView.setAdSize(AdSize.BANNER);
 		adView.setAdUnitId("ca-app-pub-6076836148998107/3630881938");
 		AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+		adRequestBuilder.addTestDevice("0A6DBE6B4413A32CB5926FB3EF4CC30C");
 		adView.loadAd(adRequestBuilder.build());
 
 		RelativeLayout.LayoutParams adParams = new RelativeLayout.LayoutParams(

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import wrapper.Globals;
 import AdsInterface.IActivityRequestHandler;
 import JSONifier.JSONCar;
+import Purchases.PlatformResolver;
+import Purchases.PurchaseManager;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
@@ -19,6 +21,7 @@ public class GameLoader extends Game {
 	
 	public AssetManager Assets;
 	public ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
+	public PurchaseManager purchaseManager = new PurchaseManager();
 
 	public GameLoader(IActivityRequestHandler handler) {
 		super();
@@ -45,6 +48,16 @@ public class GameLoader extends Game {
 		}
 		System.gc();
 		super.setScreen(screen);
+	}
+
+	public void setPlatformResolver(PlatformResolver platformResolver) {
+		PurchaseManager.setPlatformResolver(platformResolver);
+	}
+
+	public PlatformResolver getPlatformResolver() {
+		if(purchaseManager == null)return null;
+		
+		return purchaseManager.getPlatformResolver();
 	}
 
 }

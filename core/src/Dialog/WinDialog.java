@@ -1,6 +1,7 @@
 package Dialog;
 
 import wrapper.Globals;
+import JSONifier.JSONTrack;
 import Menu.PopQueObject;
 import RESTWrapper.BackendFunctions;
 import User.User;
@@ -16,84 +17,97 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.GameLoader;
 
 public class WinDialog {
-	
-	//reference : https://github.com/EsotericSoftware/tablelayout
 
-	public static Table CreateDialog(GameLoader gameLoader,final PopQueObject popQueObject) {
-		
-		Skin skin = Skins.loadDefault(gameLoader,0);
-		
+	// reference : https://github.com/EsotericSoftware/tablelayout
+
+	public static Table CreateDialog(GameLoader gameLoader,
+			final PopQueObject popQueObject) {
+
+		Skin skin = Skins.loadDefault(gameLoader, 0);
+		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
+				.getCurrentTrack());
 
 		final Table base = new Table(skin);
-		//base.debugAll();
+		// base.debugAll();
 		base.setColor(1, 1, 1, 0);
 		base.setBackground("dialogDim");
 		base.setFillParent(true);
 		base.addAction(Actions.fadeIn(0.5f));
-		
-		TextButton restart = new TextButton("restart",skin,"noButton");
-		restart.addListener(new ClickListener(){
+
+		TextButton restart = new TextButton("restart", skin, "noButton");
+		restart.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				popQueObject.getGamePlayInstance().restart();
-				//base.hide();
+				// base.hide();
 				super.clicked(event, x, y);
 			}
-			
+
 		});
-		
-		TextButton exit = new TextButton("exit",skin,"noButton");
-		exit.addListener(new ClickListener(){
+
+		TextButton exit = new TextButton("exit", skin, "noButton");
+		exit.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				popQueObject.getGamePlayInstance().exit();
-				//base.hide();
+				// base.hide();
 				super.clicked(event, x, y);
 			}
-			
+
 		});
-		
-		Label text = new Label("Win!",Skins.loadDefault(gameLoader,1));
-		//text.setTextBoxString("Win!");
-		
-		base.add(text).expandY().center();
-		
-		if(Globals.ADMIN_MODE){
-			TextButton upload = new TextButton("upload",skin,"yesButton");
-			upload.addListener(new ClickListener(){
+
+		Table textWrapper = new Table(skin);
+
+		Label text = new Label("Win!", Skins.loadDefault(gameLoader, 1));
+		// text.setTextBoxString("Win!");
+
+		textWrapper.add(text).expandY().left().padBottom(4);
+
+		textWrapper.row();
+
+		Label bestTime = new Label(Globals.makeTimeStr(playedTrack.getBestTime()),
+				Skins.loadDefault(gameLoader, 1));
+		textWrapper.add(bestTime).expandY().left().padBottom(4);
+
+		if (Globals.ADMIN_MODE) {
+			TextButton upload = new TextButton("upload", skin, "yesButton");
+			upload.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					BackendFunctions.uploadTrack(User.getInstance().getCurrentTrack(),popQueObject.getGamePlayInstance().getMapTime() );
+					BackendFunctions.uploadTrack(User.getInstance()
+							.getCurrentTrack(), popQueObject
+							.getGamePlayInstance().getMapTime());
 					super.clicked(event, x, y);
 				}
-				
+
 			});
-			base.row();
-			base.add(upload);
+			textWrapper.row();
+			textWrapper.add(upload);
 		}
-		
+
+		base.add(textWrapper).expandY().center();
+
 		base.row();
-		
 		Table bottomBar = new Table(skin);
 		bottomBar.setBackground("dialogDim");
-		
+
 		Table bottomWrapper = new Table(skin);
-		
+
 		bottomWrapper.add(exit).width(90).pad(2);
 		bottomWrapper.add(restart).width(90);
-		
+
 		bottomBar.add(bottomWrapper).expand().left().fillY();
-		//bottomBar.moveBy(0, -100);
+		// bottomBar.moveBy(0, -100);
 		bottomBar.addAction(Actions.moveTo(0, -100, 0.0f));
-		
-		bottomBar.addAction(new ParallelAction(Actions.fadeIn(0.5f),Actions.moveBy(0, 100, 0.2f)));
-		
+
+		bottomBar.addAction(new ParallelAction(Actions.fadeIn(0.5f), Actions
+				.moveBy(0, 100, 0.2f)));
+
 		base.add(bottomBar).height(100).expandX().fillX();
-		
+
 		return base;
 	}
-
 }

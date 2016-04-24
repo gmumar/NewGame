@@ -2,12 +2,16 @@ package RESTWrapper;
 
 public class ServerDataUnit {
 
-	String data;
-	String objectId;
+	private String data;
+	private String objectId;
+	private float trackBestTime;
 
-	public ServerDataUnit(String actualDataStr, String objectId2) {
-		data = actualDataStr;
-		objectId = objectId2;
+	public float getTrackBestTime() {
+		return trackBestTime;
+	}
+
+	public void setTrackBestTime(float bestTime) {
+		this.trackBestTime = bestTime;
 	}
 
 	public String getData() {
@@ -25,7 +29,5 @@ public class ServerDataUnit {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
-	
-	
+
 }

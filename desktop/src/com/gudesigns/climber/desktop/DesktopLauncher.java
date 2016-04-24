@@ -13,7 +13,10 @@ public class DesktopLauncher {
 		config.width = 1080;
 		config.height = 720;
 
+		GameLoader game = new GameLoader(null);
 		
-		Mesh.clearAllMeshes(new LwjglApplication( new GameLoader(null), config));
+		game.setPlatformResolver(new DesktopResolver(game));
+		
+		Mesh.clearAllMeshes(new LwjglApplication( game, config));
 	}
 }

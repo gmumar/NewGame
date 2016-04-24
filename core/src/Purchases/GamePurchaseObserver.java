@@ -8,13 +8,13 @@ public class GamePurchaseObserver  implements PurchaseObserver{
 
 	@Override
 	public void handleInstall() {
-		// TODO Auto-generated method stub
 		
+		System.out.print("GamePurchaseObserver: installed");
 	}
 
 	@Override
 	public void handleInstallError(Throwable arg0) {
-		// TODO Auto-generated method stub
+		System.out.print("GamePurchaseObserver: install failed");
 		
 	}
 

@@ -50,7 +50,12 @@ public class MainMenuScreen implements Screen {
 
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-
+		
+		gameLoader.getPlatformResolver().requestPurchaseRestore();
+		
+		System.out.println("MainMenuScreen: " + gameLoader.getPlatformResolver().requestInformation("pack_one").getLocalPricing());
+		gameLoader.getPlatformResolver().requestPurchase("pack_one");
+		
 		initStage();
 		initButtons();
 		initUser();

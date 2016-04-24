@@ -64,6 +64,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 								+ RESTProperties.TRACK_POINTS_JSON
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.OBJECT_ID
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.TRACK_BEST_TIME
 								
 						, new HttpResponseListener() {
 	
@@ -81,10 +83,10 @@ public class TrackSelectorScreen extends SelectorScreen {
 									final JSONTrack trackJson = JSONTrack
 											.objectify(fromServer.getData());
 									trackJson.setObjectId(fromServer.getObjectId());
+									trackJson.setBestTime(fromServer.getTrackBestTime());
 									
 									addItemToList(trackJson);
 									
-	
 									uniqueListLock.lock();
 									uniqueListLock.unlock();
 	
@@ -182,7 +184,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 		b.setZIndex(100);
 		b.setSize(100, 100);
-		
+
 		b.addListener(new ClickListener() {
 
 			@Override
