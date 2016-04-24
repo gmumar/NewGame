@@ -8,6 +8,8 @@ import com.badlogic.gdx.pay.PurchaseObserver;
 
 public class PurchaseManager {
 	
+	// link doc : https://bitbucket.org/just4phil/gdxpayexample/
+	
 	// ----- app stores -------------------------
 	public static final int APPSTORE_UNDEFINED	= 0;
 	public static final int APPSTORE_GOOGLE 	= 1;

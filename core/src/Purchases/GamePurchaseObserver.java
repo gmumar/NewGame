@@ -9,12 +9,12 @@ public class GamePurchaseObserver  implements PurchaseObserver{
 	@Override
 	public void handleInstall() {
 		
-		System.out.print("GamePurchaseObserver: installed");
+		System.out.println("GamePurchaseObserver: installed");
 	}
 
 	@Override
 	public void handleInstallError(Throwable arg0) {
-		System.out.print("GamePurchaseObserver: install failed");
+		System.out.println("GamePurchaseObserver: install failed");
 		
 	}
 
