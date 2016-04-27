@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Dialog.BuyDialog;
 import Dialog.DialogBase;
 import Dialog.Skins;
+import Dialog.StoreBuyDialog;
 import Dialog.TextDialog;
 import Dialog.WinDialog;
 import Menu.PopQueObject.PopQueObjectType;
@@ -73,9 +74,22 @@ public class PopQueManager {
 			createWinDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.KILLED) {
 			createLostDialog(popQueObject);
+		} else if (popQueObject.getType() == PopQueObjectType.STORE_BUY){
+			createBuyStoreDialog(popQueObject);
 		}
 	}
+	
+	private void createBuyStoreDialog(PopQueObject popQueObject) {
+		/*Skin skin = Skins.loadDefault();
 
+		dialog = new Text2ButtonDialog("Buy", skin, "default");
+		dialog.setTouchable(Touchable.enabled);
+		dialog.show(stage);*/
+
+		stage.addActor(StoreBuyDialog.CreateDialog(gameLoader,popQueObject));
+		
+		
+	}
 	private void createBuyDialog(PopQueObject popQueObject) {
 		/*Skin skin = Skins.loadDefault();
 

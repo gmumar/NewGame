@@ -32,6 +32,7 @@ public class GameLoader extends Game {
 	public void create() {
 		Globals.updateScreenInfo();
 		Assets = new AssetManager();//new GameAssetManager();
+		//
 		//gamePlayScreen = new GamePlayScreen(this);
 		//builderScreen = new BuilderScreen(this);
 		//menuScreen = new MainMenuScreen(this);

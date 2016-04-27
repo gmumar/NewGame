@@ -1,51 +1,54 @@
 package Purchases;
 
-import com.badlogic.gdx.pay.PurchaseObserver;
-import com.badlogic.gdx.pay.Transaction;
+public class GamePurchaseObserver  {
 
-
-public class GamePurchaseObserver  implements PurchaseObserver{
-
-	@Override
 	public void handleInstall() {
-		
 		System.out.println("GamePurchaseObserver: installed");
 	}
 
-	@Override
 	public void handleInstallError(Throwable arg0) {
 		System.out.println("GamePurchaseObserver: install failed");
+	}
+
+	public void handlePurchaseFinished(GamePurchaseResult gamePurchaseResult) {
+		System.out.println("GamePurchaseObserver: handle purchase");
+	}
+
+	public void handleConsumeFinished(
+			Purchases.GamePurchaseResult gamePurchaseResult) {
+		System.out.println("GamePurchaseObserver: handle consume ");
+	}
+
+
+	/*public void handlePurchase(Transaction arg0) {
+		System.out.println("GamePurchaseObserver: handling purchase");
 		
 	}
 
-	@Override
-	public void handlePurchase(Transaction arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void handlePurchaseCanceled() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("GamePurchaseObserver: purchase canclled");
+			
 	}
 
-	@Override
 	public void handlePurchaseError(Throwable arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("GamePurchaseObserver: purchase error");
+		//arg0.printStackTrace();
+		arg0.getCause().printStackTrace();
 		
 	}
 
-	@Override
 	public void handleRestore(Transaction[] arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("GamePurchaseObserver: purchase restore");
+		
+		for (Transaction item : arg0){
+			System.out.println("GamePurchaseObserver: " + item.getIdentifier() + " " + item.isPurchased());
+		}
 		
 	}
 
-	@Override
 	public void handleRestoreError(Throwable arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("GamePurchaseObserver: retore error");
 		
-	}
+	}*/
 
 }

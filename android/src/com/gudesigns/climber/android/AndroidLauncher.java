@@ -2,6 +2,7 @@ package com.gudesigns.climber.android;
 
 import AdsInterface.IActivityRequestHandler;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ public class AndroidLauncher extends AndroidApplication implements
 	protected AdView adView;
 	private final int SHOW_ADS = 1;
 	private final int HIDE_ADS = 0;
+	private GooglePurchaseManager IAPManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +36,11 @@ public class AndroidLauncher extends AndroidApplication implements
 		config.touchSleepTime = 16;
 		Mesh.clearAllMeshes(this);
 		
+		IAPManager = new GooglePurchaseManager(this);
+		
 		GameLoader game = new GameLoader(this);
 		
-		game.setPlatformResolver(new GooglePlayResolver(game));
+		game.setPlatformResolver(IAPManager);
 		
 		// Built Layout
 		RelativeLayout layout = new RelativeLayout(this);
@@ -65,8 +69,6 @@ public class AndroidLauncher extends AndroidApplication implements
 
 		// initialize(new GameLoader(), config);
 		setContentView(layout);
-		
-		game.getPlatformResolver().installIAP();
 	}
 
 	@Override
@@ -143,5 +145,13 @@ public class AndroidLauncher extends AndroidApplication implements
 			}
 		}
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		IAPManager.handleActivityResult(requestCode,resultCode,data);
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	
 
 }

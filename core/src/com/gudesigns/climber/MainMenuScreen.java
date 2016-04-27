@@ -12,6 +12,8 @@ import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
 import Menu.Button;
 import Menu.PopQueManager;
+import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
 import Shader.GameMesh;
 import User.User;
 
@@ -35,8 +37,9 @@ public class MainMenuScreen implements Screen {
 	private StretchViewport vp;
 	private PopQueManager popQueManager;
 	private User user;
+	private MainMenuScreen instance;
 
-	private Button builder, playGame, buildTrack, selectTrack, selectCar, quickNext;
+	private Button builder, playGame, buildTrack, selectTrack, selectCar, quickNext, buyCoins;
 
 	// -------------- Car running animation ------------------
 	private World world;
@@ -50,12 +53,8 @@ public class MainMenuScreen implements Screen {
 
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-		
-		gameLoader.getPlatformResolver().requestPurchaseRestore();
-		
-		System.out.println("MainMenuScreen: " + gameLoader.getPlatformResolver().requestInformation("pack_one").getLocalPricing());
-		gameLoader.getPlatformResolver().requestPurchase("pack_one");
-		
+		instance = this;
+			
 		initStage();
 		initButtons();
 		initUser();
@@ -227,6 +226,20 @@ public class MainMenuScreen implements Screen {
 
 		selectCar.setPosition(100, 100);
 		stage.addActor(selectCar);
+		
+		buyCoins = new Button("buy coins") {
+			@Override
+			public void Clicked() {
+				popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY, instance));
+				//gameLoader.getPlatformResolver().requestPurchase("pack_one");
+			}
+		};
+		
+		buyCoins.setPosition(25, Globals.ScreenHeight-75);
+		buyCoins.setHeight(50);
+		stage.addActor(buyCoins);
+		
+		
 	}
 
 	private void initStage() {
