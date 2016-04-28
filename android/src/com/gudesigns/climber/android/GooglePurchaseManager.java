@@ -1,24 +1,31 @@
 package com.gudesigns.climber.android;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gudesigns.climber.GameLoader;
+
 import util.IabHelper;
 import util.IabHelper.IabAsyncInProgressException;
 import util.IabResult;
 import util.Inventory;
 import util.Purchase;
+import util.SkuDetails;
+import Purchases.GameItemInformation;
 import Purchases.GamePurchaseObserver;
 import Purchases.GamePurchaseResult;
-import Purchases.PlatformResolver;
+import Purchases.IAPManager;
 import android.content.Intent;
 import android.util.Log;
 
-public class GooglePurchaseManager extends PlatformResolver {
+public class GooglePurchaseManager extends IAPManager {
 
 	private final static String GOOGLEKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhXVntip+1UisIf9ahWWVybM5B/6/imYU+UVCoCcDGv7AQ9QQT3SMsjqgu8MRQ6L5W8saEPBEPoZOxtBw55X4yG/aCogNjahAUwAzVzh2c5hzLnMf/fZ6HAFzo7Zpa4AJ2ht+LSR7QLMB/8ozUeJ1m1yY+MrVT3K0YPzRo6jEuiDzw4LNrnkGNaGYjQGFDfiIjVEM5hBFnHRRffdP0s44TWY5cadqfUvebIFjlZgOSHWx91Ot+22S786Q3FAyky4iRkVqEwk81gXBRv8jvgT8bIpQVZKk417FQM/VE+zxZFdvo1cNnsyOwli5nNHWslODrvQiCaNez/EFiK5nQmSqPwIDAQAB";
 	static final int RC_REQUEST = 10001;
 	private IabHelper mHelper;
 	private AndroidLauncher mainApp;
 
-	public GooglePurchaseManager(AndroidLauncher androidLauncher) {
+	public GooglePurchaseManager(AndroidLauncher androidLauncher,final GameLoader game) {
 		super();
 
 		mainApp = androidLauncher;
@@ -34,7 +41,7 @@ public class GooglePurchaseManager extends PlatformResolver {
 				Log.d("IAB", "Billing Success: " + result);
 
 				if (result.isSuccess()) {
-					installIAP();
+					installIAP(game);
 				} else {
 					installFailed();
 				}
@@ -43,8 +50,6 @@ public class GooglePurchaseManager extends PlatformResolver {
 
 		});
 	}
-	
-	
 
 	@Override
 	public void purchase(String sku, final GamePurchaseObserver listener) {
@@ -69,25 +74,14 @@ public class GooglePurchaseManager extends PlatformResolver {
 		}
 	}
 
-	private static final GamePurchaseResult GamePurchaseResult(
-			IabResult result, Purchase info) {
-		GamePurchaseResult ret = new GamePurchaseResult();
-
-		ret.setMessage(result.getMessage());
-		ret.setResponse(result.getResponse());
-
-		return ret;
-
-	}
-
 	@Override
 	public void purchaseRestore(final GamePurchaseObserver listener) {
 
 		try {
 			Inventory items = mHelper.queryInventory();
 
-			if (items.hasPurchase(PlatformResolver.PACK_ONE)) {
-				consume(items.getPurchase(PACK_ONE), listener);
+			if (items.hasPurchase(IAP_TEST)) {
+				consume(items.getPurchase(IAP_TEST), listener);
 			}
 
 		} catch (Exception e) {
@@ -95,8 +89,34 @@ public class GooglePurchaseManager extends PlatformResolver {
 			e.printStackTrace();
 		}
 	}
-	
-	public void handleActivityResult(int requestCode, int resultCode, Intent data){
+
+	@Override
+	protected void getInformation(final GamePurchaseObserver listener) {
+		System.out.println("GooglePurchase: getting information");
+		try {
+
+			List<String> moreItemSkus = new ArrayList<String>();
+
+			moreItemSkus.add(IAPManager.PACK_ONE);
+
+			Inventory inv = mHelper.queryInventory(true, moreItemSkus, null);
+
+			game.IAPItemInformation.put(PACK_ONE, GameItemInformation(inv.getSkuDetails(PACK_ONE)));
+
+			listener.handleRecievedInformation(GamePurchaseResult(null, inv));
+
+			System.out.println("GooglePurchase: sent request");
+
+		} catch (Exception e) {
+			System.out.println("GooglePurchase: getting information failed");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void handleActivityResult(int requestCode, int resultCode,
+			Intent data) {
 		mHelper.handleActivityResult(requestCode, resultCode, data);
 	}
 
@@ -118,6 +138,39 @@ public class GooglePurchaseManager extends PlatformResolver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private static final GamePurchaseResult GamePurchaseResult(
+			IabResult result, Purchase info) {
+		GamePurchaseResult ret = new GamePurchaseResult();
+
+		ret.setMessage(result.getMessage());
+		ret.setResponse(result.getResponse());
+		ret.setItemSku(info.getSku());
+
+		return ret;
+
+	}
+
+	private static final GamePurchaseResult GamePurchaseResult(
+			IabResult result, Inventory info) {
+		GamePurchaseResult ret = new GamePurchaseResult();
+
+		// ret.setMessage(result.getMessage());
+		// ret.setResponse(result.getResponse());
+
+		return ret;
+
+	}
+
+	private static final GameItemInformation GameItemInformation(
+			SkuDetails details) {
+		GameItemInformation ret = new GameItemInformation();
+
+		ret.setPrice(details.getPrice());
+
+		return ret;
+
 	}
 
 }

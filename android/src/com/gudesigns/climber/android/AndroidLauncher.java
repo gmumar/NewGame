@@ -36,12 +36,13 @@ public class AndroidLauncher extends AndroidApplication implements
 		config.touchSleepTime = 16;
 		Mesh.clearAllMeshes(this);
 		
-		IAPManager = new GooglePurchaseManager(this);
-		
 		GameLoader game = new GameLoader(this);
-		
+
+		IAPManager = new GooglePurchaseManager(this, game);
+
+	
 		game.setPlatformResolver(IAPManager);
-		
+
 		// Built Layout
 		RelativeLayout layout = new RelativeLayout(this);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -148,10 +149,8 @@ public class AndroidLauncher extends AndroidApplication implements
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		IAPManager.handleActivityResult(requestCode,resultCode,data);
+		IAPManager.handleActivityResult(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
-	
 
 }

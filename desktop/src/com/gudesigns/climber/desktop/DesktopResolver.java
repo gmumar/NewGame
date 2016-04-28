@@ -2,11 +2,11 @@ package com.gudesigns.climber.desktop;
 
 
 import Purchases.GamePurchaseObserver;
-import Purchases.PlatformResolver;
+import Purchases.IAPManager;
 
 import com.gudesigns.climber.GameLoader;
 
-public class DesktopResolver extends PlatformResolver {
+public class DesktopResolver extends IAPManager {
 
     public DesktopResolver(GameLoader game) {
         super(game);
@@ -15,6 +15,12 @@ public class DesktopResolver extends PlatformResolver {
 	@Override
 	public void purchase(String productString,
 			GamePurchaseObserver gamePurchaseObserver) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void purchaseRestore(GamePurchaseObserver listener) {
 		// TODO Auto-generated method stub
 		
 	}

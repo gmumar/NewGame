@@ -6,6 +6,7 @@ public class GamePurchaseResult {
 
 	int mResponse;
 	String mMessage;
+	String mSku;
 
 	public void setResponse(int mResponse) {
 		this.mResponse = mResponse;
@@ -33,6 +34,14 @@ public class GamePurchaseResult {
 
 	public String toString() {
 		return "IabResult: " + getMessage();
+	}
+
+	public void setItemSku(String sku) {
+		this.mSku = sku;
+	}
+	
+	public String getSku(){
+		return mSku;
 	}
 
 }

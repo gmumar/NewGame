@@ -1,7 +1,7 @@
 package Dialog;
 
 import Menu.PopQueObject;
-import Purchases.PlatformResolver;
+import Purchases.IAPManager;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -72,35 +72,51 @@ public class StoreBuyDialog {
 			}
 
 		});
-
-		TextButton packOne = new TextButton("pack_one "
-				/*+ gameLoader.getPlatformResolver()
-						.requestInformation("pack_one").getLocalPricing()*/,
-				skin, "noButton");
-		packOne.addListener(new ClickListener() {
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				gameLoader.getPlatformResolver().requestPurchase(PlatformResolver.PACK_ONE);
-				super.clicked(event, x, y);
-			}
-
-		});
+		/*
+		 * gameLoader.getPlatformResolver().requestInformation(
+		 * IAPManager.PACK_ONE, new GamePurchaseObserver() {
+		 * 
+		 * @Override public void handleRecievedInformation(
+		 * Purchases.GamePurchaseResult gamePurchaseResult) {
+		 * 
+		 * }
+		 * 
+		 * });
+		 */
 
 		Table centeredBox = new Table(skin);
 		centeredBox.setName("centeredBox");
 		centeredBox.setBackground("dialogDim");
 		centeredBox.pad(15);
 
-		Label text = new Label("How much many would you like to give me",
-				Skins.loadDefault(gameLoader, 1));
-		// text.setTextBoxString("Win!");
+		if (gameLoader.IAPItemInformation.size() != 0) {
+			Label text = new Label("How much many would you like to give me",
+					Skins.loadDefault(gameLoader, 1));
 
-		centeredBox.add(text).expandY().left().padBottom(4);
+			centeredBox.add(text).expandY().left().padBottom(4);
 
-		centeredBox.row();
+			centeredBox.row();
 
-		centeredBox.add(packOne);
+			TextButton packOne = new TextButton("pack_one "
+					+ gameLoader.IAPItemInformation.get(IAPManager.PACK_ONE).getPrice(),
+					skin, "noButton");
+			packOne.addListener(new ClickListener() {
+
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					gameLoader.getPlatformResolver().requestPurchase(
+							IAPManager.IAP_TEST);
+					super.clicked(event, x, y);
+				}
+
+			});
+			centeredBox.add(packOne);
+		} else {
+			Label text = new Label("Could not connect to the internets",
+					Skins.loadDefault(gameLoader, 1));
+
+			centeredBox.add(text).expandY().left().padBottom(4);
+		}
 
 		base.add(centeredBox).expandY().center();
 

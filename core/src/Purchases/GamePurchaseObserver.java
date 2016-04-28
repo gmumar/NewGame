@@ -1,5 +1,7 @@
 package Purchases;
 
+import User.User;
+
 public class GamePurchaseObserver  {
 
 	public void handleInstall() {
@@ -12,6 +14,14 @@ public class GamePurchaseObserver  {
 
 	public void handlePurchaseFinished(GamePurchaseResult gamePurchaseResult) {
 		System.out.println("GamePurchaseObserver: handle purchase");
+		
+		if(gamePurchaseResult.getResponse() == GamePurchaseResult.ANDROID_BILLING_RESPONSE_RESULT_OK){
+			if(gamePurchaseResult.getSku().compareTo(IAPManager.PACK_ONE)==0)
+				User.getInstance().addCoin(1000);
+			
+			if(gamePurchaseResult.getSku().compareTo(IAPManager.IAP_TEST)==0)
+				User.getInstance().addCoin(314);
+		}
 	}
 
 	public void handleConsumeFinished(
@@ -19,6 +29,10 @@ public class GamePurchaseObserver  {
 		System.out.println("GamePurchaseObserver: handle consume ");
 	}
 
+	public void handleRecievedInformation(
+			Purchases.GamePurchaseResult gamePurchaseResult) {
+		System.out.println("GamePurchaseObserver: handle information ");
+	}
 
 	/*public void handlePurchase(Transaction arg0) {
 		System.out.println("GamePurchaseObserver: handling purchase");

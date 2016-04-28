@@ -1,7 +1,5 @@
 package Purchases;
 
-import com.badlogic.gdx.Gdx;
-
 public class PurchaseManager {
 	
 	// link doc : https://bitbucket.org/just4phil/gdxpayexample/
@@ -15,39 +13,12 @@ public class PurchaseManager {
 
 	private int isAppStore = APPSTORE_UNDEFINED;
 
-	public final static String coin_pack_one = "pack_one";
-	static PlatformResolver m_platformResolver;
-	//public PurchaseManagerConfig purchaseManagerConfig;
-	public GamePurchaseObserver purchaseObserver = new GamePurchaseObserver();
+	static IAPManager m_platformResolver;
 
-	public PurchaseManager() {
-
-		setAppStore(APPSTORE_GOOGLE);	// change this if you deploy to another platform
-
-		// ---- IAP: define products ---------------------
-		//purchaseManagerConfig = new PurchaseManagerConfig();
-		//purchaseManagerConfig.addOffer(new Offer().setType(OfferType.ENTITLEMENT).setIdentifier(coin_pack_one));
-		
-
-	}
-	
-	protected boolean checkTransaction (String ID, boolean isRestore) {
-		boolean returnbool = false;
-
-		if (coin_pack_one.equals(ID)) {
-			Gdx.app.log("checkTransaction", "full version found!");
-
-			//----- put your logic for full version here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-			returnbool = true;
-		}
-		return returnbool;
-	}
-
-	public PlatformResolver getPlatformResolver() {
+	public IAPManager getPlatformResolver() {
 		return m_platformResolver;
 	}
-	public static void setPlatformResolver (PlatformResolver platformResolver) {
+	public static void setPlatformResolver (IAPManager platformResolver) {
 		m_platformResolver = platformResolver;
 	}
 

@@ -14,6 +14,7 @@ import Menu.Button;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
+import Purchases.GamePurchaseObserver;
 import Shader.GameMesh;
 import User.User;
 
@@ -39,7 +40,8 @@ public class MainMenuScreen implements Screen {
 	private User user;
 	private MainMenuScreen instance;
 
-	private Button builder, playGame, buildTrack, selectTrack, selectCar, quickNext, buyCoins;
+	private Button builder, playGame, buildTrack, selectTrack, selectCar,
+			quickNext, buyCoins;
 
 	// -------------- Car running animation ------------------
 	private World world;
@@ -54,7 +56,7 @@ public class MainMenuScreen implements Screen {
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 		instance = this;
-			
+
 		initStage();
 		initButtons();
 		initUser();
@@ -130,7 +132,7 @@ public class MainMenuScreen implements Screen {
 
 		timeCounter += delta;
 
-		 if (timeCounter >= Globals.STEP) {
+		if (timeCounter >= Globals.STEP) {
 
 			world.step(Globals.STEP, 80, 40);
 
@@ -172,7 +174,7 @@ public class MainMenuScreen implements Screen {
 
 		builder.setPosition(0, 0);
 		stage.addActor(builder);
-		
+
 		quickNext = new Button("Next") {
 			@Override
 			public void Clicked() {
@@ -180,7 +182,7 @@ public class MainMenuScreen implements Screen {
 			}
 		};
 
-		quickNext.setPosition(Globals.ScreenWidth-150, 25);
+		quickNext.setPosition(Globals.ScreenWidth - 150, 25);
 		quickNext.setWidth(75);
 		quickNext.setHeight(75);
 		stage.addActor(quickNext);
@@ -195,16 +197,16 @@ public class MainMenuScreen implements Screen {
 		playGame.setPosition(100, 0);
 		stage.addActor(playGame);
 
-		if(Globals.ADMIN_MODE){
-		buildTrack = new Button("build track") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new TrackBuilderScreen(gameState));
-			}
-		};
+		if (Globals.ADMIN_MODE) {
+			buildTrack = new Button("build track") {
+				@Override
+				public void Clicked() {
+					gameLoader.setScreen(new TrackBuilderScreen(gameState));
+				}
+			};
 
-		buildTrack.setPosition(200, 0);
-		stage.addActor(buildTrack);
+			buildTrack.setPosition(200, 0);
+			stage.addActor(buildTrack);
 		}
 
 		selectTrack = new Button("select track") {
@@ -226,20 +228,41 @@ public class MainMenuScreen implements Screen {
 
 		selectCar.setPosition(100, 100);
 		stage.addActor(selectCar);
-		
+
 		buyCoins = new Button("buy coins") {
 			@Override
 			public void Clicked() {
-				popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY, instance));
-				//gameLoader.getPlatformResolver().requestPurchase("pack_one");
+
+				popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
+
+				Globals.runOnUIThread(new Runnable() {
+
+					@Override
+					public void run() {
+						gameLoader.getPlatformResolver().requestInformation(
+								new GamePurchaseObserver() {
+									@Override
+									public void handleRecievedInformation(
+											Purchases.GamePurchaseResult gamePurchaseResult) {
+										popQueManager.push(new PopQueObject(
+												PopQueObjectType.DELETE));
+										
+										popQueManager.push(new PopQueObject(
+												PopQueObjectType.STORE_BUY,
+												instance));
+									}
+								});
+					}
+				});
+
+				// gameLoader.getPlatformResolver().requestPurchase("pack_one");
 			}
 		};
-		
-		buyCoins.setPosition(25, Globals.ScreenHeight-75);
+
+		buyCoins.setPosition(25, Globals.ScreenHeight - 75);
 		buyCoins.setHeight(50);
 		stage.addActor(buyCoins);
-		
-		
+
 	}
 
 	private void initStage() {
@@ -255,7 +278,7 @@ public class MainMenuScreen implements Screen {
 		// batch = new SpriteBatch();
 		stage = new Stage(vp);
 
-		popQueManager = new PopQueManager(gameLoader,stage);
+		popQueManager = new PopQueManager(gameLoader, stage);
 
 	}
 
