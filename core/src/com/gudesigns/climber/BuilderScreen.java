@@ -190,15 +190,44 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 			return false;
 
 		menu.handlePan(x, y, deltaX, deltaY);
-		camera.position.x -= deltaX / (40 + camera.zoom);
-		camera.position.y += deltaY / (40 + camera.zoom);
+		camera.position.x -= deltaX / ((30+camera.zoom)/0.8f);
+		camera.position.y += deltaY / ((30+camera.zoom)/0.8f);
+		
+		if(camera.position.x > 4.5f){
+			camera.position.x = 4.5f;
+		}
+		
+		if(camera.position.x < -4.5f){
+			camera.position.x = -4.5f;
+		}
+		
+		if(camera.position.y > 2.5f){
+			camera.position.y = 2.5f;
+		}
+		
+		if(camera.position.y < -5.5f){
+			camera.position.y = -5.5f;
+		}
+		
+		//System.out.println("BuilderScreen: " + camera.position.x + " " + camera.position.y);
+		
 		camera.update();
 		return true;
 	}
 	
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
+		if (menu.isJoined())
+			return false;
+		
 		camera.zoom += (initialDistance - distance)/500000;
+		if(camera.zoom < 0.004f){
+			camera.zoom = 0.004f;
+		}
+		if(camera.zoom > 0.025f){
+			camera.zoom = 0.025f;
+		}
+		
 		camera.update();
 		
 		return true;

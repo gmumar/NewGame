@@ -15,6 +15,8 @@ import Assembly.AssembledObject;
 import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
 import JSONifier.JSONComponentName;
+import JSONifier.JSONTrack;
+import JSONifier.JSONTrack.TrackType;
 import Menu.HUDBuilder;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -28,8 +30,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -58,9 +60,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private float speedZoom = 0;
 	// private float dlTime;
 
-	public static final float CAMERA_OFFSET = 12;
+	public static final float CAMERA_OFFSET = 10;
 
 	private GroundBuilder ground;
+	private TrackType trackType;
 
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 	private ArrayList<TouchUnit> fakeTouches = new ArrayList<TouchUnit>();
@@ -71,14 +74,16 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private JointLimits jointLimits;
 
-	private final AsyncExecutor runner = Globals.globalRunner;// = new
-																// AsyncExecutor(2);
+	private final AsyncExecutor runner = new AsyncExecutor(2);
+
 	boolean running = true;
 	boolean paused = true;
 
 	private PopQueManager popQueManager;
 
 	private User user;
+
+	private Color clearColor;
 
 	// private Box2DDebugRenderer debugRenderer ;
 
@@ -97,13 +102,22 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	// ---- Sound FX ----
 	private Sound coinCollected;
-	private Music bgMusic;
 
 	// ------------------
 
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
 		this.gameLoader = gameState.getGameLoader();
+
+		trackType = JSONTrack.objectify(gameState.getUser().getCurrentTrack())
+				.getType();
+
+		if (trackType == TrackType.FORREST) {
+			clearColor = new Color(Globals.FORREST_GREEN_BG);
+		} else if (trackType == TrackType.ARTIC) {
+			clearColor = new Color(Globals.ARTIC_BLUE_BG);
+		}
+
 		Globals.updateScreenInfo();
 
 		this.user = gameState.getUser();
@@ -130,7 +144,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				gameState.getUser());
 
 		currentTrackLen = ground.getTotalTrackLength();
-		initHud();
 
 		rollingAvg = new RollingAverage(60);
 
@@ -138,12 +151,15 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		jointLimits = new JointLimits(world);
 
-		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar);
+		scrollingBackground = new ScrollingBackground(this.gameLoader,
+				builtCar, trackType);
 
 		popQueManager = new PopQueManager(gameLoader, stage);
 		popQueManager
 				.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
-
+		popQueManager.initPauseTable(new PopQueObject(PopQueObjectType.PAUSE,
+				this));
+		initHud();
 		/*
 		 * runner.submit(new AsyncTask<String>() {
 		 * 
@@ -201,9 +217,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		coinCollected = Gdx.audio.newSound(Gdx.files
 				.internal("soundfx/coin.mp3"));
 		// bgMusic = gameLoader.Assets.get("music/track1.ogg", Music.class);
-		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/track1.ogg"));
 
-		SoundManager.loopMusic(bgMusic);
 		builtCar.startSound();
 	}
 
@@ -229,7 +243,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	final private void initHud() {
 
-		hud = new HUDBuilder(stage, gameState);
+		hud = new HUDBuilder(stage, gameState, popQueManager, this);
 	}
 
 	public void coinCollected(Body body) {
@@ -258,14 +272,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		fixedStep += delta;
 
-		Gdx.gl20.glClearColor(Globals.SKY_BLUE.r, Globals.SKY_BLUE.g,
-				Globals.SKY_BLUE.b, Globals.SKY_BLUE.a);
+		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b,
+				clearColor.a);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		// Gdx.gl20.glEnable(GL20.GL_TEXTURE_2D);
 
 		batch.setProjectionMatrix(camera.combined);
 
-		if (fixedStep >= Globals.STEP) {
+		if (!paused && fixedStep >= Globals.STEP) {
 
 			// if (!ground.loading) {
 
@@ -278,8 +292,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				mapTime += Globals.STEP;
 			}
 
-			world.step(Globals.STEP / slowMoFactor, 80, 40);
-			hud.update(Globals.STEP, progress, mapTime);
+			if (slowMoFactor != 1) {
+				world.step(Globals.STEP / slowMoFactor, 60, 40);
+			} else {
+				world.step(Globals.STEP, 60, 40);
+			}
+			hud.update(Globals.STEP, progress, mapTime, camera);
 			// builtCar.step();
 			// }
 
@@ -298,7 +316,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		builtCar.updateSound();
 
-		scrollingBackground.draw();
+		scrollingBackground.draw(paused);
 
 		attachCameraTo(builtCar.getCameraFocusPart());
 		ground.drawShapes();
@@ -331,7 +349,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	private void monitorProgress() {
-		if (contactListener.isKilled()) {
+		if (!gameWon && contactListener.isKilled()) {
 			if (!gameLost) {
 				popQueManager.push(new PopQueObject(PopQueObjectType.KILLED));
 				gameLost = true;
@@ -357,6 +375,26 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				gameWon = true;
 
 			}
+		}
+
+	}
+
+	public int calculatePosition() {
+		JSONTrack track = JSONTrack.objectify(user.getCurrentTrack());
+
+		float bestTime = track.getBestTime();
+
+		if (mapTime <= bestTime) {
+			// first place
+			return Globals.POSITION_FIRST;
+		} else if (mapTime <= bestTime * 1.10) {
+			// second place
+			return Globals.POSITION_SECOND;
+		} else if (mapTime <= bestTime * 1.20) {
+			// third
+			return Globals.POSITION_THIRD;
+		} else {
+			return Globals.POSITION_LOST;
 		}
 
 	}
@@ -387,16 +425,16 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		camera.position.set(actor.getPosition().x + CAMERA_OFFSET
 				- (0.4f - speedZoom * 4) - gameOverOffset,
-				actor.getPosition().y, 1);// +
+				actor.getPosition().y + 3, 1);// +
 		// camera.viewportWidth*2.5f
-		camera.zoom = 4.2f + speedZoom;// 4.5f;
+		camera.zoom = 3.7f + speedZoom;// 4.5f;
 
 		camera.update();
 	}
 
 	final private void initWorld() {
 		world = (new World(new Vector2(0, -38f), true));
-		world.setAutoClearForces(true);
+		// world.setAutoClearForces(true);
 
 		world.setWarmStarting(true);
 	}
@@ -505,9 +543,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		running = false;
 		paused = true;
 
-		// runner.dispose();
+		Globals.globalRunner.submit(new AsyncTask<String>() {
 
-		SoundManager.disposeSound(bgMusic);
+			@Override
+			public String call() throws Exception {
+				runner.dispose();
+				return null;
+			}
+
+		});
+
+		// SoundManager.disposeSound(bgMusic);
 		SoundManager.disposeSound(coinCollected);
 		popQueManager.dispose();
 		world.dispose();

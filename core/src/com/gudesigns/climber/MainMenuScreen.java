@@ -10,10 +10,13 @@ import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
+import JSONifier.JSONTrack;
+import JSONifier.JSONTrack.TrackType;
 import Menu.Button;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
+import ParallexBackground.ScrollingBackground;
 import Purchases.GamePurchaseObserver;
 import Shader.GameMesh;
 import User.User;
@@ -28,6 +31,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.google.gson.stream.JsonToken;
 
 public class MainMenuScreen implements Screen {
 
@@ -41,7 +45,7 @@ public class MainMenuScreen implements Screen {
 	private MainMenuScreen instance;
 
 	private Button builder, playGame, buildTrack, selectTrack, selectCar,
-			quickNext, buyCoins;
+			quickNext, buyCoins, soundControl;
 
 	// -------------- Car running animation ------------------
 	private World world;
@@ -50,6 +54,7 @@ public class MainMenuScreen implements Screen {
 	private SpriteBatch batch;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 	private GroundBuilder ground;
+	private ScrollingBackground scrollingBackground;
 
 	// -------------------------------------------------------
 
@@ -83,6 +88,9 @@ public class MainMenuScreen implements Screen {
 				gameState.getUser());
 
 		world.step(10, 100, 120);
+		
+		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar, TrackType.FORREST);
+
 		// -------------------------------------------------------
 
 	}
@@ -95,7 +103,7 @@ public class MainMenuScreen implements Screen {
 	}
 
 	final private void attachCameraTo(Body actor) {
-		carCamera.position.set(actor.getPosition().x, actor.getPosition().y, 1);
+		carCamera.position.set(actor.getPosition().x, actor.getPosition().y+3, 1);
 		carCamera.zoom = 4.2f;// 4.5f;
 		carCamera.update();
 	}
@@ -131,7 +139,7 @@ public class MainMenuScreen implements Screen {
 		batch.setProjectionMatrix(carCamera.combined);
 
 		timeCounter += delta;
-
+		scrollingBackground.draw(false);
 		if (timeCounter >= Globals.STEP) {
 
 			world.step(Globals.STEP, 80, 40);
@@ -164,6 +172,17 @@ public class MainMenuScreen implements Screen {
 	}
 
 	private void initButtons() {
+		
+		soundControl = new Button("Sound Control") {
+			@Override
+			public void Clicked() {
+				popQueManager.push(new PopQueObject(PopQueObjectType.SOUND));
+			}
+		};
+		soundControl.setPosition(Globals.ScreenWidth-50, Globals.ScreenHeight-50);
+		soundControl.setWidth(50);
+		soundControl.setHeight(50);
+		stage.addActor(soundControl);
 
 		builder = new Button("builder") {
 			@Override
@@ -313,7 +332,8 @@ public class MainMenuScreen implements Screen {
 	public void render(float delta) {
 		camera.update();
 		carCamera.update();
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(Globals.FORREST_GREEN_BG.r, Globals.FORREST_GREEN_BG.g,
+				Globals.FORREST_GREEN_BG.b, Globals.FORREST_GREEN_BG.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		carAnimationStep(delta);

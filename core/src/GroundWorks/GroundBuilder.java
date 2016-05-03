@@ -10,6 +10,8 @@ import Assembly.AssembledTrack;
 import Assembly.Assembler;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
+import JSONifier.JSONTrack;
+import JSONifier.JSONTrack.TrackType;
 import Shader.GameMesh;
 import User.User;
 
@@ -79,6 +81,7 @@ public class GroundBuilder {
 	private GroundUnitDescriptor gud;
 
 	private static Texture groundFiller;
+	private TrackType trackType = TrackType.FORREST;
 
 	private static ShaderProgram shader;
 	private static ShaderProgram colorShader;
@@ -91,7 +94,10 @@ public class GroundBuilder {
 
 	private JSONComponentName groundFixtureName = new JSONComponentName();
 	private Fixture groundFixture;
+	
+	private Color LAYER_COLOR;
 
+	// drawEdge looks up type everytime, try to optimize.
 	public GroundBuilder(GamePhysicalState gameState,
 			final CameraManager camera, ShaderProgram shader,
 			ShaderProgram colorShader, boolean forMainMenu, User user) {
@@ -100,18 +106,20 @@ public class GroundBuilder {
 		this.camera = camera;
 		GroundBuilder.shader = shader;
 		GroundBuilder.colorShader = colorShader;
-
-		createFloor();
-		decor = new GroundDecor(gameState);
-
+		
 		String mapString = null;
 		
 		if(!forMainMenu){
 			mapString = user.getCurrentTrack();
+			trackType = JSONTrack.objectify(mapString).getType();
 		}
+		
 		
 		//System.out.println(mapString);
 
+		createFloor();
+		decor = new GroundDecor(gameState);
+		
 		if (mapString == null) {
 			infinate = true;
 		} else {
@@ -132,8 +140,19 @@ public class GroundBuilder {
 			// + shaderEnd);
 		}
 
-		groundFiller = gameLoader.Assets.get("temp_ground_filler.png",
-				Texture.class);
+		if(trackType==TrackType.FORREST){
+			groundFiller = gameLoader.Assets.get("worlds/forrest/texture.png",
+					Texture.class);
+			LAYER_COLOR = Globals.FORREST_GREEN;
+		} else if(trackType==TrackType.ARTIC) {
+			groundFiller = gameLoader.Assets.get("worlds/artic/texture.png",
+					Texture.class);
+			LAYER_COLOR = Globals.ARTIC_BLUE;
+		} else {
+			groundFiller = gameLoader.Assets.get("worlds/forrest/texture.png",
+					Texture.class);
+			LAYER_COLOR = Globals.FORREST_GREEN;
+		}
 
 		groundFixtureName.setBaseName(ComponentNames.GROUND);
 
@@ -358,10 +377,10 @@ public class GroundBuilder {
 
 		colorShader.begin();
 		colorShader.setUniformMatrix("u_projTrans", camera.combined);
+		//GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
+		//		0.8f, Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
 		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
-				0.8f, Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
-		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
-				0.6f, Globals.GREEN, 0.5f, 2, vertexCount);
+				0.6f, LAYER_COLOR, 0.1f, 2, vertexCount);
 		//GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
 			//	0.1f, Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();
@@ -373,10 +392,16 @@ public class GroundBuilder {
 		edgeShape.set(v1, v2);
 		fixtureDef.shape = edgeShape;
 		// fixtureDef.density = 1;
-		fixtureDef.friction = 1;
-		fixtureDef.restitution = 0.5f;
-		fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		
+		if(trackType == TrackType.FORREST){
+			fixtureDef.friction = 1f;
+			fixtureDef.restitution = 0.8f;
+		} else if (trackType == TrackType.ARTIC) {
+			fixtureDef.friction = 0.5f;
+			fixtureDef.restitution = 0.4f;
+		}
 
+		fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
 		groundFixture = floor.createFixture(fixtureDef);
 		groundFixture.setUserData(groundFixtureName);
 

@@ -87,7 +87,7 @@ public abstract class SelectorScreen implements Screen {
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
 
-		 ae = Globals.globalRunner;
+		// ae = Globals.globalRunner;
 		this.gameState = gameState;
 		this.gameLoader = this.gameState.getGameLoader();
 		initStage();
@@ -244,9 +244,10 @@ public abstract class SelectorScreen implements Screen {
 					System.out.println("SelectorScreen: " + items.get(i).jsonify());
 					addButton(items.get(i));
 				}
-
-				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
-				loadingLock.release();
+				if(items.size()>0 && !isLoading() || loadedCount >= currentPageEnd){
+					popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+					loadingLock.release();
+				}
 			}
 		});
 
@@ -450,7 +451,7 @@ public abstract class SelectorScreen implements Screen {
 
 		killThreads = true;
 		
-		/*Globals.globalRunner.submit(new AsyncTask<String>() {
+		Globals.globalRunner.submit(new AsyncTask<String>() {
 
 			@Override
 			public String call() throws Exception {
@@ -458,7 +459,7 @@ public abstract class SelectorScreen implements Screen {
 				return null;
 			}
 			
-		});*/
+		});
 		
 		batch.dispose();
 		stage.dispose();

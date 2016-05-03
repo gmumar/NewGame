@@ -3,7 +3,6 @@ package DataMutators;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import JSONifier.JSONCar;
 import JSONifier.JSONTrack;
 
 import com.badlogic.gdx.math.Vector2;
@@ -11,16 +10,29 @@ import com.badlogic.gdx.math.Vector2;
 public class Compress {
 
 	public static final String Track(String mapString) {
+		
+		System.out.println("Compress: " + mapString);
 
 		JSONTrack jsonTrack = JSONTrack.objectify(mapString);
 		ArrayList<Vector2> points = jsonTrack.getPoints();
 		ArrayList<Float> smallPoints = new ArrayList<Float>();
 
+		
+		Vector2 prev = new Vector2(Float.NEGATIVE_INFINITY,Float.NEGATIVE_INFINITY);
+		
 		for (Vector2 point : points) {
-			smallPoints.add(point.y);
+			
+			if(prev.x != point.x){
+				smallPoints.add(point.y);
+				prev.x = point.x;
+				prev.y = point.y;
+			}
+			
 		}
 
 		jsonTrack.setSmallPoints(smallPoints);
+		
+		System.out.println("Compress: " + jsonTrack.jsonify());
 
 		String compressed = null;
 
@@ -34,9 +46,9 @@ public class Compress {
 		return compressed;
 
 	}
-	
-	public static final String Car(String carString){
-		
+
+	public static final String Car(String carString) {
+
 		String compressed = null;
 
 		try {

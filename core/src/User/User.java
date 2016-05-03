@@ -201,4 +201,22 @@ public class User {
 		this.userState.money -= value;
 	}
 
+	public void setMusicPlayState(boolean playing) {
+		userState.playingMusic = playing;
+		saveUserState();
+	}
+	
+	public boolean getMusicPlayState() {
+		return userState.playingMusic;
+	}
+
+	public void setSfxPlayState(boolean playing) {
+		userState.playingSfx = playing;
+		saveUserState();
+	}
+	
+	public boolean getSfxPlayState() {
+		return userState.playingSfx;
+	}
+	
 }

@@ -1,11 +1,14 @@
 package Assembly;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import Component.Component;
+import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 
 import com.badlogic.gdx.physics.box2d.Body;
@@ -21,7 +24,7 @@ public class AssemblyRules {
 		Body bodyB;
 	}
 
-	//return true if all checks pass
+	// return true if all checks pass
 	public boolean checkBuild(World world, Body baseObject,
 			ArrayList<Component> parts) {
 		ArrayList<Body> partsConnectedToLife = getLifeConnectedParts(world,
@@ -31,6 +34,64 @@ public class AssemblyRules {
 			return false;
 		}
 		
+		if(!checkPartCounts(partsConnectedToLife)){
+			return false;
+		}
+
+		return true;
+
+	}
+
+	public boolean checkPartCounts(ArrayList<Body> connectedParts) {
+
+		// return true if all counts are within limits
+		HashMap<String, Integer> counts = new HashMap<String, Integer>();
+
+		for (Body part : connectedParts) {
+			if (part.getUserData() == null)
+				continue;
+
+			JSONComponentName name = (JSONComponentName) part.getUserData();
+			
+			if(counts.containsKey(name.getBaseName())){
+				counts.put(name.getBaseName(), counts.get(name.getBaseName())+1);
+			} else {
+				counts.put(name.getBaseName(), 1);
+			}
+
+		}
+		
+		for(Entry<String, Integer> bla : counts.entrySet()){
+			System.out.println("AssemblyRules: " + bla.getKey() +  " " + bla.getValue());
+		}
+		
+		if(counts.containsKey(ComponentNames.BAR3)
+				&& counts.get(ComponentNames.BAR3) >= 3 
+				&& counts.get(ComponentNames.BAR3) <= 10 ){
+
+		} else {
+			return false;
+		}
+		
+		if(counts.containsKey(ComponentNames.AXLE)
+				&& counts.get(ComponentNames.AXLE) >= 2 
+				&& counts.get(ComponentNames.AXLE) <= 14 ){
+
+		} else {
+			return false;
+		}
+		
+		if(counts.containsKey(ComponentNames.SPRINGJOINT)
+				//&& counts.get(ComponentNames.SPRINGJOINT) >= 2 
+				&& counts.get(ComponentNames.SPRINGJOINT) <= 14 ){
+
+		} else {
+			return false;
+		}
+		
+		
+		
+
 		return true;
 
 	}
@@ -42,7 +103,8 @@ public class AssemblyRules {
 		Iterator<Component> allPartsIter = allParts.iterator();
 		while (allPartsIter.hasNext()) {
 			Body allPart = allPartsIter.next().getObject().getPhysicsBody();
-			if(allPart.getUserData()==null) continue;
+			if (allPart.getUserData() == null)
+				continue;
 			if (connectedParts.contains(allPart)) {
 				;
 			} else {
@@ -57,7 +119,7 @@ public class AssemblyRules {
 	}
 
 	public ArrayList<Body> getLifeConnectedParts(World world, Body baseObject) {
-		
+
 		ArrayList<SimpleJoint> joints = new ArrayList<SimpleJoint>();
 
 		Array<Contact> contacts = world.getContactList();
@@ -68,13 +130,15 @@ public class AssemblyRules {
 			if (contact.isTouching()) {
 				if (contact.getFixtureA().getUserData() != null
 						&& contact.getFixtureB().getUserData() != null) {
-					
-					if(((JSONComponentName)contact.getFixtureA().getUserData()).getMountedId().contains("*")){
+
+					if (((JSONComponentName) contact.getFixtureA()
+							.getUserData()).getMountedId().contains("*")) {
 						continue;
 					}
-					
-					if(((JSONComponentName)contact.getFixtureB().getUserData()).getMountedId().contains("*")){	
-						continue; 
+
+					if (((JSONComponentName) contact.getFixtureB()
+							.getUserData()).getMountedId().contains("*")) {
+						continue;
 					}
 
 					joint = new SimpleJoint();
@@ -109,13 +173,12 @@ public class AssemblyRules {
 
 		}
 
-		/*//System.out.println("-------------------------");
-		Iterator<Body> bodyIter = partsSeen.iterator();
-		while (bodyIter.hasNext()) {
-			Body obj = bodyIter.next();
-			//System.out.println(obj.getUserData());
-		}
-		//System.out.println("-------------------------");*/
+		/*
+		 * //System.out.println("-------------------------"); Iterator<Body>
+		 * bodyIter = partsSeen.iterator(); while (bodyIter.hasNext()) { Body
+		 * obj = bodyIter.next(); //System.out.println(obj.getUserData()); }
+		 * //System.out.println("-------------------------");
+		 */
 
 		return partsSeen;
 	}
@@ -131,12 +194,11 @@ public class AssemblyRules {
 		while (iter.hasNext()) {
 			SimpleJoint joint = iter.next();
 
-			//if (((String) joint.bodyA.getUserData())
-			//		.compareTo((String) currentBody.getUserData()) == 0) {
+			// if (((String) joint.bodyA.getUserData())
+			// .compareTo((String) currentBody.getUserData()) == 0) {
 			if (((JSONComponentName) joint.bodyA.getUserData())
 					.equals((JSONComponentName) currentBody.getUserData())) {
-					
-						
+
 				connectedBodies.add(joint.bodyB);
 
 				Iterator<JointEdge> bodyIter = joint.bodyB.getJointList()
@@ -149,9 +211,11 @@ public class AssemblyRules {
 				continue;
 			}
 
-			/*if (((String) joint.bodyB.getUserData())
-					.compareTo((String) currentBody.getUserData()) == 0) {*/
-			
+			/*
+			 * if (((String) joint.bodyB.getUserData()) .compareTo((String)
+			 * currentBody.getUserData()) == 0) {
+			 */
+
 			if (((JSONComponentName) joint.bodyB.getUserData())
 					.equals((JSONComponentName) currentBody.getUserData())) {
 				connectedBodies.add(joint.bodyA);

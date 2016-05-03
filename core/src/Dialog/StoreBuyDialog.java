@@ -1,5 +1,6 @@
 package Dialog;
 
+import Menu.Animations;
 import Menu.PopQueObject;
 import Purchases.IAPManager;
 
@@ -27,7 +28,7 @@ public class StoreBuyDialog {
 		// base.debugAll();
 		base.setColor(1, 1, 1, 0);
 		base.setFillParent(true);
-		base.addAction(Actions.fadeIn(0.5f));
+		Animations.fadeIn(base);
 		base.setTouchable(Touchable.enabled);
 		base.addListener(new ClickListener() {
 

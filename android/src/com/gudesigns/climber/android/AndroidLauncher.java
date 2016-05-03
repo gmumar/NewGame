@@ -1,6 +1,7 @@
 package com.gudesigns.climber.android;
 
 import AdsInterface.IActivityRequestHandler;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.graphics.Mesh;
@@ -35,12 +35,11 @@ public class AndroidLauncher extends AndroidApplication implements
 		config.hideStatusBar = true;
 		config.touchSleepTime = 16;
 		Mesh.clearAllMeshes(this);
-		
+
 		GameLoader game = new GameLoader(this);
 
 		IAPManager = new GooglePurchaseManager(this, game);
 
-	
 		game.setPlatformResolver(IAPManager);
 
 		// Built Layout
@@ -83,6 +82,7 @@ public class AndroidLauncher extends AndroidApplication implements
 				android.widget.Toast.LENGTH_SHORT).show();
 	}
 
+	@SuppressLint("HandlerLeak")
 	protected Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -117,6 +117,8 @@ public class AndroidLauncher extends AndroidApplication implements
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		adParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+		adView.setPadding(1, 1, 1, 1);
 
 		AdViewUnit ret = new AdViewUnit();
 		ret.view = adView;

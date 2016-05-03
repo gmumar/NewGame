@@ -3,8 +3,6 @@ package com.gudesigns.climber.android;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gudesigns.climber.GameLoader;
-
 import util.IabHelper;
 import util.IabHelper.IabAsyncInProgressException;
 import util.IabResult;
@@ -18,6 +16,8 @@ import Purchases.IAPManager;
 import android.content.Intent;
 import android.util.Log;
 
+import com.gudesigns.climber.GameLoader;
+
 public class GooglePurchaseManager extends IAPManager {
 
 	private final static String GOOGLEKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhXVntip+1UisIf9ahWWVybM5B/6/imYU+UVCoCcDGv7AQ9QQT3SMsjqgu8MRQ6L5W8saEPBEPoZOxtBw55X4yG/aCogNjahAUwAzVzh2c5hzLnMf/fZ6HAFzo7Zpa4AJ2ht+LSR7QLMB/8ozUeJ1m1yY+MrVT3K0YPzRo6jEuiDzw4LNrnkGNaGYjQGFDfiIjVEM5hBFnHRRffdP0s44TWY5cadqfUvebIFjlZgOSHWx91Ot+22S786Q3FAyky4iRkVqEwk81gXBRv8jvgT8bIpQVZKk417FQM/VE+zxZFdvo1cNnsyOwli5nNHWslODrvQiCaNez/EFiK5nQmSqPwIDAQAB";
@@ -25,7 +25,8 @@ public class GooglePurchaseManager extends IAPManager {
 	private IabHelper mHelper;
 	private AndroidLauncher mainApp;
 
-	public GooglePurchaseManager(AndroidLauncher androidLauncher,final GameLoader game) {
+	public GooglePurchaseManager(AndroidLauncher androidLauncher,
+			final GameLoader game) {
 		super();
 
 		mainApp = androidLauncher;
@@ -93,25 +94,38 @@ public class GooglePurchaseManager extends IAPManager {
 	@Override
 	protected void getInformation(final GamePurchaseObserver listener) {
 		System.out.println("GooglePurchase: getting information");
-		try {
 
-			List<String> moreItemSkus = new ArrayList<String>();
+		Thread t = new Thread(new Runnable() {
 
-			moreItemSkus.add(IAPManager.PACK_ONE);
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
 
-			Inventory inv = mHelper.queryInventory(true, moreItemSkus, null);
+					List<String> moreItemSkus = new ArrayList<String>();
 
-			game.IAPItemInformation.put(PACK_ONE, GameItemInformation(inv.getSkuDetails(PACK_ONE)));
+					moreItemSkus.add(IAPManager.PACK_ONE);
 
-			listener.handleRecievedInformation(GamePurchaseResult(null, inv));
+					Inventory inv = mHelper.queryInventory(true, moreItemSkus,
+							null);
 
-			System.out.println("GooglePurchase: sent request");
+					game.IAPItemInformation.put(PACK_ONE,
+							GameItemInformation(inv.getSkuDetails(PACK_ONE)));
 
-		} catch (Exception e) {
-			System.out.println("GooglePurchase: getting information failed");
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+					listener.handleRecievedInformation(GamePurchaseResult(null,
+							inv));
+
+					System.out.println("GooglePurchase: sent request");
+				} catch (Exception e) {
+					System.out
+							.println("GooglePurchase: getting information failed");
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		t.start();
 
 	}
 
@@ -144,9 +158,14 @@ public class GooglePurchaseManager extends IAPManager {
 			IabResult result, Purchase info) {
 		GamePurchaseResult ret = new GamePurchaseResult();
 
-		ret.setMessage(result.getMessage());
-		ret.setResponse(result.getResponse());
-		ret.setItemSku(info.getSku());
+		if (result != null) {
+			ret.setMessage(result.getMessage());
+			ret.setResponse(result.getResponse());
+		}
+
+		if (info != null) {
+			ret.setItemSku(info.getSku());
+		}
 
 		return ret;
 

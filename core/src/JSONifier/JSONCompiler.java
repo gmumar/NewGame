@@ -132,7 +132,7 @@ public class JSONCompiler {
 	}
 
 	public String compile(World world, ArrayList<GroundUnitDescriptor> mapList,
-			ArrayList<Component> parts, HashMap<String, Integer> jointTypes) {
+			ArrayList<Component> parts, HashMap<String, Integer> jointTypes, TrackType type) {
 		JSONTrack track = new JSONTrack();
 
 		// Preferences prefs = Gdx.app
@@ -201,7 +201,7 @@ public class JSONCompiler {
 		}
 
 		track.setPoints(trackArray);
-		track.setType(TrackType.NORMAL);
+		track.setType(type);
 
 		User.getInstance().setCurrentTrack(track.jsonify());
 

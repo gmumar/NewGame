@@ -4,8 +4,10 @@ import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.MainMenuScreen;
 
 public class PopQueObject {
-	
-	public enum PopQueObjectType { TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY };
+
+	public enum PopQueObjectType {
+		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE
+	};
 
 	private PopQueObjectType type;
 	private Integer nextLevel;
@@ -13,39 +15,43 @@ public class PopQueObject {
 	private MenuBuilder menuBuilderInstance;
 	private GamePlayScreen gamePlayScreenInstance;
 	private MainMenuScreen mainMenuScreenInstance;
-	
-	public PopQueObject(PopQueObjectType type){
+
+	public PopQueObject(PopQueObjectType type) {
 		this.type = type;
 	}
-	
-	public PopQueObject(PopQueObjectType type, String componentName, Integer nextLevel, MenuBuilder instance){
-		if(type!=PopQueObjectType.BUY) return;
+
+	public PopQueObject(PopQueObjectType type, String componentName,
+			Integer nextLevel, MenuBuilder instance) {
+		if (type != PopQueObjectType.BUY)
+			return;
 		this.type = type;
 		this.nextLevel = nextLevel;
 		this.componentName = componentName;
 		this.menuBuilderInstance = instance;
 	}
-	
-	public PopQueObject(PopQueObjectType type, GamePlayScreen instance){
-		if(type!=PopQueObjectType.WIN) return;
+
+	public PopQueObject(PopQueObjectType type, GamePlayScreen instance) {
+		if (!(type == PopQueObjectType.WIN || type == PopQueObjectType.PAUSE))
+			return;
 		this.type = type;
 		this.gamePlayScreenInstance = instance;
 	}
-	
-	public PopQueObject(PopQueObjectType type, MainMenuScreen instance){
-		if(type!=PopQueObjectType.STORE_BUY) return;
+
+	public PopQueObject(PopQueObjectType type, MainMenuScreen instance) {
+		if (type != PopQueObjectType.STORE_BUY)
+			return;
 		this.type = type;
 		this.mainMenuScreenInstance = instance;
 	}
-	
-	public MainMenuScreen getMainMenuInstance(){
+
+	public MainMenuScreen getMainMenuInstance() {
 		return mainMenuScreenInstance;
 	}
-		
-	public MenuBuilder getCallingInstance(){
+
+	public MenuBuilder getCallingInstance() {
 		return menuBuilderInstance;
 	}
-	
+
 	public Integer getNextLevel() {
 		return nextLevel;
 	}
@@ -73,6 +79,5 @@ public class PopQueObject {
 	public GamePlayScreen getGamePlayInstance() {
 		return gamePlayScreenInstance;
 	}
-	
-	
+
 }

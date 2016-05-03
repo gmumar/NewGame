@@ -57,7 +57,7 @@ public class MenuBuilder {
 	private Stage stage;
 	private World world;
 
-	private Button but, tire_but, spring_but, zoomIn, zoomOut, rotateLeft,
+	private Button but, tire_but, spring_but, /*zoomIn, zoomOut,*/ rotateLeft,
 			rotateRight, build, exit, upload, levelUp, levelDown, delete;
 
 	private TextBox partLevelText, moneyBox;
@@ -202,7 +202,7 @@ public class MenuBuilder {
 		delete.setWidth(50);
 		stage.addActor(delete);
 
-		zoomIn = new Button("+") {
+		/*zoomIn = new Button("+") {
 			@Override
 			public void Clicked() {
 				camera.zoom -= 0.01;
@@ -224,7 +224,7 @@ public class MenuBuilder {
 
 		zoomOut.setPosition(Globals.ScreenWidth - 100, 0);
 		zoomOut.setHeight(50);
-		stage.addActor(zoomOut);
+		stage.addActor(zoomOut);*/
 
 		build = new Button("build") {
 			@Override
@@ -763,7 +763,7 @@ public class MenuBuilder {
 				if (jointType == 0) {
 					drawFixtureSquare(fixtureA, Globals.ORANGE);
 				} else if (jointType == 1) {
-					drawFixture(fixtureA, Globals.GREEN);
+					drawFixture(fixtureA, Globals.FORREST_GREEN);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureA.getUserData())
@@ -773,7 +773,7 @@ public class MenuBuilder {
 				if (jointType == 0) {
 					drawFixtureSquare(fixtureB, Globals.ORANGE);
 				} else if (jointType == 1) {
-					drawFixture(fixtureB, Globals.GREEN);
+					drawFixture(fixtureB, Globals.FORREST_GREEN);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureB.getUserData())

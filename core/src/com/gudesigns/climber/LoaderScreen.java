@@ -70,12 +70,30 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("life_small.png", Texture.class);
 		gameLoader.Assets.load("chequered_flag.png", Texture.class);
 		gameLoader.Assets.load("button.png", Texture.class);
-		gameLoader.Assets.load("temp_ground_filler.png", Texture.class);
+		//gameLoader.Assets.load("temp_ground_filler.png", Texture.class);
 		gameLoader.Assets.load("colooorsssxcf.png", Texture.class);
-		gameLoader.Assets.load("temp_background1.png", Texture.class);
-		gameLoader.Assets.load("temp_background2.png", Texture.class);
+		//gameLoader.Assets.load("temp_background1.png", Texture.class);
+		//gameLoader.Assets.load("temp_background2.png", Texture.class);
 		gameLoader.Assets.load("temp_post.png", Texture.class);
 		gameLoader.Assets.load("coin.png", Texture.class);
+		
+		// // Worlds
+		gameLoader.Assets.load("worlds/forrest/mountains.png", Texture.class);
+		gameLoader.Assets.load("worlds/forrest/hills.png", Texture.class);
+		gameLoader.Assets.load("worlds/forrest/texture.png", Texture.class);
+		gameLoader.Assets.load("worlds/artic/mountains.png", Texture.class);
+		gameLoader.Assets.load("worlds/artic/hills.png", Texture.class);
+		gameLoader.Assets.load("worlds/artic/texture.png", Texture.class);
+		
+		// // Menus
+		gameLoader.Assets.load("menu/icons/car.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/home.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/pause.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/play.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/restart_black.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/restart_white.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/sound_black.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/sound_white.png", Texture.class);
 
 		// // Bars
 		gameLoader.Assets.load("bar/level1.png", Texture.class);

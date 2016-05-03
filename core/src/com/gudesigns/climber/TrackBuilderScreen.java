@@ -181,9 +181,11 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		// camera.position.x -= deltaX/(40+camera.zoom);
-		// camera.position.y += deltaY/(40+camera.zoom);
-		// camera.update();
+		/*if(!menu.isTrackDrawMode()){
+			camera.position.x -= deltaX/(40+camera.zoom);
+			camera.position.y += deltaY/(40+camera.zoom);
+			camera.update();
+		}*/
 		return true;
 	}
 

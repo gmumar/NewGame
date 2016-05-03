@@ -2,18 +2,23 @@ package com.gudesigns.climber;
 
 import wrapper.CameraManager;
 import wrapper.Globals;
+import Menu.Animations;
+import Sounds.SoundManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.particles.influencers.RegionInfluencer.Animated;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
+import com.badlogic.gdx.utils.async.AsyncTask;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class SplashScreen implements Screen {
@@ -52,16 +57,22 @@ public class SplashScreen implements Screen {
 				Globals.ScreenWidth * 1 / 6);
 		splashActor.setX(Globals.ScreenWidth * 5 / 12);
 		splashActor.setY(Globals.ScreenHeight * 2 / 5 - 20);
-		splashActor.setColor(1, 1, 1, 0);;
 
-		MoveToAction moveAction = new MoveToAction();
-		moveAction.setPosition(Globals.ScreenWidth * 5 / 12,
-				Globals.ScreenHeight * 2 / 5);
-		moveAction.setDuration(0.8f);
 
-		ParallelAction pa = new ParallelAction(moveAction,Actions.fadeIn(0.8f));
-		splashActor.addAction(pa);
+		Animations.fadeInAndSlideUp(splashActor);
 		
+		Globals.globalRunner.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+				
+				Globals.bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/track1.ogg"));
+				SoundManager.loopMusic(Globals.bgMusic);
+				
+				return null;
+			}
+			
+		});
 
 		stage.addActor(splashActor);
 

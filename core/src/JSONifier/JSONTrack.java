@@ -13,17 +13,26 @@ import com.google.gson.Gson;
 public class JSONTrack extends JSONParentClass {
 
 	// TODO: make it so its added to the json array
-	enum TrackType implements Serializable {
-		NORMAL;
+	public enum TrackType implements Serializable {
+		FORREST, ARTIC;
 	};
 
 	private ArrayList<Vector2> points = null;
 	private ArrayList<JSONComponent> componentList = null;
 	private ArrayList<JSONJoint> componentJointList = null;
 	private HashMap<String, Integer> componentJointTypes = null;
-	private TrackType type = TrackType.NORMAL;
+	private TrackType type = TrackType.FORREST;
 	private ArrayList<Float> smallPoints = null;
 	private float bestTime = 0.0f;
+	private int difficulty = 0;
+
+	public int getDifficulty() {
+		return difficulty;
+	}
+
+	public void setDifficulty(int difficulty) {
+		this.difficulty = difficulty;
+	}
 
 	public float getBestTime() {
 		return bestTime;
@@ -135,9 +144,7 @@ public class JSONTrack extends JSONParentClass {
 			ret += joint.toString();
 		}
 
-		if (type == TrackType.NORMAL) {
-			ret += TrackType.NORMAL.name();
-		}
+		ret += getType().name();
 
 		return ret;
 	}

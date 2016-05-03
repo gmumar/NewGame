@@ -343,7 +343,7 @@ public class GameMesh {
 			// Gdx.graphics.getHeight());
 
 			// start the shader before setting any uniforms
-			texture.setWrap(Texture.TextureWrap.ClampToEdge,
+			texture.setWrap(Texture.TextureWrap.Repeat,
 					Texture.TextureWrap.Repeat);
 			texture.bind(0);
 

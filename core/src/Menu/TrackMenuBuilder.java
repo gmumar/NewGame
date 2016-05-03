@@ -15,6 +15,8 @@ import Component.ComponentNames;
 import GroundWorks.TrackBuilder;
 import JSONifier.JSONCompiler;
 import JSONifier.JSONComponentName;
+import JSONifier.JSONTrack.TrackType;
+import RESTWrapper.BackendFunctions;
 import User.User;
 
 import com.badlogic.gdx.graphics.Color;
@@ -32,7 +34,9 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.Shape.Type;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
@@ -43,9 +47,9 @@ public class TrackMenuBuilder {
 	// private final float BOX_SIZE = 0.0001f;
 	// private final float ROTATION_SIZE = 30;
 
-	private Button zoomIn, zoomOut, panLeft, panRight, build, exit,
+	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload, worldType,
 			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildCoin;
-	private TextBox currentMode;
+	private TextBox currentMode, currentTrackType;
 
 	private CameraManager camera;
 	private JSONCompiler compiler;
@@ -62,10 +66,16 @@ public class TrackMenuBuilder {
 	private HashMap<String, Integer> jointTypes = new HashMap<String, Integer>();
 	private ShapeRenderer fixtureRenderer;
 	private boolean drawTrack = true;
+	private TrackType trackType = TrackType.FORREST;
 
 
 	private int panSpeedMultiplier = 1;
 	private final static int PAN_SPEED = 1;
+	
+	public boolean isTrackDrawMode(){
+		return drawTrack;
+	}
+	
 	public TrackMenuBuilder(final GamePhysicalState gamePhysicalState,
 			Stage stage, CameraManager secondCamera,
 			final TrackBuilder trackBuilder, final User user,
@@ -78,6 +88,48 @@ public class TrackMenuBuilder {
 		this.fixtureRenderer = fixtureRenderer;
 
 		compiler = new JSONCompiler();
+		
+		worldType = new Button("Type");
+		worldType.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(trackType == TrackType.FORREST){
+					trackType = TrackType.ARTIC;
+				} else if(trackType == TrackType.ARTIC){
+					trackType = TrackType.FORREST;
+				}
+				super.clicked(event, x, y);
+			}
+
+		});
+		worldType.setPosition(Globals.ScreenWidth-150, Globals.ScreenHeight-50);
+		stage.addActor(worldType);
+		
+		upload = new Button("upload");
+		upload.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				BackendFunctions.uploadTrack(User.getInstance()
+						.getCurrentTrack(), 0.0f,0);
+				super.clicked(event, x, y);
+			}
+
+		});
+		upload.setPosition(Globals.ScreenWidth-50, Globals.ScreenHeight-50);
+		//stage.addActor(upload);
+		
+
+		exit = new Button("exit") {
+			@Override
+			public void Clicked() {
+				gameLoader.setScreen(new MainMenuScreen(gameLoader));
+			}
+		};
+
+		exit.setPosition(Globals.ScreenWidth-50, Globals.ScreenHeight-50);
+		stage.addActor(exit);
 
 		zoomIn = new Button("+") {
 			@Override
@@ -107,7 +159,7 @@ public class TrackMenuBuilder {
 			@Override
 			public void Clicked() {
 				compiler.compile(world, trackBuilder.getMapList(), parts,
-						jointTypes);
+						jointTypes, trackType);
 				gameLoader.setScreen(new GamePlayScreen(new GameState(
 						gameLoader, user)));
 				Destroy();
@@ -176,15 +228,6 @@ public class TrackMenuBuilder {
 		panDown.setWidth(50);
 		stage.addActor(panDown);
 
-		exit = new Button("exit") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new MainMenuScreen(gameLoader));
-			}
-		};
-
-		exit.setPosition(300, 0);
-		stage.addActor(exit);
 		
 		switchMode = new Button("switch") {
 			@Override
@@ -200,15 +243,22 @@ public class TrackMenuBuilder {
 		moveMultiple = new Button("multiply") {
 			@Override
 			public void Clicked() {
-				panSpeedMultiplier += 1;
 				
-				if(panSpeedMultiplier>5) panSpeedMultiplier = 1;
+				if(panSpeedMultiplier==5)
+					panSpeedMultiplier = 1;
+				else 
+					panSpeedMultiplier = 5;
 			}
+			
 		};
 
 		moveMultiple.setPosition(600, 0);
 		moveMultiple.setHeight(50);
 		stage.addActor(moveMultiple);
+		
+		currentTrackType = new TextBox("type");
+		currentTrackType.setPosition(0, Globals.ScreenHeight - 50);
+		stage.addActor(currentTrackType);
 		
 		currentMode = new TextBox("Mode");
 		currentMode.setPosition(0, Globals.ScreenHeight - 25);
@@ -568,6 +618,8 @@ public class TrackMenuBuilder {
 		} else {
 			currentMode.setTextBoxString("Parts " + panSpeedMultiplier);
 		}
+		
+		currentTrackType.setTextBoxString(trackType.name());
 
 		Integer jointType;
 
@@ -599,7 +651,7 @@ public class TrackMenuBuilder {
 				if (jointType == 0) {
 					drawFixtureSquare(fixtureA, Globals.ORANGE);
 				} else if (jointType == 1) {
-					drawFixture(fixtureA, Globals.GREEN);
+					drawFixture(fixtureA, Globals.FORREST_GREEN);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureA.getUserData())
@@ -609,7 +661,7 @@ public class TrackMenuBuilder {
 				if (jointType == 0) {
 					drawFixtureSquare(fixtureB, Globals.ORANGE);
 				} else if (jointType == 1) {
-					drawFixture(fixtureB, Globals.GREEN);
+					drawFixture(fixtureB, Globals.FORREST_GREEN);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureB.getUserData())

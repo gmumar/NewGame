@@ -41,11 +41,14 @@ public class BackendFunctions {
 
 	}
 
-	public static void uploadTrack(String mapString, float mapTime) {
+	public static void uploadTrack(String mapString, float mapTime, int difficulty) {
+		
+		System.out.println("BackendFunctions: " + Integer.toString(difficulty));
 
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.TRACK_POINTS_JSON, Compress.Track(mapString));
 		parameters.put(RESTProperties.TRACK_BEST_TIME, Float.toString(mapTime));
+		parameters.put(RESTProperties.TRACK_DIFFICULTY, Integer.toString(difficulty));
 
 		REST.postData(RESTPaths.MAPS, parameters, new HttpResponseListener() {
 

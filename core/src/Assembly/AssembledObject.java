@@ -24,12 +24,13 @@ public class AssembledObject {
 	private ArrayList<Component> partList;
 	private ArrayList<BaseActor> driveList;
 	private Body cameraFocusPart, basePart;
-	private Body driveBody ;
+	private Body driveBody;
 	private Sound idle;
+	private boolean idlePlaying = false;
 	private long idleId;
 	private RollingAverage rotationSpeed;
-	private float ratio ;
-	//private Component leftMost, rightMost;
+	private float ratio;
+	// private Component leftMost, rightMost;
 	// private int basePartIndex;
 
 	private final float ANGULAR_DAMPING = 1f;
@@ -46,26 +47,27 @@ public class AssembledObject {
 	public Body getCameraFocusPart() {
 		return cameraFocusPart;
 	}
-	
+
 	private Body getBasePart() {
 		return basePart;
 	}
 
-	public Vector2 getPosition(){
+	public Vector2 getPosition() {
 		return getBasePart().getPosition();
 	}
-	
-	public Vector2 getSpeed(){
+
+	public Vector2 getSpeed() {
 		return getCameraFocusPart().getLinearVelocity();
 	}
-	
-	public void startSound(){
+
+	public void startSound() {
 		idleId = SoundManager.loopFXSound(idle);
+		idlePlaying = true;
 	}
-	
+
 	public void initSound(GameLoader gameLoader) {
 		idle = Gdx.audio.newSound(Gdx.files.internal("soundfx/idle.mp3"));
-		//idle = gameLoader.Assets.get("soundfx/idle.mp3", Sound.class);
+		// idle = gameLoader.Assets.get("soundfx/idle.mp3", Sound.class);
 		rotationSpeed = new RollingAverage(2);
 	}
 
@@ -82,8 +84,9 @@ public class AssembledObject {
 
 		while (iter.hasNext()) {
 			Component part = iter.next();
-			if (part.getComponentName().compareTo(ComponentNames.LIFE)==0) {
-				this.cameraFocusPart = part.getJointBodies().get(1).getPhysicsBody();// .getObject().getPhysicsBody();
+			if (part.getComponentName().compareTo(ComponentNames.LIFE) == 0) {
+				this.cameraFocusPart = part.getJointBodies().get(1)
+						.getPhysicsBody();// .getObject().getPhysicsBody();
 				this.basePart = part.getJointBodies().get(0).getPhysicsBody();
 			}
 		}
@@ -91,8 +94,8 @@ public class AssembledObject {
 		// this.basePart.getObject().getPhysicsBody()
 		// .setAngularDamping(ANGULAR_DAMPING);
 
-		//this.setLeftMost();
-		//this.setRightMost();
+		// this.setLeftMost();
+		// this.setRightMost();
 	}
 
 	public ArrayList<Component> getPartList() {
@@ -113,34 +116,24 @@ public class AssembledObject {
 		}
 	}
 
-	/*public void setLeftMost() {
-		Iterator<Component> iter = partList.iterator();
-		float minY = Float.POSITIVE_INFINITY;
-
-		while (iter.hasNext()) {
-			Component component = iter.next();
-			if (component.getObject().getPosition().x < minY) {
-				leftMost = component;
-				minY = component.getObject().getPosition().x;
-			}
-		}
-
-		//System.out.println("left Most: " + leftMost.getComponentName());
-	}
-
-	public void setRightMost() {
-		Iterator<Component> iter = partList.iterator();
-		float maxY = Float.NEGATIVE_INFINITY;
-
-		while (iter.hasNext()) {
-			Component component = iter.next();
-			if (component.getObject().getPosition().x > maxY) {
-				rightMost = component;
-				maxY = component.getObject().getPosition().x;
-			}
-		}
-		//System.out.println("right Most: " + rightMost.getComponentName());
-	}*/
+	/*
+	 * public void setLeftMost() { Iterator<Component> iter =
+	 * partList.iterator(); float minY = Float.POSITIVE_INFINITY;
+	 * 
+	 * while (iter.hasNext()) { Component component = iter.next(); if
+	 * (component.getObject().getPosition().x < minY) { leftMost = component;
+	 * minY = component.getObject().getPosition().x; } }
+	 * 
+	 * //System.out.println("left Most: " + leftMost.getComponentName()); }
+	 * 
+	 * public void setRightMost() { Iterator<Component> iter =
+	 * partList.iterator(); float maxY = Float.NEGATIVE_INFINITY;
+	 * 
+	 * while (iter.hasNext()) { Component component = iter.next(); if
+	 * (component.getObject().getPosition().x > maxY) { rightMost = component;
+	 * maxY = component.getObject().getPosition().x; } }
+	 * //System.out.println("right Most: " + rightMost.getComponentName()); }
+	 */
 
 	public Vector2 getCenter() {
 		float sumX = 0, sumY = 0;
@@ -159,42 +152,60 @@ public class AssembledObject {
 	}
 
 	public void setPosition(float x, float y) {
-		//String componentName = "";
-		//JSONComponentName componentName = new JSONComponentName();
+		// String componentName = "";
+		// JSONComponentName componentName = new JSONComponentName();
 		ArrayList<String> componentsSet = new ArrayList<String>();
 
 		Iterator<Component> iter = partList.iterator();
 		while (iter.hasNext()) {
 			Component component = iter.next();
 			JSONComponentName componentName = component.getjComponentName();
-			/*componentName = Globals.getComponentName(
-					component.getComponentName()).split(
-					Assembler.NAME_SUBNAME_SPLIT)[0]
-					+ Globals.getId(component.getComponentName());*/
-			//System.out.println(componentName);
+			/*
+			 * componentName = Globals.getComponentName(
+			 * component.getComponentName()).split(
+			 * Assembler.NAME_SUBNAME_SPLIT)[0] +
+			 * Globals.getId(component.getComponentName());
+			 */
+			// System.out.println(componentName);
 			if (componentsSet.contains(componentName.getBaseId()))
 				continue;
 			component.setPosition(x, y);
 			componentsSet.add(componentName.getBaseId());
 		}
-		
-		
+
 	}
-	
-	public void updateSound(){
-		ratio = (float) (Math.abs((rotationSpeed.getAverage())/MAX_IDLE_RATIO)) + 1.3f;
-		//System.out.println((ratio/6)*SoundManager.FX_VOLUME);
-		idle.setVolume(idleId, (ratio/6)*SoundManager.FX_VOLUME );
-		idle.setPitch(idleId, ratio);
+
+	public void updateSound() {
+
+		if (idlePlaying) {
+
+			if (SoundManager.muteSFX) {
+				idle.stop();
+				idlePlaying = false;
+			} else {
+
+				ratio = (float) (Math.abs((rotationSpeed.getAverage())
+						/ MAX_IDLE_RATIO)) + 1.3f;
+				// System.out.println((ratio/6)*SoundManager.FX_VOLUME);
+				idle.setVolume(idleId, (ratio / 6) * SoundManager.FX_VOLUME);
+				idle.setPitch(idleId, ratio);
+			}
+
+		} else {
+			if (!SoundManager.muteSFX) {
+				startSound();
+			}
+		}
 	}
-	
-	public void stopSound(){
+
+	public void stopSound() {
 		SoundManager.disposeSound(idle);
+		idlePlaying = false;
 	}
-	
+
 	public void step() {
 
-		for (Component part : partList){
+		for (Component part : partList) {
 			part.step();
 		}
 
@@ -202,7 +213,7 @@ public class AssembledObject {
 
 	public void draw(SpriteBatch batch) {
 
-		for (Component part : partList){
+		for (Component part : partList) {
 			part.draw(batch);
 		}
 
@@ -231,13 +242,13 @@ public class AssembledObject {
 	}
 
 	public void addToDriveList(Component c) {
-		//System.out.println("Adding to drive list");
+		// System.out.println("Adding to drive list");
 		if (driveList == null) {
 			driveList = new ArrayList<BaseActor>();
 		}
 		// c.getObject().getPhysicsBody().setAngularDamping(0.5f);
 
-		//System.out.println(c.getComponentName());
+		// System.out.println(c.getComponentName());
 		if (c.getComponentName().contains(ComponentNames.TIRE)) {
 			ArrayList<BaseActor> bodies = c.getJointBodies();
 			driveList.add(bodies.get(0));
@@ -250,15 +261,15 @@ public class AssembledObject {
 		if (driveList == null || touchesIn == null)
 			return;
 
-		//touchIter = touchesIn.iterator();
+		// touchIter = touchesIn.iterator();
 		direction = 0;
-		
+
 		float resultantForce = 0;
 
 		// System.out.println(rightMost.getObject().getRotation());
 
 		for (TouchUnit touch : touchesIn) {
-			//touch = touchIter.next();
+			// touch = touchIter.next();
 
 			if (touch.isTouched()) {
 
@@ -288,10 +299,10 @@ public class AssembledObject {
 
 				}
 
-				//driveListIter = driveList.iterator();
+				// driveListIter = driveList.iterator();
 				resultantForce += -100 * direction;
 			}
-			
+
 		}
 
 		for (BaseActor comp : driveList) {
@@ -299,10 +310,11 @@ public class AssembledObject {
 			driveBody = comp.getPhysicsBody();
 			float anguleVelocity = driveBody.getAngularVelocity();
 
-			driveBody.applyAngularImpulse(resultantForce,true);
-			
-			if(rotationSpeed!=null) rotationSpeed.add(anguleVelocity);
-			
+			driveBody.applyAngularImpulse(resultantForce, true);
+
+			if (rotationSpeed != null)
+				rotationSpeed.add(anguleVelocity);
+
 			if (anguleVelocity > MAX_VELOCITY) {
 				driveBody.setAngularVelocity(MAX_VELOCITY);
 			} else if (anguleVelocity < -MAX_VELOCITY) {
@@ -312,13 +324,14 @@ public class AssembledObject {
 	}
 
 	public void dispose() {
-		if(idle!=null) {
+		if (idle != null) {
+			idlePlaying = false;
 			idle.stop();
 			idle.dispose();
 		}
 	}
-	
-	public void setMaxVelocity(float maxVelocity){
+
+	public void setMaxVelocity(float maxVelocity) {
 		MAX_VELOCITY = maxVelocity;
 	}
 

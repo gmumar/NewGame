@@ -20,7 +20,9 @@ public class Decompress {
 			ArrayList<Vector2> points = new ArrayList<Vector2>();
 			ArrayList<Float> smallPoints = jsonTrack.getSmallPoints();
 
-			float x = 0;
+			float x = GroundBuilder.UNIT_LENGTH;
+
+
 			for (Float point : smallPoints) {
 				points.add(new Vector2(x, point));
 				x += GroundBuilder.UNIT_LENGTH;
@@ -31,13 +33,12 @@ public class Decompress {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
 		return jsonTrack.jsonify();
 	}
-	
-	public static final String Car(String carString){
-		
+
+	public static final String Car(String carString) {
+
 		String decompressed = null;
 
 		try {

@@ -66,6 +66,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 								+ RESTProperties.OBJECT_ID
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.TRACK_BEST_TIME
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.TRACK_DIFFICULTY
 								
 						, new HttpResponseListener() {
 	
@@ -84,6 +86,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 											.objectify(fromServer.getData());
 									trackJson.setObjectId(fromServer.getObjectId());
 									trackJson.setBestTime(fromServer.getTrackBestTime());
+									trackJson.setDifficulty(fromServer.getTrackDifficulty());
 									
 									addItemToList(trackJson);
 									
