@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import wrapper.GameState;
+import wrapper.Globals;
 import Assembly.Assembler;
 import Dialog.Skins;
 import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
 import Menu.Button;
 import Menu.PopQueObject;
-import Menu.SelectorScreen;
+import Menu.ScreenType;
 import Menu.PopQueObject.PopQueObjectType;
+import Menu.SelectorScreen;
 import RESTWrapper.Backendless_Car;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.REST;
@@ -347,14 +349,13 @@ public class CarSelectorScreen extends SelectorScreen {
 		};
 		
 
-		contentTable.add(prevPage).colspan(1).left();
+		contentTable.add(prevPage).colspan(1).left().width(Globals.baseSize);
 		//stage.addActor(prevPage);
 		
 		
 		createItemsTable(contentTable);
 		initButtons();
 		itemsTable.invalidate();
-		scrollPane.invalidate();
 		
 		
 		nextPage = new Button(">") {
@@ -375,8 +376,20 @@ public class CarSelectorScreen extends SelectorScreen {
 			}
 		};
 		
-		contentTable.add(nextPage).colspan(1).right();
+		contentTable.add(nextPage).colspan(1).right().width(Globals.baseSize);
 		
 	}
 	
+	@Override
+	protected void createItemsTable(Table container) {
+		itemsTable = new Table();
+
+		container.add(itemsTable).width(600f).pad(20);
+		//container.row();
+	}
+	
+	@Override
+	protected ScreenType getScreenType(){
+		return ScreenType.CAR_SELECTOR;
+	}
 }

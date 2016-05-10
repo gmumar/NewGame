@@ -5,10 +5,9 @@ import wrapper.GameState;
 import wrapper.Globals;
 import Dialog.Skins;
 import Menu.PopQueManager;
+import Menu.ScreenType;
 import Menu.Bars.BottomBar;
-import Menu.Bars.BottomBar.BottomBarFor;
 import Menu.Bars.TitleBar;
-import Menu.Bars.TitleBar.TitleBarFor;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
 
@@ -50,10 +49,10 @@ public class GameModeScreen implements Screen {
 
 		base = new Table(skin);
 		base.setFillParent(true);
-		//base.pad(25);
+		// base.pad(25);
 
-		TitleBar.create(base, TitleBarFor.MODE_SCREEN, popQueManager,
-				gameState, true);
+		TitleBar.create(base, ScreenType.MODE_SCREEN, popQueManager, gameState,
+				true);
 
 		// Main Buttons
 		buttonHolder = new Table(skin);
@@ -92,9 +91,9 @@ public class GameModeScreen implements Screen {
 
 		base.add(buttonHolder).expand().fill();
 
-		BottomBar.create(base, BottomBarFor.MODE_SCREEN, gameState, true);
+		BottomBar.create(base, ScreenType.MODE_SCREEN, gameState, true);
 
-		//Animations.fadeInAndSlideSide(base);
+		// Animations.fadeInAndSlideSide(base);
 
 		stage.addActor(base);
 

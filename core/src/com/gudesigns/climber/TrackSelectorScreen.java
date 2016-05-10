@@ -9,9 +9,8 @@ import wrapper.GameState;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
 import Menu.Button;
-import Menu.PopQueObject;
+import Menu.ScreenType;
 import Menu.SelectorScreen;
-import Menu.PopQueObject.PopQueObjectType;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
@@ -24,6 +23,8 @@ import Storage.FileObject;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.async.AsyncTask;
@@ -273,14 +274,13 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 		Iterator<Table> iter = buttons.iterator();
 
-		int count = 0;
-
 		while (iter.hasNext()) {
 			b = iter.next();
 			b.invalidate();
 
 			itemsTable.add(b).pad(5);
-
+			itemsTable.invalidate();
+			scrollPane.invalidate();
 		}
 
 	}
@@ -288,7 +288,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	@Override
 	protected void populateContentTable(Table contentTable) {
 
-		contentTable.add(prevPage).colspan(1).left();
+		//contentTable.add(prevPage).colspan(1).left();
 		// stage.addActor(prevPage);
 
 		createItemsTable(contentTable);
@@ -296,8 +296,33 @@ public class TrackSelectorScreen extends SelectorScreen {
 		itemsTable.invalidate();
 		scrollPane.invalidate();
 
-		contentTable.add(nextPage).colspan(1).right();
-
+		//contentTable.add(nextPage).colspan(1).right();
+	
 	}
+	
+	@Override
+	protected void createItemsTable(Table container) {
+		itemsTable = new Table();
+	
+
+		scrollPane = new ScrollPane(itemsTable);
+		scrollPane.layout();
+		//scrollPane.setWidth(100);
+		scrollPane.setScrollingDisabled(false, true);
+		scrollPane.setSmoothScrolling(true);
+		scrollPane.setLayoutEnabled(true);
+		scrollPane.setTouchable(Touchable.enabled);
+		scrollPane.setOverscroll(true, false);
+
+		//stage.addActor(scrollPane);
+		container.add(scrollPane).width(600f);
+		//container.row();
+	}
+	
+	@Override
+	protected ScreenType getScreenType(){
+		return ScreenType.TRACK_SELECTOR;
+	}
+
 
 }

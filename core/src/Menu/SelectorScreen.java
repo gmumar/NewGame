@@ -1,7 +1,6 @@
 package Menu;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,9 +12,7 @@ import Dialog.Skins;
 import JSONifier.JSONParentClass;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BottomBar;
-import Menu.Bars.BottomBar.BottomBarFor;
 import Menu.Bars.TitleBar;
-import Menu.Bars.TitleBar.TitleBarFor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -95,6 +92,10 @@ public abstract class SelectorScreen implements Screen {
 	
 	abstract protected void populateContentTable(Table contentTable);
 	
+	protected abstract void createItemsTable(Table container);
+	
+	protected abstract ScreenType getScreenType();
+	
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
 
@@ -170,7 +171,7 @@ public abstract class SelectorScreen implements Screen {
 			public void run() {
 
 				for (int i = from; i < actualTo; i++) {
-					System.out.println("SelectorScreen: " + items.get(i).jsonify());
+					//System.out.println("SelectorScreen: " + items.get(i).jsonify());
 					addButton(items.get(i));
 				}
 				if(items.size()>0 && !isLoading() || loadedCount >= currentPageEnd){
@@ -221,44 +222,32 @@ public abstract class SelectorScreen implements Screen {
 		});
 	}
 
-	protected void createItemsTable(Table container) {
-		itemsTable = new Table();
-		itemsTable.setWidth(300);
-
-		scrollPane = new ScrollPane(itemsTable);
-		//scrollPane.setWidth(100);
-		scrollPane.setSmoothScrolling(true);
-		//scrollPane.setFillParent(true);
-		//scrollPane.setLayoutEnabled(true);
-		scrollPane.setTouchable(Touchable.enabled);
-
-		//stage.addActor(scrollPane);
-		container.add(scrollPane).expand().colspan(2).pad(20);
-	}
-
 
 
 	protected void refreshAllButtons() {
 		
+
 		if(!initButtons){
 			initButtons = !initButtons;
 			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
 			baseTable.setBackground("blackOut");
 			baseTable.setFillParent(true);
 			
+			
 		} else {
 			baseTable.clear();
 		}
 		
-		TitleBar.create(baseTable, TitleBarFor.SCREEN_SELECTOR, popQueManager, gameState, false);
+		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState, false);
 		
 		Table contentTable = new Table();
+		contentTable.setTouchable(Touchable.childrenOnly);
 		
 		populateContentTable(contentTable);
 
-		baseTable.add(contentTable).expand().fill();
+		baseTable.add(contentTable).expand().pad(20);
 		
-		BottomBar.create(baseTable, BottomBarFor.MODE_SCREEN, gameState, false);
+		BottomBar.create(baseTable, getScreenType(), gameState, false);
 		
 		//initNavigationButtons();
 		
