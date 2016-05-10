@@ -8,6 +8,7 @@ import wrapper.CameraManager;
 import wrapper.Globals;
 import JSONifier.JSONCar;
 import Menu.FontManager;
+import Shader.GameMesh;
 import Storage.FileManager;
 
 import com.badlogic.gdx.Gdx;
@@ -60,6 +61,7 @@ public class LoaderScreen implements Screen {
 
 	private void loadAssets() {
 		loadLocalCars();
+		GameMesh.create();
 
 		// Textures
 		gameLoader.Assets.load("temp_bar.png", Texture.class);
@@ -94,6 +96,13 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/restart_white.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/sound_black.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/sound_white.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/back.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/glowing_coin.png", Texture.class);
+		
+		gameLoader.Assets.load("menu/images/adventure.png", Texture.class);
+		gameLoader.Assets.load("menu/images/infinity.png", Texture.class);
+		
+		gameLoader.Assets.load("menu/tags/new.png", Texture.class);
 
 		// // Bars
 		gameLoader.Assets.load("bar/level1.png", Texture.class);
@@ -107,10 +116,16 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("soundfx/coin.mp3", Sound.class);
 		gameLoader.Assets.load("soundfx/idle.mp3", Sound.class);
 
+		
+		// https://www.google.com/fonts/specimen/Chivo
 		ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
-		BitmapFont font = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
+		BitmapFont font = FontManager.GenerateFont("fonts/chivoRegular.ttf", 4,
 				Color.BLACK);
 		resources.put("default-font", font);
+		
+		BitmapFont fontWhite = FontManager.GenerateFont("fonts/chivoRegular.ttf", 4,
+				Color.WHITE);
+		resources.put("default-font-white", fontWhite);
 		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
 				new SkinParameter("skins/uiskin.atlas", resources));
 

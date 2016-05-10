@@ -1,7 +1,6 @@
 package Menu;
 
 import com.gudesigns.climber.GamePlayScreen;
-import com.gudesigns.climber.MainMenuScreen;
 
 public class PopQueObject {
 
@@ -14,7 +13,7 @@ public class PopQueObject {
 	private String componentName;
 	private MenuBuilder menuBuilderInstance;
 	private GamePlayScreen gamePlayScreenInstance;
-	private MainMenuScreen mainMenuScreenInstance;
+	//private MainMenuScreen mainMenuScreenInstance;
 
 	public PopQueObject(PopQueObjectType type) {
 		this.type = type;
@@ -37,16 +36,16 @@ public class PopQueObject {
 		this.gamePlayScreenInstance = instance;
 	}
 
-	public PopQueObject(PopQueObjectType type, MainMenuScreen instance) {
+	/*public PopQueObject(PopQueObjectType type, MainMenuScreen instance) {
 		if (type != PopQueObjectType.STORE_BUY)
 			return;
 		this.type = type;
-		this.mainMenuScreenInstance = instance;
-	}
+		//this.mainMenuScreenInstance = instance;
+	}*/
 
-	public MainMenuScreen getMainMenuInstance() {
-		return mainMenuScreenInstance;
-	}
+	//public MainMenuScreen getMainMenuInstance() {
+	//	return mainMenuScreenInstance;
+	//}
 
 	public MenuBuilder getCallingInstance() {
 		return menuBuilderInstance;

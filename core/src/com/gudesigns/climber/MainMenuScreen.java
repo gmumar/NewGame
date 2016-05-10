@@ -1,22 +1,15 @@
 package com.gudesigns.climber;
 
-import java.util.ArrayList;
-
 import wrapper.CameraManager;
-import wrapper.GamePhysicalState;
 import wrapper.GameState;
 import wrapper.Globals;
-import wrapper.TouchUnit;
-import Assembly.AssembledObject;
-import Assembly.Assembler;
-import GroundWorks.GroundBuilder;
-import JSONifier.JSONTrack;
-import JSONifier.JSONTrack.TrackType;
+import Dialog.DialogBase;
+import Dialog.Skins;
 import Menu.Button;
+import Menu.CarAnimationRunner;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
-import ParallexBackground.ScrollingBackground;
 import Purchases.GamePurchaseObserver;
 import Shader.GameMesh;
 import User.User;
@@ -24,20 +17,17 @@ import User.User;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.google.gson.stream.JsonToken;
 
 public class MainMenuScreen implements Screen {
 
 	private GameLoader gameLoader;
 	private GameState gameState;
-	private CameraManager camera, carCamera;
+	private CameraManager camera;
 	private Stage stage;
 	private StretchViewport vp;
 	private PopQueManager popQueManager;
@@ -45,19 +35,11 @@ public class MainMenuScreen implements Screen {
 	private MainMenuScreen instance;
 
 	private Button builder, playGame, buildTrack, selectTrack, selectCar,
-			quickNext, buyCoins, soundControl;
+			quickNext, buyCoins, soundControl, tapToPlay;
 
-	// -------------- Car running animation ------------------
-	private World world;
-	private ShaderProgram shader, colorShader;
-	private AssembledObject builtCar;
-	private SpriteBatch batch;
-	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
-	private GroundBuilder ground;
-	private ScrollingBackground scrollingBackground;
-
-	// -------------------------------------------------------
-
+	private static CarAnimationRunner carAnimation;
+	private static boolean  carAnimationCreated = false;
+	
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 		instance = this;
@@ -68,103 +50,9 @@ public class MainMenuScreen implements Screen {
 
 		this.gameState = new GameState(gameLoader, user);
 
-		// -------------- Car running animation ------------------
-		initWorld();
-		initShader();
-		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
-				this.gameLoader), gameState.getUser().getCurrentCar(), false);
-		builtCar.setPosition(6, 45);
-		builtCar.setMaxVelocity(20);
-		batch = new SpriteBatch();
-		initCarStage();
-
-		TouchUnit fakeTouch = new TouchUnit();
-		fakeTouch.screenX = 5000;
-		fakeTouch.touched = true;
-		touches.add(fakeTouch);
-
-		ground = new GroundBuilder(new GamePhysicalState(this.world,
-				this.gameLoader), carCamera, shader, colorShader, true,
-				gameState.getUser());
-
-		world.step(10, 100, 120);
-		
-		scrollingBackground = new ScrollingBackground(this.gameLoader, builtCar, TrackType.FORREST);
-
-		// -------------------------------------------------------
-
+		carAnimation = new CarAnimationRunner(gameState);
+	
 	}
-
-	// -------------- Car running animation ------------------
-	final private void initWorld() {
-		world = (new World(new Vector2(0, -38f), true));
-		world.setAutoClearForces(true);
-		world.setWarmStarting(true);
-	}
-
-	final private void attachCameraTo(Body actor) {
-		carCamera.position.set(actor.getPosition().x, actor.getPosition().y+3, 1);
-		carCamera.zoom = 4.2f;// 4.5f;
-		carCamera.update();
-	}
-
-	final private void initShader() {
-		String vertexShader = Gdx.files.internal("shaders/vertex.glsl")
-				.readString();
-		String fragmentShader = Gdx.files.internal("shaders/fragment.glsl")
-				.readString();
-		shader = new ShaderProgram(vertexShader, fragmentShader);
-		if (shader.isCompiled() == false) {
-			Gdx.app.log("ShaderError", shader.getLog());
-			System.exit(0);
-		}
-
-		fragmentShader = Gdx.files.internal("shaders/colorfragment.glsl")
-				.readString();
-		colorShader = new ShaderProgram(vertexShader, fragmentShader);
-		if (shader.isCompiled() == false) {
-			Gdx.app.log("ShaderError", shader.getLog());
-			System.exit(0);
-		}
-	}
-
-	private void initCarStage() {
-		carCamera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
-		carCamera.update();
-	}
-
-	private float timeCounter = 0;
-
-	private void carAnimationStep(float delta) {
-		batch.setProjectionMatrix(carCamera.combined);
-
-		timeCounter += delta;
-		scrollingBackground.draw(false);
-		if (timeCounter >= Globals.STEP) {
-
-			world.step(Globals.STEP, 80, 40);
-
-			timeCounter -= Globals.STEP;
-		}
-
-		attachCameraTo(builtCar.getCameraFocusPart());
-		ground.drawShapes();
-
-		batch.begin();
-
-		ground.drawMainMenu(batch);
-		builtCar.draw(batch);
-
-		batch.end();
-
-		driveCar();
-	}
-
-	final private void driveCar() {
-		builtCar.handleInput(touches);
-	}
-
-	// -------------------------------------------------------
 
 	private void initUser() {
 		user = User.getInstance();
@@ -172,6 +60,30 @@ public class MainMenuScreen implements Screen {
 	}
 
 	private void initButtons() {
+		
+		tapToPlay = new Button("Tap To Play") {
+			@Override
+			public void Clicked() {
+				Action completeAction = new Action() {
+					public boolean act(float delta) {
+						gameLoader.setScreen(new GameModeScreen(gameState));
+						return true;
+					}
+				};
+				
+				DialogBase d = new DialogBase("black",Skins.loadDefault(gameLoader, 1), "default");
+				d.setBackground("blackOut");
+				d.setFillParent(true);
+				d.setColor(1, 1, 1, 0);
+				d.addAction(new SequenceAction(Actions.fadeIn(0.25f),completeAction));
+				stage.addActor(d);
+				
+			}
+		};
+		tapToPlay.setPosition(Globals.ScreenWidth/2 - 50, Globals.ScreenHeight/2);
+		tapToPlay.setWidth(100);
+		tapToPlay.setHeight(50);
+		stage.addActor(tapToPlay);
 		
 		soundControl = new Button("Sound Control") {
 			@Override
@@ -267,8 +179,7 @@ public class MainMenuScreen implements Screen {
 												PopQueObjectType.DELETE));
 										
 										popQueManager.push(new PopQueObject(
-												PopQueObjectType.STORE_BUY,
-												instance));
+												PopQueObjectType.STORE_BUY));
 									}
 								});
 					}
@@ -308,22 +219,17 @@ public class MainMenuScreen implements Screen {
 		camera.viewportHeight = Globals.PixelToMeters(height);
 		camera.update();
 
-		carCamera.viewportWidth = Globals.PixelToMeters(width);
-		carCamera.viewportHeight = Globals.PixelToMeters(height);
-		carCamera.update();
-
 		vp.update(width, height);
+		carAnimation.resize(width, height);
+	
 		camera.position.set(camera.viewportWidth / 2,
 				camera.viewportHeight / 2, 0);
-		carCamera.position.set(carCamera.viewportWidth / 2,
-				carCamera.viewportHeight / 2, 0);
-
 	}
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		GameMesh.create(camera, shader);
+		GameMesh.create();
 		Globals.updateScreenInfo();
 
 	}
@@ -331,13 +237,12 @@ public class MainMenuScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		camera.update();
-		carCamera.update();
+
 		Gdx.gl.glClearColor(Globals.FORREST_GREEN_BG.r, Globals.FORREST_GREEN_BG.g,
 				Globals.FORREST_GREEN_BG.b, Globals.FORREST_GREEN_BG.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		carAnimationStep(delta);
-
+		
+		carAnimation.draw(delta);
 		stepStage();
 
 		popQueManager.update();
@@ -367,7 +272,6 @@ public class MainMenuScreen implements Screen {
 	@Override
 	public void hide() {
 		Gdx.input.setInputProcessor(null);
-		ground.destory();
 		stage.dispose();
 		GameMesh.destroy();
 
@@ -375,14 +279,7 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		batch.dispose();
-		builtCar.dispose();
-		world.dispose();
+		carAnimation.dispose();
 		camera = null;
-		carCamera = null;
-		shader.dispose();
-		colorShader.dispose();
-		touches.clear();
-		touches = null;
 	}
 }

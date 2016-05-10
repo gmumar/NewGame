@@ -12,6 +12,27 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		name: white,
 		color: { a: 0.5, b: 0.2, g: 0.2, r: 0.2 }
 	}
+	
+	transparent: {
+		name: white,
+		color: { a: 0.0, b: 0.2, g: 0.2, r: 0.2 }
+	}
+	
+	gameGreen: {
+		name: white,
+		color: { r: 0.580, g: 0.769, b: 0.035, a: 1 }
+	}
+	
+	gameYellow: {
+		name: white,
+		color: { r: 1, g: 0.741, a: 1 }
+	}
+	
+	blackOut: {
+		name: white,
+		color: { a: 1 }
+	}
+	
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default: { background: default-scroll, knobBefore: default-round-large }
@@ -47,6 +68,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: { imageUp: paint_brush, up: default-round, down: default-round-down }
+	transparentButton: { up: transparent, down: transparent}
 },
 com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 	default-vertical: { handle: default-splitpane-vertical },
@@ -56,7 +78,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 	default: { background: default-pane, knob: default-round-large }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
-	default: { up: default-scroll, down: default-round-down }
+	default: { up: default-scroll, down: default-round-down },
+	modeButton: { up: gameYellow, down: gameGreen, checked: gameGreen },
+	transparentButton: { up: transparent, down: transparent}
 },
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
@@ -108,8 +132,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		fontColor: { a: 1, r: 1 }
 	},
 	title: {
-		font: default-font,
-		fontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 }
+		font: default-font-white,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 }
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {

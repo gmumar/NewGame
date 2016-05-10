@@ -83,8 +83,8 @@ public class GroundBuilder {
 	private static Texture groundFiller;
 	private TrackType trackType = TrackType.FORREST;
 
-	private static ShaderProgram shader;
-	private static ShaderProgram colorShader;
+	private ShaderProgram shader;
+	private ShaderProgram colorShader;
 	private static int vertexCount;
 
 	private int initial = 0 * 8;
@@ -104,8 +104,8 @@ public class GroundBuilder {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
-		GroundBuilder.shader = shader;
-		GroundBuilder.colorShader = colorShader;
+		this.shader = shader;
+		this.colorShader = colorShader;
 		
 		String mapString = null;
 		
@@ -156,6 +156,14 @@ public class GroundBuilder {
 
 		groundFixtureName.setBaseName(ComponentNames.GROUND);
 
+	}
+	
+	public void reset(){
+		lastDrawnPointer = 0;
+		lastRemovedPointer = 1;
+		
+		mapList = new ArrayList<GroundUnitDescriptor>();
+		createFloor();
 	}
 
 	public boolean isLoading() {
@@ -369,7 +377,9 @@ public class GroundBuilder {
 		vertexCount = (shaderEnd - shaderStart) * 2;
 
 		shader.begin();
-		shader.setUniformMatrix("u_projTrans", camera.combined);
+		shader
+		.setUniformMatrix("u_projTrans",
+				camera.combined);
 		//shader.setUniformi("u_texture", 0);
 		GameMesh.drawLayer(camera, shader, shaderStart, shaderEnd,
 				groundFiller, 30, Color.WHITE, 0f, 0, vertexCount);

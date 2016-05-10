@@ -9,8 +9,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import wrapper.CameraManager;
 import wrapper.GameState;
 import wrapper.Globals;
+import Dialog.Skins;
 import JSONifier.JSONParentClass;
 import Menu.PopQueObject.PopQueObjectType;
+import Menu.Bars.BottomBar;
+import Menu.Bars.BottomBar.BottomBarFor;
+import Menu.Bars.TitleBar;
+import Menu.Bars.TitleBar.TitleBarFor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -27,7 +32,6 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.gudesigns.climber.GameLoader;
-import com.gudesigns.climber.MainMenuScreen;
 
 public abstract class SelectorScreen implements Screen {
 
@@ -40,12 +44,14 @@ public abstract class SelectorScreen implements Screen {
 	protected static ArrayList<Table> buttons = new ArrayList<Table>();
 	protected ArrayList<JsonElement> uniquenessButtonList = new ArrayList<JsonElement>();
 	protected ArrayList<JSONParentClass> items = new ArrayList<JSONParentClass>();
-	private TableW tracksTable;
-	private ScrollPane scrollPane;
-	private PopQueManager popQueManager;
+	protected Table itemsTable;
+	protected Table baseTable;
+	protected ScrollPane scrollPane;
+	protected PopQueManager popQueManager;
 	public GameLoader gameLoader;
 
-	private Button exit, nextPage, prevPage, quickNext;
+	protected Button  nextPage;
+	protected Button prevPage;
 
 	public volatile boolean resultsRemaining = true;
 	private boolean loadingComplete = false;
@@ -58,20 +64,21 @@ public abstract class SelectorScreen implements Screen {
 
 	public Semaphore loaderSemaphore = new Semaphore(2);
 	public Lock uniqueListLock = new ReentrantLock();
-	private Semaphore loadingLock = new Semaphore(1);
+	protected Semaphore loadingLock = new Semaphore(1);
 	public Semaphore localLoading = new Semaphore(1);
 	protected Semaphore localLoadedCounter = new Semaphore(0);
 	protected Semaphore totalLoadedCounter = new Semaphore(0);
 	public volatile boolean downloadCancelled = false;
 
-	private int pageNumber = 0;
-	private static final int MAX_CARS_PER_PAGE = 6;
-	private int currentPageStart = 0;
-	private int currentPageEnd = MAX_CARS_PER_PAGE;
+	protected int pageNumber = 0;
+	protected static final int MAX_CARS_PER_PAGE = 6;
+	protected int currentPageStart = 0;
+	protected int currentPageEnd = MAX_CARS_PER_PAGE;
 	private int loadedCount = 0;
 	private JsonParser parser = new JsonParser();
 	// private Integer previousSize = 0;
-
+	private boolean initButtons = false;
+	
 	public GameState gameState;
 
 	abstract protected void addButton(final JSONParentClass jsonParentClass);
@@ -83,16 +90,20 @@ public abstract class SelectorScreen implements Screen {
 	abstract protected void addSpecificItemToList();
 	
 	abstract protected void goNext();
-
+	
+	abstract protected void initButtons();
+	
+	abstract protected void populateContentTable(Table contentTable);
+	
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
 
 		// ae = Globals.globalRunner;
 		this.gameState = gameState;
-		this.gameLoader = this.gameState.getGameLoader();
+		this.gameLoader = gameState.getGameLoader();
 		initStage();
 
-		initNavigationButtons();
+		//initNavigationButtons();
 
 		popQueManager = new PopQueManager(gameLoader, stage);
 
@@ -130,88 +141,6 @@ public abstract class SelectorScreen implements Screen {
 				return null;
 			}
 		});
-
-	}
-
-	private void initNavigationButtons() {
-		quickNext = new Button("Next") {
-			@Override
-			public void Clicked() {
-				exit();
-				goNext();
-
-			}
-		};
-		quickNext.setPosition(Globals.ScreenWidth-150, 25);
-		quickNext.setHeight(75);
-		quickNext.setWidth(75);
-		stage.addActor(quickNext);
-		
-		exit = new Button("exit") {
-			@Override
-			public void Clicked() {
-				exit();
-				gameLoader.setScreen(new MainMenuScreen(gameLoader));
-			}
-		};
-
-		exit.setPosition(0, 0);
-		stage.addActor(exit);
-
-		nextPage = new Button(">") {
-			@Override
-			public void Clicked() {
-				pageNumber++;
-				if (loadingLock.tryAcquire()) {
-					popQueManager.push(new PopQueObject(
-							PopQueObjectType.LOADING));
-				}
-
-				pageDisplayed = false;
-				// buttons.clear();
-				currentPageStart += MAX_CARS_PER_PAGE;
-				currentPageEnd += MAX_CARS_PER_PAGE;
-
-				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
-			}
-		};
-
-		nextPage.setPosition(Globals.ScreenWidth - 50,
-				Globals.ScreenHeight / 2 - 100);
-		nextPage.setHeight(200);
-		nextPage.setWidth(50);
-
-		stage.addActor(nextPage);
-
-		prevPage = new Button("<") {
-			@Override
-			public void Clicked() {
-				pageNumber--;
-
-				if (pageNumber < 0) {
-					pageNumber = 0;
-				} else {
-					pageDisplayed = false;
-					if (loadingLock.tryAcquire()) {
-						popQueManager.push(new PopQueObject(
-								PopQueObjectType.LOADING));
-					}
-					// buttons.clear();
-
-					currentPageStart -= MAX_CARS_PER_PAGE;
-					if (currentPageStart <= 0)
-						currentPageStart = 0;
-					currentPageEnd = currentPageStart + MAX_CARS_PER_PAGE;
-				}
-
-			}
-		};
-
-		prevPage.setPosition(0, Globals.ScreenHeight / 2 - 100);
-		prevPage.setHeight(200);
-		prevPage.setWidth(50);
-
-		stage.addActor(prevPage);
 
 	}
 
@@ -292,52 +221,50 @@ public abstract class SelectorScreen implements Screen {
 		});
 	}
 
-	private void initCarSelector() {
-		tracksTable = new TableW();
-		tracksTable.setWidth(300);
+	protected void createItemsTable(Table container) {
+		itemsTable = new Table();
+		itemsTable.setWidth(300);
 
-		scrollPane = new ScrollPane(tracksTable);
-		scrollPane.setWidth(100);
+		scrollPane = new ScrollPane(itemsTable);
+		//scrollPane.setWidth(100);
 		scrollPane.setSmoothScrolling(true);
-		scrollPane.setFillParent(true);
-		scrollPane.setLayoutEnabled(true);
+		//scrollPane.setFillParent(true);
+		//scrollPane.setLayoutEnabled(true);
 		scrollPane.setTouchable(Touchable.enabled);
 
-		stage.addActor(scrollPane);
+		//stage.addActor(scrollPane);
+		container.add(scrollPane).expand().colspan(2).pad(20);
 	}
 
-	private void initButtons() {
 
-		Table b;
-
-		Iterator<Table> iter = buttons.iterator();
-
-		int count = 0;
-
-		while (iter.hasNext()) {
-			b = iter.next();
-			b.invalidate();
-
-			tracksTable.add(b);
-
-			count++;
-			if (count > 2) {
-				tracksTable.row();
-				count = 0;
-			}
-
-		}
-
-	}
 
 	protected void refreshAllButtons() {
-		initCarSelector();
-		initButtons();
+		
+		if(!initButtons){
+			initButtons = !initButtons;
+			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
+			baseTable.setBackground("blackOut");
+			baseTable.setFillParent(true);
+			
+		} else {
+			baseTable.clear();
+		}
+		
+		TitleBar.create(baseTable, TitleBarFor.SCREEN_SELECTOR, popQueManager, gameState, false);
+		
+		Table contentTable = new Table();
+		
+		populateContentTable(contentTable);
 
-		tracksTable.invalidate();
-		scrollPane.invalidate();
-
-		initNavigationButtons();
+		baseTable.add(contentTable).expand().fill();
+		
+		BottomBar.create(baseTable, BottomBarFor.MODE_SCREEN, gameState, false);
+		
+		//initNavigationButtons();
+		
+		
+		
+		stage.addActor(baseTable);
 	}
 
 	private void initStage() {
@@ -369,13 +296,13 @@ public abstract class SelectorScreen implements Screen {
 		Globals.updateScreenInfo();
 	}
 
-	boolean pageDisplayed = false;
+	public boolean pageDisplayed = false;
 
 	private void showCars() {
 		if (pageDisplayed == false) {
 			buttons.clear();
-			if (tracksTable != null) {
-				tracksTable.clear();
+			if (itemsTable != null) {
+				itemsTable.clear();
 			}
 			addItemToDisplay(currentPageStart, currentPageEnd);
 			pageDisplayed = true;
@@ -413,7 +340,7 @@ public abstract class SelectorScreen implements Screen {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);

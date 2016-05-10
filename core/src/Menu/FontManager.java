@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 public class FontManager {
 	
-	private static final int SCALE = 10;
+	private static final int SCALE = 8;
 	
 	private static HashMap<String,BitmapFont> fonts = new HashMap<String,BitmapFont>();
 	
@@ -29,13 +29,12 @@ public class FontManager {
 			//parameters.borderStraight = false;
 			//parameters.genMipMaps = true;
 			//parameters.incremental = true;
-			parameters.magFilter = TextureFilter.Linear;
-			parameters.minFilter = TextureFilter.Linear;
-			parameters.borderWidth = 1f;
-			parameters.borderColor = color;
+			//parameters.magFilter = TextureFilter.Linear;
+			//parameters.minFilter = TextureFilter.Nearest;
 			parameters.color = color;
 			BitmapFont bfont = generator.generateFont(parameters);// new BitmapFont();
 			bfont.getData().setScale((float)size/SCALE);
+			bfont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			fonts.put(key, bfont);
 			return bfont;
 		}
@@ -62,6 +61,7 @@ public class FontManager {
 			parameters.color = color;
 			BitmapFont bfont = generator.generateFont(parameters);// new BitmapFont();
 			bfont.getData().setScale((float)size/Scale);
+			bfont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			fonts.put(key, bfont);
 			return bfont;
 		}

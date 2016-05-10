@@ -3,12 +3,15 @@ package com.gudesigns.climber;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import wrapper.GameState;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
 import Menu.Button;
+import Menu.PopQueObject;
 import Menu.SelectorScreen;
+import Menu.PopQueObject.PopQueObjectType;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
@@ -21,6 +24,7 @@ import Storage.FileObject;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
@@ -43,16 +47,16 @@ public class TrackSelectorScreen extends SelectorScreen {
 			public String call() {
 
 				while (resultsRemaining && !killThreads) {
-					//stall = true;
-					
-					if(killThreads) {
+					// stall = true;
+
+					if (killThreads) {
 						loaderSemaphore.release();
 						resultsRemaining = false;
-						
+
 						return null;
 					}
-					
-					while(stallSemaphore.tryAcquire()){
+
+					while (stallSemaphore.tryAcquire()) {
 						downloadRequest = REST.getData(RESTPaths.MAPS
 								+ RESTProperties.URL_ARG_SPLITTER
 								+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
@@ -68,71 +72,77 @@ public class TrackSelectorScreen extends SelectorScreen {
 								+ RESTProperties.TRACK_BEST_TIME
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.TRACK_DIFFICULTY
-								
+
 						, new HttpResponseListener() {
-	
+
 							@Override
-							public void handleHttpResponse(HttpResponse httpResponse) {
-								System.out.println("TrackSelectorScreen: got a reply ");
+							public void handleHttpResponse(
+									HttpResponse httpResponse) {
+								System.out
+										.println("TrackSelectorScreen: got a reply ");
 								Backendless_Track obj = Backendless_JSONParser
 										.processDownloadedTrack(httpResponse
 												.getResultAsString());
-	
-								//Iterator<String> iter = obj.getData().iterator();
-	
-								for (ServerDataUnit fromServer :  obj.getData()) {
-									
+
+								// Iterator<String> iter =
+								// obj.getData().iterator();
+
+								for (ServerDataUnit fromServer : obj.getData()) {
+
 									final JSONTrack trackJson = JSONTrack
 											.objectify(fromServer.getData());
-									trackJson.setObjectId(fromServer.getObjectId());
-									trackJson.setBestTime(fromServer.getTrackBestTime());
-									trackJson.setDifficulty(fromServer.getTrackDifficulty());
-									
+									trackJson.setObjectId(fromServer
+											.getObjectId());
+									trackJson.setBestTime(fromServer
+											.getTrackBestTime());
+									trackJson.setDifficulty(fromServer
+											.getTrackDifficulty());
+
 									addItemToList(trackJson);
-									
+
 									uniqueListLock.lock();
 									uniqueListLock.unlock();
-	
+
 								}
-	
+
 								if (obj.getTotalObjects() - obj.getOffset() > 0) {
 									resultsRemaining = true;
 								} else {
 									resultsRemaining = false;
 								}
 								stallSemaphore.release();
-								//stall = false;
-	
+								// stall = false;
+
 							}
-	
+
 							@Override
 							public void failed(Throwable t) {
-								System.out.println("TrackSelectorScreen: download failed Stack printing");
+								System.out
+										.println("TrackSelectorScreen: download failed Stack printing");
 								t.printStackTrace();
 								loaderSemaphore.release();
-								//stallSemaphore.release();
-								//stall = false;
+								// stallSemaphore.release();
+								// stall = false;
 								resultsRemaining = false;
 								downloadCancelled = true;
-								//return;
+								// return;
 							}
-	
+
 							@Override
 							public void cancelled() {
 								loaderSemaphore.release();
-								//stallSemaphore.release();
-								//stall = false;
+								// stallSemaphore.release();
+								// stall = false;
 								resultsRemaining = false;
 								downloadCancelled = true;
-								//return;
+								// return;
 							}
-	
+
 						});
 						currentOffset += REST.PAGE_SIZE;
 					}
-					//while (stall);
+					// while (stall);
 
-					
 				}
 				loaderSemaphore.release();
 
@@ -142,44 +152,34 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	}
 
-	/*@Override
-	protected void writeItemsToFile() {
-		ae.submit(new AsyncTask<String>() {
-
-			@Override
-			public String call() throws Exception {
-
-				try {
-					while (isLoading());
-						//Thread.sleep(5);
-					// loaderSemaphore.acquire(2);
-
-					// Iterator<String> iter = cars.iterator();
-					ArrayList<JSONTrack> list = new ArrayList<JSONTrack>();
-					for (JSONParentClass track : items) {
-						// String car = iter.next();
-						list.add((JSONTrack) track);
-					}
-
-					System.out.println("writing " + list.size());
-
-					FileObject fileObject = new FileObject();
-					fileObject.setTracks(list);
-
-					FileManager.writeTracksToFileGson(list);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					// loaderSemaphore.release(2);
-				}
-
-				return null;
-
-			}
-		});
-
-	}*/
+	/*
+	 * @Override protected void writeItemsToFile() { ae.submit(new
+	 * AsyncTask<String>() {
+	 * 
+	 * @Override public String call() throws Exception {
+	 * 
+	 * try { while (isLoading()); //Thread.sleep(5); //
+	 * loaderSemaphore.acquire(2);
+	 * 
+	 * // Iterator<String> iter = cars.iterator(); ArrayList<JSONTrack> list =
+	 * new ArrayList<JSONTrack>(); for (JSONParentClass track : items) { //
+	 * String car = iter.next(); list.add((JSONTrack) track); }
+	 * 
+	 * System.out.println("writing " + list.size());
+	 * 
+	 * FileObject fileObject = new FileObject(); fileObject.setTracks(list);
+	 * 
+	 * FileManager.writeTracksToFileGson(list);
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); } finally { //
+	 * loaderSemaphore.release(2); }
+	 * 
+	 * return null;
+	 * 
+	 * } });
+	 * 
+	 * }
+	 */
 
 	@Override
 	protected void addButton(final JSONParentClass item) {
@@ -210,12 +210,13 @@ public class TrackSelectorScreen extends SelectorScreen {
 		for (JSONParentClass track : items) {
 			// String car = iter.next();
 			list.add((JSONTrack) track);
-			
+
 		}
-		
+
 		System.out.println("TrackSelectorScreen: writting " + list.size());
-		
-		if(list.isEmpty()) return;
+
+		if (list.isEmpty())
+			return;
 
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);
@@ -226,8 +227,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	@Override
 	protected void addSpecificItemToList() {
 		Gson gson = new Gson();
-		Reader stream = FileManager
-				.getFileStream(FileManager.TRACK_FILE_NAME);
+		Reader stream = FileManager.getFileStream(FileManager.TRACK_FILE_NAME);
 
 		if (stream == null) {
 			loaderSemaphore.release();
@@ -260,10 +260,44 @@ public class TrackSelectorScreen extends SelectorScreen {
 		}
 		return;
 	}
-	
+
 	@Override
 	protected void goNext() {
 		gameLoader.setScreen(new CarSelectorScreen(gameState));
+	}
+
+	@Override
+	protected void initButtons() {
+
+		Table b;
+
+		Iterator<Table> iter = buttons.iterator();
+
+		int count = 0;
+
+		while (iter.hasNext()) {
+			b = iter.next();
+			b.invalidate();
+
+			itemsTable.add(b).pad(5);
+
+		}
+
+	}
+
+	@Override
+	protected void populateContentTable(Table contentTable) {
+
+		contentTable.add(prevPage).colspan(1).left();
+		// stage.addActor(prevPage);
+
+		createItemsTable(contentTable);
+		initButtons();
+		itemsTable.invalidate();
+		scrollPane.invalidate();
+
+		contentTable.add(nextPage).colspan(1).right();
+
 	}
 
 }

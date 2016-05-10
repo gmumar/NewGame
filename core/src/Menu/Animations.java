@@ -44,6 +44,11 @@ public class Animations {
 		table.addAction(Actions.fadeIn(0.5f));
 	}
 
+	public static final void click(final Table base) {
+		base.addAction(new SequenceAction(Actions.alpha(0.8f, 0.2f), Actions
+				.alpha(Globals.BUTTON_OPACITY, 0.4f)));
+	}
+
 	public static final void fadeInAndSlideUp(SplashActor splashActor) {
 		splashActor.setColor(1, 1, 1, 0);
 		MoveToAction moveAction = new MoveToAction();
@@ -53,13 +58,36 @@ public class Animations {
 		ParallelAction pa = new ParallelAction(moveAction, Actions.fadeIn(0.8f));
 
 		splashActor.addAction(pa);
+	}
+
+	public static final void fadeInAndSlideSide(Table base) {
+		base.setColor(1, 1, 1, 0);
+		base.addAction(Actions.moveBy(-10, 0));
+		base.addAction(new ParallelAction(Actions.fadeIn(0.5f), Actions.moveBy(
+				10, 0, 0.5f)));
 
 	}
 
-	public static final void slideInFromBottom(Table table, int distance) {
-		table.addAction(Actions.moveTo(0, -distance, 0.0f));
+	public static void ExploadeIn(Table table) {
+		table.setColor(1, 1, 1, 0);
+		// table.setScale(2);
+		table.sizeBy(100);
 		table.addAction(new ParallelAction(Actions.fadeIn(0.5f), Actions
-				.moveBy(0, distance, 0.2f)));
+				.scaleBy(0.3f, 0.3f)));
+	}
+
+	public static void slideInFromTop(Table table, int distance) {
+		table.addAction(Actions.moveTo(0, Globals.ScreenHeight));
+		table.addAction(new SequenceAction(Actions.delay(0.5f),
+				new ParallelAction(Actions.fadeIn(0.5f), Actions.moveBy(0,
+						distance, 0.2f))));
+	}
+
+	public static final void fadeInFromBottom(Table table, int distance) {
+		table.addAction(Actions.moveTo(0, -distance));
+		table.addAction(new SequenceAction(Actions.delay(0.5f),
+				new ParallelAction(Actions.fadeIn(0.5f), Actions.moveBy(0,
+						distance, 0.2f))));
 	}
 
 }

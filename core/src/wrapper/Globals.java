@@ -2,6 +2,22 @@ package wrapper;
 
 import java.util.ArrayList;
 
+/*
+ * black #000000 - menu backgrounds, reading text, button text
+50% opacity - menu icons, unplayed levels
+white #FFFFFF - screen header, pop-up window backgrounds
+bright light #FFFBDF - coin icon and text, tap to play text
+outer glow #FFF180 at 50% opacity if you want to be extra fancy
+green #94C409 - quick start button, selected objects, empty joint, easy unlimited levels
+yellow #FFBD00 - menu buttons, medium unlimited levels
+red #FC6838 - hard unlimited levels, used joint, clear screen button
+light grey #C6C6C6 - locked menu buttons (ex. track builder mode), negative menu buttons (ex. cancel)
+med grey #757575 - builder buttons, upgrade diagrams, sound muted
+dark grey #424242 - pop-up window headers + icon text, level numbers, builder mode header background
+country green #646600 - for borders around played levels in country mode
+arctic blue #627689 - for borders around played levels in arctic mode
+ */
+
 import AdsInterface.IActivityRequestHandler;
 import JSONifier.JSONJoint;
 
@@ -25,6 +41,7 @@ public class Globals {
 	final static public Color SKY_BLUE = new Color((float) 118 / 256, (float) 211 / 256,
 			(float) 222 / 256, 1);
 	
+	public static final Color GREEN = new Color(0x94C409ff);
 	final static public Color FORREST_GREEN = new Color(0x646600ff);
 	final static public Color FORREST_GREEN_BG = new Color(0xf2e4bdff);
 	
@@ -62,6 +79,10 @@ public class Globals {
 	public static IActivityRequestHandler nativeRequestHandler = null;
 	
 	public static Music bgMusic;
+
+	public static int baseSize = 24;
+	public static final float BUTTON_OPACITY = 0.5f;
+
 	
 	public static final int POSITION_FIRST = 1;
 	public static final int POSITION_SECOND = 2;
@@ -146,7 +167,5 @@ public class Globals {
 	
 	public static final String defualt_car = "{\"jointList\":[{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"1\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"2\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"1\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"1\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"0\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"0\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"0\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"1\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"1\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"2\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"1\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"2\"},\"m2\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"0\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"2\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"1\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"1\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"0\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"1\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"TR\",\"C\":\"1\",\"M\":\"0\"}},{\"m1\":{\"B\":\"TR\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"0\",\"M\":\"0\",\"L\":1}},{\"m1\":{\"B\":\"LF\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"2\"}},{\"m1\":{\"B\":\"LF\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"0\"}},{\"m1\":{\"B\":\"LF\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"1\"}}],\"componentList\":[{\"cN\":{\"B\":\"LF\",\"S\":\"CMF\",\"C\":\"0\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"0.0\",\"Y\":\"0.0\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"AX\",\"C\":\"0\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"-2.1595528\",\"Y\":\"-2.0799813\",\"t\":\"PART\",\"m\":true}},{\"cN\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"0\",\"L\":1},\"props\":{\"r\":\"-37.595768\",\"X\":\"-2.1680284\",\"Y\":\"-2.1792185\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"1\",\"L\":1},\"props\":{\"r\":\"34.72171\",\"X\":\"2.015686\",\"Y\":\"-2.224338\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"-1.2200001\",\"Y\":\"-0.98999995\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"1.2099998\",\"Y\":\"-0.98\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"AX\",\"C\":\"1\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"2.0704477\",\"Y\":\"-2.189068\",\"t\":\"PART\",\"m\":true}},{\"cN\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"-0.010000348\",\"Y\":\"-0.96\",\"t\":\"PART\",\"m\":false}}],\"jointTypeList\":{},\"addComponents\":[{\"cN\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"0\",\"L\":-1},\"props\":{\"r\":\"-37.595768\",\"X\":\"-1.2528986\",\"Y\":\"-0.9907166\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"1\",\"L\":-1},\"props\":{\"r\":\"34.72171\",\"X\":\"1.1612995\",\"Y\":\"-0.9914457\",\"t\":\"PART\",\"m\":false}}]}";
 	final public static String default_track = "{\"points\":[{\"x\":2.0,\"y\":0.0},{\"x\":2.0,\"y\":0.0},{\"x\":2.0,\"y\":0.0},{\"x\":4.0,\"y\":-0.666667},{\"x\":6.0,\"y\":-0.80000067},{\"x\":8.0,\"y\":-0.80000067},{\"x\":10.0,\"y\":-0.80000067},{\"x\":12.0,\"y\":-0.8666668},{\"x\":14.0,\"y\":-1.0666666},{\"x\":16.0,\"y\":-1.1333327},{\"x\":18.0,\"y\":-1.2666664},{\"x\":20.0,\"y\":-1.333334},{\"x\":22.0,\"y\":-1.2000003},{\"x\":24.0,\"y\":-0.8666668}],\"componentList\":[],\"componentJointList\":[],\"componentJointTypes\":{},\"type\":\"FORREST\"}";
-
-	
 
 }

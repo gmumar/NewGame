@@ -522,7 +522,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		initInputs();
 		initSounds();
 		Globals.updateScreenInfo();
-		GameMesh.create(camera, shader);
+		GameMesh.create();
 		paused = false;
 
 	}

@@ -108,7 +108,7 @@ public class PauseDialog extends Table {
 		bottomBar.add(bottomWrapper).expand().left().fillY();
 		// bottomBar.moveBy(0, -100);
 
-		Animations.slideInFromBottom(bottomBar, 100);
+		Animations.fadeInFromBottom(bottomBar, 100);
 
 		base.add(bottomBar).height(100).expandX().fillX();
 	}

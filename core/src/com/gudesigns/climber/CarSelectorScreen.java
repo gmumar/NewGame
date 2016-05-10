@@ -1,13 +1,17 @@
 package com.gudesigns.climber;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import wrapper.GameState;
 import Assembly.Assembler;
 import Dialog.Skins;
 import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
+import Menu.Button;
+import Menu.PopQueObject;
 import Menu.SelectorScreen;
+import Menu.PopQueObject.PopQueObjectType;
 import RESTWrapper.Backendless_Car;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.REST;
@@ -288,5 +292,91 @@ public class CarSelectorScreen extends SelectorScreen {
 	protected void goNext() {
 		gameLoader.setScreen(new GamePlayScreen(gameState));
 	}
+	
+	@Override
+	protected void initButtons() {
 
+		Table b;
+
+		Iterator<Table> iter = buttons.iterator();
+
+		int count = 0;
+
+		while (iter.hasNext()) {
+			b = iter.next();
+			b.invalidate();
+
+			itemsTable.add(b);
+
+			count++;
+			if (count > 2) {
+				itemsTable.row();
+				count = 0;
+			}
+
+		}
+
+	}
+	
+
+	@Override
+	protected void populateContentTable(Table contentTable) {
+
+		prevPage = new Button("<") {
+			@Override
+			public void Clicked() {
+				pageNumber--;
+
+				if (pageNumber < 0) {
+					pageNumber = 0;
+				} else {
+					pageDisplayed = false;
+					if (loadingLock.tryAcquire()) {
+						popQueManager.push(new PopQueObject(
+								PopQueObjectType.LOADING));
+					}
+					// buttons.clear();
+
+					currentPageStart -= MAX_CARS_PER_PAGE;
+					if (currentPageStart <= 0)
+						currentPageStart = 0;
+					currentPageEnd = currentPageStart + MAX_CARS_PER_PAGE;
+				}
+
+			}
+		};
+		
+
+		contentTable.add(prevPage).colspan(1).left();
+		//stage.addActor(prevPage);
+		
+		
+		createItemsTable(contentTable);
+		initButtons();
+		itemsTable.invalidate();
+		scrollPane.invalidate();
+		
+		
+		nextPage = new Button(">") {
+			@Override
+			public void Clicked() {
+				pageNumber++;
+				if (loadingLock.tryAcquire()) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.LOADING));
+				}
+
+				pageDisplayed = false;
+				// buttons.clear();
+				currentPageStart += MAX_CARS_PER_PAGE;
+				currentPageEnd += MAX_CARS_PER_PAGE;
+
+				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
+			}
+		};
+		
+		contentTable.add(nextPage).colspan(1).right();
+		
+	}
+	
 }

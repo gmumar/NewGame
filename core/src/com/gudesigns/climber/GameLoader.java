@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import wrapper.GameAssetManager;
 import wrapper.Globals;
 import AdsInterface.IActivityRequestHandler;
 import JSONifier.JSONCar;
@@ -12,7 +13,6 @@ import Purchases.PurchaseManager;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 
 public class GameLoader extends Game {
 
@@ -21,7 +21,7 @@ public class GameLoader extends Game {
 	// private MainMenuScreen menuScreen;
 	private LoaderScreen loadScreen;
 
-	public AssetManager Assets;
+	public GameAssetManager Assets;
 	public ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
 	public PurchaseManager purchaseManager = new PurchaseManager();
 	public final HashMap<String,GameItemInformation> IAPItemInformation = new HashMap<String,GameItemInformation>();
@@ -34,7 +34,7 @@ public class GameLoader extends Game {
 	@Override
 	public void create() {
 		Globals.updateScreenInfo();
-		Assets = new AssetManager();// new GameAssetManager();
+		Assets = new GameAssetManager();// new GameAssetManager();
 		//
 		// gamePlayScreen = new GamePlayScreen(this);
 		// builderScreen = new BuilderScreen(this);

@@ -31,7 +31,7 @@ public class AndroidLauncher extends AndroidApplication implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		config.numSamples = 0;
+		config.numSamples = 2;
 		config.hideStatusBar = true;
 		config.touchSleepTime = 16;
 		Mesh.clearAllMeshes(this);

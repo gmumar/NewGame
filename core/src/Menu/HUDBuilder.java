@@ -4,6 +4,8 @@ import wrapper.CameraManager;
 import wrapper.GameState;
 import wrapper.Globals;
 import Menu.PopQueObject.PopQueObjectType;
+import Menu.Buttons.SimpleImageButton;
+import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import User.User;
 
 import com.badlogic.gdx.Gdx;
@@ -13,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -49,7 +50,7 @@ public class HUDBuilder {
 			};
 
 			exit.setPosition(Globals.GameWidth - 100, Globals.GameHeight - 300);
-			//stage.addActor(exit);
+			// stage.addActor(exit);
 
 			restart = new Button("restart") {
 				@Override
@@ -61,7 +62,7 @@ public class HUDBuilder {
 
 			restart.setPosition(Globals.GameWidth - 100,
 					Globals.GameHeight - 200);
-			//stage.addActor(restart);
+			// stage.addActor(restart);
 
 			// Text Feilds
 			fps = new TextBox("fps");
@@ -84,24 +85,21 @@ public class HUDBuilder {
 		TextureRegionDrawable trd = new TextureRegionDrawable(
 				new TextureRegion(gameLoader.Assets.get("menu/icons/pause.png",
 						Texture.class)));
-		
-		trd.setMinHeight(45);
-		trd.setMinWidth(45);
 
-		pause = new ImageButton(trd);
-		pause.pad(8.5f);
-		pause.addAction(Actions.alpha(0.3f));
+		trd.setMinHeight(Globals.baseSize * 2.3f);
+		trd.setMinWidth(Globals.baseSize * 2);
 
+		pause = SimpleImageButton.create(SimpleImageButtonTypes.PAUSE,
+				gameLoader);
 		pause.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				
+
 				gamePlayScreen.pause();
-				
-				pause.addAction(new SequenceAction(Actions.alpha(0.8f, 0.2f),
-						Actions.alpha(0.3f, 0.4f)));
-				popQueManager.push(new PopQueObject(PopQueObjectType.PAUSE, gamePlayScreen));
+				popQueManager.push(new PopQueObject(PopQueObjectType.PAUSE,
+						gamePlayScreen));
+
 				super.clicked(event, x, y);
 			}
 
@@ -149,7 +147,7 @@ public class HUDBuilder {
 		exit.addAction(fadeAndSide);
 		restart.addAction(fadeAndSide1);
 		pause.addAction(fadeAndSide2);
-		
+
 		mapProgress.addAction(Actions.fadeOut(0.8f));
 	}
 

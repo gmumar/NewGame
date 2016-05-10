@@ -78,19 +78,24 @@ public class GameMesh {
 	// vertice floats
 	static float pointX,  pointY , colorr , colorg , colorb , colora , pointXt , pointYt;
 	
-	static public void create(CameraManager cam, ShaderProgram shader) {
-		initArrays();
-		mesh = new Mesh(false, MAX_VERTS, MAX_VERTS, new VertexAttribute(
-				Usage.Position, POSITION_COMPONENTS, "a_position"),
-				new VertexAttribute(Usage.ColorUnpacked, COLOR_COMPONENTS,
-						"a_color"), new VertexAttribute(
-						Usage.TextureCoordinates, 2, "a_texCoord0"));
-
-		// for(int i=0;i<150;i++) addPoint(0,0);
-		// addTriangle(0, 0, 0, 0, 0, 0, Globals.BLUE);
-		retArray = new MeshDescriptor[LAYER_COUNT];
-		for (int i = 0; i < LAYER_COUNT; i++) {
-			retArray[i] = new MeshDescriptor();
+	private static boolean created = false;
+	
+	static public void create() {
+		if(created == false){
+			initArrays();
+			mesh = new Mesh(false, MAX_VERTS, MAX_VERTS, new VertexAttribute(
+					Usage.Position, POSITION_COMPONENTS, "a_position"),
+					new VertexAttribute(Usage.ColorUnpacked, COLOR_COMPONENTS,
+							"a_color"), new VertexAttribute(
+							Usage.TextureCoordinates, 2, "a_texCoord0"));
+	
+			// for(int i=0;i<150;i++) addPoint(0,0);
+			// addTriangle(0, 0, 0, 0, 0, 0, Globals.BLUE);
+			retArray = new MeshDescriptor[LAYER_COUNT];
+			for (int i = 0; i < LAYER_COUNT; i++) {
+				retArray[i] = new MeshDescriptor();
+			}
+			created = true;
 		}
 
 	}
@@ -128,9 +133,13 @@ public class GameMesh {
 
 	static public void destroy() {
 		mesh.dispose();
+		//
+		vectorVerts.clear();
 		vectorVerts = null;
-
+		
 		retArray = null;
+		
+		created = false;
 
 		// verts = null;
 	}
@@ -141,7 +150,9 @@ public class GameMesh {
 
 		boolean same = true;
 
-		final MeshDescriptor ret = retArray[meshIndex];
+		final MeshDescriptor ret =
+				retArray
+				[meshIndex];
 
 		if (ret.end != end) {
 			ret.end = end;
