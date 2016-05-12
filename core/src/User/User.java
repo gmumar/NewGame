@@ -1,5 +1,7 @@
 package User;
 
+import java.io.Serializable;
+
 import wrapper.GamePreferences;
 import wrapper.Globals;
 import Component.ComponentNames;
@@ -10,6 +12,10 @@ import com.badlogic.gdx.Preferences;
 import com.google.gson.Gson;
 
 public class User {
+	
+	public enum STARS implements Serializable {
+		ONE, TWO, THREE, NONE
+	}
 
 	public static final Integer MAX_BAR3_LEVEL = 15;
 	public static final Integer MAX_TIRE_LEVEL = 5;
@@ -83,6 +89,10 @@ public class User {
 	public void setCurrentTrack(String currentTrack) {
 		
 		//prefs.clear();
+		
+
+		System.out.println("User: Track saved!");
+		
 		prefs.putString(GamePreferences.TRACK_MAP_STR, currentTrack);
 		
 		prefs.flush();
@@ -217,6 +227,32 @@ public class User {
 	
 	public boolean getSfxPlayState() {
 		return userState.playingSfx;
+	}
+
+	public static final String TRACK_PREFIX = "track_";
+	public void setStars(String trackId, STARS stars) {
+		prefs.putString(TRACK_PREFIX + trackId, stars.toString());
+		prefs.flush();
+
+	}
+	
+	public STARS getStars(String trackId){
+		
+		String starString = prefs.getString(TRACK_PREFIX + trackId,
+				STARS.NONE.toString());
+		
+		if(starString.compareTo(STARS.NONE.toString())==0){
+			return STARS.NONE;
+		} else if(starString.compareTo(STARS.ONE.toString())==0){
+			return STARS.ONE;
+		} else if(starString.compareTo(STARS.TWO.toString())==0){
+			return STARS.TWO;
+		} else if(starString.compareTo(STARS.THREE.toString())==0){
+			return STARS.THREE;
+		}
+		
+		return STARS.NONE;
+		
 	}
 	
 }

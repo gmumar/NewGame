@@ -27,6 +27,22 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 
 public class Globals {
+	/*
+	 * 
+black #000000 - menu backgrounds, reading text, button text
+50% opacity - menu icons, unplayed levels
+white #FFFFFF - screen header, pop-up window backgrounds
+bright light #FFFBDF - coin icon and text, tap to play text
+outer glow #FFF180 at 50% opacity if you want to be extra fancy
+green #94C409 - quick start button, selected objects, empty joint, easy unlimited levels
+yellow #FFBD00 - menu buttons, medium unlimited levels
+red #FC6838 - hard unlimited levels, used joint, clear screen button
+light grey #C6C6C6 - locked menu buttons (ex. track builder mode), negative menu buttons (ex. cancel)
+med grey #757575 - builder buttons, upgrade diagrams, sound muted
+dark grey #424242 - pop-up window headers + icon text, level numbers, builder mode header background
+country green #646600 - for borders around played levels in country mode
+arctic blue #627689 - for borders around played levels in arctic mode
+	 */
 	
 	public final static boolean ADMIN_MODE = true;
 

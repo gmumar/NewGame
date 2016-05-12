@@ -22,9 +22,11 @@ import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import ParallexBackground.ScrollingBackground;
+import ParallexBackground.ScrollingBackground.ScrollTypes;
 import Shader.GameMesh;
 import Sounds.SoundManager;
 import User.User;
+import User.User.STARS;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -316,7 +318,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		builtCar.updateSound();
 
-		scrollingBackground.draw(paused);
+		scrollingBackground.draw(paused ? ScrollTypes.STATIONARY : ScrollTypes.NORMAL);
 
 		attachCameraTo(builtCar.getCameraFocusPart());
 		ground.drawShapes();
@@ -383,19 +385,26 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		JSONTrack track = JSONTrack.objectify(user.getCurrentTrack());
 
 		float bestTime = track.getBestTime();
+		int position = Globals.POSITION_LOST;
 
 		if (mapTime <= bestTime) {
 			// first place
-			return Globals.POSITION_FIRST;
+			user.setStars(track.getObjectId(),STARS.THREE);
+			position =  Globals.POSITION_FIRST;
 		} else if (mapTime <= bestTime * 1.10) {
 			// second place
-			return Globals.POSITION_SECOND;
+			user.setStars(track.getObjectId(),STARS.TWO);
+			position =  Globals.POSITION_SECOND;
 		} else if (mapTime <= bestTime * 1.20) {
 			// third
-			return Globals.POSITION_THIRD;
+			user.setStars(track.getObjectId(),STARS.ONE);
+			position =  Globals.POSITION_THIRD;
 		} else {
-			return Globals.POSITION_LOST;
+			user.setStars(track.getObjectId(),STARS.NONE);
+			position =  Globals.POSITION_LOST;
 		}
+		
+		return position;
 
 	}
 

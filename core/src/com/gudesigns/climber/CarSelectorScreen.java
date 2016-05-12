@@ -23,6 +23,7 @@ import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -391,5 +392,15 @@ public class CarSelectorScreen extends SelectorScreen {
 	@Override
 	protected ScreenType getScreenType(){
 		return ScreenType.CAR_SELECTOR;
+	}
+	
+	@Override
+	protected void selectorRender(float delta) {
+		
+	}
+	
+	@Override
+	protected  void clearScreen(){
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 	}
 }

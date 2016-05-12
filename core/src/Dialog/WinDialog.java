@@ -91,10 +91,17 @@ public class WinDialog extends Table {
 			textWrapper.row();
 
 			final TextBox difficulty = new TextBox("difficulty");
-			difficulty.setMaxLength(2);
-			difficulty.setTextBoxString("Here");
+			difficulty.setMaxLength(1);
+			difficulty.setTextBoxString("d");
+			
+			final TextBox index = new TextBox("index");
+			index.setMaxLength(1000);
+			index.setTextBoxString("i");
+			
 			textWrapper.row();
-			textWrapper.add(difficulty);
+			textWrapper.add(index).pad(5);
+			textWrapper.row();
+			textWrapper.add(difficulty).pad(5);
 
 			TextButton upload = new TextButton("upload", skin, "yesButton");
 			upload.addListener(new ClickListener() {
@@ -104,7 +111,8 @@ public class WinDialog extends Table {
 					BackendFunctions.uploadTrack(User.getInstance()
 							.getCurrentTrack(), popQueObject
 							.getGamePlayInstance().getMapTime(), Integer
-							.parseInt(difficulty.getText()));
+							.parseInt(difficulty.getText()), Integer.parseInt(index.getText())
+							);
 					super.clicked(event, x, y);
 				}
 

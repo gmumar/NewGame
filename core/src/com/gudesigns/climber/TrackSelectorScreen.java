@@ -6,11 +6,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import wrapper.GameState;
+import wrapper.Globals;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
-import Menu.Button;
+import JSONifier.JSONTrack.TrackType;
 import Menu.ScreenType;
 import Menu.SelectorScreen;
+import Menu.Buttons.AdventureTrackButton;
+import ParallexBackground.ScrollingBackground;
+import ParallexBackground.ScrollingBackground.ScrollTypes;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
@@ -20,10 +24,12 @@ import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -33,8 +39,13 @@ import com.google.gson.stream.JsonReader;
 
 public class TrackSelectorScreen extends SelectorScreen {
 
+	private ScrollingBackground scrollingBackground;
+
 	public TrackSelectorScreen(GameState gameState) {
 		super(gameState);
+
+		scrollingBackground = new ScrollingBackground(this.gameLoader, null,
+				TrackType.FORREST);
 	}
 
 	@Override
@@ -73,6 +84,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 								+ RESTProperties.TRACK_BEST_TIME
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.TRACK_DIFFICULTY
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.TRACK_INDEX
 
 						, new HttpResponseListener() {
 
@@ -98,6 +111,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 											.getTrackBestTime());
 									trackJson.setDifficulty(fromServer
 											.getTrackDifficulty());
+									trackJson.setIndex(fromServer
+											.getTrackIndex());
 
 									addItemToList(trackJson);
 
@@ -184,10 +199,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	@Override
 	protected void addButton(final JSONParentClass item) {
-		Button b = new Button(item.getObjectId().substring(0, 5));
-
-		b.setZIndex(100);
-		b.setSize(100, 100);
+		Button b = AdventureTrackButton.create(gameLoader,
+				JSONTrack.objectify(item.jsonify()));
 
 		b.addListener(new ClickListener() {
 
@@ -278,7 +291,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 			b = iter.next();
 			b.invalidate();
 
-			itemsTable.add(b).pad(5);
+			itemsTable.add(b).pad(5).height(Globals.baseSize * 4)
+					.width(Globals.baseSize * 4);
 			itemsTable.invalidate();
 			scrollPane.invalidate();
 		}
@@ -288,7 +302,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	@Override
 	protected void populateContentTable(Table contentTable) {
 
-		//contentTable.add(prevPage).colspan(1).left();
+		// contentTable.add(prevPage).colspan(1).left();
 		// stage.addActor(prevPage);
 
 		createItemsTable(contentTable);
@@ -296,33 +310,43 @@ public class TrackSelectorScreen extends SelectorScreen {
 		itemsTable.invalidate();
 		scrollPane.invalidate();
 
-		//contentTable.add(nextPage).colspan(1).right();
-	
+		// contentTable.add(nextPage).colspan(1).right();
+
 	}
-	
+
 	@Override
 	protected void createItemsTable(Table container) {
 		itemsTable = new Table();
-	
 
 		scrollPane = new ScrollPane(itemsTable);
 		scrollPane.layout();
-		//scrollPane.setWidth(100);
+		// scrollPane.setWidth(100);
 		scrollPane.setScrollingDisabled(false, true);
 		scrollPane.setSmoothScrolling(true);
 		scrollPane.setLayoutEnabled(true);
 		scrollPane.setTouchable(Touchable.enabled);
 		scrollPane.setOverscroll(true, false);
 
-		//stage.addActor(scrollPane);
+		// stage.addActor(scrollPane);
 		container.add(scrollPane).width(600f);
-		//container.row();
+		// container.row();
 	}
-	
+
 	@Override
-	protected ScreenType getScreenType(){
+	protected ScreenType getScreenType() {
 		return ScreenType.TRACK_SELECTOR;
 	}
 
+	@Override
+	protected void selectorRender(float delta) {
+		scrollingBackground.draw(ScrollTypes.SCROLLING);
+
+	}
+
+	@Override
+	protected void clearScreen() {
+		Gdx.gl.glClearColor(Globals.FORREST_GREEN_BG.r,
+				Globals.FORREST_GREEN_BG.g, Globals.FORREST_GREEN_BG.b, 1);
+	}
 
 }

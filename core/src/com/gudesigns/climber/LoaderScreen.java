@@ -101,6 +101,9 @@ public class LoaderScreen implements Screen {
 		
 		gameLoader.Assets.load("menu/images/adventure.png", Texture.class);
 		gameLoader.Assets.load("menu/images/infinity.png", Texture.class);
+		gameLoader.Assets.load("menu/images/one_star.png", Texture.class);
+		gameLoader.Assets.load("menu/images/two_stars.png", Texture.class);
+		gameLoader.Assets.load("menu/images/three_stars.png", Texture.class);
 		
 		gameLoader.Assets.load("menu/tags/new.png", Texture.class);
 

@@ -12,6 +12,7 @@ import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
 import JSONifier.JSONTrack.TrackType;
 import ParallexBackground.ScrollingBackground;
+import ParallexBackground.ScrollingBackground.ScrollTypes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -122,7 +123,7 @@ public class CarAnimationRunner {
 		batch.setProjectionMatrix(camera.combined);
 
 		timeCounter += delta;
-		scrollingBackground.draw(false);
+		scrollingBackground.draw(ScrollTypes.NORMAL);
 		if (timeCounter >= Globals.STEP) {
 
 			world.step(Globals.STEP, 80, 40);

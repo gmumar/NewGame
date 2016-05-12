@@ -63,6 +63,8 @@ public class Backendless_Deserializer implements
 						RESTProperties.TRACK_BEST_TIME).getAsFloat());
 				unit.setTrackDifficulty(fromServer.get(
 						RESTProperties.TRACK_DIFFICULTY).getAsInt());
+				unit.setTrackIndex(fromServer.get(
+						RESTProperties.TRACK_INDEX).getAsInt());
 			}
 
 			tmp.add(unit);

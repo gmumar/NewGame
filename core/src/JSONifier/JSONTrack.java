@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 
 public class JSONTrack extends JSONParentClass {
 
-	// TODO: make it so its added to the json array
 	public enum TrackType implements Serializable {
 		FORREST, ARTIC;
 	};
@@ -25,6 +24,15 @@ public class JSONTrack extends JSONParentClass {
 	private ArrayList<Float> smallPoints = null;
 	private float bestTime = 0.0f;
 	private int difficulty = 0;
+	private int index = 0;
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
 	public int getDifficulty() {
 		return difficulty;

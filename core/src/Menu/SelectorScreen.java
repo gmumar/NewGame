@@ -47,7 +47,7 @@ public abstract class SelectorScreen implements Screen {
 	protected PopQueManager popQueManager;
 	public GameLoader gameLoader;
 
-	protected Button  nextPage;
+	protected Button nextPage;
 	protected Button prevPage;
 
 	public volatile boolean resultsRemaining = true;
@@ -75,7 +75,7 @@ public abstract class SelectorScreen implements Screen {
 	private JsonParser parser = new JsonParser();
 	// private Integer previousSize = 0;
 	private boolean initButtons = false;
-	
+
 	public GameState gameState;
 
 	abstract protected void addButton(final JSONParentClass jsonParentClass);
@@ -85,17 +85,21 @@ public abstract class SelectorScreen implements Screen {
 	abstract protected void writeObjectsToFile();
 
 	abstract protected void addSpecificItemToList();
-	
+
 	abstract protected void goNext();
-	
+
 	abstract protected void initButtons();
-	
+
 	abstract protected void populateContentTable(Table contentTable);
-	
+
 	protected abstract void createItemsTable(Table container);
-	
+
 	protected abstract ScreenType getScreenType();
-	
+
+	protected abstract void selectorRender(float delta);
+
+	protected abstract void clearScreen();
+
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
 
@@ -104,7 +108,7 @@ public abstract class SelectorScreen implements Screen {
 		this.gameLoader = gameState.getGameLoader();
 		initStage();
 
-		//initNavigationButtons();
+		// initNavigationButtons();
 
 		popQueManager = new PopQueManager(gameLoader, stage);
 
@@ -171,11 +175,14 @@ public abstract class SelectorScreen implements Screen {
 			public void run() {
 
 				for (int i = from; i < actualTo; i++) {
-					//System.out.println("SelectorScreen: " + items.get(i).jsonify());
+					// System.out.println("SelectorScreen: " +
+					// items.get(i).jsonify());
 					addButton(items.get(i));
 				}
-				if(items.size()>0 && !isLoading() || loadedCount >= currentPageEnd){
-					popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+				if (items.size() > 0 && !isLoading()
+						|| loadedCount >= currentPageEnd) {
+					popQueManager
+							.push(new PopQueObject(PopQueObjectType.DELETE));
 					loadingLock.release();
 				}
 			}
@@ -197,17 +204,19 @@ public abstract class SelectorScreen implements Screen {
 
 					// Iterator<String> iter = cars.iterator();
 
-					if(downloadCancelled){
+					if (downloadCancelled) {
 						return null;
 					}
-					
-					System.out.println("SelectorScreen: " + localLoadedCounter.availablePermits() +  " " + totalLoadedCounter.availablePermits());
-					
-					if(localLoadedCounter.availablePermits()>=totalLoadedCounter.availablePermits()){
+
+					System.out.println("SelectorScreen: "
+							+ localLoadedCounter.availablePermits() + " "
+							+ totalLoadedCounter.availablePermits());
+
+					if (localLoadedCounter.availablePermits() >= totalLoadedCounter
+							.availablePermits()) {
 						return null;
 					}
-					
-					
+
 					writeObjectsToFile();
 
 				} catch (Exception e) {
@@ -222,37 +231,32 @@ public abstract class SelectorScreen implements Screen {
 		});
 	}
 
-
-
 	protected void refreshAllButtons() {
-		
 
-		if(!initButtons){
+		if (!initButtons) {
 			initButtons = !initButtons;
 			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
-			baseTable.setBackground("blackOut");
+			baseTable.setBackground("transparent");
 			baseTable.setFillParent(true);
-			
-			
+
 		} else {
 			baseTable.clear();
 		}
-		
-		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState, false);
-		
+
+		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState,
+				false);
+
 		Table contentTable = new Table();
 		contentTable.setTouchable(Touchable.childrenOnly);
-		
+
 		populateContentTable(contentTable);
 
 		baseTable.add(contentTable).expand().pad(20);
-		
+
 		BottomBar.create(baseTable, getScreenType(), gameState, false);
-		
-		//initNavigationButtons();
-		
-		
-		
+
+		// initNavigationButtons();
+
 		stage.addActor(baseTable);
 	}
 
@@ -305,7 +309,14 @@ public abstract class SelectorScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+
 		renderWorld();
+
+		selectorRender(delta);
+
+		stage.draw();
+		stage.act(Gdx.graphics.getDeltaTime());
+
 		popQueManager.update();
 
 		if (uniqueListLock.tryLock()) {
@@ -329,12 +340,11 @@ public abstract class SelectorScreen implements Screen {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		clearScreen();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
-		stage.draw();
-		stage.act(Gdx.graphics.getDeltaTime());
+
 	}
 
 	@Override
@@ -355,10 +365,11 @@ public abstract class SelectorScreen implements Screen {
 		exit();
 
 	}
-	
-	private void exit(){
+
+	private void exit() {
 		killThreads = true;
-		if(downloadRequest!=null) Gdx.net.cancelHttpRequest(downloadRequest);
+		if (downloadRequest != null)
+			Gdx.net.cancelHttpRequest(downloadRequest);
 	}
 
 	@Override
@@ -366,7 +377,7 @@ public abstract class SelectorScreen implements Screen {
 		exit();
 
 		killThreads = true;
-		
+
 		Globals.globalRunner.submit(new AsyncTask<String>() {
 
 			@Override
@@ -374,9 +385,9 @@ public abstract class SelectorScreen implements Screen {
 				ae.dispose();
 				return null;
 			}
-			
+
 		});
-		
+
 		batch.dispose();
 		stage.dispose();
 

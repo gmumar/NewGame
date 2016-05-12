@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.gudesigns.climber.GameLoader;
 
 public class ScrollingBackground {
+	
+	public enum ScrollTypes {NORMAL, STATIONARY, SCROLLING};
 
 	Texture background;
 	AssembledObject object;
@@ -48,12 +50,14 @@ public class ScrollingBackground {
 		this.object = obj;
 	}
 
-	public void draw(boolean speedOverride) {
+	public void draw(ScrollTypes type) {
 		//batch.draw(background, camera.position.x-20, camera.position.y-5,100,20);
-		if(speedOverride){
+		if(type == ScrollTypes.STATIONARY){
 			rbg.render(new Vector2(0,0));
-		} else {
+		} else if(type == ScrollTypes.NORMAL){
 			rbg.render(object.getSpeed());	
+		} else if(type == ScrollTypes.SCROLLING){
+			rbg.render(new Vector2(0,0));	
 		}
 		
 	}

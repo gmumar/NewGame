@@ -47,9 +47,10 @@ public class TrackMenuBuilder {
 	// private final float BOX_SIZE = 0.0001f;
 	// private final float ROTATION_SIZE = 30;
 
-	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload, worldType,
-			buildPost, buildBar, rotateLeft, rotateRight, delete, panUp, panDown, switchMode, moveMultiple, buildCoin;
-	private TextBox currentMode, currentTrackType;
+	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload,
+			worldType, buildPost, buildBar, rotateLeft, rotateRight, delete,
+			panUp, panDown, switchMode, moveMultiple, buildCoin;
+	private TextBox currentMode, currentTrackType, distance;
 
 	private CameraManager camera;
 	private JSONCompiler compiler;
@@ -67,15 +68,15 @@ public class TrackMenuBuilder {
 	private ShapeRenderer fixtureRenderer;
 	private boolean drawTrack = true;
 	private TrackType trackType = TrackType.FORREST;
-
+	private TrackBuilder trackBuilder;
 
 	private int panSpeedMultiplier = 1;
 	private final static int PAN_SPEED = 1;
-	
-	public boolean isTrackDrawMode(){
+
+	public boolean isTrackDrawMode() {
 		return drawTrack;
 	}
-	
+
 	public TrackMenuBuilder(final GamePhysicalState gamePhysicalState,
 			Stage stage, CameraManager secondCamera,
 			final TrackBuilder trackBuilder, final User user,
@@ -86,40 +87,41 @@ public class TrackMenuBuilder {
 		this.gameLoader = gamePhysicalState.getGameLoader();
 		this.world = gamePhysicalState.getWorld();
 		this.fixtureRenderer = fixtureRenderer;
+		this.trackBuilder = trackBuilder;
 
 		compiler = new JSONCompiler();
-		
+
 		worldType = new Button("Type");
 		worldType.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(trackType == TrackType.FORREST){
+				if (trackType == TrackType.FORREST) {
 					trackType = TrackType.ARTIC;
-				} else if(trackType == TrackType.ARTIC){
+				} else if (trackType == TrackType.ARTIC) {
 					trackType = TrackType.FORREST;
 				}
 				super.clicked(event, x, y);
 			}
 
 		});
-		worldType.setPosition(Globals.ScreenWidth-150, Globals.ScreenHeight-50);
+		worldType.setPosition(Globals.ScreenWidth - 150,
+				Globals.ScreenHeight - 50);
 		stage.addActor(worldType);
-		
+
 		upload = new Button("upload");
 		upload.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				BackendFunctions.uploadTrack(User.getInstance()
-						.getCurrentTrack(), 0.0f,0);
+						.getCurrentTrack(), 0.0f, 0,0);
 				super.clicked(event, x, y);
 			}
 
 		});
-		upload.setPosition(Globals.ScreenWidth-50, Globals.ScreenHeight-50);
-		//stage.addActor(upload);
-		
+		upload.setPosition(Globals.ScreenWidth - 50, Globals.ScreenHeight - 50);
+		// stage.addActor(upload);
 
 		exit = new Button("exit") {
 			@Override
@@ -128,7 +130,7 @@ public class TrackMenuBuilder {
 			}
 		};
 
-		exit.setPosition(Globals.ScreenWidth-50, Globals.ScreenHeight-50);
+		exit.setPosition(Globals.ScreenWidth - 50, Globals.ScreenHeight - 50);
 		stage.addActor(exit);
 
 		zoomIn = new Button("+") {
@@ -136,7 +138,7 @@ public class TrackMenuBuilder {
 			public void Clicked() {
 				camera.zoom -= 0.01;
 				camera.update();
-				
+
 			}
 		};
 
@@ -148,7 +150,7 @@ public class TrackMenuBuilder {
 			public void Clicked() {
 				camera.zoom += 0.01;
 				camera.update();
-				
+
 			}
 		};
 
@@ -175,7 +177,7 @@ public class TrackMenuBuilder {
 			public void Clicked() {
 				camera.position.x += PAN_SPEED * panSpeedMultiplier;
 				camera.update();
-				
+
 			}
 
 		};
@@ -190,7 +192,7 @@ public class TrackMenuBuilder {
 			public void Clicked() {
 				camera.position.x -= PAN_SPEED * panSpeedMultiplier;
 				camera.update();
-				
+
 			}
 		};
 
@@ -198,13 +200,13 @@ public class TrackMenuBuilder {
 		panRight.setHeight(50);
 		panRight.setWidth(50);
 		stage.addActor(panRight);
-		
+
 		panUp = new Button("^") {
 			@Override
 			public void Clicked() {
 				camera.position.y += PAN_SPEED * panSpeedMultiplier;
 				camera.update();
-				
+
 			}
 
 		};
@@ -219,7 +221,7 @@ public class TrackMenuBuilder {
 			public void Clicked() {
 				camera.position.y -= PAN_SPEED * panSpeedMultiplier;
 				camera.update();
-				
+
 			}
 		};
 
@@ -228,7 +230,6 @@ public class TrackMenuBuilder {
 		panDown.setWidth(50);
 		stage.addActor(panDown);
 
-		
 		switchMode = new Button("switch") {
 			@Override
 			public void Clicked() {
@@ -239,30 +240,34 @@ public class TrackMenuBuilder {
 		switchMode.setPosition(600, 50);
 		switchMode.setHeight(50);
 		stage.addActor(switchMode);
-		
+
 		moveMultiple = new Button("multiply") {
 			@Override
 			public void Clicked() {
-				
-				if(panSpeedMultiplier==5)
+
+				if (panSpeedMultiplier == 5)
 					panSpeedMultiplier = 1;
-				else 
+				else
 					panSpeedMultiplier = 5;
 			}
-			
+
 		};
 
 		moveMultiple.setPosition(600, 0);
 		moveMultiple.setHeight(50);
 		stage.addActor(moveMultiple);
-		
+
 		currentTrackType = new TextBox("type");
 		currentTrackType.setPosition(0, Globals.ScreenHeight - 50);
 		stage.addActor(currentTrackType);
-		
+
 		currentMode = new TextBox("Mode");
 		currentMode.setPosition(0, Globals.ScreenHeight - 25);
 		stage.addActor(currentMode);
+
+		distance = new TextBox("Distance");
+		distance.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight - 25);
+		stage.addActor(distance);
 
 		rotateLeft = new Button(">") {
 			@Override
@@ -272,7 +277,7 @@ public class TrackMenuBuilder {
 							lastSelected.getAngle() - MenuBuilder.ROTATION_SIZE
 									* MathUtils.degreesToRadians);
 				}
-				
+
 			}
 
 		};
@@ -290,7 +295,7 @@ public class TrackMenuBuilder {
 							lastSelected.getAngle() + MenuBuilder.ROTATION_SIZE
 									* MathUtils.degreesToRadians);
 				}
-				
+
 			}
 		};
 
@@ -302,7 +307,6 @@ public class TrackMenuBuilder {
 		delete = new Button("delete") {
 			@Override
 			public void Clicked() {
-				
 
 				if (lastSelected == null)
 					return;
@@ -412,8 +416,8 @@ public class TrackMenuBuilder {
 
 		buildBar.setPosition(500, 0);
 		buildBar.setHeight(50);
-		stage.addActor(buildBar);//buildCoin
-		
+		stage.addActor(buildBar);// buildCoin
+
 		buildCoin = new Button("buildCoin") {
 			@Override
 			public void Clicked() {
@@ -444,37 +448,29 @@ public class TrackMenuBuilder {
 		buildCoin.setPosition(500, 50);
 		buildCoin.setHeight(50);
 		stage.addActor(buildCoin);
-		
-		/*buildBall = new Button("buildBall") {
-			@Override
-			public void Clicked() {
-				drawTrack = false;
-				int partLevel = 1;
-				incrementCount(ComponentNames.TRACKBALL);
-				Component c = ComponentBuilder.buildTrackBall(
-						new GamePhysicalState(world, gameLoader), partLevel,
-						true);
-				// c.setUpForBuilder(ComponentNames.BAR3
-				// + Assembler.NAME_ID_SPLIT
-				// + componentCounts.get(ComponentNames.BAR3));
-				JSONComponentName name = new JSONComponentName();
-				name.setBaseName(ComponentNames.TRACKBALL);
-				name.setComponentId(Integer.toString(componentCounts
-						.get(ComponentNames.TRACKBALL)));
-				name.setMountId("*");
-				name.setLevel(partLevel);
-				c.setUpForBuilder(name, partLevel);
-				System.out.println("TrackBuilder: " + name);
-				lastSelected = c.getObject().getPhysicsBody();
-				c.setPosition(camera.position.x, camera.position.y);
-				parts.add(c);
 
-			}
-		};
-
-		buildBall.setPosition(500, 50);
-		buildBall.setHeight(50);
-		stage.addActor(buildBall);*/
+		/*
+		 * buildBall = new Button("buildBall") {
+		 * 
+		 * @Override public void Clicked() { drawTrack = false; int partLevel =
+		 * 1; incrementCount(ComponentNames.TRACKBALL); Component c =
+		 * ComponentBuilder.buildTrackBall( new GamePhysicalState(world,
+		 * gameLoader), partLevel, true); //
+		 * c.setUpForBuilder(ComponentNames.BAR3 // + Assembler.NAME_ID_SPLIT //
+		 * + componentCounts.get(ComponentNames.BAR3)); JSONComponentName name =
+		 * new JSONComponentName(); name.setBaseName(ComponentNames.TRACKBALL);
+		 * name.setComponentId(Integer.toString(componentCounts
+		 * .get(ComponentNames.TRACKBALL))); name.setMountId("*");
+		 * name.setLevel(partLevel); c.setUpForBuilder(name, partLevel);
+		 * System.out.println("TrackBuilder: " + name); lastSelected =
+		 * c.getObject().getPhysicsBody(); c.setPosition(camera.position.x,
+		 * camera.position.y); parts.add(c);
+		 * 
+		 * } };
+		 * 
+		 * buildBall.setPosition(500, 50); buildBall.setHeight(50);
+		 * stage.addActor(buildBall);
+		 */
 
 	}
 
@@ -489,8 +485,10 @@ public class TrackMenuBuilder {
 	public void handleClick(float f, float g) {
 		camera.unproject(mousePoint.set(f, g, 0));
 		// mousePoint.x += (mousePoint.x * Globals.AspectRatio)/6;
-		world.QueryAABB(mouseClickCallback, mousePoint.x - ITEM_SELECT_BOX_SIZE,
-				mousePoint.y - ITEM_SELECT_BOX_SIZE, mousePoint.x + ITEM_SELECT_BOX_SIZE, mousePoint.y
+		world.QueryAABB(mouseClickCallback,
+				mousePoint.x - ITEM_SELECT_BOX_SIZE, mousePoint.y
+						- ITEM_SELECT_BOX_SIZE, mousePoint.x
+						+ ITEM_SELECT_BOX_SIZE, mousePoint.y
 						+ ITEM_SELECT_BOX_SIZE);
 
 	}
@@ -607,18 +605,20 @@ public class TrackMenuBuilder {
 		}
 	};
 
-	public boolean getDrawTrack(){
+	public boolean getDrawTrack() {
 		return drawTrack;
 	}
-	
+
 	public void drawShapes(SpriteBatch batch) {
-		
-		if(drawTrack){
+
+		if (drawTrack) {
 			currentMode.setTextBoxString("Track " + panSpeedMultiplier);
 		} else {
 			currentMode.setTextBoxString("Parts " + panSpeedMultiplier);
 		}
-		
+
+		distance.setTextBoxString(trackBuilder.getMapList().size());
+
 		currentTrackType.setTextBoxString(trackType.name());
 
 		Integer jointType;
@@ -769,7 +769,7 @@ public class TrackMenuBuilder {
 			vec.set(shape.getPosition());
 			transform.mul(vec);
 			// Gdx.gl.glLineWidth(20 / camera.zoom);
-			
+
 			fixtureRenderer.setColor(c);
 			fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 45);
 
