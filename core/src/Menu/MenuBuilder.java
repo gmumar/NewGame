@@ -19,6 +19,7 @@ import JSONifier.JSONCompiler;
 import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import Menu.PopQueObject.PopQueObjectType;
+import Menu.Bars.TitleBar;
 import RESTWrapper.BackendFunctions;
 import User.User;
 
@@ -41,13 +42,17 @@ import com.badlogic.gdx.physics.box2d.Shape.Type;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
-import com.gudesigns.climber.MainMenuScreen;
 
 public class MenuBuilder {
+
+	public final static String BUILDER_SELECTED = "builder_selected";
+	public final static String BUILDER = "builder";
 
 	private final static float BOX_SIZE = 0.3f;
 	public final static float ROTATION_SIZE = 30;
@@ -57,10 +62,10 @@ public class MenuBuilder {
 	private Stage stage;
 	private World world;
 
-	private Button but, tire_but, spring_but, /*zoomIn, zoomOut,*/ rotateLeft,
-			rotateRight, build, exit, upload, levelUp, levelDown, delete;
+	private Button but, tire_but, spring_but, /* zoomIn, zoomOut, */rotateLeft,
+			rotateRight, build, upload, levelUp, levelDown, delete;
 
-	private TextBox partLevelText, moneyBox;
+	private TextBox partLevelText;
 
 	private Vector3 mousePoint = new Vector3();
 	private Body hitBody, lastSelected = null, baseObject;
@@ -81,11 +86,14 @@ public class MenuBuilder {
 	private Vector2 relativeVector = new Vector2();
 
 	private static ShapeRenderer fixtureRenderer;
-	
+
 	private User user;
 	volatile private int partLevel = 1;
 
 	private MenuBuilder instance;
+
+	private Label titleBar;
+	private Integer currentMoney;
 
 	// private FixtureDef mouseFixture;
 	// BaseActor mouseActor;
@@ -99,8 +107,10 @@ public class MenuBuilder {
 		this.stage = stage;
 		this.camera = secondCamera;
 		this.mouseJoined = false;
-		this.user = user;
+		this.user = User.getInstance();
 		this.instance = this;
+
+		currentMoney = user.getMoney();
 		// this.user = user;
 		MenuBuilder.fixtureRenderer = shapeRenderer;
 
@@ -117,6 +127,18 @@ public class MenuBuilder {
 
 		//
 
+		Table base = new Table();
+		base.setFillParent(true);
+
+		titleBar = TitleBar.create(base, ScreenType.MODE_SCREEN, popQueManager,
+				new GameState(gameLoader, user), false);
+
+		Table menuHolders = new Table();
+
+		Table leftMenu = new Table();
+
+		Table rightMenu = new Table();
+
 		but = new Button("Small bar") {
 			@Override
 			public void Clicked() {
@@ -125,8 +147,9 @@ public class MenuBuilder {
 
 		};
 
-		but.setPosition(0, 200);
-		stage.addActor(but);
+		// but.setPosition(0, 200);
+		leftMenu.add(but);
+		leftMenu.row();
 
 		tire_but = new Button("tire") {
 			@Override
@@ -137,8 +160,9 @@ public class MenuBuilder {
 
 		};
 
-		tire_but.setPosition(0, 0);
-		stage.addActor(tire_but);
+		// tire_but.setPosition(0, 0);
+		leftMenu.add(tire_but);
+		leftMenu.row();
 
 		spring_but = new Button("spring") {
 			@Override
@@ -148,8 +172,9 @@ public class MenuBuilder {
 			}
 		};
 
-		spring_but.setPosition(0, 100);
-		stage.addActor(spring_but);
+		// spring_but.setPosition(0, 100);
+		leftMenu.add(spring_but);
+		leftMenu.row();
 
 		delete = new Button("delete") {
 			@Override
@@ -184,8 +209,15 @@ public class MenuBuilder {
 					return;
 				}
 
-				parts.remove(lookupLastPart());
+				Component toRemove = lookupLastPart(lastSelected);
 
+				if (toRemove.getJointBodies() != null) {
+					for (BaseActor joinedPart : toRemove.getJointBodies()) {
+						parts.remove(lookupLastPart(joinedPart.getPhysicsBody()));
+					}
+				}
+
+				parts.remove(toRemove);
 				Array<JointEdge> joints = lastSelected.getJointList();
 
 				for (JointEdge joint : joints) {
@@ -197,34 +229,30 @@ public class MenuBuilder {
 			}
 		};
 
-		delete.setPosition(100, 0);
-		delete.setHeight(50);
-		delete.setWidth(50);
-		stage.addActor(delete);
+		// delete.setPosition(100, 0);
+		// delete.setHeight(50);
+		// delete.setWidth(50);
+		leftMenu.add(delete);
 
-		/*zoomIn = new Button("+") {
-			@Override
-			public void Clicked() {
-				camera.zoom -= 0.01;
-				camera.update();
-			}
-		};
+		menuHolders.add(leftMenu).left().expand();
 
-		zoomIn.setPosition(Globals.ScreenWidth - 100, 50);
-		zoomIn.setHeight(50);
-		stage.addActor(zoomIn);
-
-		zoomOut = new Button("-") {
-			@Override
-			public void Clicked() {
-				camera.zoom += 0.01;
-				camera.update();
-			}
-		};
-
-		zoomOut.setPosition(Globals.ScreenWidth - 100, 0);
-		zoomOut.setHeight(50);
-		stage.addActor(zoomOut);*/
+		/*
+		 * zoomIn = new Button("+") {
+		 * 
+		 * @Override public void Clicked() { camera.zoom -= 0.01;
+		 * camera.update(); } };
+		 * 
+		 * zoomIn.setPosition(Globals.ScreenWidth - 100, 50);
+		 * zoomIn.setHeight(50); stage.addActor(zoomIn);
+		 * 
+		 * zoomOut = new Button("-") {
+		 * 
+		 * @Override public void Clicked() { camera.zoom += 0.01;
+		 * camera.update(); } };
+		 * 
+		 * zoomOut.setPosition(Globals.ScreenWidth - 100, 0);
+		 * zoomOut.setHeight(50); stage.addActor(zoomOut);
+		 */
 
 		build = new Button("build") {
 			@Override
@@ -240,7 +268,7 @@ public class MenuBuilder {
 
 		build.setPosition(0, Globals.ScreenHeight - 100);
 		build.setHeight(50);
-		stage.addActor(build);
+		// stage.addActor(build);
 
 		upload = new Button("^") {
 			@Override
@@ -254,7 +282,7 @@ public class MenuBuilder {
 
 		upload.setPosition(0, Globals.ScreenHeight - 50);
 		upload.setHeight(50);
-		stage.addActor(upload);
+		// stage.addActor(upload);
 
 		rotateLeft = new Button(">") {
 			@Override
@@ -271,7 +299,9 @@ public class MenuBuilder {
 		rotateLeft.setPosition(Globals.ScreenWidth - 50, 150);
 		rotateLeft.setHeight(50);
 		rotateLeft.setWidth(50);
-		stage.addActor(rotateLeft);
+		// stage.addActor(rotateLeft);
+		rightMenu.add(rotateLeft).height(Globals.baseSize * 2);
+		rightMenu.row();
 
 		rotateRight = new Button("<") {
 			@Override
@@ -284,10 +314,9 @@ public class MenuBuilder {
 			}
 		};
 
-		rotateRight.setPosition(Globals.ScreenWidth - 100, 150);
-		rotateRight.setHeight(50);
-		rotateRight.setWidth(50);
-		stage.addActor(rotateRight);
+		rightMenu.add(rotateRight).height(Globals.baseSize * 2);
+		rightMenu.row();
+		// stage.addActor(rotateRight);
 
 		levelUp = new Button("+") {
 			@Override
@@ -325,10 +354,14 @@ public class MenuBuilder {
 			}
 		};
 
-		levelUp.setPosition(Globals.ScreenWidth - 75, 300);
-		levelUp.setHeight(50);
-		levelUp.setWidth(50);
-		stage.addActor(levelUp);
+		rightMenu.add(levelUp).height(Globals.baseSize * 2);
+		rightMenu.row();
+		// stage.addActor(levelUp);
+
+		partLevelText = new TextBox("1");
+		rightMenu.add(partLevelText).height(Globals.baseSize * 2)
+				.width(Globals.baseSize * 2).center().align(Align.center);
+		rightMenu.row();
 
 		levelDown = new Button("-") {
 			@Override
@@ -345,35 +378,16 @@ public class MenuBuilder {
 			}
 		};
 
-		levelDown.setPosition(Globals.ScreenWidth - 75, 200);
-		levelDown.setHeight(50);
-		levelDown.setWidth(50);
-		stage.addActor(levelDown);
+		rightMenu.add(levelDown).height(Globals.baseSize * 2);
+		rightMenu.row();
 
-		partLevelText = new TextBox("1");
-		partLevelText.setPosition(Globals.ScreenWidth - 75, 250);
-		partLevelText.setHeight(50);
-		partLevelText.setWidth(50);
-		stage.addActor(partLevelText);
+		rightMenu.add(build).height(Globals.baseSize * 4);
+		rightMenu.row();
+		// stage.addActor(levelDown);
 
-		moneyBox = new TextBox("1");
-		moneyBox.setTouchable(Touchable.disabled);
-		moneyBox.setPosition(Globals.ScreenWidth / 2 - 25, 0);
-		moneyBox.setHeight(50);
-		moneyBox.setWidth(50);
-		stage.addActor(moneyBox);
+		menuHolders.add(rightMenu).right().expand();
 
-		exit = new Button("exit") {
-			@Override
-			public void Clicked() {
-				gameLoader.setScreen(new MainMenuScreen(gameLoader));
-			}
-		};
-
-		exit.setPosition(Globals.ScreenWidth - 50, Globals.ScreenHeight - 50);
-		exit.setHeight(50);
-		exit.setWidth(50);
-		stage.addActor(exit);
+		base.add(menuHolders).fill().expand();
 
 		// JSONComponentName mouseName = new JSONComponentName();
 		// mouseName.setBaseName("mouseActor");
@@ -382,6 +396,8 @@ public class MenuBuilder {
 		// mouseFixture = ComponentBuilder.buildMount(new
 		// Vector2(mousePoint.x,mousePoint.y), 1, true);
 		// mouseActor.getPhysicsBody().createFixture(mouseFixture);
+
+		stage.addActor(base);
 
 	}
 
@@ -428,6 +444,7 @@ public class MenuBuilder {
 		name.setMountId("*");
 		name.setLevel(partLevel);
 		c.setUpForBuilder(name, partLevel);
+
 		System.out.println("MenuBuilder: " + name);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
@@ -480,7 +497,7 @@ public class MenuBuilder {
 
 	private ArrayList<Component> addSpring(Integer inLevel) {
 		boolean hack = false;
-		
+
 		if (inLevel == -1) {
 			partLevel = user.getSpringLevel();
 		} else {
@@ -489,8 +506,9 @@ public class MenuBuilder {
 		}
 		incrementCount(ComponentNames.SPRINGJOINT);
 
-		ArrayList<Component> list = ComponentBuilder.buildSpringJoint(
-				new GamePhysicalState(world, gameLoader), partLevel, true, hack);
+		ArrayList<Component> list = ComponentBuilder
+				.buildSpringJoint(new GamePhysicalState(world, gameLoader),
+						partLevel, true, hack);
 
 		Component c = list.get(0);
 		// c.setUpForBuilder(Assembler.NAME_ID_SPLIT
@@ -518,7 +536,7 @@ public class MenuBuilder {
 	}
 
 	private void setUpPreBuiltCar() {
-		//World tmpWorld = new World(new Vector2(), false);
+		// World tmpWorld = new World(new Vector2(), false);
 		JSONCar currentCarJson = new JSONCar();
 		currentCarJson = JSONCar.objectify(user.getCurrentCar());
 		// HashMap<String, Component> carParts =
@@ -543,8 +561,6 @@ public class MenuBuilder {
 			JSONComponentName name = jcomponent.getjComponentName();// comp.getjComponentName();
 			String key = name.getBaseId();
 
-			System.out.println("---------------" + name.toString());
-
 			if (seenComponents.contains(key)) {
 
 			} else {
@@ -563,7 +579,6 @@ public class MenuBuilder {
 				} else if (name.getBaseName().compareTo(ComponentNames.BAR3) == 0) {
 					addedComponents = addSmallBar(name.getLevel());
 				} else {
-					System.out.println("Item did not match");
 					System.exit(1);
 				}
 
@@ -582,9 +597,11 @@ public class MenuBuilder {
 													.getPositionX()),
 											Float.parseFloat(addcomp
 													.getProperties()
-													.getPositionY() ));
-									 addedComponent.getObject().setRotation(
-									 Float.parseFloat(addcomp.getProperties().getRotation()));
+													.getPositionY()));
+									addedComponent.getObject().setRotation(
+											Float.parseFloat(addcomp
+													.getProperties()
+													.getRotation()));
 								}
 							}
 						}
@@ -623,11 +640,11 @@ public class MenuBuilder {
 			 */
 		}
 
-		//tmpWorld.dispose();
+		// tmpWorld.dispose();
 
 	}
 
-	private Component lookupLastPart() {
+	private Component lookupLastPart(Body body) {
 
 		/*
 		 * Array<Fixture> fixtures = lastSelected.getFixtureList(); Fixture
@@ -647,15 +664,12 @@ public class MenuBuilder {
 		 * if (fixture.getUserData() == null) { //return null; }
 		 */
 
-		System.out.println("Set "
-				+ (JSONComponentName) lastSelected.getUserData());
-
 		for (Component part : parts) {
 
 			if (part.getjComponentName()
 					.getBaseId()
 					.compareTo(
-							((JSONComponentName) lastSelected.getUserData())
+							((JSONComponentName) body.getUserData())
 									.getBaseId()) == 0) {
 
 				return part;
@@ -668,6 +682,12 @@ public class MenuBuilder {
 	}
 
 	public void drawForBuilder(SpriteBatch batch) {
+		currentMoney = Animations
+				.money(titleBar, user.getMoney(), currentMoney);
+
+		for (Component part : parts) {
+			part.draw(batch, BUILDER);
+		}
 
 		if (lastSelected == null)
 			return;
@@ -676,34 +696,21 @@ public class MenuBuilder {
 				.getBaseId();
 
 		for (Component part : parts) {
+
 			if (part.getjComponentName().getBaseId().compareTo(name) == 0) {
-				part.draw(batch);
+				part.draw(batch, BUILDER_SELECTED);
 			}
-		}
-
-	}
-
-	public void draw(SpriteBatch batch) {
-
-		Iterator<Component> iter = parts.iterator();
-
-		while (iter.hasNext()) {
-			Component part = iter.next();
-			part.draw(batch);
 		}
 
 	}
 
 	private void setLastSelectedLevel(Integer level) {
 		partLevel = level;
-		Component c = lookupLastPart();
+		Component c = lookupLastPart(lastSelected);
 
 		c.setPartLevel(level);
 
 		((JSONComponentName) lastSelected.getUserData()).setLevel(level);
-
-		System.out
-				.println("MenuBulder: setting level " + c.getjComponentName());
 
 		Array<JointEdge> joints = c.getObject().getPhysicsBody().getJointList();
 
@@ -714,7 +721,6 @@ public class MenuBuilder {
 	}
 
 	public void successfulBuy() {
-		System.out.println("buy successfull");
 		setLastSelectedLevel(user.getLevel(((JSONComponentName) lastSelected
 				.getUserData()).getBaseName()));
 	}
@@ -725,8 +731,11 @@ public class MenuBuilder {
 
 	public void drawShapes(SpriteBatch batch) {
 
+		final Color unConnectedColor = Color.GREEN;
+		final Color ConnectedColorLocked = Color.RED;
+		final Color ConnectedColorUnLocked = Color.RED;
+
 		partLevelText.setText(Integer.toString(partLevel));
-		moneyBox.setText(user.getMoney().toString());
 
 		// if(clickedLevelUpBuy){
 		//
@@ -761,9 +770,9 @@ public class MenuBuilder {
 
 				jointType = lookupJointType(fixtureA);
 				if (jointType == 0) {
-					drawFixtureSquare(fixtureA, Globals.ORANGE);
+					drawFixtureSquare(fixtureA, ConnectedColorLocked);
 				} else if (jointType == 1) {
-					drawFixture(fixtureA, Globals.FORREST_GREEN);
+					drawFixtureDiamond(fixtureA, ConnectedColorUnLocked);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureA.getUserData())
@@ -771,9 +780,9 @@ public class MenuBuilder {
 
 				jointType = lookupJointType(fixtureB);
 				if (jointType == 0) {
-					drawFixtureSquare(fixtureB, Globals.ORANGE);
+					drawFixtureSquare(fixtureB, ConnectedColorLocked);
 				} else if (jointType == 1) {
-					drawFixture(fixtureB, Globals.FORREST_GREEN);
+					drawFixtureDiamond(fixtureB, ConnectedColorUnLocked);
 				}
 
 				drawIds.add(((JSONComponentName) fixtureB.getUserData())
@@ -806,10 +815,10 @@ public class MenuBuilder {
 					// jointType = lookupJointType(fixture);
 					// if(jointType == -1){
 					if (fixture.getUserData() == null) {
-						drawFixture(fixture, Globals.RED);
+						drawFixture(fixture, unConnectedColor);
 					} else if (!drawIds.contains(((JSONComponentName) fixture
 							.getUserData()).getMountedId())) {
-						drawFixture(fixture, Globals.RED);
+						drawFixture(fixture, unConnectedColor);
 					}
 					// } else if(jointType == 1){
 					// ;
@@ -828,11 +837,11 @@ public class MenuBuilder {
 						// jointType = lookupJointType(fixture);
 						// if(jointType == -1){
 						if (fixture.getUserData() == null) {
-							drawFixture(fixture, Globals.RED);
+							drawFixture(fixture, unConnectedColor);
 						} else if (!drawIds
 								.contains(((JSONComponentName) fixture
 										.getUserData()).getMountedId())) {
-							drawFixture(fixture, Globals.RED);
+							drawFixture(fixture, unConnectedColor);
 						}
 						// } else if(jointType == 1){
 						// ;
@@ -879,6 +888,8 @@ public class MenuBuilder {
 	}
 
 	private void drawFixture(Fixture fix, Color c) {
+		final float cirlceSize = 0.1f;
+
 		if (!isFixtureName((JSONComponentName) fix.getUserData())) {
 			return;
 		}
@@ -892,12 +903,15 @@ public class MenuBuilder {
 			transform.mul(vec);
 			// Gdx.gl.glLineWidth(20 / camera.zoom);
 			fixtureRenderer.setColor(c);
-			fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f, 45);
+			fixtureRenderer.circle(vec.x, vec.y, cirlceSize, 45);
 
 		}
 	}
 
 	private void drawFixtureSquare(Fixture fix, Color c) {
+
+		final float squareSize = 0.17f;
+
 		if (!isFixtureName((JSONComponentName) fix.getUserData())) {
 			return;
 		}
@@ -911,7 +925,36 @@ public class MenuBuilder {
 			transform.mul(vec);
 			// Gdx.gl.glLineWidth(20 / camera.zoom);
 			fixtureRenderer.setColor(c);
-			fixtureRenderer.box(vec.x - 0.25f, vec.y - 0.25f, 0, 0.5f, 0.5f, 1);
+			fixtureRenderer.box(vec.x - squareSize / 2, vec.y - squareSize / 2,
+					0, squareSize, squareSize, 1);
+			// fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f,
+			// 45);
+
+		}
+	}
+
+	private void drawFixtureDiamond(Fixture fix, Color c) {
+
+		final float squareSize = 0.17f;
+
+		if (!isFixtureName((JSONComponentName) fix.getUserData())) {
+			return;
+		}
+
+		Transform transform = fix.getBody().getTransform();
+		if (fix.getShape().getType() == Type.Circle) {
+
+			CircleShape shape = (CircleShape) fix.getShape();
+			Vector2 vec = new Vector2();
+			vec.set(shape.getPosition());
+			transform.mul(vec);
+			// Gdx.gl.glLineWidth(20 / camera.zoom);
+			fixtureRenderer.setColor(c);
+			fixtureRenderer.rect(vec.x - squareSize / 2,
+					vec.y - squareSize / 2, squareSize / 2, squareSize / 2,
+					squareSize, squareSize, 1, 1, 45, c, c, c, c);
+			// fixtureRenderer.box(vec.x - squareSize/2, vec.y - squareSize/2,
+			// 0, squareSize, squareSize, 1);
 			// fixtureRenderer.circle(vec.x, vec.y, shape.getRadius() + 0.2f,
 			// 45);
 
@@ -1042,7 +1085,7 @@ public class MenuBuilder {
 
 				// JSONComponentName hitBodyName = ((JSONComponentName) hitBody
 				// .getUserData());
-				partLevel = lookupLastPart().getPartLevel();// hitBodyName.getLevel();
+				partLevel = lookupLastPart(lastSelected).getPartLevel();// hitBodyName.getLevel();
 
 				// if (hitBodyName.getBaseName().compareTo(ComponentNames.LIFE)
 				// == 0) {

@@ -108,12 +108,29 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/tags/new.png", Texture.class);
 
 		// // Bars
+		gameLoader.Assets.load("bar/builder.png", Texture.class);
+		gameLoader.Assets.load("bar/builder_selected.png", Texture.class);
 		gameLoader.Assets.load("bar/level1.png", Texture.class);
 		gameLoader.Assets.load("bar/level2.png", Texture.class);
 		gameLoader.Assets.load("bar/level3.png", Texture.class);
 		gameLoader.Assets.load("bar/level4.png", Texture.class);
 		gameLoader.Assets.load("bar/level5.png", Texture.class);
-
+		
+		// // Tire
+		gameLoader.Assets.load("tire/builder.png", Texture.class);
+		gameLoader.Assets.load("tire/builder_selected.png", Texture.class);
+		
+		// // Springs
+		gameLoader.Assets.load("spring_upper/builder.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/builder_selected.png", Texture.class);
+		
+		gameLoader.Assets.load("spring_lower/builder.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/builder_selected.png", Texture.class);
+		
+		// // Life
+		gameLoader.Assets.load("life/builder.png", Texture.class);
+		gameLoader.Assets.load("life/builder_selected.png", Texture.class);
+		
 		// Sounds
 		gameLoader.Assets.load("music/track1.ogg", Music.class);
 		gameLoader.Assets.load("soundfx/coin.mp3", Sound.class);

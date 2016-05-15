@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.gudesigns.climber.SplashScreen.SplashActor;
 
@@ -88,6 +89,21 @@ public class Animations {
 		table.addAction(new SequenceAction(Actions.delay(0.5f),
 				new ParallelAction(Actions.fadeIn(0.5f), Actions.moveBy(0,
 						distance, 0.2f))));
+	}
+	
+	public static final Integer money(Label titleBar, Integer previousMoney, Integer currentMoney){
+		if(
+				previousMoney > 
+				currentMoney){
+			currentMoney ++;
+		}
+		
+		if(previousMoney < currentMoney){
+			currentMoney --;
+		}
+		titleBar.setText(currentMoney.toString());
+		
+		return currentMoney;
 	}
 
 }

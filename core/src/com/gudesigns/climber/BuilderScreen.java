@@ -112,12 +112,14 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	@Override
 	public void render(float delta) {
+		
+		
 		renderWorld();
 		batch.begin();
 		menu.drawForBuilder(batch);
 		batch.end();
 
-		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.begin(ShapeType.Filled);
 		menu.drawShapes(batch);
 		shapeRenderer.end();
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -127,13 +129,13 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(0.4f, 0.4f, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
-		debugRenderer.render(world, camera.combined);
+		//debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
 		
 	}

@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import wrapper.BaseActor;
+import wrapper.GameState;
 import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import JSONifier.Properties;
@@ -442,6 +443,26 @@ public class Component {
 				body.draw(batch);
 			}
 		}
+	}
+	
+	public void draw(SpriteBatch batch, String texture) {
+		if (getJointBodies() == null) {
+			this.getObject().draw(batch, texture);
+		} else {
+			/*
+			 * Iterator<BaseActor> iter = getJointBodies().iterator(); while
+			 * (iter.hasNext()) { BaseActor body = iter.next();
+			 * body.draw(batch); }
+			 */
+
+			for (BaseActor body : getJointBodies()) {
+				body.draw(batch, texture);
+			}
+		}
+	}
+	
+	public void addTexture(String name, String texture){
+		this.getObject().addSprite(name ,texture);
 	}
 
 }

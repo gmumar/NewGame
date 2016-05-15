@@ -28,6 +28,9 @@ public class BaseActor {
 
 	private Sprite sprite;
 	private Body body;
+	private GamePhysicalState gameState;
+
+	private HashMap<String, Sprite> sprites = new HashMap<String, Sprite>();
 
 	// private String name, textureStr;
 	private JSONComponentName name;
@@ -59,12 +62,13 @@ public class BaseActor {
 
 	private ArrayList<Vector2> mounts = new ArrayList<Vector2>();
 	private HashMap<Integer, Joint> joints = new HashMap<Integer, Joint>();
-	
+
 	private float spriteHalfHeight, spriteHalfWidth;
 
 	public BaseActor(JSONComponentName name, String texture,
 			GamePhysicalState gameState) {
 
+		this.gameState = gameState;
 		this.texture = gameState.getGameLoader().Assets.get(texture,
 				Texture.class);
 		this.name = name;
@@ -76,6 +80,7 @@ public class BaseActor {
 	}
 
 	public BaseActor(JSONComponentName name, GamePhysicalState gameState) {
+		this.gameState = gameState;
 		this.onlyPhysicBody = true;
 		this.name = name;
 		this.world = gameState.getWorld();
@@ -135,6 +140,7 @@ public class BaseActor {
 			this.onlyPhysicBody = true;
 		}
 
+		this.gameState = gameState;
 		this.name = name;
 		this.world = gameState.getWorld();
 
@@ -143,13 +149,26 @@ public class BaseActor {
 	}
 
 	private Vector2 pos;
+
 	public void draw(SpriteBatch batch) {
 		if (!onlyPhysicBody) {
 			pos = body.getPosition();
-			sprite.setPosition(pos.x - spriteHalfWidth,
-					pos.y - spriteHalfHeight);
+			sprite.setPosition(pos.x - spriteHalfWidth, pos.y
+					- spriteHalfHeight);
 			sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 			sprite.draw(batch);
+		}
+	}
+
+	public void draw(SpriteBatch batch, String textureName) {
+		if (!onlyPhysicBody) {
+			Sprite s = sprites.get(textureName);
+			if (s != null) {
+				pos = body.getPosition();
+				s.setPosition(pos.x - s.getWidth()/2, pos.y - s.getHeight()/2);
+				s.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+				s.draw(batch);
+			}
 		}
 	}
 
@@ -178,6 +197,19 @@ public class BaseActor {
 			sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 			spriteHalfHeight = sprite.getHeight() / 2;
 			spriteHalfWidth = sprite.getWidth() / 2;
+		}
+	}
+
+	public void addSprite(String name, String textureName) {
+		if (!onlyPhysicBody) {
+			Texture t = gameState.getGameLoader().Assets
+					.getFilteredTexture(textureName);
+			Sprite s = new Sprite(t);
+			s.setSize(Globals.PixelToMeters(t.getWidth()),
+					Globals.PixelToMeters(t.getHeight()));
+
+			s.setOrigin(s.getWidth() / 2, s.getHeight() / 2);
+			sprites.put(name, s);
 		}
 	}
 
@@ -309,6 +341,19 @@ public class BaseActor {
 		}
 		initBody();
 	}
+	
+	public void setScale(String name, float xy) {
+		scaleX = scaleY = xy;
+		if (!onlyPhysicBody) {
+			
+			Sprite s = sprites.get(name);
+			s.setSize(s.getWidth() * scaleX, s.getHeight()
+					* scaleY);
+			s.setOrigin(s.getWidth() / 2, s.getHeight() / 2);
+
+		}
+		initBody();
+	}
 
 	public void setScaleY(float y) {
 		scaleY = y;
@@ -318,6 +363,19 @@ public class BaseActor {
 			sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 			spriteHalfHeight = sprite.getHeight() / 2;
 			spriteHalfWidth = sprite.getWidth() / 2;
+		}
+		initBody();
+	}
+	
+	public void setScaleY(String name, float y) {
+		scaleY = y;
+		if (!onlyPhysicBody) {
+			Sprite s = sprites.get(name);
+			s.setSize(s.getWidth() * scaleX, s.getHeight()
+					* scaleY);
+			s.setOrigin(s.getWidth() / 2, s.getHeight() / 2);
+			//spriteHalfHeight = sprite.getHeight() / 2;
+			//spriteHalfWidth = sprite.getWidth() / 2;
 		}
 		initBody();
 	}

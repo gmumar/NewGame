@@ -28,12 +28,16 @@ import com.gudesigns.climber.TrackSelectorScreen;
 
 public class TitleBar {
 
-	public final static TableW create(Table base, final ScreenType type,
+	static Label coins;
+	static User user;
+
+	public final static Label create(Table base, final ScreenType type,
 			final PopQueManager popQueManager, final GameState gameState,
 			boolean animate) {
 		final GameLoader gameLoader = gameState.getGameLoader();
 		Skin skin = Skins.loadDefault(gameLoader, 0);
 		TableW titleBar = new TableW(skin);
+		user = User.getInstance();
 
 		// Back button
 		Button back = SimpleImageButton.create(SimpleImageButtonTypes.BACK,
@@ -92,8 +96,7 @@ public class TitleBar {
 						.getFilteredTexture("menu/icons/glowing_coin.png"));
 		buyCoins.add(glowingCoin).width(Globals.baseSize * 2.5f)
 				.height(Globals.baseSize * 2f);
-		Label coins = new Label(User.getInstance().getMoney().toString(), skin,
-				"title");
+		coins = new Label(user.getMoney().toString(), skin, "title");
 		buyCoins.add(coins);
 
 		titleBar.add(buyCoins).left().colspan(1).pad(4);
@@ -124,7 +127,7 @@ public class TitleBar {
 
 		});
 
-		titleBar.add(sound);
+		titleBar.add(sound).right();
 
 		base.add(titleBar).fillX().height(Globals.baseSize * 2).expandX()
 				.center();
@@ -134,7 +137,7 @@ public class TitleBar {
 		if (animate)
 			Animations.slideInFromTop(titleBar, -50);
 
-		return titleBar;
+		return coins;
 
 	}
 

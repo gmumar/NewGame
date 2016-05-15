@@ -68,9 +68,9 @@ public abstract class SelectorScreen implements Screen {
 	public volatile boolean downloadCancelled = false;
 
 	protected int pageNumber = 0;
-	protected static final int MAX_CARS_PER_PAGE = 6;
+	//protected static final int MAX_ITEMS_PER_PAGE = 6;
 	protected int currentPageStart = 0;
-	protected int currentPageEnd = MAX_CARS_PER_PAGE;
+	protected int currentPageEnd ;
 	private int loadedCount = 0;
 	private JsonParser parser = new JsonParser();
 	// private Integer previousSize = 0;
@@ -99,9 +99,13 @@ public abstract class SelectorScreen implements Screen {
 	protected abstract void selectorRender(float delta);
 
 	protected abstract void clearScreen();
+	
+	protected abstract int getItemsPerPage();
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
+		
+		currentPageEnd = getItemsPerPage();
 
 		// ae = Globals.globalRunner;
 		this.gameState = gameState;

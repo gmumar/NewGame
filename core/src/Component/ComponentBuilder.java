@@ -6,6 +6,7 @@ import wrapper.BaseActor;
 import wrapper.GamePhysicalState;
 import Component.Component.ComponentTypes;
 import JSONifier.JSONComponentName;
+import Menu.MenuBuilder;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -84,6 +85,8 @@ public class ComponentBuilder {
 
 		Component tmpComponent = new Component(tmpActor, ComponentTypes.PART,
 				componentName);
+		tmpComponent.addTexture(MenuBuilder.BUILDER, "bar/builder.png");
+		tmpComponent.addTexture(MenuBuilder.BUILDER_SELECTED, "bar/builder_selected.png");
 
 		if (forBuilder) {
 
@@ -166,6 +169,8 @@ public class ComponentBuilder {
 		componentName.setBaseName(ComponentNames.WHEEL);
 		Component tireComponent = new Component(tmpActor, ComponentTypes.PART,
 				componentName);
+		tireComponent.addTexture(MenuBuilder.BUILDER, "tire/builder.png");
+		tireComponent.addTexture(MenuBuilder.BUILDER_SELECTED, "tire/builder_selected.png");
 		tireComponent.setJointBodies(bodies);
 
 		componentName.setBaseName(ComponentNames.AXLE);
@@ -203,10 +208,15 @@ public class ComponentBuilder {
 		BaseActor topFixture = new BaseActor(componentNameUpper, properties,
 				gameState);
 
+		topFixture.addSprite(MenuBuilder.BUILDER, "spring_upper/builder.png");
+		topFixture.addSprite(MenuBuilder.BUILDER_SELECTED, "spring_upper/builder_selected.png");
+
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(topFixture.getCenter());
 		topFixture.setMounts(mountTop, 0.0f);
 		topFixture.setScaleY(1.2f);
+		topFixture.setScaleY(MenuBuilder.BUILDER,1.2f);
+		topFixture.setScaleY(MenuBuilder.BUILDER_SELECTED,1.2f);
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(0.3f, 0.5f, new Vector2(0, -0.2f), 0);
 		topFixture.setShapeBase(shape);
@@ -238,6 +248,8 @@ public class ComponentBuilder {
 
 		BaseActor botFixture = new BaseActor(componentNameLower, properties,
 				gameState);
+		botFixture.addSprite(MenuBuilder.BUILDER, "spring_lower/builder.png");
+		botFixture.addSprite(MenuBuilder.BUILDER_SELECTED, "spring_lower/builder_selected.png");
 
 		/*
 		 * BaseActor botFixture = new BaseActor( ComponentNames.SPRINGJOINT +
@@ -249,6 +261,8 @@ public class ComponentBuilder {
 		mountBot.add(botFixture.getCenter());
 		botFixture.setMounts(mountBot, 0.0f);
 		botFixture.setScaleY(1.5f);
+		botFixture.setScaleY(MenuBuilder.BUILDER,1.25f);
+		botFixture.setScaleY(MenuBuilder.BUILDER_SELECTED,1.25f);
 		shape.setAsBox(0.3f, 0.5f, new Vector2(0, 0.2f), 0);
 		botFixture.setShapeBase(shape);
 		// botFixture.setScale(0.3f);
@@ -315,7 +329,7 @@ public class ComponentBuilder {
 		topComponent.setJointBodies(bodies);
 
 		Component botComponent = new Component(botFixture,
-				ComponentTypes.JOINT, componentNameLower);
+				ComponentTypes.JOINT, componentNameLower);		
 		botComponent.setJointBodies(bodies);
 
 		ArrayList<Component> retList = new ArrayList<Component>();
@@ -339,9 +353,13 @@ public class ComponentBuilder {
 
 		// Setup mounts, shape
 		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
+		tmpActor.addSprite(MenuBuilder.BUILDER, "life/builder.png");
+		tmpActor.addSprite(MenuBuilder.BUILDER_SELECTED, "life/builder_selected.png");
 
 		tmpActor.setDensity(5);
 		tmpActor.setScale(0.6f);
+		tmpActor.setScale(MenuBuilder.BUILDER,0.6f);
+		tmpActor.setScale(MenuBuilder.BUILDER_SELECTED,0.6f);
 
 		if (!forBuilder) {
 			CircleShape shape = new CircleShape();

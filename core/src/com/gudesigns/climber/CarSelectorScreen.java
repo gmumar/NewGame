@@ -37,6 +37,11 @@ import com.badlogic.gdx.utils.async.AsyncTask;
 
 public class CarSelectorScreen extends SelectorScreen {
 
+	@Override
+	protected int getItemsPerPage() {
+		return 6;
+	}
+	
 	public CarSelectorScreen(GameState gameState) {
 		super(gameState);
 	}
@@ -340,10 +345,10 @@ public class CarSelectorScreen extends SelectorScreen {
 					}
 					// buttons.clear();
 
-					currentPageStart -= MAX_CARS_PER_PAGE;
+					currentPageStart -= getItemsPerPage();
 					if (currentPageStart <= 0)
 						currentPageStart = 0;
-					currentPageEnd = currentPageStart + MAX_CARS_PER_PAGE;
+					currentPageEnd = currentPageStart + getItemsPerPage();
 				}
 
 			}
@@ -370,8 +375,8 @@ public class CarSelectorScreen extends SelectorScreen {
 
 				pageDisplayed = false;
 				// buttons.clear();
-				currentPageStart += MAX_CARS_PER_PAGE;
-				currentPageEnd += MAX_CARS_PER_PAGE;
+				currentPageStart += getItemsPerPage();
+				currentPageEnd += getItemsPerPage();
 
 				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
 			}

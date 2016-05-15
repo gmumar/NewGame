@@ -39,7 +39,14 @@ import com.google.gson.stream.JsonReader;
 
 public class TrackSelectorScreen extends SelectorScreen {
 
+	@Override
+	protected int getItemsPerPage() {
+		return 20;
+	}
+
 	private ScrollingBackground scrollingBackground;
+	
+	
 
 	public TrackSelectorScreen(GameState gameState) {
 		super(gameState);
