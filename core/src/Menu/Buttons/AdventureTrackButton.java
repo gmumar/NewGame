@@ -3,6 +3,7 @@ package Menu.Buttons;
 import wrapper.Globals;
 import Dialog.Skins;
 import JSONifier.JSONTrack;
+import JSONifier.JSONTrack.TrackType;
 import User.User;
 import User.User.STARS;
 
@@ -22,9 +23,15 @@ public class AdventureTrackButton {
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		String indexTxt = Integer.toString(track.getIndex());
 		User user = User.getInstance();
-
-		Button base = new Button(skin, "adventureTrack");
-
+		
+		Button base =null;
+		
+		if(track.getType()==TrackType.FORREST){
+			base = new Button(skin, "adventureTrack_forrest");
+		} else if (track.getType()==TrackType.ARTIC) {
+			base = new Button(skin, "adventureTrack_artic");
+		}
+ 
 		Table content = new Table(skin);
 		content.setBackground("white");
 
@@ -41,15 +48,12 @@ public class AdventureTrackButton {
 							.getFilteredTexture("menu/images/one_star.png")))));
 			
 			starWidth*=1;
-			System.out.println("AdventureTrackButton: one star");
-
 		} else if (user.getStars(track.getObjectId()) == STARS.TWO) {
 			stars = new Image((new TextureRegionDrawable(new TextureRegion(
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/two_stars.png")))));
 			
 			starWidth*=2;
-			System.out.println("AdventureTrackButton: two star");
 
 		} else if (user.getStars(track.getObjectId()) == STARS.THREE) {
 			stars = new Image(
@@ -59,7 +63,6 @@ public class AdventureTrackButton {
 											.getFilteredTexture("menu/images/three_stars.png")))));
 			
 			starWidth*=3;
-			System.out.println("AdventureTrackButton: three star");
 		}
 
 		content.add(stars).top().padBottom(15).height(Globals.baseSize*1/2).width(starWidth);

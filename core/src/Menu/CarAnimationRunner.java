@@ -12,7 +12,7 @@ import Assembly.Assembler;
 import GroundWorks.GroundBuilder;
 import JSONifier.JSONTrack.TrackType;
 import ParallexBackground.ScrollingBackground;
-import ParallexBackground.ScrollingBackground.ScrollTypes;
+import ParallexBackground.ScrollingBackground.BackgroundType;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,12 +30,11 @@ public class CarAnimationRunner {
 	private ScrollingBackground scrollingBackground;
 	private GameLoader gameLoader;
 	private CameraManager camera;
-	
-	
+
 	// State
-	 private World world = null;
-	 private AssembledObject builtCar = null;
-	 private GroundBuilder ground = null;
+	private World world = null;
+	private AssembledObject builtCar = null;
+	private GroundBuilder ground = null;
 
 	public CarAnimationRunner(GameState gameState) {
 		// GameMesh must be created before this is called
@@ -48,9 +47,10 @@ public class CarAnimationRunner {
 		initWorld();
 		initShader();
 
-		if(builtCar == null){
-			builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
-					gameLoader), gameState.getUser().getCurrentCar(), false);
+		if (builtCar == null) {
+			builtCar = Assembler.assembleObject(new GamePhysicalState(
+					this.world, gameLoader), gameState.getUser()
+					.getCurrentCar(), false);
 			builtCar.setPosition(6, 45);
 			builtCar.setMaxVelocity(20);
 		}
@@ -61,26 +61,24 @@ public class CarAnimationRunner {
 		fakeTouch.touched = true;
 		touches.add(fakeTouch);
 
-		if(ground==null){
-		ground = new GroundBuilder(new GamePhysicalState(this.world,
-				this.gameLoader), this.camera, shader, colorShader, true,
-				gameState.getUser());
+		if (ground == null) {
+			ground = new GroundBuilder(new GamePhysicalState(this.world,
+					this.gameLoader), this.camera, shader, colorShader, true,
+					gameState.getUser());
 		}
 
-
-		//ground.reset();
-		
+		// ground.reset();
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader,
-				builtCar, TrackType.FORREST);
+				builtCar, TrackType.FORREST, BackgroundType.NORMAL);
 	}
 
 	final private void initWorld() {
-		if(world==null){
-		world = (new World(new Vector2(0, -38f), true));
-		world.setAutoClearForces(true);
-		world.setWarmStarting(true);
-		world.step(10, 100, 120);
+		if (world == null) {
+			world = (new World(new Vector2(0, -38f), true));
+			world.setAutoClearForces(true);
+			world.setWarmStarting(true);
+			world.step(10, 100, 120);
 		}
 	}
 
@@ -123,7 +121,7 @@ public class CarAnimationRunner {
 		batch.setProjectionMatrix(camera.combined);
 
 		timeCounter += delta;
-		scrollingBackground.draw(ScrollTypes.NORMAL);
+		scrollingBackground.draw(BackgroundType.NORMAL);
 		if (timeCounter >= Globals.STEP) {
 
 			world.step(Globals.STEP, 80, 40);
@@ -158,14 +156,14 @@ public class CarAnimationRunner {
 	}
 
 	public void dispose() {
-		//ground.destory();
-		//batch.dispose();
-		//builtCar.dispose();
-		//world.dispose();
+		// ground.destory();
+		// batch.dispose();
+		// builtCar.dispose();
+		// world.dispose();
 		camera = null;
 		// carCamera = null;
-		//shader.dispose();
-		//colorShader.dispose();
+		// shader.dispose();
+		// colorShader.dispose();
 		touches.clear();
 		touches = null;
 	}

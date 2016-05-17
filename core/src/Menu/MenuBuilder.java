@@ -20,6 +20,8 @@ import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.TitleBar;
+import Menu.Buttons.CarBuilderButton;
+import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
 import RESTWrapper.BackendFunctions;
 import User.User;
 
@@ -41,10 +43,11 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.Shape.Type;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
@@ -62,8 +65,8 @@ public class MenuBuilder {
 	private Stage stage;
 	private World world;
 
-	private Button but, tire_but, spring_but, /* zoomIn, zoomOut, */rotateLeft,
-			rotateRight, build, upload, levelUp, levelDown, delete;
+	private com.badlogic.gdx.scenes.scene2d.ui.Button spring_but, but, tire_but, delete, rotateLeft,
+			rotateRight, build, upload, levelUp, levelDown;
 
 	private TextBox partLevelText;
 
@@ -94,6 +97,9 @@ public class MenuBuilder {
 
 	private Label titleBar;
 	private Integer currentMoney;
+	
+	private final float buttonWidth = 100;
+	private final float buttonHeight = 100;
 
 	// private FixtureDef mouseFixture;
 	// BaseActor mouseActor;
@@ -130,7 +136,7 @@ public class MenuBuilder {
 		Table base = new Table();
 		base.setFillParent(true);
 
-		titleBar = TitleBar.create(base, ScreenType.MODE_SCREEN, popQueManager,
+		titleBar = TitleBar.create(base, ScreenType.CAR_BUILDER, popQueManager,
 				new GameState(gameLoader, user), false);
 
 		Table menuHolders = new Table();
@@ -139,46 +145,68 @@ public class MenuBuilder {
 
 		Table rightMenu = new Table();
 
-		but = new Button("Small bar") {
+		/*but = new Button("Small bar") {
 			@Override
 			public void Clicked() {
 				addSmallBar(-1);
 			}
 
-		};
+		};*/
+		
+		but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.BAR, false);
+		but.addListener(new ClickListener() {
+			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				addSmallBar(-1);
+			}
+			
+		});
 
 		// but.setPosition(0, 200);
-		leftMenu.add(but);
+		leftMenu.add(but).width(buttonWidth).height(buttonHeight);
 		leftMenu.row();
 
-		tire_but = new Button("tire") {
+		tire_but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.WHEEL, false);
+		tire_but.addListener(new ClickListener() {
 			@Override
-			public void Clicked() {
+			public void clicked(InputEvent event, float x, float y) {
 				addTire(-1);
 
 			}
 
-		};
+		});
 
 		// tire_but.setPosition(0, 0);
-		leftMenu.add(tire_but);
+		leftMenu.add(tire_but).width(buttonWidth).height(buttonHeight);
 		leftMenu.row();
 
-		spring_but = new Button("spring") {
+		/*spring_but = new Button("spring") {
 			@Override
 			public void Clicked() {
 				addSpring(-1);
 
 			}
-		};
+		};*/
+		
+		spring_but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.SPRING, false);
+		spring_but.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				addSpring(-1);
+
+			}
+
+		});
 
 		// spring_but.setPosition(0, 100);
-		leftMenu.add(spring_but);
+		leftMenu.add(spring_but).width(buttonWidth).height(buttonHeight);
 		leftMenu.row();
 
-		delete = new Button("delete") {
+		delete = CarBuilderButton.create(gameLoader, CarBuilderButtonType.DELETE, false);
+		delete.addListener(new ClickListener() {
 			@Override
-			public void Clicked() {
+			public void clicked(InputEvent event, float x, float y) {
 
 				if (lastSelected == null)
 					return;
@@ -227,14 +255,14 @@ public class MenuBuilder {
 				world.destroyBody(lastSelected);
 				lastSelected = null;
 			}
-		};
+		});
 
 		// delete.setPosition(100, 0);
 		// delete.setHeight(50);
 		// delete.setWidth(50);
-		leftMenu.add(delete);
+		leftMenu.add(delete).width(buttonWidth).height(buttonHeight);
 
-		menuHolders.add(leftMenu).left().expand();
+		menuHolders.add(leftMenu).left().expand().top();
 
 		/*
 		 * zoomIn = new Button("+") {
@@ -254,9 +282,10 @@ public class MenuBuilder {
 		 * zoomOut.setHeight(50); stage.addActor(zoomOut);
 		 */
 
-		build = new Button("build") {
+		build = CarBuilderButton.create(gameLoader, CarBuilderButtonType.PLAY, false);
+		build.addListener(new ClickListener() {
 			@Override
-			public void Clicked() {
+			public void clicked(InputEvent event, float x, float y) {
 				if (buildCar()) {
 					gameLoader.setScreen(new GamePlayScreen(new GameState(
 							gameLoader, user)));
@@ -264,7 +293,7 @@ public class MenuBuilder {
 				}
 			}
 
-		};
+		});
 
 		build.setPosition(0, Globals.ScreenHeight - 100);
 		build.setHeight(50);
@@ -284,44 +313,46 @@ public class MenuBuilder {
 		upload.setHeight(50);
 		// stage.addActor(upload);
 
-		rotateLeft = new Button(">") {
+		rotateLeft = CarBuilderButton.create(gameLoader, CarBuilderButtonType.ROTATE_LEFT, false);
+		rotateLeft.addListener(new ClickListener() {
 			@Override
-			public void Clicked() {
-				if (lastSelected != null) {
-					lastSelected.setTransform(lastSelected.getPosition(),
-							lastSelected.getAngle() - ROTATION_SIZE
-									* MathUtils.degreesToRadians);
-				}
-			}
-
-		};
-
-		rotateLeft.setPosition(Globals.ScreenWidth - 50, 150);
-		rotateLeft.setHeight(50);
-		rotateLeft.setWidth(50);
-		// stage.addActor(rotateLeft);
-		rightMenu.add(rotateLeft).height(Globals.baseSize * 2);
-		rightMenu.row();
-
-		rotateRight = new Button("<") {
-			@Override
-			public void Clicked() {
+			public void clicked(InputEvent event, float x, float y) {
 				if (lastSelected != null) {
 					lastSelected.setTransform(lastSelected.getPosition(),
 							lastSelected.getAngle() + ROTATION_SIZE
 									* MathUtils.degreesToRadians);
 				}
 			}
-		};
 
-		rightMenu.add(rotateRight).height(Globals.baseSize * 2);
+		});
+
+		rotateLeft.setPosition(Globals.ScreenWidth - 50, 150);
+		rotateLeft.setHeight(50);
+		rotateLeft.setWidth(50);
+		// stage.addActor(rotateLeft);
+		rightMenu.add(rotateLeft).width(buttonWidth).height(buttonHeight);
+		rightMenu.row();
+
+		rotateRight = CarBuilderButton.create(gameLoader, CarBuilderButtonType.ROTATE_RIGHT, false);
+		rotateRight.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (lastSelected != null) {
+					lastSelected.setTransform(lastSelected.getPosition(),
+							lastSelected.getAngle() - ROTATION_SIZE
+									* MathUtils.degreesToRadians);
+				}
+			}
+		});
+
+		rightMenu.add(rotateRight).width(buttonWidth).height(buttonHeight);
 		rightMenu.row();
 		// stage.addActor(rotateRight);
 
-		levelUp = new Button("+") {
+		levelUp = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_UP, false);
+		levelUp.addListener(new ClickListener() {
 			@Override
-			public void Clicked() {
-
+			public void clicked(InputEvent event, float x, float y) {
 				if (lastSelected != null) {
 					JSONComponentName lastSelectName = (JSONComponentName) lastSelected
 							.getUserData();
@@ -352,21 +383,21 @@ public class MenuBuilder {
 
 				}
 			}
-		};
+		});
 
-		rightMenu.add(levelUp).height(Globals.baseSize * 2);
+		rightMenu.add(levelUp).height(Globals.baseSize * 2).width(buttonWidth);
 		rightMenu.row();
 		// stage.addActor(levelUp);
 
 		partLevelText = new TextBox("1");
-		rightMenu.add(partLevelText).height(Globals.baseSize * 2)
-				.width(Globals.baseSize * 2).center().align(Align.center);
+		//rightMenu.add(partLevelText).height(Globals.baseSize * 2)
+			//	.width(Globals.baseSize * 2).center().align(Align.center);
 		rightMenu.row();
 
-		levelDown = new Button("-") {
+		levelDown = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_DOWN, false);
+		levelDown.addListener(new ClickListener() {
 			@Override
-			public void Clicked() {
-
+			public void clicked(InputEvent event, float x, float y) {
 				if (lastSelected != null) {
 					partLevel -= 1;
 					if (partLevel <= 1) {
@@ -376,16 +407,16 @@ public class MenuBuilder {
 					setLastSelectedLevel(partLevel);
 				}
 			}
-		};
+		});
 
-		rightMenu.add(levelDown).height(Globals.baseSize * 2);
+		rightMenu.add(levelDown).height(Globals.baseSize * 2).width(buttonWidth);
 		rightMenu.row();
 
-		rightMenu.add(build).height(Globals.baseSize * 4);
+		rightMenu.add(build).width(buttonWidth).height(buttonHeight);
 		rightMenu.row();
 		// stage.addActor(levelDown);
 
-		menuHolders.add(rightMenu).right().expand();
+		menuHolders.add(rightMenu).right().expand().top();
 
 		base.add(menuHolders).fill().expand();
 

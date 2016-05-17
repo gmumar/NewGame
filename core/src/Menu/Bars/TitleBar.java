@@ -36,7 +36,15 @@ public class TitleBar {
 			boolean animate) {
 		final GameLoader gameLoader = gameState.getGameLoader();
 		Skin skin = Skins.loadDefault(gameLoader, 0);
-		TableW titleBar = new TableW(skin);
+		
+		TableW titleBar = new TableW(skin);;
+		if(type == ScreenType.CAR_BUILDER) {
+			titleBar.setBackground("darkGrey");
+		}
+		
+		
+		
+		
 		user = User.getInstance();
 
 		// Back button
@@ -51,6 +59,8 @@ public class TitleBar {
 				} else if (type == ScreenType.TRACK_SELECTOR) {
 					gameLoader.setScreen(new GameModeScreen(gameState));
 				} else if (type == ScreenType.CAR_SELECTOR) {
+					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				} else if (type == ScreenType.CAR_BUILDER) {
 					gameLoader.setScreen(new TrackSelectorScreen(gameState));
 				}
 				super.clicked(event, x, y);
@@ -109,6 +119,8 @@ public class TitleBar {
 			titleLabel.setText("Select Track");
 		} else if (type == ScreenType.CAR_SELECTOR) {
 			titleLabel.setText("Select Car");
+		}  else if (type == ScreenType.CAR_BUILDER) {
+			titleLabel.setText("Build Car");
 		}
 		titleLabel.setPosition(Globals.ScreenWidth / 2,
 				Globals.ScreenHeight / 12);

@@ -3,6 +3,7 @@ package Menu;
 import wrapper.CameraManager;
 import wrapper.GameState;
 import wrapper.Globals;
+import Dialog.Skins;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
@@ -11,11 +12,14 @@ import User.User;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.gudesigns.climber.GameLoader;
@@ -25,12 +29,12 @@ import com.gudesigns.climber.MainMenuScreen;
 public class HUDBuilder {
 
 	private Button exit, restart;
-	private TextBox fps, version, money, time;
+	private TextBox fps;
+	private Label clockTime, money;
 	private ProgressBarW mapProgress;
 	private User user;
 	private ImageButton pause;
 
-	private boolean init = false;
 	private GameLoader gameLoader;
 
 	public HUDBuilder(Stage stage, final GameState gameState,
@@ -66,20 +70,9 @@ public class HUDBuilder {
 
 			// Text Feilds
 			fps = new TextBox("fps");
-			fps.setPosition(0, Globals.ScreenHeight - 50);
+			// fps.setPosition(0, Globals.ScreenHeight - 50);
 			stage.addActor(fps);
 
-			version = new TextBox("Version:" + Globals.VERSION);
-			version.setPosition(0, Globals.ScreenHeight - 25);
-			stage.addActor(version);
-
-			money = new TextBox("Version:" + Globals.VERSION);
-			money.setPosition(0, Globals.ScreenHeight - 75);
-			stage.addActor(money);
-
-			time = new TextBox("Version:" + Globals.VERSION);
-			time.setPosition(0, Globals.ScreenHeight - 100);
-			stage.addActor(time);
 		}
 
 		TextureRegionDrawable trd = new TextureRegionDrawable(
@@ -116,21 +109,45 @@ public class HUDBuilder {
 
 		stage.addActor(mapProgress);
 
+		// Timer
+		Vector2 timerLocation = new Vector2(20, -50);
+		Image clock = new Image(
+				gameLoader.Assets.getFilteredTexture("worlds/hud/clock.png"));
+		clock.setPosition(timerLocation.x, timerLocation.y
+				+ Globals.ScreenHeight);
+		clock.setSize(30, 30);
+		stage.addActor(clock);
+
+		clockTime = new Label("Time", Skins.loadDefault(gameLoader, 1));
+		clockTime.setPosition(timerLocation.x + 30 + 4, timerLocation.y
+				+ Globals.ScreenHeight + 6.5f);
+		stage.addActor(clockTime);
+
+		// Money
+		Vector2 moneyLocation = new Vector2(20, -85);
+		Image coin = new Image(gameLoader.Assets.getFilteredTexture("coin.png"));
+		coin.setPosition(moneyLocation.x, moneyLocation.y
+				+ Globals.ScreenHeight);
+		coin.setSize(30, 30);
+		stage.addActor(coin);
+
+		money = new Label("Money", Skins.loadDefault(gameLoader, 1));
+		money.setPosition(moneyLocation.x + 30 + 4, moneyLocation.y
+				+ Globals.ScreenHeight + 6.5f);
+		stage.addActor(money);
+
 	}
 
 	public void update(float delta, float progress, float timeIn,
 			CameraManager camera) {
 
 		if (Globals.ADMIN_MODE) {
-			time.setTextBoxString(Globals.makeTimeStr(timeIn));
 
 			fps.setTextBoxString("fps: " + Gdx.graphics.getFramesPerSecond());
-			if (!init) {
-				version.setTextBoxString("Version:" + Globals.VERSION);
-				init = true;
-			}
+
 		}
-		money.setTextBoxString(user.getMoney());
+		clockTime.setText(Globals.makeTimeStr(timeIn));
+		money.setText(user.getMoney().toString());
 		mapProgress.setValue(progress > 100 ? 100 : progress);
 		// mapProgress.act(delta);
 

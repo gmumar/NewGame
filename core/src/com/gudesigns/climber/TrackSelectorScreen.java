@@ -14,7 +14,7 @@ import Menu.ScreenType;
 import Menu.SelectorScreen;
 import Menu.Buttons.AdventureTrackButton;
 import ParallexBackground.ScrollingBackground;
-import ParallexBackground.ScrollingBackground.ScrollTypes;
+import ParallexBackground.ScrollingBackground.BackgroundType;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
@@ -52,7 +52,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 		super(gameState);
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader, null,
-				TrackType.FORREST);
+				TrackType.FORREST, BackgroundType.SELECTOR);
 	}
 
 	@Override
@@ -346,7 +346,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	@Override
 	protected void selectorRender(float delta) {
-		scrollingBackground.draw(ScrollTypes.SCROLLING);
+		scrollingBackground.draw(BackgroundType.SCROLLING);
 
 	}
 

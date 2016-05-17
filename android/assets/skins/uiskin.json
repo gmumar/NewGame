@@ -4,8 +4,7 @@ com.badlogic.gdx.graphics.Color: {
 	light_grey: { r: 0.8, g: 0.8, b: 0.8, a: 1 },
 	white: { r: 1, g: 1, b: 1, a: 1 },
 	red: { r: 1, a: 1 },
-	black: { a: 1 },
-	grey: { r: 0.7, g: 0.7, b: 0.7, a: 1 }
+	black: { a: 1 }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: {
@@ -18,19 +17,49 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		color: { a: 0.0, b: 0.2, g: 0.2, r: 0.2 }
 	}
 	
-	gameGreen: {
+	forrestGreen: {
 		name: white,
-		color: { r: 0.580, g: 0.769, b: 0.035, a: 1 }
+		color: { r: 0.390, g: 0.391, b: 0, a: 1 }
+	}
+	
+	articBlue: {
+		name: white,
+		color: { r: 0.375, g: 0.460, b: 0.535, a: 1 }
+	}
+	
+	deleteRed: {
+		name: white,
+		color: { r: 0.984, g: 0.406, b: 0.218, a: 1 }
+	}
+	
+	grey: {
+		name: white,
+		color: { r: 0.7, g: 0.7, b: 0.7, a: 1 }
+	}
+	
+	mediumGrey: {
+		name: white,
+		color: { r:	0.457, g: 0.457, b: 0.457, a: 1 }
+	}
+		
+	darkGrey: {
+		name: white,
+		color: { r:	0.257, g: 0.257, b: 0.257, a: 1 }
 	}
 	
 	gameYellow: {
 		name: white,
 		color: { r: 1, g: 0.741, a: 1 }
 	}
-	
+
 	blackOut: {
 		name: white,
 		color: { a: 1 }
+	}
+	
+	gameGreen: {
+		name: white,
+		color: { r:	0.578, g: 0.765, b: 0.035, a: 1 }
 	}
 	
 },
@@ -79,9 +108,14 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: { up: default-scroll, down: default-round-down },
-	modeButton: { up: gameYellow, down: gameGreen, checked: gameGreen },
+	modeButton: { up: gameYellow, down: forrestGreen, checked: forrestGreen },
 	transparentButton: { up: transparent, down: transparent},
-	adventureTrack: { up: gameGreen, down: grey	}
+	adventureTrack_forrest: { up: forrestGreen, down: grey	}
+	adventureTrack_artic: { up: articBlue, down: grey	}
+	carBuilder_general: { up: mediumGrey, down: grey	}
+	carBuilder_delete: { up: deleteRed, down: grey	}
+	carBuilder_play: { up: gameGreen, down: grey	}
+	
 },
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {

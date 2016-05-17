@@ -22,7 +22,7 @@ import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import ParallexBackground.ScrollingBackground;
-import ParallexBackground.ScrollingBackground.ScrollTypes;
+import ParallexBackground.ScrollingBackground.BackgroundType;
 import Shader.GameMesh;
 import Sounds.SoundManager;
 import User.User;
@@ -154,7 +154,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		jointLimits = new JointLimits(world);
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader,
-				builtCar, trackType);
+				builtCar, trackType, BackgroundType.NORMAL);
 
 		popQueManager = new PopQueManager(gameLoader, stage);
 		popQueManager
@@ -318,7 +318,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		builtCar.updateSound();
 
-		scrollingBackground.draw(paused ? ScrollTypes.STATIONARY : ScrollTypes.NORMAL);
+		scrollingBackground.draw(paused ? BackgroundType.STATIONARY : BackgroundType.NORMAL);
 
 		attachCameraTo(builtCar.getCameraFocusPart());
 		ground.drawShapes();
