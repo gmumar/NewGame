@@ -86,8 +86,6 @@ public abstract class SelectorScreen implements Screen {
 
 	abstract protected void addSpecificItemToList();
 
-	abstract protected void goNext();
-
 	abstract protected void initButtons();
 
 	abstract protected void populateContentTable(Table contentTable);

@@ -243,7 +243,7 @@ public class CarSelectorScreen extends SelectorScreen {
 			public void clicked(InputEvent event, float x, float y) {
 
 				gameState.getUser().setCurrentCar(itemJson);
-				gameLoader.setScreen(new BuilderScreen(gameState));
+				gameLoader.setScreen(new CarBuilderScreen(gameState));
 				super.clicked(event, x, y);
 			}
 
@@ -296,11 +296,6 @@ public class CarSelectorScreen extends SelectorScreen {
 		
 	}
 
-	@Override
-	protected void goNext() {
-		gameLoader.setScreen(new GamePlayScreen(gameState));
-	}
-	
 	@Override
 	protected void initButtons() {
 

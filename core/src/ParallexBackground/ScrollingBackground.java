@@ -41,15 +41,23 @@ public class ScrollingBackground {
 		            		,new Vector2(-5,400)),
 		      }, Globals.ScreenWidth*1.3f, Globals.ScreenHeight*1.3f);
 			
-		} else {
+		} else {//
 			rbg = new ParallaxBackground(new ParallaxLayer[]{
+					
 		            new ParallaxLayer(
-		            		new TextureRegion(gameLoader.Assets.get(mountains, Texture.class))
+		            		new TextureRegion(gameLoader.Assets.getFilteredTexture("worlds/gradient.png"))
+		            		,new Vector2(0,0)
+		            		,new Vector2(-50, 330)
+		            		,new Vector2(0,400)),
+		            		
+		            new ParallaxLayer(
+		            		new TextureRegion(gameLoader.Assets.getFilteredTexture(mountains))
 		            		,new Vector2(1,0)
 		            		,new Vector2(0, 130)
 		            		,new Vector2(-5,400)),
+	
 	        		new ParallaxLayer(
-		            		new TextureRegion(gameLoader.Assets.get(hills, Texture.class))
+		            		new TextureRegion(gameLoader.Assets.getFilteredTexture(hills))
 		            		,new Vector2(7,0)
 		            		,new Vector2(0, -170)
 		            		,new Vector2(-5,400)),

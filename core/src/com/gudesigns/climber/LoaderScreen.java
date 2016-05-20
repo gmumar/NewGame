@@ -123,6 +123,8 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("worlds/artic/mountains.png", Texture.class);
 		gameLoader.Assets.load("worlds/artic/hills.png", Texture.class);
 		gameLoader.Assets.load("worlds/artic/texture.png", Texture.class);
+		
+		gameLoader.Assets.load("worlds/gradient.png", Texture.class);
 
 		gameLoader.Assets.load("worlds/hud/clock.png", Texture.class);
 
@@ -146,6 +148,9 @@ public class LoaderScreen implements Screen {
 
 		gameLoader.Assets.load("menu/images/adventure.png", Texture.class);
 		gameLoader.Assets.load("menu/images/infinity.png", Texture.class);
+		gameLoader.Assets.load("menu/images/car_builder.png", Texture.class);
+		gameLoader.Assets.load("menu/images/car_my_picks.png", Texture.class);
+		gameLoader.Assets.load("menu/images/car_community.png", Texture.class);
 		gameLoader.Assets.load("menu/images/one_star.png", Texture.class);
 		gameLoader.Assets.load("menu/images/two_stars.png", Texture.class);
 		gameLoader.Assets.load("menu/images/three_stars.png", Texture.class);

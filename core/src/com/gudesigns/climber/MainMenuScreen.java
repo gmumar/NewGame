@@ -99,7 +99,7 @@ public class MainMenuScreen implements Screen {
 		builder = new Button("builder") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new BuilderScreen(gameState));
+				gameLoader.setScreen(new CarBuilderScreen(gameState));
 			}
 		};
 

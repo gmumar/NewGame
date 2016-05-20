@@ -27,7 +27,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class BuilderScreen implements Screen, InputProcessor, GestureListener {
+public class CarBuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	// private GameLoader gameLoader;
 	private SpriteBatch batch;
@@ -44,7 +44,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
 	private float zoom = 0.015f;
 
-	public BuilderScreen(GameState gameState) {
+	public CarBuilderScreen(GameState gameState) {
 		// this.gameLoader = gameLoader;		
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();

@@ -214,7 +214,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				gameState.getUser().setCurrentTrack(item.jsonify());
-				gameLoader.setScreen(new CarSelectorScreen(gameState));
+				gameLoader.setScreen(new CarModeScreen(gameState));
 				super.clicked(event, x, y);
 			}
 
@@ -280,11 +280,6 @@ public class TrackSelectorScreen extends SelectorScreen {
 			localLoading.release();
 		}
 		return;
-	}
-
-	@Override
-	protected void goNext() {
-		gameLoader.setScreen(new CarSelectorScreen(gameState));
 	}
 
 	@Override

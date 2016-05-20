@@ -16,7 +16,7 @@ import com.gudesigns.climber.GameLoader;
 public class ModeButton {
 
 	public enum ModeButtonTypes {
-		INFINITY, ADVENTURE
+		INFINITY, ADVENTURE, CAR_BUILDER, CAR_MY_PICKS, CAR_COMMUNITY_CARS
 	};
 
 	public static Button create(Skin skin, GameLoader gameLoader,
@@ -36,6 +36,21 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/adventure.png"));
 			buttonName = new Label("Adventrue Mode", skin);
+		}  else if (type == ModeButtonTypes.CAR_BUILDER) {
+			image = new Image(
+					gameLoader.Assets
+							.getFilteredTexture("menu/images/car_builder.png"));
+			buttonName = new Label("Car Builder", skin);
+		} else if (type == ModeButtonTypes.CAR_COMMUNITY_CARS) {
+			image = new Image(
+					gameLoader.Assets
+							.getFilteredTexture("menu/images/car_community.png"));
+			buttonName = new Label("Community Cars", skin);
+		} else if (type == ModeButtonTypes.CAR_MY_PICKS) {
+			image = new Image(
+					gameLoader.Assets
+							.getFilteredTexture("menu/images/car_my_picks.png"));
+			buttonName = new Label("Author's Pick", skin);
 		}
 
 		Stack stack = new Stack();

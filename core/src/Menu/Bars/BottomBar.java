@@ -18,9 +18,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.gudesigns.climber.BuilderScreen;
+import com.gudesigns.climber.CarBuilderScreen;
+import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.CarSelectorScreen;
 import com.gudesigns.climber.GameLoader;
+import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.TrackSelectorScreen;
 
 public class BottomBar {
@@ -55,9 +57,11 @@ public class BottomBar {
 				if (type == ScreenType.MODE_SCREEN) {
 					gameLoader.setScreen(new TrackSelectorScreen(gameState));
 				} else if (type == ScreenType.TRACK_SELECTOR) {
-					gameLoader.setScreen(new CarSelectorScreen(gameState));
+					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_SELECTOR) {
-					gameLoader.setScreen(new BuilderScreen(gameState));
+					gameLoader.setScreen(new GamePlayScreen(gameState));
+				} else if (type == ScreenType.CAR_MODE_SCREEN) {
+					gameLoader.setScreen(new CarBuilderScreen(gameState));
 				}
 				super.clicked(event, x, y);
 			}

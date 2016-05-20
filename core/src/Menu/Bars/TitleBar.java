@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GameModeScreen;
 import com.gudesigns.climber.MainMenuScreen;
@@ -58,8 +59,10 @@ public class TitleBar {
 				} else if (type == ScreenType.TRACK_SELECTOR) {
 					gameLoader.setScreen(new GameModeScreen(gameState));
 				} else if (type == ScreenType.CAR_SELECTOR) {
-					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_BUILDER) {
+					gameLoader.setScreen(new CarModeScreen(gameState));
+				} else if (type == ScreenType.CAR_MODE_SCREEN) {
 					gameLoader.setScreen(new TrackSelectorScreen(gameState));
 				}
 				super.clicked(event, x, y);
@@ -122,6 +125,8 @@ public class TitleBar {
 			titleLabel.setText("Select Track");
 		} else if (type == ScreenType.CAR_SELECTOR) {
 			titleLabel.setText("Select Car");
+		} else if (type == ScreenType.CAR_MODE_SCREEN) {
+					titleLabel.setText("Select Car");
 		} else if (type == ScreenType.CAR_BUILDER) {
 			titleLabel.setText("Build Car");
 
