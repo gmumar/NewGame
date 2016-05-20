@@ -12,6 +12,7 @@ import Menu.TableW;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import Purchases.GamePurchaseObserver;
+import RESTWrapper.BackendFunctions;
 import User.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -33,18 +34,16 @@ public class TitleBar {
 
 	public final static Label create(Table base, final ScreenType type,
 			final PopQueManager popQueManager, final GameState gameState,
-			boolean animate) {
+			final BarObjects barObjects, boolean animate) {
 		final GameLoader gameLoader = gameState.getGameLoader();
 		Skin skin = Skins.loadDefault(gameLoader, 0);
-		
-		TableW titleBar = new TableW(skin);;
-		if(type == ScreenType.CAR_BUILDER) {
+
+		TableW titleBar = new TableW(skin);
+		;
+		if (type == ScreenType.CAR_BUILDER) {
 			titleBar.setBackground("darkGrey");
 		}
-		
-		
-		
-		
+
 		user = User.getInstance();
 
 		// Back button
@@ -113,18 +112,38 @@ public class TitleBar {
 
 		// Title
 		Label titleLabel = new Label("", skin, "title");
+		titleLabel.setPosition(Globals.ScreenWidth / 2,
+				Globals.ScreenHeight / 12);
+		titleBar.add(titleLabel).expand().center().padRight(100);
+
 		if (type == ScreenType.MODE_SCREEN) {
 			titleLabel.setText("Game Mode");
 		} else if (type == ScreenType.TRACK_SELECTOR) {
 			titleLabel.setText("Select Track");
 		} else if (type == ScreenType.CAR_SELECTOR) {
 			titleLabel.setText("Select Car");
-		}  else if (type == ScreenType.CAR_BUILDER) {
+		} else if (type == ScreenType.CAR_BUILDER) {
 			titleLabel.setText("Build Car");
+
+			// Upload
+			Button sound = SimpleImageButton.create(
+					SimpleImageButtonTypes.UPLOAD, gameLoader);
+			sound.addListener(new ClickListener() {
+
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					if (barObjects.menuBuilder.buildCar()) {
+						BackendFunctions.uploadCar(user.getCurrentCar());
+					}
+
+					super.clicked(event, x, y);
+				}
+
+			});
+
+			titleBar.add(sound).right();
+
 		}
-		titleLabel.setPosition(Globals.ScreenWidth / 2,
-				Globals.ScreenHeight / 12);
-		titleBar.add(titleLabel).expand().center().padRight(100);
 
 		// Sound
 		Button sound = SimpleImageButton.create(SimpleImageButtonTypes.SOUND,

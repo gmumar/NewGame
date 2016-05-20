@@ -92,5 +92,18 @@ public class JSONComponentName {
 		Gson json = new Gson();
 		return json.toJson(this);
 	}
+	
+	public String getPrettyName(){
+		if(getBaseName().compareTo(ComponentNames.BAR3)==0){
+			return "BAR";
+		} else if(getBaseName().compareTo(ComponentNames.AXLE)==0){
+			return "WHEEL";
+		} else if(getBaseName().compareTo(ComponentNames.SPRINGJOINT)==0){
+			return "SPRING";
+		}
+		
+		
+		return null;
+	}
 
 }

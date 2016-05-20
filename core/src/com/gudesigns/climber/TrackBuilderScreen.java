@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import wrapper.CameraManager;
 import wrapper.GamePhysicalState;
 import wrapper.GameState;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import GroundWorks.TrackBuilder;
@@ -25,7 +26,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class TrackBuilderScreen implements Screen, InputProcessor,
 		GestureListener {
@@ -34,7 +34,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 	private CameraManager camera, secondCamera;
 	private World world;
 	private Stage stage;
-	private StretchViewport vp;
+	private GameViewport vp;
 
 	private Box2DDebugRenderer debugRenderer;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
@@ -77,7 +77,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				secondCamera);
 
 		stage = new Stage(vp);

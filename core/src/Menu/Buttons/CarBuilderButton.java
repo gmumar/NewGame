@@ -29,8 +29,8 @@ public class CarBuilderButton {
 
 		Image image = null;
 		Label buttonName = null;
-		
-		float sizeXAdjust = 1,sizeYAdjust = 1;
+
+		float sizeXAdjust = 1, sizeYAdjust = 1;
 
 		if (type == CarBuilderButtonType.BAR) {
 			base = new Button(skin, "carBuilder_general");
@@ -62,9 +62,9 @@ public class CarBuilderButton {
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_rotate_right.png"));
-			sizeYAdjust = 0.5f; 
+			sizeYAdjust = 0.5f;
 			buttonName = new Label("Rotate Right", skin);
-		}  else if (type == CarBuilderButtonType.DELETE) {
+		} else if (type == CarBuilderButtonType.DELETE) {
 			base = new Button(skin, "carBuilder_delete");
 			image = new Image(
 					gameLoader.Assets
@@ -73,24 +73,24 @@ public class CarBuilderButton {
 		} else if (type == CarBuilderButtonType.PLAY) {
 			base = new Button(skin, "carBuilder_play");
 			image = new Image(
-					gameLoader.Assets
-							.getFilteredTexture("menu/icons/play.png"));
+					gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
 			buttonName = new Label("Play", skin);
 		} else if (type == CarBuilderButtonType.LEVEL_DOWN) {
 			base = new Button(skin, "carBuilder_general");
-			image = null;
+			image = new Image(
+					gameLoader.Assets.getFilteredTexture("menu/icons/down.png"));
+			sizeYAdjust = 0.5f;
 			buttonName = new Label("-", skin);
 		} else if (type == CarBuilderButtonType.LEVEL_UP) {
 			base = new Button(skin, "carBuilder_general");
-			image = null;
+			image = new Image(
+					gameLoader.Assets.getFilteredTexture("menu/icons/up.png"));
+			sizeYAdjust = 0.5f;
 			buttonName = new Label("+", skin);
-		} 
-		
+		}
 
 		Stack stack = new Stack();
-		if (type != CarBuilderButtonType.LEVEL_DOWN && type != CarBuilderButtonType.LEVEL_UP) {
-			stack.add(image);
-		}
+		stack.add(image);
 
 		TextureRegion tr = new TextureRegion(
 				gameLoader.Assets.getFilteredTexture("menu/tags/new.png"));
@@ -106,11 +106,18 @@ public class CarBuilderButton {
 			stack.add(newTag);
 		}
 		// infinityMode.add(infinityImage).pad(8).expand();
-		base.add(stack).pad(8).expand().width(Globals.baseSize*1.5f*sizeXAdjust).height(Globals.baseSize*1.5f*sizeYAdjust);
+		base.add(stack).pad(8).expand()
+				.width(Globals.baseSize * 1.5f * sizeXAdjust)
+				.height(Globals.baseSize * 1.5f * sizeYAdjust);
 
 		base.row();
 
-		base.add(buttonName).pad(10);
+		if (type != CarBuilderButtonType.LEVEL_DOWN
+				&& type != CarBuilderButtonType.LEVEL_UP
+				&& type != CarBuilderButtonType.ROTATE_LEFT
+				&& type != CarBuilderButtonType.ROTATE_RIGHT) {
+			base.add(buttonName).pad(10);
+		}
 
 		return base;
 

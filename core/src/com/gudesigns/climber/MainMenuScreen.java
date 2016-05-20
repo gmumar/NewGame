@@ -2,6 +2,7 @@ package com.gudesigns.climber;
 
 import wrapper.CameraManager;
 import wrapper.GameState;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.DialogBase;
 import Dialog.Skins;
@@ -21,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class MainMenuScreen implements Screen {
 
@@ -29,7 +29,7 @@ public class MainMenuScreen implements Screen {
 	private GameState gameState;
 	private CameraManager camera;
 	private Stage stage;
-	private StretchViewport vp;
+	private GameViewport vp;
 	private PopQueManager popQueManager;
 	private User user;
 	private MainMenuScreen instance;
@@ -202,7 +202,7 @@ public class MainMenuScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				camera);
 		vp.apply();
 		// batch = new SpriteBatch();

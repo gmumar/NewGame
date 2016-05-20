@@ -2,6 +2,7 @@ package com.gudesigns.climber;
 
 import wrapper.CameraManager;
 import wrapper.GameState;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
 import Menu.PopQueManager;
@@ -22,14 +23,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class GameModeScreen implements Screen {
 
 	private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
-	private StretchViewport vp;
+	private GameViewport vp;
 	private PopQueManager popQueManager;
 
 	private Button adventrueMode, infinityMode;
@@ -51,7 +51,7 @@ public class GameModeScreen implements Screen {
 		base.setFillParent(true);
 		// base.pad(25);
 
-		TitleBar.create(base, ScreenType.MODE_SCREEN, popQueManager, gameState,
+		TitleBar.create(base, ScreenType.MODE_SCREEN, popQueManager, gameState, null,
 				true);
 
 		// Main Buttons
@@ -106,7 +106,7 @@ public class GameModeScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);

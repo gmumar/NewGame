@@ -1,6 +1,7 @@
 package com.gudesigns.climber;
 
 import wrapper.CameraManager;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import Menu.Animations;
 import Sounds.SoundManager;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class SplashScreen implements Screen {
 
@@ -22,7 +22,7 @@ public class SplashScreen implements Screen {
 	private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
-	private StretchViewport vp;
+	private GameViewport vp;
 
 	private float time = 0;
 
@@ -50,8 +50,8 @@ public class SplashScreen implements Screen {
 		SplashActor splashActor = new SplashActor();
 		splashActor.setSize(Globals.ScreenWidth * 1 / 6,
 				Globals.ScreenWidth * 1 / 6);
-		splashActor.setX(Globals.ScreenWidth * 5 / 12);
-		splashActor.setY(Globals.ScreenHeight * 2 / 5 - 20);
+		splashActor.setX(Globals.ScreenWidth * 1 / 2 - splashActor.getWidth()/2);
+		splashActor.setY(Globals.ScreenHeight * 1 / 2 - 20 - splashActor.getHeight()/2);
 
 
 		Animations.fadeInAndSlideUp(splashActor);
@@ -80,7 +80,7 @@ public class SplashScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 

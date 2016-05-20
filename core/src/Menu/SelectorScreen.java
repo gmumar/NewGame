@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import wrapper.CameraManager;
 import wrapper.GameState;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
 import JSONifier.JSONParentClass;
@@ -25,7 +26,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.gudesigns.climber.GameLoader;
@@ -35,7 +35,7 @@ public abstract class SelectorScreen implements Screen {
 	private CameraManager camera;
 	private SpriteBatch batch;
 	private Stage stage;
-	private StretchViewport vp;
+	private GameViewport vp;
 
 	// private ArrayList<Button> buttons = new ArrayList<Button>();
 	protected static ArrayList<Table> buttons = new ArrayList<Table>();
@@ -247,7 +247,7 @@ public abstract class SelectorScreen implements Screen {
 			baseTable.clear();
 		}
 
-		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState,
+		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState,null,
 				false);
 
 		Table contentTable = new Table();
@@ -271,7 +271,7 @@ public abstract class SelectorScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);

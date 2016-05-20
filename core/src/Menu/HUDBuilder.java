@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.gudesigns.climber.GameLoader;
@@ -43,6 +44,9 @@ public class HUDBuilder {
 
 		this.gameLoader = gameState.getGameLoader();
 		this.user = gameState.getUser();
+		
+		Table base = new Table();
+		base.setFillParent(true);
 
 		if (Globals.ADMIN_MODE) {
 			// Buttons
@@ -53,7 +57,7 @@ public class HUDBuilder {
 				}
 			};
 
-			exit.setPosition(Globals.GameWidth - 100, Globals.GameHeight - 300);
+			exit.setPosition(Globals.ScreenWidth - 100, Globals.ScreenHeight - 300);
 			// stage.addActor(exit);
 
 			restart = new Button("restart") {
@@ -64,8 +68,8 @@ public class HUDBuilder {
 				}
 			};
 
-			restart.setPosition(Globals.GameWidth - 100,
-					Globals.GameHeight - 200);
+			restart.setPosition(Globals.ScreenWidth - 100,
+					Globals.ScreenHeight - 200);
 			// stage.addActor(restart);
 
 			// Text Feilds
@@ -74,6 +78,17 @@ public class HUDBuilder {
 			stage.addActor(fps);
 
 		}
+		
+		// Progress Bars
+		mapProgress = new ProgressBarW(0, 100, 0.01f, false, "mapProgress");
+		mapProgress.setPosition(0, Globals.ScreenHeight - 5);
+		mapProgress.setSize(Globals.ScreenWidth, 0.2f);
+		mapProgress.setAnimateDuration(0.5f);
+
+		//stage.addActor(mapProgress);
+		base.add(mapProgress).expandX().fillX();
+
+		base.row();
 
 		TextureRegionDrawable trd = new TextureRegionDrawable(
 				new TextureRegion(gameLoader.Assets.get("menu/icons/pause.png",
@@ -98,16 +113,10 @@ public class HUDBuilder {
 
 		});
 
-		pause.setPosition(Globals.GameWidth - 60, Globals.GameHeight - 65);
-		stage.addActor(pause);
+		//pause.setPosition(Globals.ScreenWidth - 60, Globals.ScreenHeight - 65);
+		base.add(pause).top().expand().right().width(Globals.baseSize*2).height(Globals.baseSize*1.5f*2);
+		//stage.addActor(pause);
 
-		// Progress Bars
-		mapProgress = new ProgressBarW(0, 100, 0.01f, false, "mapProgress");
-		mapProgress.setPosition(0, Globals.ScreenHeight - 5);
-		mapProgress.setSize(Globals.ScreenWidth, 0.2f);
-		mapProgress.setAnimateDuration(0.5f);
-
-		stage.addActor(mapProgress);
 
 		// Timer
 		Vector2 timerLocation = new Vector2(20, -50);
@@ -126,9 +135,9 @@ public class HUDBuilder {
 		// Money
 		Vector2 moneyLocation = new Vector2(20, -85);
 		Image coin = new Image(gameLoader.Assets.getFilteredTexture("coin.png"));
-		coin.setPosition(moneyLocation.x, moneyLocation.y
+		coin.setPosition(moneyLocation.x -5, moneyLocation.y-5
 				+ Globals.ScreenHeight);
-		coin.setSize(30, 30);
+		coin.setSize(40, 40);
 		stage.addActor(coin);
 
 		money = new Label("Money", Skins.loadDefault(gameLoader, 1));
@@ -136,6 +145,7 @@ public class HUDBuilder {
 				+ Globals.ScreenHeight + 6.5f);
 		stage.addActor(money);
 
+		stage.addActor(base);
 	}
 
 	public void update(float delta, float progress, float timeIn,

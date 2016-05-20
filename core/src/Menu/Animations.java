@@ -5,7 +5,6 @@ import Dialog.DialogBase;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -52,11 +51,9 @@ public class Animations {
 
 	public static final void fadeInAndSlideUp(SplashActor splashActor) {
 		splashActor.setColor(1, 1, 1, 0);
-		MoveToAction moveAction = new MoveToAction();
-		moveAction.setPosition(Globals.ScreenWidth * 5 / 12,
-				Globals.ScreenHeight * 2 / 5);
-		moveAction.setDuration(0.8f);
-		ParallelAction pa = new ParallelAction(moveAction, Actions.fadeIn(0.8f));
+		
+		
+		ParallelAction pa = new ParallelAction(Actions.moveBy(0, 10, 0.8f), Actions.fadeIn(0.8f));
 
 		splashActor.addAction(pa);
 	}

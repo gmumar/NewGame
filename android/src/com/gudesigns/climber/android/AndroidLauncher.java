@@ -118,7 +118,6 @@ public class AndroidLauncher extends AndroidApplication implements
 		adParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
-		adView.setPadding(1, 1, 1, 1);
 
 		AdViewUnit ret = new AdViewUnit();
 		ret.view = adView;

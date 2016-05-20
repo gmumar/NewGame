@@ -14,11 +14,13 @@ import Component.Component;
 import Component.Component.PropertyTypes;
 import Component.ComponentBuilder;
 import Component.ComponentNames;
+import Dialog.Skins;
 import JSONifier.JSONCar;
 import JSONifier.JSONCompiler;
 import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import Menu.PopQueObject.PopQueObjectType;
+import Menu.Bars.BarObjects;
 import Menu.Bars.TitleBar;
 import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
@@ -46,6 +48,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
@@ -68,7 +71,7 @@ public class MenuBuilder {
 	private com.badlogic.gdx.scenes.scene2d.ui.Button spring_but, but, tire_but, delete, rotateLeft,
 			rotateRight, build, upload, levelUp, levelDown;
 
-	private TextBox partLevelText;
+	private Label partLevelText, partNameLabel;
 
 	private Vector3 mousePoint = new Vector3();
 	private Body hitBody, lastSelected = null, baseObject;
@@ -116,6 +119,7 @@ public class MenuBuilder {
 		this.user = User.getInstance();
 		this.instance = this;
 
+		Skin skin = Skins.loadDefault(gameLoader, 1);
 		currentMoney = user.getMoney();
 		// this.user = user;
 		MenuBuilder.fixtureRenderer = shapeRenderer;
@@ -137,7 +141,7 @@ public class MenuBuilder {
 		base.setFillParent(true);
 
 		titleBar = TitleBar.create(base, ScreenType.CAR_BUILDER, popQueManager,
-				new GameState(gameLoader, user), false);
+				new GameState(gameLoader, user), new BarObjects(this), false);
 
 		Table menuHolders = new Table();
 
@@ -164,7 +168,7 @@ public class MenuBuilder {
 		});
 
 		// but.setPosition(0, 200);
-		leftMenu.add(but).width(buttonWidth).height(buttonHeight);
+		leftMenu.add(but).width(buttonWidth).expandY().fillY();
 		leftMenu.row();
 
 		tire_but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.WHEEL, false);
@@ -178,7 +182,7 @@ public class MenuBuilder {
 		});
 
 		// tire_but.setPosition(0, 0);
-		leftMenu.add(tire_but).width(buttonWidth).height(buttonHeight);
+		leftMenu.add(tire_but).width(buttonWidth).expandY().fillY();
 		leftMenu.row();
 
 		/*spring_but = new Button("spring") {
@@ -200,7 +204,7 @@ public class MenuBuilder {
 		});
 
 		// spring_but.setPosition(0, 100);
-		leftMenu.add(spring_but).width(buttonWidth).height(buttonHeight);
+		leftMenu.add(spring_but).width(buttonWidth).expandY().fillY();
 		leftMenu.row();
 
 		delete = CarBuilderButton.create(gameLoader, CarBuilderButtonType.DELETE, false);
@@ -260,9 +264,9 @@ public class MenuBuilder {
 		// delete.setPosition(100, 0);
 		// delete.setHeight(50);
 		// delete.setWidth(50);
-		leftMenu.add(delete).width(buttonWidth).height(buttonHeight);
+		leftMenu.add(delete).width(buttonWidth).expandY().fillY();
 
-		menuHolders.add(leftMenu).left().expand().top();
+		menuHolders.add(leftMenu).left().expand().fillY().top();
 
 		/*
 		 * zoomIn = new Button("+") {
@@ -330,7 +334,7 @@ public class MenuBuilder {
 		rotateLeft.setHeight(50);
 		rotateLeft.setWidth(50);
 		// stage.addActor(rotateLeft);
-		rightMenu.add(rotateLeft).width(buttonWidth).height(buttonHeight);
+		rightMenu.add(rotateLeft).width(buttonWidth).expandY().fillY();
 		rightMenu.row();
 
 		rotateRight = CarBuilderButton.create(gameLoader, CarBuilderButtonType.ROTATE_RIGHT, false);
@@ -345,9 +349,27 @@ public class MenuBuilder {
 			}
 		});
 
-		rightMenu.add(rotateRight).width(buttonWidth).height(buttonHeight);
+		rightMenu.add(rotateRight).width(buttonWidth).expandY().fillY();
 		rightMenu.row();
 		// stage.addActor(rotateRight);
+	
+		Table partInfo = new Table(skin);
+		partInfo.setBackground("white");
+		
+		Label partLevelLabel = new Label("Level", skin);
+		partInfo.add(partLevelLabel).pad(5);
+		partInfo.row();
+
+		partLevelText = new Label("1",skin);
+		partInfo.add(partLevelText).expandY().fillY();
+		partInfo.row();
+		
+		partNameLabel = new Label("name", skin);
+		partInfo.add(partNameLabel).pad(5);
+		
+		rightMenu.add(partInfo).fill().height(Globals.baseSize*5);
+		rightMenu.row();
+		
 
 		levelUp = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_UP, false);
 		levelUp.addListener(new ClickListener() {
@@ -385,14 +407,10 @@ public class MenuBuilder {
 			}
 		});
 
-		rightMenu.add(levelUp).height(Globals.baseSize * 2).width(buttonWidth);
+		rightMenu.add(levelUp).expandY().fillY().width(buttonWidth);
 		rightMenu.row();
 		// stage.addActor(levelUp);
 
-		partLevelText = new TextBox("1");
-		//rightMenu.add(partLevelText).height(Globals.baseSize * 2)
-			//	.width(Globals.baseSize * 2).center().align(Align.center);
-		rightMenu.row();
 
 		levelDown = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_DOWN, false);
 		levelDown.addListener(new ClickListener() {
@@ -409,14 +427,14 @@ public class MenuBuilder {
 			}
 		});
 
-		rightMenu.add(levelDown).height(Globals.baseSize * 2).width(buttonWidth);
+		rightMenu.add(levelDown).expandY().fillY().width(buttonWidth);
 		rightMenu.row();
 
-		rightMenu.add(build).width(buttonWidth).height(buttonHeight);
+		rightMenu.add(build).width(buttonWidth).expandY().fillY();
 		rightMenu.row();
 		// stage.addActor(levelDown);
 
-		menuHolders.add(rightMenu).right().expand().top();
+		menuHolders.add(rightMenu).right().expand().fillY().top();
 
 		base.add(menuHolders).fill().expand();
 
@@ -762,11 +780,15 @@ public class MenuBuilder {
 
 	public void drawShapes(SpriteBatch batch) {
 
-		final Color unConnectedColor = Color.GREEN;
-		final Color ConnectedColorLocked = Color.RED;
-		final Color ConnectedColorUnLocked = Color.RED;
+		final Color unConnectedColor = Globals.GREEN;
+		final Color ConnectedColorLocked = Globals.RED;
+		final Color ConnectedColorUnLocked = Globals.YELLOW;
 
 		partLevelText.setText(Integer.toString(partLevel));
+		
+		if(lastSelected!=null){
+			partNameLabel.setText(((JSONComponentName)(lastSelected.getUserData())).getPrettyName());
+		}
 
 		// if(clickedLevelUpBuy){
 		//
@@ -887,7 +909,7 @@ public class MenuBuilder {
 
 	}
 
-	private boolean buildCar() {
+	public boolean buildCar() {
 		if (assemblyRules.checkBuild(world, baseObject, parts)) {
 			user.setCurrentCar(compiler.compile(world, parts, jointTypes));
 			return true;

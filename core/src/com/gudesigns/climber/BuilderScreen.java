@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import wrapper.CameraManager;
 import wrapper.GamePhysicalState;
 import wrapper.GameState;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import Menu.MenuBuilder;
@@ -25,7 +26,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 
@@ -35,7 +35,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 	private World world;
 	private Stage stage;
 	private MenuBuilder menu;
-	private StretchViewport vp;
+	private GameViewport vp;
 	private ShapeRenderer shapeRenderer;
 
 	private Box2DDebugRenderer debugRenderer;
@@ -89,7 +89,7 @@ public class BuilderScreen implements Screen, InputProcessor, GestureListener {
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				secondCamera);
 
 		stage = new Stage(vp);

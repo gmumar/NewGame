@@ -273,7 +273,7 @@ public class AssembledObject {
 
 			if (touch.isTouched()) {
 
-				if (touch.screenX > Globals.GameWidth / 2) {
+				if (touch.screenX > Globals.ScreenWidth / 2) {
 					direction = 1;
 					/*
 					 * float rotation = rightMost.getObject().getRotation();

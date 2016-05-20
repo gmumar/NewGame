@@ -7,6 +7,7 @@ import wrapper.CameraManager;
 import wrapper.GameContactListener;
 import wrapper.GamePhysicalState;
 import wrapper.GameState;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import wrapper.JointLimits;
 import wrapper.RollingAverage;
@@ -43,7 +44,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class GamePlayScreen implements Screen, InputProcessor {
 
@@ -55,7 +55,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private CameraManager camera, secondCamera;
 	private HUDBuilder hud;
 	private Stage stage;
-	private StretchViewport vp;
+	private GameViewport vp;
 	private ShaderProgram shader, colorShader;
 
 	private RollingAverage rollingAvg;
@@ -204,7 +204,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 		});
 
-		fakeTouch.screenX = 500;
+		fakeTouch.screenX = Globals.ScreenWidth;
 		fakeTouch.touched = true;
 		fakeTouches.add(fakeTouch);
 
@@ -460,7 +460,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new StretchViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				secondCamera);
 
 		stage = new Stage(vp);

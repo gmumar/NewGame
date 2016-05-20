@@ -62,6 +62,11 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		color: { r:	0.578, g: 0.765, b: 0.035, a: 1 }
 	}
 	
+	white: {
+		name: white,
+		color: { r:	1, g: 1, b: 1, a: 1 }
+	}
+	
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default: { background: default-scroll, knobBefore: default-round-large }

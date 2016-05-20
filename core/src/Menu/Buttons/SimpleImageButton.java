@@ -20,7 +20,7 @@ public class SimpleImageButton extends ImageButton {
 	}
 
 	public enum SimpleImageButtonTypes {
-		PAUSE, BACK, SOUND
+		PAUSE, BACK, SOUND, UPLOAD
 	};
 
 	public static ImageButton create(SimpleImageButtonTypes type,
@@ -45,6 +45,11 @@ public class SimpleImageButton extends ImageButton {
 			trd = new TextureRegionDrawable(new TextureRegion(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/sound_white.png")));
+			
+		} else if (type == SimpleImageButtonTypes.UPLOAD) {
+			trd = new TextureRegionDrawable(new TextureRegion(
+					gameLoader.Assets
+							.getFilteredTexture("menu/icons/upload.png")));
 			
 		}
 
