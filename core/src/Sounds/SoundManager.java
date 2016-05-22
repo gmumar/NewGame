@@ -10,10 +10,8 @@ public class SoundManager {
 	public static final float FX_VOLUME = 0.2f;
 	public static final float MUSIC_VOLUME = 0.3f;
 
-	public static boolean muteSFX = false;
-
 	public static long playFXSound(Sound clip) {
-		if (!muteSFX) {
+		if (!User.getInstance().getSfxPlayState()) {
 			return clip.play(FX_VOLUME);
 		}
 		return 0;
@@ -24,8 +22,8 @@ public class SoundManager {
 	}
 
 	public static void toggleSFX() {
-		muteSFX = !muteSFX;
-		User.getInstance().setSfxPlayState(muteSFX);
+		User.getInstance().setSfxPlayState(
+				!User.getInstance().getSfxPlayState());
 	}
 
 	public static void loopMusic(Music clip) {

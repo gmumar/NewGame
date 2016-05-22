@@ -100,9 +100,9 @@ public class AssemblyRules {
 			ArrayList<Component> allParts) {
 		// return true if all parts connected
 		// even if one part missing return false
-		Iterator<Component> allPartsIter = allParts.iterator();
-		while (allPartsIter.hasNext()) {
-			Body allPart = allPartsIter.next().getObject().getPhysicsBody();
+		
+		for (Component part : allParts ) {
+			Body allPart = part.getObject().getPhysicsBody();
 			if (allPart.getUserData() == null)
 				continue;
 			if (connectedParts.contains(allPart)) {

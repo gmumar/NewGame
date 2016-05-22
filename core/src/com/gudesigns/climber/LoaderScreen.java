@@ -11,6 +11,7 @@ import JSONifier.JSONCar;
 import Menu.FontManager;
 import Shader.GameMesh;
 import Storage.FileManager;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -90,7 +91,7 @@ public class LoaderScreen implements Screen {
 	public LoaderScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 		loaderBar = new LoaderBar();
-
+		
 		initStage();
 		loadAssets();
 
@@ -156,6 +157,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/images/three_stars.png", Texture.class);
 
 		gameLoader.Assets.load("menu/tags/new.png", Texture.class);
+		gameLoader.Assets.load("menu/tags/lock.png", Texture.class);
 
 		gameLoader.Assets.load("menu/icons/builder_bar.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/builder_clear.png", Texture.class);

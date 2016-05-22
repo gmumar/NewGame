@@ -109,13 +109,9 @@ public class Globals {
 
 	public static void updateScreenInfo() {
 
-		float heightRatio = (float) Gdx.graphics.getHeight() / GameHeight;
-		float widthRatio = (float) Gdx.graphics.getWidth() / GameWidth;
-
 		ScreenWidth = GameWidth;//(int) (GameWidth * widthRatio);
 		ScreenHeight = GameHeight;//(int) (GameHeight * heightRatio);
 		
-		System.out.println("Globals: " + Gdx.graphics.getHeight() + " " + ScreenHeight + " " + heightRatio);
 		calculateAspectRatio();
 	}
 

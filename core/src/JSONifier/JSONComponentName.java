@@ -11,6 +11,20 @@ public class JSONComponentName {
 	private String C;//ComponentId = null;
 	private String M;//MountId;
 	private Integer L;//Level;
+	
+	
+	public JSONComponentName() {
+		super();
+	}
+
+	public JSONComponentName(JSONComponentName inName) {
+		super();
+		B = inName.getBaseName();
+		S = inName.getSubName();
+		C = inName.getComponentId();
+		M = inName.getMountId();
+		L = inName.getLevel();
+	}
 
 	public Integer getLevel() {
 		return L;

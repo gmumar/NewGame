@@ -11,6 +11,7 @@ import Component.Component;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 import Sounds.SoundManager;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -179,7 +180,7 @@ public class AssembledObject {
 
 		if (idlePlaying) {
 
-			if (SoundManager.muteSFX) {
+			if (!User.getInstance().getSfxPlayState()) {
 				idle.stop();
 				idlePlaying = false;
 			} else {
@@ -192,7 +193,7 @@ public class AssembledObject {
 			}
 
 		} else {
-			if (!SoundManager.muteSFX) {
+			if (User.getInstance().getSfxPlayState()) {
 				startSound();
 			}
 		}

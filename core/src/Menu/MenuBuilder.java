@@ -45,11 +45,13 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.Shape.Type;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
@@ -101,8 +103,8 @@ public class MenuBuilder {
 	private Label titleBar;
 	private Integer currentMoney;
 	
-	private final float buttonWidth = 100;
-	private final float buttonHeight = 100;
+	private final float buttonWidth = 110;
+	//private final float buttonHeight = 100;
 
 	// private FixtureDef mouseFixture;
 	// BaseActor mouseActor;
@@ -157,7 +159,7 @@ public class MenuBuilder {
 
 		};*/
 		
-		but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.BAR, false);
+		but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.BAR, false, false);
 		but.addListener(new ClickListener() {
 			
 			@Override
@@ -171,7 +173,7 @@ public class MenuBuilder {
 		leftMenu.add(but).width(buttonWidth).expandY().fillY();
 		leftMenu.row();
 
-		tire_but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.WHEEL, false);
+		tire_but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.WHEEL, false, false);
 		tire_but.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -193,7 +195,7 @@ public class MenuBuilder {
 			}
 		};*/
 		
-		spring_but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.SPRING, false);
+		spring_but = CarBuilderButton.create(gameLoader, CarBuilderButtonType.SPRING, false, false);
 		spring_but.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -207,58 +209,45 @@ public class MenuBuilder {
 		leftMenu.add(spring_but).width(buttonWidth).expandY().fillY();
 		leftMenu.row();
 
-		delete = CarBuilderButton.create(gameLoader, CarBuilderButtonType.DELETE, false);
-		delete.addListener(new ClickListener() {
+		delete = CarBuilderButton.create(gameLoader, CarBuilderButtonType.DELETE, false, false);		
+		delete.addListener(new ActorGestureListener(){
+
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
-
-				if (lastSelected == null)
-					return;
-
-				// ----------------------- HACK ----------------------
-				if (((JSONComponentName) lastSelected.getUserData())
-						.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
-					Array<JointEdge> joints = lastSelected.getJointList();
-					JointEdge joint = joints.first();
-					lastSelected = joint.other;
-				}
-				// ---------------------------------------------------
-
-				Array<Fixture> fixtures = lastSelected.getFixtureList();
-				Fixture fixture = null;
-
-				for (Fixture fixtureIter : fixtures) {
-					if (fixtureIter.getUserData() == null)
+			public boolean longPress(Actor actor, float x, float y) {
+				System.out.println("Menubuilder: long press");
+				
+				ArrayList<Component> partsCopy = new ArrayList<Component>(parts);
+				Body body = null;
+				for(Component part : partsCopy){
+					body = part.getObject().getPhysicsBody();
+					
+					if(body==null || body.getUserData()==null){
 						continue;
-					fixture = fixtureIter;
-					break;
-				}
-
-				if (fixture == null)
-					return;
-				if (fixture.getUserData() == null) {
-					world.destroyBody(fixture.getBody());
-					return;
-				}
-
-				Component toRemove = lookupLastPart(lastSelected);
-
-				if (toRemove.getJointBodies() != null) {
-					for (BaseActor joinedPart : toRemove.getJointBodies()) {
-						parts.remove(lookupLastPart(joinedPart.getPhysicsBody()));
 					}
+					
+					if(((JSONComponentName)body.getUserData()).getBaseName().compareTo(ComponentNames.LIFE)==0){
+						continue;
+					}
+					
+					System.out.println("MenuBuilder: " + ((JSONComponentName)body.getUserData()).getBaseName());
+					
+					lastSelected = body;
+					deleteLastSelected();
 				}
-
-				parts.remove(toRemove);
-				Array<JointEdge> joints = lastSelected.getJointList();
-
-				for (JointEdge joint : joints) {
-					world.destroyBody(joint.other);
-				}
-
-				world.destroyBody(lastSelected);
-				lastSelected = null;
+				
+				return super.longPress(actor, x, y);
 			}
+
+			@Override
+			public void tap(InputEvent event, float x, float y, int count,
+					int button) {
+				System.out.println("Menubuilder: tap");
+				deleteLastSelected();
+				super.tap(event, x, y, count, button);
+			}
+			
+			
+			
 		});
 
 		// delete.setPosition(100, 0);
@@ -286,7 +275,7 @@ public class MenuBuilder {
 		 * zoomOut.setHeight(50); stage.addActor(zoomOut);
 		 */
 
-		build = CarBuilderButton.create(gameLoader, CarBuilderButtonType.PLAY, false);
+		build = CarBuilderButton.create(gameLoader, CarBuilderButtonType.PLAY, false, false);
 		build.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -317,7 +306,7 @@ public class MenuBuilder {
 		upload.setHeight(50);
 		// stage.addActor(upload);
 
-		rotateLeft = CarBuilderButton.create(gameLoader, CarBuilderButtonType.ROTATE_LEFT, false);
+		rotateLeft = CarBuilderButton.create(gameLoader, CarBuilderButtonType.ROTATE_LEFT, false, false);
 		rotateLeft.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -337,7 +326,7 @@ public class MenuBuilder {
 		rightMenu.add(rotateLeft).width(buttonWidth).expandY().fillY();
 		rightMenu.row();
 
-		rotateRight = CarBuilderButton.create(gameLoader, CarBuilderButtonType.ROTATE_RIGHT, false);
+		rotateRight = CarBuilderButton.create(gameLoader, CarBuilderButtonType.ROTATE_RIGHT, false, false);
 		rotateRight.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -371,7 +360,7 @@ public class MenuBuilder {
 		rightMenu.row();
 		
 
-		levelUp = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_UP, false);
+		levelUp = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_UP, false, false);
 		levelUp.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -412,7 +401,7 @@ public class MenuBuilder {
 		// stage.addActor(levelUp);
 
 
-		levelDown = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_DOWN, false);
+		levelDown = CarBuilderButton.create(gameLoader, CarBuilderButtonType.LEVEL_DOWN, false, false);
 		levelDown.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -450,6 +439,64 @@ public class MenuBuilder {
 
 	}
 
+	private void deleteLastSelected(){
+		if (lastSelected == null){
+			System.out.println("MenuBuilder: delete is null");
+			return;
+		}
+		
+		System.out.println("MenuBuilder: deleting " + ((JSONComponentName)lastSelected.getUserData()).getBaseName());
+
+		// ----------------------- HACK ----------------------
+		if (((JSONComponentName) lastSelected.getUserData())
+				.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+			Array<JointEdge> joints = lastSelected.getJointList();
+			JointEdge joint = joints.first();
+			lastSelected = joint.other;
+		}
+		// ---------------------------------------------------
+
+		Array<Fixture> fixtures = lastSelected.getFixtureList();
+		Fixture fixture = null;
+
+		for (Fixture fixtureIter : fixtures) {
+			if (fixtureIter.getUserData() == null)
+				continue;
+			fixture = fixtureIter;
+			break;
+		}
+
+		if (fixture == null)
+			return;
+		if (fixture.getUserData() == null) {
+			world.destroyBody(fixture.getBody());
+			return;
+		}
+
+		Component toRemove = lookupLastPart(lastSelected);
+
+		if(toRemove!=null){
+			if (toRemove.getJointBodies() != null) {
+				for (BaseActor joinedPart : toRemove.getJointBodies()) {
+					parts.remove(lookupLastPart(joinedPart.getPhysicsBody()));
+				}
+			}
+	
+			parts.remove(toRemove);
+		} else {
+			System.out.println("MenuBuilder: to remove null"  );
+		}
+		Array<JointEdge> joints = lastSelected.getJointList();
+
+		for (JointEdge joint : joints) {
+			world.destroyBody(joint.other);
+		}
+
+		world.destroyBody(lastSelected);
+		lastSelected = null;
+
+	}
+	
 	private ArrayList<Component> addLife() {
 		incrementCount(ComponentNames.LIFE);
 		Component c = ComponentBuilder.buildLife(new GamePhysicalState(world,
@@ -530,11 +577,11 @@ public class MenuBuilder {
 		parts.add(c);
 
 		// --------------- HACK ------------------
-		if (((JSONComponentName) lastSelected.getUserData()).getBaseName()
-				.compareTo(ComponentNames.TIRE) == 0) {
-			((JSONComponentName) lastSelected.getUserData())
-					.setBaseName(ComponentNames.AXLE);
-		}
+		//if (((JSONComponentName) lastSelected.getUserData()).getBaseName()
+		//		.compareTo(ComponentNames.TIRE) == 0) {
+		//	((JSONComponentName) lastSelected.getUserData())
+		//			.setBaseName(ComponentNames.AXLE);
+		//}
 		// ---------------------------------------
 
 		// lastSelected =
@@ -714,12 +761,19 @@ public class MenuBuilder {
 		 */
 
 		for (Component part : parts) {
+			
+			JSONComponentName lookupName = new JSONComponentName((JSONComponentName)body.getUserData());
+			
+			// ------------------- HACK -----------------
+			if(lookupName.getBaseName().compareTo(ComponentNames.TIRE)==0){
+				lookupName.setBaseName(ComponentNames.AXLE);
+			}
+			// ------------------------------------------
 
 			if (part.getjComponentName()
 					.getBaseId()
 					.compareTo(
-							((JSONComponentName) body.getUserData())
-									.getBaseId()) == 0) {
+							lookupName.getBaseId()) == 0) {
 
 				return part;
 
@@ -1123,14 +1177,26 @@ public class MenuBuilder {
 				}
 
 				hitBody = fixture.getBody();
-				// --------------- HACK ------------------
-				if (((JSONComponentName) hitBody.getUserData()).getBaseName()
-						.compareTo(ComponentNames.TIRE) == 0) {
-					((JSONComponentName) hitBody.getUserData())
-							.setBaseName(ComponentNames.AXLE);
+				
+				// ----------------------- HACK ----------------------
+				if (((JSONComponentName) hitBody.getUserData())
+						.getBaseName().compareTo(ComponentNames.TIRE) == 0) {
+					Array<JointEdge> joints = hitBody.getJointList();
+					JointEdge joint = joints.first();
+					hitBody = joint.other;
+				} else {
+				// ---------------------------------------------------
+					lastSelected = hitBody;
 				}
+				
+				// --------------- HACK ------------------
+				//if (((JSONComponentName) hitBody.getUserData()).getBaseName()
+				//		.compareTo(ComponentNames.AXLE) == 0) {
+				//	((JSONComponentName) hitBody.getUserData())
+				//			.setBaseName(ComponentNames.TIRE);
+				//}
 				// ---------------------------------------
-				lastSelected = hitBody;
+				
 
 				System.out.println("mouse: "
 						+ ((JSONComponentName) hitBody.getUserData())

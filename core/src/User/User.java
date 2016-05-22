@@ -1,6 +1,7 @@
 package User;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import wrapper.GamePreferences;
 import wrapper.Globals;
@@ -12,7 +13,9 @@ import com.badlogic.gdx.Preferences;
 import com.google.gson.Gson;
 
 public class User {
-	
+
+	public static final String TRACK_PREFIX = "track_";
+
 	public enum STARS implements Serializable {
 		ONE, TWO, THREE, NONE
 	}
@@ -37,13 +40,15 @@ public class User {
 
 		currentCar = (Globals.defualt_car);
 		currentTrack = (Globals.default_track);
-		
+
 		restoreUserState();
 	}
-	
+
 	private void saveUserState() {
-		
+
 		Gson json = new Gson();
+
+		System.out.println("User: Saving: " + json.toJson(userState));
 
 		String encrypted = encryptor.encrypt(json.toJson(userState));
 
@@ -51,15 +56,30 @@ public class User {
 		prefs.flush();
 
 	}
-	
-	private void restoreUserState(){
-		String inputString = prefs.getString(GamePreferences.USR_STR,
-				"cveSuvxEjX1GNBw7FDuABebTQF0Dz9fsJxrLH/Mwy7GrJkIonjtO0icayx/zMMuxSm9j+vdJQwq6typf+G0FHw==");		
+
+	private void restoreUserState() {
+		String inputString = prefs
+				.getString(
+						GamePreferences.USR_STR,
+						"cveSuvxEjX1GNBw7FDuABebTQF0Dz9fsJxrLH/Mwy7GrJkIonjtO0icayx/zMMuxSm9j+vdJQwq6typf+G0FHw==");
 
 		Gson json = new Gson();
-		userState = json.fromJson(encryptor.decrypt(inputString), UserState.class);
+		userState = json.fromJson(encryptor.decrypt(inputString),
+				UserState.class);
 
-		//System.out.println("Restored: " + json.toJson(userState));
+		// Initially unlocked
+		if (userState.lockedItems == null) {
+			userState.lockedItems = new HashMap<String, Boolean>();
+		}
+		userState.lockedItems
+				.put(LockingPrefix.getForrestPrefix() + "1", false);
+		userState.lockedItems
+				.put(LockingPrefix.getForrestPrefix() + "2", false);
+		userState.lockedItems
+				.put(LockingPrefix.getForrestPrefix() + "3", false);
+
+		saveUserState();
+		// System.out.println("Restored: " + json.toJson(userState));
 	}
 
 	public String getCurrentCar() {
@@ -80,23 +100,22 @@ public class User {
 	public String getCurrentTrack() {
 		String inputString = prefs.getString(GamePreferences.TRACK_MAP_STR,
 				Globals.default_track);
-		
+
 		currentTrack = inputString;
-		
+
 		return currentTrack;
 	}
 
 	public void setCurrentTrack(String currentTrack) {
-		
-		//prefs.clear();
-		
+
+		// prefs.clear();
 
 		System.out.println("User: Track saved!");
-		
+
 		prefs.putString(GamePreferences.TRACK_MAP_STR, currentTrack);
-		
+
 		prefs.flush();
-		
+
 		this.currentTrack = currentTrack;
 	}
 
@@ -125,7 +144,7 @@ public class User {
 		} else if (itemName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
 			incrementSpringLevel();
 		}
-		
+
 		saveUserState();
 
 		return true;
@@ -215,7 +234,7 @@ public class User {
 		userState.playingMusic = playing;
 		saveUserState();
 	}
-	
+
 	public boolean getMusicPlayState() {
 		return userState.playingMusic;
 	}
@@ -224,35 +243,59 @@ public class User {
 		userState.playingSfx = playing;
 		saveUserState();
 	}
-	
+
 	public boolean getSfxPlayState() {
 		return userState.playingSfx;
 	}
 
-	public static final String TRACK_PREFIX = "track_";
 	public void setStars(String trackId, STARS stars) {
 		prefs.putString(TRACK_PREFIX + trackId, stars.toString());
 		prefs.flush();
 
 	}
-	
-	public STARS getStars(String trackId){
-		
+
+	public STARS getStars(String trackId) {
+
 		String starString = prefs.getString(TRACK_PREFIX + trackId,
 				STARS.NONE.toString());
-		
-		if(starString.compareTo(STARS.NONE.toString())==0){
+
+		if (starString.compareTo(STARS.NONE.toString()) == 0) {
 			return STARS.NONE;
-		} else if(starString.compareTo(STARS.ONE.toString())==0){
+		} else if (starString.compareTo(STARS.ONE.toString()) == 0) {
 			return STARS.ONE;
-		} else if(starString.compareTo(STARS.TWO.toString())==0){
+		} else if (starString.compareTo(STARS.TWO.toString()) == 0) {
 			return STARS.TWO;
-		} else if(starString.compareTo(STARS.THREE.toString())==0){
+		} else if (starString.compareTo(STARS.THREE.toString()) == 0) {
 			return STARS.THREE;
 		}
-		
+
 		return STARS.NONE;
-		
+
 	}
-	
+
+	public void Lock(String id) {
+		setLock(id, true);
+	}
+
+	public void Unlock(String id) {
+		setLock(id, false);
+	}
+
+	private void setLock(String id, Boolean lock) {
+		if (userState.lockedItems == null) {
+			userState.lockedItems = new HashMap<String, Boolean>();
+		}
+		userState.lockedItems.put(id, lock);
+		saveUserState();
+	}
+
+	public Boolean getLock(String id) {
+
+		if (userState.lockedItems == null) {
+			return false;
+		}
+
+		return userState.lockedItems.get(id);
+	}
+
 }

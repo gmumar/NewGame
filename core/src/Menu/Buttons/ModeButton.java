@@ -20,7 +20,7 @@ public class ModeButton {
 	};
 
 	public static Button create(Skin skin, GameLoader gameLoader,
-			ModeButtonTypes type, boolean isNew) {
+			ModeButtonTypes type, boolean isNew, boolean isLocked) {
 
 		Button button = new Button(skin, "modeButton");//
 		Image image = null;
@@ -69,6 +69,20 @@ public class ModeButton {
 		if (isNew) {
 			stack.add(newTag);
 		}
+		
+		TextureRegion lockTextureRegion = new TextureRegion(
+				gameLoader.Assets.getFilteredTexture("menu/tags/lock.png"));
+		TextureRegionDrawable lockTextureRegionDrawable = new TextureRegionDrawable(lockTextureRegion);
+
+		lockTextureRegionDrawable.setMinWidth(Globals.baseSize );
+		lockTextureRegionDrawable.setMinHeight(Globals.baseSize *1.2f );
+
+		ImageButton lock = new ImageButton(lockTextureRegionDrawable);
+		lock.align(Align.center | Align.top);
+		lock.pad(15);
+
+		if(isLocked) stack.add(lock);
+		
 		// infinityMode.add(infinityImage).pad(8).expand();
 		button.add(stack).pad(8).expand();
 

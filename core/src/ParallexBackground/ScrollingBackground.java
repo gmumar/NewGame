@@ -34,6 +34,11 @@ public class ScrollingBackground {
 		
 		if(bgType == BackgroundType.SELECTOR){
 			rbg = new ParallaxBackground(new ParallaxLayer[]{
+		            new ParallaxLayer(
+		            		new TextureRegion(gameLoader.Assets.getFilteredTexture("worlds/gradient.png"))
+		            		,new Vector2(0,0)
+		            		,new Vector2(-50, 330)
+		            		,new Vector2(0,400)),
 	        		new ParallaxLayer(
 		            		new TextureRegion(gameLoader.Assets.get(hills, Texture.class))
 		            		,new Vector2(7,0)

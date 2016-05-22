@@ -59,7 +59,7 @@ public class CarModeScreen implements Screen {
 		buttonHolder = new Table(skin);
 
 		carBuilder = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_BUILDER, true);
+				ModeButtonTypes.CAR_BUILDER, true,true);
 		carBuilder.setChecked(true);
 		carBuilder.addListener(new ClickListener() {
 
@@ -70,7 +70,7 @@ public class CarModeScreen implements Screen {
 		});
 
 		myPicks = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_MY_PICKS, true);
+				ModeButtonTypes.CAR_MY_PICKS, true,true);
 		myPicks.addListener(new ClickListener() {
 
 			@Override
@@ -80,7 +80,7 @@ public class CarModeScreen implements Screen {
 		});
 
 		communityCars = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_COMMUNITY_CARS, true);
+				ModeButtonTypes.CAR_COMMUNITY_CARS, true,true);
 		communityCars.addListener(new ClickListener() {
 
 			@Override

@@ -58,7 +58,7 @@ public class GameModeScreen implements Screen {
 		buttonHolder = new Table(skin);
 
 		adventrueMode = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.ADVENTURE, true);
+				ModeButtonTypes.ADVENTURE, true,true);
 		adventrueMode.setChecked(true);
 		adventrueMode.addListener(new ClickListener() {
 
@@ -69,7 +69,7 @@ public class GameModeScreen implements Screen {
 		});
 
 		infinityMode = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.INFINITY, true);
+				ModeButtonTypes.INFINITY, true,true);
 		infinityMode.addListener(new ClickListener() {
 
 			@Override

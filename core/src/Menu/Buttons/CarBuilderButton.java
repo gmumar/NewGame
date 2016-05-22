@@ -21,7 +21,7 @@ public class CarBuilderButton {
 	};
 
 	public static final Button create(GameLoader gameLoader,
-			CarBuilderButtonType type, boolean isNew) {
+			CarBuilderButtonType type, boolean isNew, boolean isLocked) {
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 
@@ -69,7 +69,7 @@ public class CarBuilderButton {
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_clear.png"));
-			buttonName = new Label("Delete", skin);
+			buttonName = new Label("Delete/Clear", skin);
 		} else if (type == CarBuilderButtonType.PLAY) {
 			base = new Button(skin, "carBuilder_play");
 			image = new Image(
@@ -86,7 +86,7 @@ public class CarBuilderButton {
 			image = new Image(
 					gameLoader.Assets.getFilteredTexture("menu/icons/up.png"));
 			sizeYAdjust = 0.5f;
-			buttonName = new Label("+", skin);
+			buttonName = new Label("Level Up", skin);
 		}
 
 		Stack stack = new Stack();
@@ -101,10 +101,22 @@ public class CarBuilderButton {
 
 		ImageButton newTag = new ImageButton(trd);
 		newTag.align(Align.top | Align.right);
-
+		
 		if (isNew) {
 			stack.add(newTag);
 		}
+		
+		TextureRegion lockTextureRegion = new TextureRegion(
+				gameLoader.Assets.getFilteredTexture("menu/tags/lock.png"));
+		TextureRegionDrawable lockTextureRegionDrawable = new TextureRegionDrawable(lockTextureRegion);
+
+		lockTextureRegionDrawable.setMinWidth(Globals.baseSize );
+		lockTextureRegionDrawable.setMinHeight(Globals.baseSize );
+
+		ImageButton lock = new ImageButton(lockTextureRegionDrawable);
+		lock.align(Align.center);
+
+		if(isLocked) stack.add(lock);
 		// infinityMode.add(infinityImage).pad(8).expand();
 		base.add(stack).pad(8).expand()
 				.width(Globals.baseSize * 1.5f * sizeXAdjust)
@@ -113,7 +125,7 @@ public class CarBuilderButton {
 		base.row();
 
 		if (type != CarBuilderButtonType.LEVEL_DOWN
-				&& type != CarBuilderButtonType.LEVEL_UP
+				//&& type != CarBuilderButtonType.LEVEL_UP
 				&& type != CarBuilderButtonType.ROTATE_LEFT
 				&& type != CarBuilderButtonType.ROTATE_RIGHT) {
 			base.add(buttonName).pad(10);

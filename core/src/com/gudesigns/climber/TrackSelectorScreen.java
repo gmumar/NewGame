@@ -39,14 +39,14 @@ import com.google.gson.stream.JsonReader;
 
 public class TrackSelectorScreen extends SelectorScreen {
 
+	private final static int itemsPerRow = 5;
+
 	@Override
 	protected int getItemsPerPage() {
 		return 20;
 	}
 
 	private ScrollingBackground scrollingBackground;
-	
-	
 
 	public TrackSelectorScreen(GameState gameState) {
 		super(gameState);
@@ -207,7 +207,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	@Override
 	protected void addButton(final JSONParentClass item) {
 		Button b = AdventureTrackButton.create(gameLoader,
-				JSONTrack.objectify(item.jsonify()));
+				JSONTrack.objectify(item.jsonify()),true, false );
 
 		b.addListener(new ClickListener() {
 
@@ -286,6 +286,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	protected void initButtons() {
 
 		Table b;
+		int count = 0;
 
 		Iterator<Table> iter = buttons.iterator();
 
@@ -295,6 +296,11 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 			itemsTable.add(b).pad(5).height(Globals.baseSize * 4)
 					.width(Globals.baseSize * 4);
+			count++;
+			if (count >= itemsPerRow) {
+				itemsTable.row();
+				count = 0;
+			}
 			itemsTable.invalidate();
 			scrollPane.invalidate();
 		}

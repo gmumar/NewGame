@@ -10,15 +10,18 @@ import User.User.STARS;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.gudesigns.climber.GameLoader;
 
 public class AdventureTrackButton {
 
-	public static final Button create(GameLoader gameLoader, JSONTrack track) {
+	public static final Button create(GameLoader gameLoader, JSONTrack track, boolean isNew, boolean isLocked) {
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		String indexTxt = Integer.toString(track.getIndex());
@@ -32,6 +35,9 @@ public class AdventureTrackButton {
 			base = new Button(skin, "adventureTrack_artic");
 		}
  
+		Stack stack = new Stack();
+		//stack.setFillParent(true);
+		
 		Table content = new Table(skin);
 		content.setBackground("white");
 
@@ -72,8 +78,37 @@ public class AdventureTrackButton {
 		index.setText(indexTxt);
 
 		content.add(index);
+		
+		stack.add(content);
+		
+		TextureRegion tr = new TextureRegion(
+				gameLoader.Assets.getFilteredTexture("menu/tags/new.png"));
+		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 
-		base.add(content).width(Globals.baseSize * 3)
+		trd.setMinWidth(Globals.baseSize * 1.2f);
+		trd.setMinHeight(Globals.baseSize * 1.2f);
+
+		ImageButton newTag = new ImageButton(trd);
+		newTag.align(Align.top | Align.right);
+
+		if (isNew) {
+			stack.add(newTag);
+		}
+		
+		TextureRegion lockTextureRegion = new TextureRegion(
+				gameLoader.Assets.getFilteredTexture("menu/tags/lock.png"));
+		TextureRegionDrawable lockTextureRegionDrawable = new TextureRegionDrawable(lockTextureRegion);
+
+		lockTextureRegionDrawable.setMinWidth(Globals.baseSize );
+		lockTextureRegionDrawable.setMinHeight(Globals.baseSize * 1.2f );
+
+		ImageButton lock = new ImageButton(lockTextureRegionDrawable);
+		lock.align(Align.center);
+		lock.padBottom(30);
+
+		if(isLocked) stack.add(lock);
+
+		base.add(stack).width(Globals.baseSize * 3)
 				.height(Globals.baseSize * 3);
 
 		return base;
