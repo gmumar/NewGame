@@ -9,7 +9,6 @@ import Menu.PopQueManager;
 import Menu.ScreenType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
-import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
 

@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import wrapper.BaseActor;
-import wrapper.GameState;
 import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import JSONifier.Properties;

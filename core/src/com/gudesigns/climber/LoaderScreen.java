@@ -11,7 +11,6 @@ import JSONifier.JSONCar;
 import Menu.FontManager;
 import Shader.GameMesh;
 import Storage.FileManager;
-import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

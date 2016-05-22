@@ -20,7 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.CarModeScreen;
-import com.gudesigns.climber.CarSelectorScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.TrackSelectorScreen;

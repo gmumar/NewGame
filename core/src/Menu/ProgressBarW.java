@@ -1,7 +1,5 @@
 package Menu;
 
-import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
-
 import wrapper.Globals;
 
 import com.badlogic.gdx.graphics.Color;

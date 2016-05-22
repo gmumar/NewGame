@@ -32,18 +32,15 @@ public class MainMenuScreen implements Screen {
 	private GameViewport vp;
 	private PopQueManager popQueManager;
 	private User user;
-	private MainMenuScreen instance;
 
 	private Button builder, playGame, buildTrack, selectTrack, selectCar,
 			quickNext, buyCoins, soundControl, tapToPlay;
 
 	private static CarAnimationRunner carAnimation;
-	private static boolean  carAnimationCreated = false;
 	
 	public MainMenuScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
-		instance = this;
-
+		
 		initStage();
 		initButtons();
 		initUser();

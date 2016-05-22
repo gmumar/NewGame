@@ -8,8 +8,8 @@ import JSONifier.JSONTrack;
 
 public class FileObject  {
 	
-	private final static String CARS = "cars";
-	private final static String TRACKS = "tracks";
+	//private final static String CARS = "cars";
+	//private final static String TRACKS = "tracks";
 
 	private ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
 	private ArrayList<JSONTrack> tracks = new ArrayList<JSONTrack>();

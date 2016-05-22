@@ -87,7 +87,7 @@ public class GroundBuilder {
 	private ShaderProgram colorShader;
 	private static int vertexCount;
 
-	private int initial = 0 * 8;
+	//private int initial = 0 * 8;
 	public boolean loading = true;
 
 	private AssembledTrack track;
@@ -223,7 +223,7 @@ public class GroundBuilder {
 
 			}
 		} else {
-			initial = 0;
+			//initial = 0;
 			loading = false;
 			ADD_FLOOR_COUNT_FINAL = 3;
 		}

@@ -207,7 +207,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	@Override
 	protected void addButton(final JSONParentClass item) {
 		Button b = AdventureTrackButton.create(gameLoader,
-				JSONTrack.objectify(item.jsonify()),true, false );
+				JSONTrack.objectify(item.jsonify()), true, true);
 
 		b.addListener(new ClickListener() {
 

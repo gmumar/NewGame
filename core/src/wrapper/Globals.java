@@ -54,6 +54,7 @@ public class Globals {
 
 	final static public Color BROWN1 = new Color(0.73f, 0.40f, 0.31f, 1);
 	final static public Color TRANSPERENT_BLACK = new Color(0, 0, 0, 0.4f);
+	final static public Color LOCKED_COLOR = new Color(1, 1, 1, 0.9f);
 
 	final static public Color PROGRESS_BG = new Color(0, 0, 0, 0.2f);
 

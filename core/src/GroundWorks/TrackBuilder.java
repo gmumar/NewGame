@@ -73,7 +73,7 @@ public class TrackBuilder {
 		return f;
 	}
 
-	private Fixture drawEdge(Vector2 v1, Vector2 v2, Body body) {
+	/*private Fixture drawEdge(Vector2 v1, Vector2 v2, Body body) {
 		FixtureDef fixtureDef = new FixtureDef();
 
 		EdgeShape edgeShape = new EdgeShape();
@@ -105,7 +105,7 @@ public class TrackBuilder {
 
 		return boxBody;
 
-	}
+	}*/
 
 	public void draw(SpriteBatch batch) {
 		GroundUnitDescriptor lastObj = mapList.get(mapList.size() - 1);

@@ -2,6 +2,9 @@ package Menu.Buttons;
 
 import wrapper.Globals;
 
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -9,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.gudesigns.climber.GameLoader;
@@ -26,6 +30,8 @@ public class ModeButton {
 		Image image = null;
 		Label buttonName = null;
 
+		Table stackInlay = new Table();
+
 		if (type == ModeButtonTypes.INFINITY) {
 			image = new Image(
 					gameLoader.Assets
@@ -36,7 +42,7 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/adventure.png"));
 			buttonName = new Label("Adventrue Mode", skin);
-		}  else if (type == ModeButtonTypes.CAR_BUILDER) {
+		} else if (type == ModeButtonTypes.CAR_BUILDER) {
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/car_builder.png"));
@@ -54,14 +60,29 @@ public class ModeButton {
 		}
 
 		Stack stack = new Stack();
-		stack.add(image);
+		// stack.add(image);
+		stackInlay.add(image).pad(8);
+
+		stackInlay.row();
+		stackInlay.add(buttonName).pad(10);
+		stack.add(stackInlay);
+
+		if (isLocked) {
+
+			Pixmap overlay = new Pixmap((100), (100), Format.RGBA8888);
+			overlay.setColor(Globals.LOCKED_COLOR);
+			overlay.fill();
+
+			stack.add(new Image(new Texture(overlay)));
+			// stackInlay.add(new Image(new Texture(overlay)));
+		}
 
 		TextureRegion tr = new TextureRegion(
 				gameLoader.Assets.getFilteredTexture("menu/tags/new.png"));
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 
-		trd.setMinWidth(Globals.baseSize * 1.8f);
-		trd.setMinHeight(Globals.baseSize * 1.8f);
+		trd.setMinWidth(Globals.baseSize * 1.4f);
+		trd.setMinHeight(Globals.baseSize * 1.4f);
 
 		ImageButton newTag = new ImageButton(trd);
 		newTag.align(Align.top | Align.right);
@@ -69,26 +90,25 @@ public class ModeButton {
 		if (isNew) {
 			stack.add(newTag);
 		}
-		
+
 		TextureRegion lockTextureRegion = new TextureRegion(
 				gameLoader.Assets.getFilteredTexture("menu/tags/lock.png"));
-		TextureRegionDrawable lockTextureRegionDrawable = new TextureRegionDrawable(lockTextureRegion);
+		TextureRegionDrawable lockTextureRegionDrawable = new TextureRegionDrawable(
+				lockTextureRegion);
 
-		lockTextureRegionDrawable.setMinWidth(Globals.baseSize );
-		lockTextureRegionDrawable.setMinHeight(Globals.baseSize *1.2f );
+		lockTextureRegionDrawable.setMinWidth(Globals.baseSize);
+		lockTextureRegionDrawable.setMinHeight(Globals.baseSize * 1.2f);
 
 		ImageButton lock = new ImageButton(lockTextureRegionDrawable);
 		lock.align(Align.center | Align.top);
 		lock.pad(15);
 
-		if(isLocked) stack.add(lock);
-		
+		if (isLocked) {
+			stack.add(lock);
+		}
+
 		// infinityMode.add(infinityImage).pad(8).expand();
-		button.add(stack).pad(8).expand();
-
-		button.row();
-
-		button.add(buttonName).pad(10);
+		button.add(stack).expand();// .pad(8);
 
 		return button;
 

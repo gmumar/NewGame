@@ -1,41 +1,5 @@
 package throwaway;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import wrapper.CameraManager;
-import wrapper.GamePreferences;
-import wrapper.GameState;
-import wrapper.Globals;
-import JSONifier.JSONTrack;
-import Menu.Button;
-import Menu.PopQueManager;
-import Menu.PopQueObject;
-import Menu.PopQueObject.PopQueObjectType;
-import Menu.TableW;
-import RESTWrapper.Backendless_JSONParser;
-import RESTWrapper.Backendless_Track;
-import RESTWrapper.REST;
-import RESTWrapper.RESTPaths;
-import RESTWrapper.RESTProperties;
-import Storage.FileManager;
-import Storage.FileObject;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.HttpResponse;
-import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.utils.async.AsyncExecutor;
-import com.badlogic.gdx.utils.async.AsyncTask;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.gudesigns.climber.GameLoader;
-import com.gudesigns.climber.MainMenuScreen;
 
 public class OLD_TrackSelectorScreen {//Oimplements Screen {
 
