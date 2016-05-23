@@ -37,6 +37,9 @@ public class HUDBuilder {
 	private ImageButton pause;
 
 	private GameLoader gameLoader;
+	private Integer currentMoney;
+	private boolean biggerMoney = false;
+	private float timePassed = 0;
 
 	public HUDBuilder(Stage stage, final GameState gameState,
 			final PopQueManager popQueManager,
@@ -44,7 +47,8 @@ public class HUDBuilder {
 
 		this.gameLoader = gameState.getGameLoader();
 		this.user = gameState.getUser();
-		
+		this.currentMoney = user.getMoney();
+
 		Table base = new Table();
 		base.setFillParent(true);
 
@@ -57,7 +61,8 @@ public class HUDBuilder {
 				}
 			};
 
-			exit.setPosition(Globals.ScreenWidth - 100, Globals.ScreenHeight - 300);
+			exit.setPosition(Globals.ScreenWidth - 100,
+					Globals.ScreenHeight - 300);
 			// stage.addActor(exit);
 
 			restart = new Button("restart") {
@@ -78,14 +83,14 @@ public class HUDBuilder {
 			stage.addActor(fps);
 
 		}
-		
+
 		// Progress Bars
 		mapProgress = new ProgressBarW(0, 100, 0.01f, false, "mapProgress");
 		mapProgress.setPosition(0, Globals.ScreenHeight - 5);
 		mapProgress.setSize(Globals.ScreenWidth, 0.2f);
 		mapProgress.setAnimateDuration(0.5f);
 
-		//stage.addActor(mapProgress);
+		// stage.addActor(mapProgress);
 		base.add(mapProgress).expandX().fillX();
 
 		base.row();
@@ -113,10 +118,11 @@ public class HUDBuilder {
 
 		});
 
-		//pause.setPosition(Globals.ScreenWidth - 60, Globals.ScreenHeight - 65);
-		base.add(pause).top().expand().right().width(Globals.baseSize*2).height(Globals.baseSize*1.5f*2);
-		//stage.addActor(pause);
-
+		// pause.setPosition(Globals.ScreenWidth - 60, Globals.ScreenHeight -
+		// 65);
+		base.add(pause).top().expand().right().width(Globals.baseSize * 2)
+				.height(Globals.baseSize * 1.5f * 2);
+		// stage.addActor(pause);
 
 		// Timer
 		Vector2 timerLocation = new Vector2(20, -50);
@@ -135,7 +141,7 @@ public class HUDBuilder {
 		// Money
 		Vector2 moneyLocation = new Vector2(20, -85);
 		Image coin = new Image(gameLoader.Assets.getFilteredTexture("coin.png"));
-		coin.setPosition(moneyLocation.x -5, moneyLocation.y-5
+		coin.setPosition(moneyLocation.x - 5, moneyLocation.y - 5
 				+ Globals.ScreenHeight);
 		coin.setSize(40, 40);
 		stage.addActor(coin);
@@ -157,7 +163,22 @@ public class HUDBuilder {
 
 		}
 		clockTime.setText(Globals.makeTimeStr(timeIn));
-		money.setText(user.getMoney().toString());
+		// money.setText(user.getMoney().toString());
+
+		currentMoney = Animations.money(money, user.getMoney(), currentMoney,
+				biggerMoney);
+
+		biggerMoney = !biggerMoney;
+
+		if (money.getFontScaleX() == Animations.BIG_TEXT) {
+			timePassed += delta;
+			if (timePassed > 0.2f) {
+				timePassed = 0;
+				money.setFontScale(1);
+			}
+
+		}
+
 		mapProgress.setValue(progress > 100 ? 100 : progress);
 		// mapProgress.act(delta);
 

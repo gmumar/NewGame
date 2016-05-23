@@ -141,7 +141,10 @@ public class JSONTrack extends JSONParentClass {
 
 	@Override
 	public boolean equals(Object obj) {
-		return (this.jsonify().compareTo(((JSONTrack) obj).jsonify()) == 0);
+		
+		return (this.getIndex() == ((JSONTrack) obj).getIndex());
+		//return (this.getObjectId().compareTo(((JSONTrack) obj).getObjectId()) == 0);
+		//return (this.jsonify().compareTo(((JSONTrack) obj).jsonify()) == 0);
 	}
 
 	public String getId() {

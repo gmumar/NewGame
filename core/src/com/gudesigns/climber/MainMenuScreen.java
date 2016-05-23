@@ -61,19 +61,21 @@ public class MainMenuScreen implements Screen {
 		tapToPlay = new Button("Tap To Play") {
 			@Override
 			public void Clicked() {
-				Action completeAction = new Action() {
+				/*Action completeAction = new Action() {
 					public boolean act(float delta) {
 						gameLoader.setScreen(new GameModeScreen(gameState));
 						return true;
 					}
-				};
+				};*/
 				
-				DialogBase d = new DialogBase("black",Skins.loadDefault(gameLoader, 1), "default");
+				gameLoader.setScreen(new GameModeScreen(gameState));
+				
+				/*DialogBase d = new DialogBase("black",Skins.loadDefault(gameLoader, 1), "default");
 				d.setBackground("blackOut");
 				d.setFillParent(true);
 				d.setColor(1, 1, 1, 0);
 				d.addAction(new SequenceAction(Actions.fadeIn(0.25f),completeAction));
-				stage.addActor(d);
+				stage.addActor(d);*/
 				
 			}
 		};

@@ -3,6 +3,8 @@ package com.gudesigns.climber;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import wrapper.GameState;
@@ -13,6 +15,7 @@ import JSONifier.JSONTrack.TrackType;
 import Menu.ScreenType;
 import Menu.SelectorScreen;
 import Menu.Buttons.AdventureTrackButton;
+import Menu.Buttons.ButtonLockWrapper;
 import ParallexBackground.ScrollingBackground;
 import ParallexBackground.ScrollingBackground.BackgroundType;
 import RESTWrapper.Backendless_JSONParser;
@@ -110,6 +113,9 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 								for (ServerDataUnit fromServer : obj.getData()) {
 
+									System.out.println("TrackSelectorScreen: "
+											+ fromServer.getTrackIndex());
+
 									final JSONTrack trackJson = JSONTrack
 											.objectify(fromServer.getData());
 									trackJson.setObjectId(fromServer
@@ -120,6 +126,8 @@ public class TrackSelectorScreen extends SelectorScreen {
 											.getTrackDifficulty());
 									trackJson.setIndex(fromServer
 											.getTrackIndex());
+									trackJson.setCreationTime(fromServer
+											.getCreationTime());
 
 									addItemToList(trackJson);
 
@@ -206,21 +214,24 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	@Override
 	protected void addButton(final JSONParentClass item) {
-		Button b = AdventureTrackButton.create(gameLoader,
-				JSONTrack.objectify(item.jsonify()), true, true);
+		JSONTrack track = JSONTrack.objectify(item.jsonify());
+		final ButtonLockWrapper b = AdventureTrackButton.create(gameLoader,
+				track, false);
 
-		b.addListener(new ClickListener() {
+		b.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameState.getUser().setCurrentTrack(item.jsonify());
-				gameLoader.setScreen(new CarModeScreen(gameState));
-				super.clicked(event, x, y);
+				if (!b.locked) {
+					gameState.getUser().setCurrentTrack(item.jsonify());
+					gameLoader.setScreen(new CarModeScreen(gameState));
+					super.clicked(event, x, y);
+				}
 			}
 
 		});
 
-		buttons.add(b);
+		buttons.add(b.button);
 
 		refreshAllButtons();
 	}
@@ -287,6 +298,18 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 		Table b;
 		int count = 0;
+
+		Collections.sort(buttons, new Comparator<Table>() {
+
+			@Override
+			public int compare(Table o1, Table o2) {
+				Integer table1 = Integer.parseInt((String) o1.getUserObject());
+				Integer table2 = Integer.parseInt((String) o2.getUserObject());
+
+				return table1.compareTo(table2);
+			}
+
+		});
 
 		Iterator<Table> iter = buttons.iterator();
 

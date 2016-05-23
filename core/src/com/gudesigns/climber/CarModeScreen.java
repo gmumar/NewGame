@@ -9,6 +9,7 @@ import Menu.PopQueManager;
 import Menu.ScreenType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
+import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
 
@@ -32,7 +33,7 @@ public class CarModeScreen implements Screen {
 	private GameViewport vp;
 	private PopQueManager popQueManager;
 
-	private Button carBuilder, myPicks, communityCars;
+	private ButtonLockWrapper carBuilder, myPicks, communityCars;
 
 	private Table buttonHolder, base;
 
@@ -58,49 +59,63 @@ public class CarModeScreen implements Screen {
 		buttonHolder = new Table(skin);
 
 		carBuilder = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_BUILDER, true,true);
-		carBuilder.setChecked(true);
-		carBuilder.addListener(new ClickListener() {
+				ModeButtonTypes.CAR_BUILDER, true, false);
+		carBuilder.button.setChecked(true);
+
+		carBuilder.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameLoader.setScreen(new CarBuilderScreen(gameState));
+				if (!carBuilder.locked) {
+					gameLoader.setScreen(new CarBuilderScreen(gameState));
+				}
 			}
+
 		});
 
 		myPicks = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_MY_PICKS, true,true);
-		myPicks.addListener(new ClickListener() {
+				ModeButtonTypes.CAR_MY_PICKS, true, false);
+
+		myPicks.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameLoader.setScreen(new CarSelectorScreen(gameState));
+				if (!myPicks.locked) {
+					gameLoader.setScreen(new CarSelectorScreen(gameState));
+				}
 			}
 		});
 
 		communityCars = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_COMMUNITY_CARS, true,true);
-		communityCars.addListener(new ClickListener() {
+				ModeButtonTypes.CAR_COMMUNITY_CARS, true, true);
+
+		communityCars.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameLoader.setScreen(new CarSelectorScreen(gameState));
+				if (!communityCars.locked) {
+					gameLoader.setScreen(new CarSelectorScreen(gameState));
+				}
 			}
 		});
 
 		ButtonGroup<Button> group = new ButtonGroup<Button>();
-		group.add(myPicks);
-		group.add(carBuilder);
-		group.add(communityCars);
+		group.add(myPicks.button);
+		group.add(carBuilder.button);
+		if (!communityCars.locked) {
+			group.add(communityCars.button);
+		}
 		group.setMaxCheckCount(1);
 		group.setMinCheckCount(1);
 
-		buttonHolder.add(carBuilder).pad(5).height(Globals.baseSize * 10)
+		buttonHolder.add(carBuilder.button).pad(5)
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 8)
+				.center();
+		buttonHolder.add(myPicks.button).pad(5).height(Globals.baseSize * 10)
 				.width(Globals.baseSize * 8).center();
-		buttonHolder.add(myPicks).pad(5).height(Globals.baseSize * 10)
-				.width(Globals.baseSize * 8).center();
-		buttonHolder.add(communityCars).pad(5).height(Globals.baseSize * 10)
-		.width(Globals.baseSize * 8).center();
+		buttonHolder.add(communityCars.button).pad(5)
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 8)
+				.center();
 
 		base.add(buttonHolder).expand().fill();
 

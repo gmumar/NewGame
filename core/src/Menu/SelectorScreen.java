@@ -10,7 +10,10 @@ import wrapper.GameState;
 import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
+import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
+import JSONifier.JSONParentClass.JSONParentType;
+import JSONifier.JSONTrack;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
@@ -26,8 +29,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.gudesigns.climber.GameLoader;
 
 public abstract class SelectorScreen implements Screen {
@@ -39,7 +40,10 @@ public abstract class SelectorScreen implements Screen {
 
 	// private ArrayList<Button> buttons = new ArrayList<Button>();
 	protected static ArrayList<Table> buttons = new ArrayList<Table>();
-	protected ArrayList<JsonElement> uniquenessButtonList = new ArrayList<JsonElement>();
+	// protected ArrayList<JsonElement> uniquenessButtonList = new
+	// ArrayList<JsonElement>();
+	protected ArrayList<JSONParentClass> uniquenessButtonList = new ArrayList<JSONParentClass>();
+
 	protected ArrayList<JSONParentClass> items = new ArrayList<JSONParentClass>();
 	protected Table itemsTable;
 	protected Table baseTable;
@@ -68,11 +72,11 @@ public abstract class SelectorScreen implements Screen {
 	public volatile boolean downloadCancelled = false;
 
 	protected int pageNumber = 0;
-	//protected static final int MAX_ITEMS_PER_PAGE = 6;
+	// protected static final int MAX_ITEMS_PER_PAGE = 6;
 	protected int currentPageStart = 0;
-	protected int currentPageEnd ;
+	protected int currentPageEnd;
 	private int loadedCount = 0;
-	private JsonParser parser = new JsonParser();
+	// private JsonParser parser = new JsonParser();
 	// private Integer previousSize = 0;
 	private boolean initButtons = false;
 
@@ -97,12 +101,12 @@ public abstract class SelectorScreen implements Screen {
 	protected abstract void selectorRender(float delta);
 
 	protected abstract void clearScreen();
-	
+
 	protected abstract int getItemsPerPage();
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
-		
+
 		currentPageEnd = getItemsPerPage();
 
 		// ae = Globals.globalRunner;
@@ -155,13 +159,62 @@ public abstract class SelectorScreen implements Screen {
 
 		uniqueListLock.lock();
 
-		JsonElement catElem = parser.parse(item.jsonify());
+		if (item.getParentType() == JSONParentType.TRACK) {
 
-		if (!uniquenessButtonList.contains(catElem)) {
-			items.add(item);
-			totalLoadedCounter.release();
-			uniquenessButtonList.add(catElem);
+			JSONTrack trackToBeAdded = (JSONTrack) item;
+
+			if (uniquenessButtonList.contains(trackToBeAdded)) {
+
+				System.out.println("SelectorScreen: found");
+
+				Integer indexInList = uniquenessButtonList
+						.indexOf(trackToBeAdded);
+				JSONParentClass otherItem = uniquenessButtonList
+						.get(indexInList);
+				JSONTrack trackInList = (JSONTrack) otherItem;
+
+				Long time1 = Long.parseLong(trackToBeAdded.getCreationTime());
+				Long time2 = Long.parseLong(trackInList.getCreationTime());
+
+				if (time1 > time2) {
+					System.out.println("SelectorScreen: newer " + time1 + " > "
+							+ time2);
+					items.add(item);
+					items.remove(otherItem);
+					totalLoadedCounter.release();
+					uniquenessButtonList.remove(trackInList);
+					uniquenessButtonList.add(trackToBeAdded);
+
+				} else {
+					System.out.println("SelectorScreen: skipping");
+					;
+				}
+
+			} else {
+				items.add(item);
+				totalLoadedCounter.release();
+				uniquenessButtonList.add(trackToBeAdded);
+			}
+
+		} else if (item.getParentType() == JSONParentType.CAR) {
+			JSONCar car = (JSONCar) item;
+
+			if (uniquenessButtonList.contains(car)) {
+			} else {
+				items.add(item);
+				totalLoadedCounter.release();
+				uniquenessButtonList.add(car);
+			}
 		}
+
+		/*
+		 * JsonElement catElem = parser.parse(item.jsonify());
+		 * 
+		 * if (uniquenessButtonList.contains(catElem)) {
+		 * System.out.println("SelectorScreen: Found"); } else{
+		 * System.out.println("SelectorScreen: Not Found"); items.add(item);
+		 * totalLoadedCounter.release(); uniquenessButtonList.add(catElem); }
+		 */
 
 		uniqueListLock.unlock();
 
@@ -214,7 +267,7 @@ public abstract class SelectorScreen implements Screen {
 							+ localLoadedCounter.availablePermits() + " "
 							+ totalLoadedCounter.availablePermits());
 
-					if (localLoadedCounter.availablePermits() >= totalLoadedCounter
+					if (localLoadedCounter.availablePermits() - 2 >= totalLoadedCounter
 							.availablePermits()) {
 						return null;
 					}
@@ -245,8 +298,8 @@ public abstract class SelectorScreen implements Screen {
 			baseTable.clear();
 		}
 
-		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState,null,
-				false);
+		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState,
+				null, false);
 
 		Table contentTable = new Table();
 		contentTable.setTouchable(Touchable.childrenOnly);
@@ -269,8 +322,7 @@ public abstract class SelectorScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
-				camera);
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 

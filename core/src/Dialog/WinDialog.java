@@ -93,11 +93,11 @@ public class WinDialog extends Table {
 			final TextBox difficulty = new TextBox("difficulty");
 			difficulty.setMaxLength(1);
 			difficulty.setTextBoxString("d");
-			
+
 			final TextBox index = new TextBox("index");
 			index.setMaxLength(1000);
 			index.setTextBoxString("i");
-			
+
 			textWrapper.row();
 			textWrapper.add(index).pad(5);
 			textWrapper.row();
@@ -111,8 +111,8 @@ public class WinDialog extends Table {
 					BackendFunctions.uploadTrack(User.getInstance()
 							.getCurrentTrack(), popQueObject
 							.getGamePlayInstance().getMapTime(), Integer
-							.parseInt(difficulty.getText()), Integer.parseInt(index.getText())
-							);
+							.parseInt(difficulty.getText()), Integer
+							.parseInt(index.getText()));
 					super.clicked(event, x, y);
 				}
 
@@ -144,7 +144,7 @@ public class WinDialog extends Table {
 		return base;
 	}
 
-	public void update(GameLoader gameLoader, PopQueObject popQueObject) {
+	public void updateMoney(GameLoader gameLoader, PopQueObject popQueObject) {
 		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
 				.getCurrentTrack());
 		buildTable(gameLoader, popQueObject);

@@ -31,6 +31,8 @@ public class Backendless_Deserializer implements
 		}
 
 		JsonObject obj = json.getAsJsonObject();
+		
+		//System.out.println("Backendless_Deserializer: " + obj.toString());
 
 		dataSet.setTotalObjects(obj.get("totalObjects").getAsInt());
 		dataSet.setOffset(obj.get("offset").getAsInt());
@@ -44,6 +46,9 @@ public class Backendless_Deserializer implements
 			JsonObject fromServer = iter.getAsJsonObject();
 			ServerDataUnit unit = new ServerDataUnit();
 			String actualDataStr = null;
+			
+			unit.setCreationTime(fromServer.get(RESTProperties.CREATED)
+					.getAsString());
 
 			if (typeOfT.equals(Backendless_Car.class)) {
 				actualDataStr = Decompress.Car(fromServer.get(

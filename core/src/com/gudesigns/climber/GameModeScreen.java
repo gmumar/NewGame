@@ -9,6 +9,7 @@ import Menu.PopQueManager;
 import Menu.ScreenType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
+import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
 
@@ -32,7 +33,7 @@ public class GameModeScreen implements Screen {
 	private GameViewport vp;
 	private PopQueManager popQueManager;
 
-	private Button adventrueMode, infinityMode;
+	private ButtonLockWrapper adventrueMode, infinityMode;
 
 	private Table buttonHolder, base;
 
@@ -51,43 +52,51 @@ public class GameModeScreen implements Screen {
 		base.setFillParent(true);
 		// base.pad(25);
 
-		TitleBar.create(base, ScreenType.MODE_SCREEN, popQueManager, gameState, null,
-				true);
+		TitleBar.create(base, ScreenType.MODE_SCREEN, popQueManager, gameState,
+				null, true);
 
 		// Main Buttons
 		buttonHolder = new Table(skin);
 
 		adventrueMode = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.ADVENTURE, true,true);
-		adventrueMode.setChecked(true);
-		adventrueMode.addListener(new ClickListener() {
+				ModeButtonTypes.ADVENTURE, true, false);
+		adventrueMode.button.setChecked(true);
+
+		adventrueMode.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				if (!adventrueMode.locked) {
+					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				}
 			}
 		});
 
 		infinityMode = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.INFINITY, true,true);
-		infinityMode.addListener(new ClickListener() {
+				ModeButtonTypes.INFINITY, true, false);
+
+		infinityMode.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				if (!infinityMode.locked) {
+					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				}
 			}
 		});
 
 		ButtonGroup<Button> group = new ButtonGroup<Button>();
-		group.add(infinityMode);
-		group.add(adventrueMode);
+		group.add(infinityMode.button);
+		group.add(adventrueMode.button);
 		group.setMaxCheckCount(1);
 		group.setMinCheckCount(1);
 
-		buttonHolder.add(adventrueMode).pad(5).height(Globals.baseSize * 10)
-				.width(Globals.baseSize * 8).center();
-		buttonHolder.add(infinityMode).pad(5).height(Globals.baseSize * 10)
-				.width(Globals.baseSize * 8).center();
+		buttonHolder.add(adventrueMode.button).pad(5)
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 8)
+				.center();
+		buttonHolder.add(infinityMode.button).pad(5)
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 8)
+				.center();
 
 		base.add(buttonHolder).expand().fill();
 
@@ -106,8 +115,7 @@ public class GameModeScreen implements Screen {
 		camera.setToOrtho(false, Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
 
-		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
-				camera);
+		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight, camera);
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 

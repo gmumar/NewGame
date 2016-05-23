@@ -170,9 +170,9 @@ public class TitleBar {
 
 		base.row();
 
-		if (animate)
-			Animations.slideInFromTop(titleBar, -50);
-
+		if (animate){
+		//	Animations.slideInFromTop(titleBar, -50);
+		}
 		return coins;
 
 	}

@@ -7,7 +7,8 @@ public class ServerDataUnit {
 	private float trackBestTime;
 	private int trackDifficulty;
 	private int trackIndex;
-	
+	private String createdAt;
+
 	public int getTrackIndex() {
 		return trackIndex;
 	}
@@ -46,6 +47,14 @@ public class ServerDataUnit {
 
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
+	}
+
+	public void setCreationTime(String asString) {
+		createdAt = asString;
+	}
+
+	public String getCreationTime() {
+		return createdAt;
 	}
 
 }

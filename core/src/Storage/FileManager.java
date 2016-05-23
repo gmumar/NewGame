@@ -20,7 +20,7 @@ public class FileManager {
 
 	public final static String FILE_NAME = "myfile.txt";
 	public final static String CAR_FILE_NAME = "mycarfile.txt";
-	public final static String TRACK_FILE_NAME = "mytrackfile.txt";
+	public final static String TRACK_FILE_NAME = "mytrackfile_1.txt";
 
 	public static void writeToFile(FileObject objectIn) {
 

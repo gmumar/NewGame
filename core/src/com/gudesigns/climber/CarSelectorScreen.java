@@ -95,6 +95,7 @@ public class CarSelectorScreen extends SelectorScreen {
 									final JSONCar carJson = JSONCar
 											.objectify(fromServer.getData());
 									carJson.setObjectId(fromServer.getObjectId());
+									carJson.setCreationTime(fromServer.getCreationTime());
 
 									addItemToList(carJson);
 

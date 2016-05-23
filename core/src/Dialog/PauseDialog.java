@@ -118,16 +118,16 @@ public class PauseDialog extends Table {
 	}
 
 	public void update(GameLoader gameLoader, PopQueObject popQueObject) {
-		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
-				.getCurrentTrack());
+		//JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
+			//	.getCurrentTrack());
 		buildTable(gameLoader, popQueObject);
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
-		User.getInstance()
+		/*User.getInstance()
 				.addCoin(
 						(popQueObject.getGamePlayInstance().calculatePosition() >= Globals.POSITION_LOST ? 0
 								: popQueObject.getGamePlayInstance()
 										.calculatePosition())
-								* playedTrack.getDifficulty());
+								* playedTrack.getDifficulty());*/
 
 	}
 }

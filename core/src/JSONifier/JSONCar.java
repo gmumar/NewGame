@@ -65,10 +65,13 @@ public class JSONCar extends JSONParentClass {
 	@Override
 	public boolean equals(Object obj) {
 
-		JsonElement o1 = parser.parse(this.jsonify());
-		JsonElement o2 = parser.parse(((JSONCar) obj).jsonify());
+		//JsonElement o1 = parser.parse(this.jsonify());
+		//JsonElement o2 = parser.parse(((JSONCar) obj).jsonify());
 
-		return o1.equals(o2);
+		String id1 = getObjectId();
+		String id2 = ((JSONCar) obj).getObjectId();
+		
+		return id1.equals(id2);
 	}
 
 	public String getId() {

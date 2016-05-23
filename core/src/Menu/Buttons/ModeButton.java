@@ -1,6 +1,8 @@
 package Menu.Buttons;
 
 import wrapper.Globals;
+import User.LockingPrefix;
+import User.User;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -23,12 +25,16 @@ public class ModeButton {
 		INFINITY, ADVENTURE, CAR_BUILDER, CAR_MY_PICKS, CAR_COMMUNITY_CARS
 	};
 
-	public static Button create(Skin skin, GameLoader gameLoader,
+	public static ButtonLockWrapper create(Skin skin, GameLoader gameLoader,
 			ModeButtonTypes type, boolean isNew, boolean isLocked) {
 
 		Button button = new Button(skin, "modeButton");//
 		Image image = null;
 		Label buttonName = null;
+		
+		User user = User.getInstance();
+		
+		//boolean isLocked = false;
 
 		Table stackInlay = new Table();
 
@@ -37,6 +43,7 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/infinity.png"));
 			buttonName = new Label("Infinity Mode", skin);
+			isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.INFINITY);
 		} else if (type == ModeButtonTypes.ADVENTURE) {
 			image = new Image(
 					gameLoader.Assets
@@ -52,6 +59,7 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/car_community.png"));
 			buttonName = new Label("Community Cars", skin);
+			isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.CAR_COMMUNITY_CAR);
 		} else if (type == ModeButtonTypes.CAR_MY_PICKS) {
 			image = new Image(
 					gameLoader.Assets
@@ -110,7 +118,7 @@ public class ModeButton {
 		// infinityMode.add(infinityImage).pad(8).expand();
 		button.add(stack).expand();// .pad(8);
 
-		return button;
+		return new ButtonLockWrapper(button, isLocked);
 
 	}
 }

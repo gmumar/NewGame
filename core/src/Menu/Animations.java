@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.gudesigns.climber.SplashScreen.SplashActor;
 
 public class Animations {
+	
+	public final static float BIG_TEXT = 1.01f;
 
 	public static final void fadeAndRemove(final Table table) {
 
@@ -51,9 +53,9 @@ public class Animations {
 
 	public static final void fadeInAndSlideUp(SplashActor splashActor) {
 		splashActor.setColor(1, 1, 1, 0);
-		
-		
-		ParallelAction pa = new ParallelAction(Actions.moveBy(0, 10, 0.8f), Actions.fadeIn(0.8f));
+
+		ParallelAction pa = new ParallelAction(Actions.moveBy(0, 10, 0.8f),
+				Actions.fadeIn(0.8f));
 
 		splashActor.addAction(pa);
 	}
@@ -87,19 +89,29 @@ public class Animations {
 				new ParallelAction(Actions.fadeIn(0.5f), Actions.moveBy(0,
 						distance, 0.2f))));
 	}
-	
-	public static final Integer money(Label titleBar, Integer previousMoney, Integer currentMoney){
-		if(
-				previousMoney > 
-				currentMoney){
-			currentMoney ++;
+
+	public static final Integer money(Label titleBar, Integer previousMoney,
+			Integer currentMoney, boolean biggerMoney) {
+		if (previousMoney > currentMoney) {
+			currentMoney++;
+			if(biggerMoney){
+				titleBar.setFontScale(BIG_TEXT);
+			} else {
+				titleBar.setFontScale(1);
+			}
 		}
-		
-		if(previousMoney < currentMoney){
-			currentMoney --;
+
+		if (previousMoney < currentMoney) {
+			currentMoney--;
+			if(biggerMoney){
+				titleBar.setFontScale(BIG_TEXT);
+			} else {
+				titleBar.setFontScale(1);
+			}
 		}
 		titleBar.setText(currentMoney.toString());
-		
+
+
 		return currentMoney;
 	}
 

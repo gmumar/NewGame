@@ -116,7 +116,7 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 		
 		renderWorld();
 		batch.begin();
-		menu.drawForBuilder(batch);
+		menu.drawForBuilder(batch, delta);
 		batch.end();
 
 		shapeRenderer.begin(ShapeType.Filled);

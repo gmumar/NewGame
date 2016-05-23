@@ -72,8 +72,9 @@ public class BottomBar {
 		base.add(bottomBar).fillX().height(Globals.baseSize * 2).expandX()
 				.bottom();
 
-		if (animate)
-			Animations.fadeInFromBottom(bottomBar, 50);
+		if (animate){
+			//Animations.fadeInFromBottom(bottomBar, 50);
+		}
 
 		return bottomBar;
 	}

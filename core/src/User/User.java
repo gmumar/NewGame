@@ -25,6 +25,13 @@ public class User {
 	public static final Integer MAX_SPRING_LEVEL = 15;
 
 	private UserState userState = new UserState();
+
+	class LockedItemsType {
+		HashMap<String, Boolean> items = new HashMap<String, Boolean>();
+	};
+
+	public LockedItemsType lockedItems = null;
+
 	private String currentCar = null;
 	private String currentTrack = null;
 
@@ -52,7 +59,12 @@ public class User {
 
 		String encrypted = encryptor.encrypt(json.toJson(userState));
 
+		System.out.println("User: Saving: " + json.toJson(lockedItems));
+
+		String encryptedLocked = encryptor.encrypt(json.toJson(lockedItems));
+
 		prefs.putString(GamePreferences.USR_STR, encrypted);
+		prefs.putString(GamePreferences.USR_LOCKED, encryptedLocked);
 		prefs.flush();
 
 	}
@@ -63,20 +75,26 @@ public class User {
 						GamePreferences.USR_STR,
 						"cveSuvxEjX1GNBw7FDuABebTQF0Dz9fsJxrLH/Mwy7GrJkIonjtO0icayx/zMMuxSm9j+vdJQwq6typf+G0FHw==");
 
+		String lockedItemsString = prefs.getString(GamePreferences.USR_LOCKED,
+				null);
+
 		Gson json = new Gson();
 		userState = json.fromJson(encryptor.decrypt(inputString),
 				UserState.class);
 
-		// Initially unlocked
-		if (userState.lockedItems == null) {
-			userState.lockedItems = new HashMap<String, Boolean>();
+		if (lockedItemsString != null) {
+			lockedItems = json.fromJson(encryptor.decrypt(lockedItemsString),
+					LockedItemsType.class);
 		}
-		userState.lockedItems
-				.put(LockingPrefix.getForrestPrefix() + "1", false);
-		userState.lockedItems
-				.put(LockingPrefix.getForrestPrefix() + "2", false);
-		userState.lockedItems
-				.put(LockingPrefix.getForrestPrefix() + "3", false);
+
+		// Initially unlocked
+		if (lockedItems == null) {
+			lockedItems = new LockedItemsType();
+		}
+
+		lockedItems.items.put(LockingPrefix.getForrestPrefix() + "1", false);
+		lockedItems.items.put(LockingPrefix.getForrestPrefix() + "2", false);
+		lockedItems.items.put(LockingPrefix.getForrestPrefix() + "3", false);
 
 		saveUserState();
 		// System.out.println("Restored: " + json.toJson(userState));
@@ -282,20 +300,21 @@ public class User {
 	}
 
 	private void setLock(String id, Boolean lock) {
-		if (userState.lockedItems == null) {
-			userState.lockedItems = new HashMap<String, Boolean>();
+		if (lockedItems == null) {
+			lockedItems = new LockedItemsType();
 		}
-		userState.lockedItems.put(id, lock);
+		lockedItems.items.put(id, lock);
 		saveUserState();
 	}
 
-	public Boolean getLock(String id) {
+	public Boolean isLocked(String id) {
 
-		if (userState.lockedItems == null) {
-			return false;
+		if (lockedItems == null) {
+			return true;
 		}
 
-		return userState.lockedItems.get(id);
+		return lockedItems.items.get(id) == null ? true : lockedItems.items
+				.get(id);
 	}
 
 }

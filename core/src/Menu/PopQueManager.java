@@ -137,7 +137,7 @@ public class PopQueManager {
 		 */
 
 		// Table t = WinDialog.CreateDialog(popQueObject);
-		winTable.update(gameLoader,popQueObject);
+		winTable.updateMoney(gameLoader,popQueObject);
 		stage.addActor(winTable.getBase());
 	}
 

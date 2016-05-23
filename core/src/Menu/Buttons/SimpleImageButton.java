@@ -16,7 +16,6 @@ public class SimpleImageButton extends ImageButton {
 
 	public SimpleImageButton(Drawable imageUp) {
 		super(imageUp);
-		// TODO Auto-generated constructor stub
 	}
 
 	public enum SimpleImageButtonTypes {

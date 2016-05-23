@@ -4,6 +4,7 @@ import wrapper.Globals;
 import Dialog.Skins;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
+import User.LockingPrefix;
 import User.User;
 import User.User.STARS;
 
@@ -24,12 +25,15 @@ import com.gudesigns.climber.GameLoader;
 
 public class AdventureTrackButton {
 
-	public static final Button create(GameLoader gameLoader, JSONTrack track,
-			boolean isNew, boolean isLocked) {
+	public static final ButtonLockWrapper create(GameLoader gameLoader, JSONTrack track,
+			boolean isNew) {
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		String indexTxt = Integer.toString(track.getIndex());
 		User user = User.getInstance();
+
+		boolean isLocked = user.isLocked(LockingPrefix.getForrestPrefix()
+				+ indexTxt);
 
 		Table stackInlay = new Table();
 
@@ -79,7 +83,7 @@ public class AdventureTrackButton {
 				.width(starWidth);
 		content.row();
 
-		Label index = new Label("title", skin);
+		Label index = new Label("index", skin);
 		index.setText(indexTxt);
 
 		content.add(index);
@@ -130,7 +134,9 @@ public class AdventureTrackButton {
 
 		base.add(stack).fill().expand();
 
-		return base;
+		base.setUserObject(indexTxt);
+
+		return new ButtonLockWrapper(base, isLocked);
 	}
 
 }

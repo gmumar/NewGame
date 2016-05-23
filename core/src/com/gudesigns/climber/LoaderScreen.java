@@ -64,25 +64,36 @@ public class LoaderScreen implements Screen {
 		public void draw(Batch batch, float parentAlpha) {
 			super.draw(batch, parentAlpha);
 			batch.end();
-			
+
 			// if (!projectionMatrixSet) {
 			shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 			shapeRenderer.setTransformMatrix(batch.getTransformMatrix());
-			shapeRenderer.translate(getX(),getY(), 0);
+			shapeRenderer.translate(getX(), getY(), 0);
 			// }
 
-			shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.circle(0	, 0, RADIUS, 100);
-			shapeRenderer.end();
+			/*
+			 * shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+			 * shapeRenderer.setColor(Color.BLACK); shapeRenderer.circle(0 , 0,
+			 * RADIUS, 100); shapeRenderer.end();
+			 * 
+			 * shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+			 * shapeRenderer.setColor(Color.GOLD); shapeRenderer.arc(0, 0,
+			 * RADIUS, 90, 360 * progress, 100); shapeRenderer.end();
+			 */
 
 			shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-			shapeRenderer.setColor(Color.GOLD);
-			shapeRenderer.arc(0, 0, RADIUS, 90, 360 * progress,
-					100);
+			shapeRenderer.setColor(Color.WHITE);
+			
+			/*shapeRenderer.rect(-Gdx.graphics.getWidth() / 2,
+					-Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth()
+							* progress, Gdx.graphics.getHeight(), Color.WHITE,
+					Color.BLACK, Color.BLACK, Color.WHITE);*/
+			
+			shapeRenderer.rect(-Gdx.graphics.getWidth() / 2,
+					-Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth()
+							* progress, Gdx.graphics.getHeight());
 			shapeRenderer.end();
 
-			//shapeRenderer.end();
 			batch.begin();
 		}
 	}
@@ -90,7 +101,7 @@ public class LoaderScreen implements Screen {
 	public LoaderScreen(GameLoader gameLoader) {
 		this.gameLoader = gameLoader;
 		loaderBar = new LoaderBar();
-		
+
 		initStage();
 		loadAssets();
 
@@ -123,7 +134,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("worlds/artic/mountains.png", Texture.class);
 		gameLoader.Assets.load("worlds/artic/hills.png", Texture.class);
 		gameLoader.Assets.load("worlds/artic/texture.png", Texture.class);
-		
+
 		gameLoader.Assets.load("worlds/gradient.png", Texture.class);
 
 		gameLoader.Assets.load("worlds/hud/clock.png", Texture.class);
@@ -140,7 +151,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/back.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/glowing_coin.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/upload.png", Texture.class);
-		
+
 		gameLoader.Assets.load("menu/icons/up.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/down.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/left.png", Texture.class);
@@ -265,12 +276,12 @@ public class LoaderScreen implements Screen {
 		batch = new SpriteBatch();
 		stage = new Stage(vp);
 
-		Table t= new Table();
+		Table t = new Table();
 		t.setFillParent(true);
 		t.center();
 		t.add(loaderBar).center().expand();
-		//loaderBar
-			//	.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
+		// loaderBar
+		// .setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
 		stage.addActor(t);
 
 	}
@@ -315,7 +326,7 @@ public class LoaderScreen implements Screen {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);

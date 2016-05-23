@@ -86,6 +86,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private User user;
 
 	private Color clearColor;
+	
+	private Integer currentMoney;
 
 	// private Box2DDebugRenderer debugRenderer ;
 
@@ -119,10 +121,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		} else if (trackType == TrackType.ARTIC) {
 			clearColor = new Color(Globals.ARTIC_BLUE_BG);
 		}
-
+		
 		Globals.updateScreenInfo();
 
 		this.user = gameState.getUser();
+		
+		currentMoney = user.getMoney();
 
 		batch = new SpriteBatch();
 		initStage();
@@ -271,7 +275,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// renderWorld(delta);
 
 		// dlTime = delta;
-
+		
 		fixedStep += delta;
 
 		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b,
