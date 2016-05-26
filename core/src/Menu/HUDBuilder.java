@@ -38,8 +38,6 @@ public class HUDBuilder {
 
 	private GameLoader gameLoader;
 	private Integer currentMoney;
-	private boolean biggerMoney = false;
-	private float timePassed = 0;
 
 	public HUDBuilder(Stage stage, final GameState gameState,
 			final PopQueManager popQueManager,
@@ -121,7 +119,7 @@ public class HUDBuilder {
 		// pause.setPosition(Globals.ScreenWidth - 60, Globals.ScreenHeight -
 		// 65);
 		base.add(pause).top().expand().right().width(Globals.baseSize * 2)
-				.height(Globals.baseSize * 1.5f * 2);
+				.height(Globals.baseSize * 1.5f * 2).padRight(13);
 		// stage.addActor(pause);
 
 		// Timer
@@ -165,19 +163,7 @@ public class HUDBuilder {
 		clockTime.setText(Globals.makeTimeStr(timeIn));
 		// money.setText(user.getMoney().toString());
 
-		currentMoney = Animations.money(money, user.getMoney(), currentMoney,
-				biggerMoney);
-
-		biggerMoney = !biggerMoney;
-
-		if (money.getFontScaleX() == Animations.BIG_TEXT) {
-			timePassed += delta;
-			if (timePassed > 0.2f) {
-				timePassed = 0;
-				money.setFontScale(1);
-			}
-
-		}
+		currentMoney = Animations.money(money, user.getMoney(), currentMoney);
 
 		mapProgress.setValue(progress > 100 ? 100 : progress);
 		// mapProgress.act(delta);

@@ -103,7 +103,11 @@ public class LoaderScreen implements Screen {
 		loaderBar = new LoaderBar();
 
 		initStage();
+		
+		
+		
 		loadAssets();
+		
 
 	}
 
@@ -151,6 +155,11 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/back.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/glowing_coin.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/upload.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/upgrade.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/dull_coin.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/dull_forward.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/mute.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/start.png", Texture.class);
 
 		gameLoader.Assets.load("menu/icons/up.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/down.png", Texture.class);
@@ -283,6 +292,8 @@ public class LoaderScreen implements Screen {
 		// loaderBar
 		// .setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
 		stage.addActor(t);
+		
+
 
 	}
 

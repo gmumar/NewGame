@@ -27,7 +27,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class CarBuilderScreen implements Screen, InputProcessor, GestureListener {
+public class CarBuilderScreen implements Screen, InputProcessor,
+		GestureListener {
 
 	// private GameLoader gameLoader;
 	private SpriteBatch batch;
@@ -45,14 +46,14 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 	private float zoom = 0.015f;
 
 	public CarBuilderScreen(GameState gameState) {
-		// this.gameLoader = gameLoader;		
+		// this.gameLoader = gameLoader;
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		initStage();
 		initWorld();
-		
-		popQueManager = new PopQueManager(gameState.getGameLoader(),stage);
+
+		popQueManager = new PopQueManager(gameState.getGameLoader(), stage);
 
 		for (int i = 0; i < Globals.MAX_FINGERS; i++) {
 			touches.add(new TouchUnit());
@@ -61,7 +62,7 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 		menu = new MenuBuilder(new GamePhysicalState(world,
 				gameState.getGameLoader()), stage, camera, shapeRenderer,
 				gameState.getUser(), popQueManager);
-		
+
 		debugRenderer = new Box2DDebugRenderer();
 
 		debugRenderer.AABB_COLOR.set(Color.WHITE);
@@ -99,9 +100,11 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 	private void initInputs() {
 		InputProcessor inputProcessorOne = this;
 		InputProcessor inputProcessorTwo = stage;
+		InputProcessor inputProcessorThree = menu;
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(inputProcessorOne);
 		inputMultiplexer.addProcessor(inputProcessorTwo);
+		inputMultiplexer.addProcessor(inputProcessorThree);
 		inputMultiplexer.addProcessor(new GestureDetector(this));
 		Gdx.input.setInputProcessor(inputMultiplexer);
 	}
@@ -112,8 +115,7 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 
 	@Override
 	public void render(float delta) {
-		
-		
+
 		renderWorld();
 		batch.begin();
 		menu.drawForBuilder(batch, delta);
@@ -135,15 +137,13 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
-		//debugRenderer.render(world, camera.combined);
+		// debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
-		
+
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		menu.handleClick(screenX, screenY);
-
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
@@ -151,12 +151,14 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 
 			return false;
 		}
-		return false;
+
+		// menu.handleClick(screenX, screenY);
+
+		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		menu.handleRelease(screenX, screenY);
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = 0;
 			touches.get(pointer).screenY = 0;
@@ -164,19 +166,24 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 
 			return false;
 		}
-		return false;
+
+		// menu.handleRelease(screenX, screenY);
+
+		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		menu.handleDrag(screenX, screenY);
 		if (pointer < Globals.MAX_FINGERS) {
 			touches.get(pointer).screenX = screenX;
 			touches.get(pointer).screenY = screenY;
 
 			return false;
 		}
-		return false;
+
+		// menu.handleDrag(screenX, screenY);
+
+		return true;
 	}
 
 	@Override
@@ -192,46 +199,47 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 			return false;
 
 		menu.handlePan(x, y, deltaX, deltaY);
-		camera.position.x -= deltaX / ((30+camera.zoom)/0.8f);
-		camera.position.y += deltaY / ((30+camera.zoom)/0.8f);
-		
-		if(camera.position.x > 4.5f){
+		camera.position.x -= deltaX / ((30 + camera.zoom) / 0.8f);
+		camera.position.y += deltaY / ((30 + camera.zoom) / 0.8f);
+
+		if (camera.position.x > 4.5f) {
 			camera.position.x = 4.5f;
 		}
-		
-		if(camera.position.x < -4.5f){
+
+		if (camera.position.x < -4.5f) {
 			camera.position.x = -4.5f;
 		}
-		
-		if(camera.position.y > 2.5f){
+
+		if (camera.position.y > 2.5f) {
 			camera.position.y = 2.5f;
 		}
-		
-		if(camera.position.y < -5.5f){
+
+		if (camera.position.y < -5.5f) {
 			camera.position.y = -5.5f;
 		}
-		
-		//System.out.println("BuilderScreen: " + camera.position.x + " " + camera.position.y);
-		
+
+		// System.out.println("BuilderScreen: " + camera.position.x + " " +
+		// camera.position.y);
+
 		camera.update();
 		return true;
 	}
-	
+
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
 		if (menu.isJoined())
 			return false;
-		
-		camera.zoom += (initialDistance - distance)/500000;
-		if(camera.zoom < 0.004f){
+
+		camera.zoom += (initialDistance - distance) / 500000;
+		if (camera.zoom < 0.004f) {
 			camera.zoom = 0.004f;
 		}
-		if(camera.zoom > 0.025f){
+		if (camera.zoom > 0.025f) {
 			camera.zoom = 0.025f;
 		}
-		
+
 		camera.update();
-		
+
 		return true;
 	}
 
@@ -346,7 +354,7 @@ public class CarBuilderScreen implements Screen, InputProcessor, GestureListener
 	@Override
 	public void pinchStop() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

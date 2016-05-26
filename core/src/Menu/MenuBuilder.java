@@ -28,6 +28,7 @@ import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
 import RESTWrapper.BackendFunctions;
 import User.User;
 
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -58,7 +59,7 @@ import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 
-public class MenuBuilder {
+public class MenuBuilder implements  InputProcessor{
 
 	public final static String BUILDER_SELECTED = "builder_selected";
 	public final static String BUILDER = "builder";
@@ -103,9 +104,6 @@ public class MenuBuilder {
 
 	private Label titleBar;
 	private Integer currentMoney;
-	private boolean biggerMoney = false;
-	private float timePassed = 0;
-
 	private final float buttonWidth = 110;
 
 	// private final float buttonHeight = 100;
@@ -315,7 +313,12 @@ public class MenuBuilder {
 		rotateLeft.button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (lastSelected != null) {
+				if (lastSelected != null
+						&& ((JSONComponentName) lastSelected.getUserData())
+								.getBaseName().compareTo(
+										ComponentNames.SPRINGJOINT) != 0
+						&& ((JSONComponentName) lastSelected.getUserData())
+								.getBaseName().compareTo(ComponentNames.AXLE) != 0) {
 					lastSelected.setTransform(lastSelected.getPosition(),
 							lastSelected.getAngle() + ROTATION_SIZE
 									* MathUtils.degreesToRadians);
@@ -336,7 +339,12 @@ public class MenuBuilder {
 		rotateRight.button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (lastSelected != null) {
+				if (lastSelected != null
+						&& ((JSONComponentName) lastSelected.getUserData())
+								.getBaseName().compareTo(
+										ComponentNames.SPRINGJOINT) != 0
+						&& ((JSONComponentName) lastSelected.getUserData())
+								.getBaseName().compareTo(ComponentNames.AXLE) != 0) {
 					lastSelected.setTransform(lastSelected.getPosition(),
 							lastSelected.getAngle() - ROTATION_SIZE
 									* MathUtils.degreesToRadians);
@@ -797,18 +805,8 @@ public class MenuBuilder {
 		}
 
 		currentMoney = Animations.money(titleBar, user.getMoney(),
-				currentMoney, biggerMoney);
+				currentMoney);
 
-		biggerMoney = !biggerMoney;
-
-		if (titleBar.getFontScaleX() == Animations.BIG_TEXT) {
-			timePassed += delta;
-			if (timePassed > 0.2f) {
-				timePassed = 0;
-				titleBar.setFontScale(1);
-			}
-
-		}
 
 		if (lastSelected == null)
 			return;
@@ -1323,5 +1321,53 @@ public class MenuBuilder {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		handleClick(screenX, screenY);
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		handleRelease(screenX, screenY);
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		handleDrag(screenX, screenY);
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -87,7 +87,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private Color clearColor;
 	
-	private Integer currentMoney;
 
 	// private Box2DDebugRenderer debugRenderer ;
 
@@ -126,7 +125,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		this.user = gameState.getUser();
 		
-		currentMoney = user.getMoney();
+		//currentMoney = user.getMoney();
 
 		batch = new SpriteBatch();
 		initStage();

@@ -36,18 +36,11 @@ public class BottomBar {
 		TableW bottomBar = new TableW(skin);
 
 		Button next = new Button(skin, "transparentButton");
-		Pixmap pixmap = new Pixmap((100), (100), Format.RGBA8888);
-		pixmap.setColor(Globals.GREEN);
-		pixmap.fillCircle(50, 50, 48);
-		pixmap.setColor(Color.WHITE);
-		pixmap.fillTriangle(30, 100 * 3 / 4, 30, 100 * 1 / 4, 80, 100 * 2 / 4);
-		Texture circle = new Texture(pixmap);
-		circle.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		Image nextImage = new Image(circle);
+		Image nextImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/start.png"));
 
 		next.add(nextImage).width(Globals.baseSize * 2)
-				.height(Globals.baseSize * 2);
+				.height(Globals.baseSize * 2).pad(18);
 
 		next.addListener(new ClickListener() {
 
@@ -69,7 +62,7 @@ public class BottomBar {
 
 		bottomBar.add(next).right().expand();
 
-		base.add(bottomBar).fillX().height(Globals.baseSize * 2).expandX()
+		base.add(bottomBar).fillX().height(Globals.baseSize * 2.5f).expandX()
 				.bottom();
 
 		if (animate){

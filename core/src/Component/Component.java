@@ -430,7 +430,7 @@ public class Component {
 	
 	public void draw(SpriteBatch batch) {
 		if (getJointBodies() == null) {
-			this.getObject().draw(batch);
+			object.draw(batch);
 		} else {
 			/*
 			 * Iterator<BaseActor> iter = getJointBodies().iterator(); while
@@ -446,7 +446,7 @@ public class Component {
 	
 	public void draw(SpriteBatch batch, String texture) {
 		if (getJointBodies() == null) {
-			this.getObject().draw(batch, texture);
+			object.draw(batch, texture);
 		} else {
 			/*
 			 * Iterator<BaseActor> iter = getJointBodies().iterator(); while

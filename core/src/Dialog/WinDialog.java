@@ -23,6 +23,8 @@ public class WinDialog extends Table {
 	Table base;
 	Skin skin;
 
+	Label stars;
+
 	public WinDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
 		super();
 		skin = Skins.loadDefault(gameLoader, 0);
@@ -33,7 +35,7 @@ public class WinDialog extends Table {
 
 	private void buildTable(GameLoader gameLoader,
 			final PopQueObject popQueObject) {
-		int position = popQueObject.getGamePlayInstance().calculatePosition();
+		int position = 100;
 
 		// Skin skin = Skins.loadDefault(gameLoader, 0);
 		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
@@ -84,7 +86,7 @@ public class WinDialog extends Table {
 
 		textWrapper.row();
 
-		Label stars = new Label(Integer.toString(position), skin);
+		stars = new Label(Integer.toString(position), skin);
 		textWrapper.add(stars).expandY().left().padBottom(4);
 
 		if (Globals.ADMIN_MODE) {
@@ -147,7 +149,8 @@ public class WinDialog extends Table {
 	public void updateMoney(GameLoader gameLoader, PopQueObject popQueObject) {
 		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
 				.getCurrentTrack());
-		buildTable(gameLoader, popQueObject);
+		stars.setText(Integer.toString(popQueObject.getGamePlayInstance()
+				.calculatePosition()));
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
 		User.getInstance()
 				.addCoin(

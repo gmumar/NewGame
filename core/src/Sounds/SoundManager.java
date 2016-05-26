@@ -11,7 +11,7 @@ public class SoundManager {
 	public static final float MUSIC_VOLUME = 0.3f;
 
 	public static long playFXSound(Sound clip) {
-		if (!User.getInstance().getSfxPlayState()) {
+		if (User.getInstance().getSfxPlayState()) {
 			return clip.play(FX_VOLUME);
 		}
 		return 0;

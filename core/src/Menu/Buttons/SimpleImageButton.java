@@ -26,6 +26,7 @@ public class SimpleImageButton extends ImageButton {
 			GameLoader gameLoader) {
 		
 		float scaleX = 1, scaleY = 1;
+		float paddingOffset = 0;
 
 		TextureRegionDrawable trd = null;
 
@@ -35,6 +36,7 @@ public class SimpleImageButton extends ImageButton {
 							.getFilteredTexture("menu/icons/pause.png")));
 			scaleY = 2.3f;
 			scaleX = 2f;
+			paddingOffset = -8;
 		} else if (type == SimpleImageButtonTypes.BACK) {
 			trd = new TextureRegionDrawable(
 					new TextureRegion(gameLoader.Assets.getFilteredTexture(
@@ -56,7 +58,6 @@ public class SimpleImageButton extends ImageButton {
 		trd.setMinWidth(Globals.baseSize * scaleX);
 
 		final ImageButton button = new ImageButton(trd);
-		button.pad(8.5f);
 		button.addAction(Actions.alpha(Globals.BUTTON_OPACITY));
 
 		button.addListener(new ClickListener() {
@@ -69,7 +70,7 @@ public class SimpleImageButton extends ImageButton {
 
 		});
 		
-		button.pad(8.5f);
+		button.pad(18.5f + paddingOffset);
 		button.addAction(Actions.alpha(Globals.BUTTON_OPACITY));
 		
 		return button;

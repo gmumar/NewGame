@@ -3,6 +3,7 @@ package Menu;
 import wrapper.Globals;
 import Dialog.DialogBase;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
@@ -12,8 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.gudesigns.climber.SplashScreen.SplashActor;
 
 public class Animations {
-	
-	public final static float BIG_TEXT = 1.01f;
+
+	public final static float BIG_TEXT = 1.000001f;
 
 	public static final void fadeAndRemove(final Table table) {
 
@@ -90,27 +91,39 @@ public class Animations {
 						distance, 0.2f))));
 	}
 
-	public static final Integer money(Label titleBar, Integer previousMoney,
-			Integer currentMoney, boolean biggerMoney) {
+	static float timePassed = 0;
+
+	public static final Integer money(Label coinLabel, Integer previousMoney,
+			Integer currentMoney) {
+
+		timePassed += Gdx.graphics.getDeltaTime();
+
 		if (previousMoney > currentMoney) {
 			currentMoney++;
-			if(biggerMoney){
-				titleBar.setFontScale(BIG_TEXT);
-			} else {
-				titleBar.setFontScale(1);
-			}
+
+			Action completeAction = new ParallelAction(Actions.moveBy(0, -1,
+					0.01f), Actions.fadeIn(0.1f));
+			Action mainAction = new ParallelAction(Actions.moveBy(0, 1, 0.01f),
+					Actions.fadeOut(0.1f));
+
+			coinLabel.addAction(new SequenceAction(mainAction, completeAction));
 		}
 
 		if (previousMoney < currentMoney) {
 			currentMoney--;
-			if(biggerMoney){
-				titleBar.setFontScale(BIG_TEXT);
-			} else {
-				titleBar.setFontScale(1);
+
+			if (timePassed > 0.5f) {
+				Action completeAction = new ParallelAction(Actions.moveBy(0,
+						-2, 0.1f), Actions.fadeIn(0.25f));
+				Action mainAction = new ParallelAction(Actions.moveBy(0, 2,
+						0.1f), Actions.fadeOut(0.25f));
+
+				coinLabel.addAction(new SequenceAction(mainAction,
+						completeAction));
+				timePassed = 0;
 			}
 		}
-		titleBar.setText(currentMoney.toString());
-
+		coinLabel.setText(currentMoney.toString());
 
 		return currentMoney;
 	}

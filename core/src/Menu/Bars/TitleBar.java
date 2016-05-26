@@ -36,6 +36,9 @@ public class TitleBar {
 	public final static Label create(Table base, final ScreenType type,
 			final PopQueManager popQueManager, final GameState gameState,
 			final BarObjects barObjects, boolean animate) {
+		
+		final int imagePadding = 8;
+		
 		final GameLoader gameLoader = gameState.getGameLoader();
 		Skin skin = Skins.loadDefault(gameLoader, 0);
 
@@ -165,7 +168,7 @@ public class TitleBar {
 
 		titleBar.add(sound).right();
 
-		base.add(titleBar).fillX().height(Globals.baseSize * 2).expandX()
+		base.add(titleBar).fillX().height(Globals.baseSize * 2.5f).expandX()
 				.center();
 
 		base.row();

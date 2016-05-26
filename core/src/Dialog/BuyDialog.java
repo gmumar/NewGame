@@ -1,56 +1,122 @@
 package Dialog;
 
+import wrapper.Globals;
 import Menu.PopQueObject;
 import User.Costs;
 import User.User;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.GameLoader;
 
 public class BuyDialog {
 
-	public static DialogBase CreateDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
+	public static DialogBase CreateDialog(GameLoader gameLoader,
+			final PopQueObject popQueObject) {
 
-		final DialogBase base = new DialogBase("", Skins.loadDefault(gameLoader,0), "default");
+		Skin skin = Skins.loadDefault(gameLoader, 0);
 
+		final DialogBase base = new DialogBase("", skin, "buyDialog");
+		base.clear();
 		base.setMovable(false);
 		base.setModal(true);
-		base.pad(10);
 
-		base.getButtonTable().defaults().height(60);
-		base.getButtonTable().defaults().width(60);
-		
+		Table header = new Table();
+		Table images = new Table();
+		Table price = new Table();
+		Table buttons = new Table();
+
+		// Header
+		Image upgradeImage = new Image(
+				gameLoader.Assets.getFilteredTexture("menu/icons/upgrade.png"));
+
+		header.add(upgradeImage).width(Globals.baseSize)
+				.height(Globals.baseSize).pad(5);
+
+		Label upgradeText = new Label("Upgrade", skin);
+		header.add(upgradeText);
+
+		base.add(header).center();
+		base.row();
+
+		// Images
+		// Vector2 originalOrigin = null;
+		Table currentItem = new Table(skin);
+		currentItem.setBackground("dialogDim");
+		Image currentItemImage = new Image(
+				gameLoader.Assets.getFilteredTexture("bar/level1.png"));
+		// originalOrigin = new
+		// Vector2(currentItemImage.getOriginX(),currentItemImage.getOriginY());
+		// currentItemImage.setOrigin(currentItemImage.getWidth()/2,
+		// currentItemImage.getHeight()/2);
+		// currentItemImage.setRotation(20);
+		// currentItemImage.setOrigin(originalOrigin.x, originalOrigin.y);
+		Label currentItemText = new Label("Level "
+				+ Integer.toString(popQueObject.getNextLevel() - 1), skin);
+		currentItem.add(currentItemImage).width(Globals.baseSize * 3)
+				.height(Globals.baseSize).pad(10);
+		currentItem.row();
+		currentItem.add(currentItemText);
+
+		Table nextItem = new Table(skin);
+		nextItem.setBackground("dialogDim");
+		Image nextItemImage = new Image(
+				gameLoader.Assets.getFilteredTexture("bar/level2.png"));
+		// originalOrigin = new
+		// Vector2(nextItemImage.getOriginX(),nextItemImage.getOriginY());
+		// nextItemImage.setOrigin(nextItemImage.getWidth()/2,
+		// nextItemImage.getHeight()/2);
+		// nextItemImage.setRotation(80);
+		// nextItemImage.setOrigin(originalOrigin.x, originalOrigin.y);
+		Label nextItemText = new Label("Level "
+				+ Integer.toString(popQueObject.getNextLevel()), skin);
+		nextItem.add(nextItemImage).width(Globals.baseSize * 3)
+				.height(Globals.baseSize).pad(10);
+		nextItem.row();
+		nextItem.add(nextItemText);
+
+		images.add(currentItem);
+		Image arrow = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/dull_forward.png"));
+		arrow.setOrigin(arrow.getWidth() / 2, arrow.getHeight() / 2);
+		// arrow.setRotation(180);
+		images.add(arrow).width(Globals.baseSize).height(Globals.baseSize)
+				.pad(10);
+		images.add(nextItem);
+		base.add(images).center().padRight(15).padLeft(15);
+		base.row();
+
+		// Price
 		final Integer itemCost = Costs.lookup(popQueObject.getComponentName(),
 				popQueObject.getNextLevel());
+		Image coinImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/dull_coin.png"));
 
-		base.text("Buy level:"
-				+ popQueObject.getNextLevel()
-				+ " of "
-				+ popQueObject.getComponentName()
-				+ " for "
-				+ itemCost.toString());
-		
-		TextButton yesButton = new TextButton("Yes",Skins.loadDefault(gameLoader,1),"yesButton");
-		yesButton.addListener(new ClickListener(){
+		price.add(coinImage).width(Globals.baseSize).height(Globals.baseSize)
+				.pad(5);
 
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				User.getInstance().buyItem(popQueObject.getComponentName(), itemCost);
-				popQueObject.getCallingInstance().successfulBuy();
-				base.hide();
-				super.clicked(event, x, y);
-			}
-			
-		});
-		base.getButtonTable().add(yesButton).height(60).width(120).pad(-2.5f);
+		Label priceText = new Label(itemCost.toString(), skin);
+		price.add(priceText);
 
-		TextButton noButton = new TextButton("No",Skins.loadDefault(gameLoader,1),"noButton");
-		noButton.addListener(new ClickListener(){
+		base.add(price).center();
+		base.row();
+
+		/*
+		 * base.text("Buy level:" + popQueObject.getNextLevel() + " of " +
+		 * popQueObject.getComponentName() + " for " + itemCost.toString());
+		 */
+
+		TextButton noButton = new TextButton("cancel", Skins.loadDefault(
+				gameLoader, 1), "noButton");
+		noButton.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -58,28 +124,27 @@ public class BuyDialog {
 				base.hide();
 				super.clicked(event, x, y);
 			}
-			
+
 		});
-		base.getButtonTable().add(noButton).height(60).width(120).pad(-2.5f);
-		
-		
-		
-		int size = 50;
+		buttons.add(noButton).height(Globals.baseSize * 2).fillX().expandX();
 
-		Texture t = new Texture("bar/level1.png");
-		TextureRegion tr = new TextureRegion(t);
-		float ratio = (float)t.getHeight()/t.getWidth();
-		Image i = new Image(tr);
-		
-		base.getContentTable().row();
+		TextButton yesButton = new TextButton("upgrade", Skins.loadDefault(
+				gameLoader, 1), "yesButton");
+		yesButton.addListener(new ClickListener() {
 
-		// How to resize stuff
-		base.getContentTable().add(i).height(size*ratio).width(size).padBottom(5);
-		
-		// Make it look rite
-		base.getButtonTable().pad(-2);
-		base.getContentTable().pad(3);
-		base.pad(0);
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				User.getInstance().buyItem(popQueObject.getComponentName(),
+						itemCost);
+				popQueObject.getCallingInstance().successfulBuy();
+				base.hide();
+				super.clicked(event, x, y);
+			}
+
+		});
+		buttons.add(yesButton).height(Globals.baseSize * 2).fillX().expandX();
+
+		base.add(buttons).expandX().fillX().pad(-2);
 
 		return base;
 	}

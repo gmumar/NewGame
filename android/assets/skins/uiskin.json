@@ -82,7 +82,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	noButton: {
 		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		up: red,
+		up: mediumGrey,
 		down: grey
 	},
 	toggle: {
@@ -96,7 +96,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	yesButton: {
 		font: default-font,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		up: green,
+		up: gameGreen,
 		down: grey
 	}
 },
@@ -120,13 +120,19 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	carBuilder_general: { up: mediumGrey, down: grey	}
 	carBuilder_delete: { up: deleteRed, down: grey	}
 	carBuilder_play: { up: gameGreen, down: grey	}
-	
+	soundButton: { up: grey, down: gameGreen, checked: gameGreen}
 },
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
-		background: default-round,
+		background: white,
 		titleFont: default-font,
 		titleFontColor: { a: 1, b: 1, g: 1, r: 1 }
+	},
+	buyDialog: {
+		background: white,
+		titleFont: default-font,
+		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
+		stageBackground: dialogDim
 	},
 	winDialog: {
 		titleFont: default-font,
