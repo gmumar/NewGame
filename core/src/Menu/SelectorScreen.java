@@ -17,6 +17,7 @@ import JSONifier.JSONTrack;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
+import User.TwoButtonDialogFlow;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -31,7 +32,7 @@ import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.gudesigns.climber.GameLoader;
 
-public abstract class SelectorScreen implements Screen {
+public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	private CameraManager camera;
 	private SpriteBatch batch;
@@ -39,7 +40,7 @@ public abstract class SelectorScreen implements Screen {
 	private GameViewport vp;
 
 	// private ArrayList<Button> buttons = new ArrayList<Button>();
-	protected static ArrayList<Table> buttons = new ArrayList<Table>();
+	protected ArrayList<Table> buttons = new ArrayList<Table>();
 	// protected ArrayList<JsonElement> uniquenessButtonList = new
 	// ArrayList<JsonElement>();
 	protected ArrayList<JSONParentClass> uniquenessButtonList = new ArrayList<JSONParentClass>();
@@ -49,6 +50,7 @@ public abstract class SelectorScreen implements Screen {
 	protected Table baseTable;
 	protected ScrollPane scrollPane;
 	protected PopQueManager popQueManager;
+	protected SelectorScreen context;
 	public GameLoader gameLoader;
 
 	protected Button nextPage;
@@ -106,6 +108,7 @@ public abstract class SelectorScreen implements Screen {
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
+		context = this;
 
 		currentPageEnd = getItemsPerPage();
 
@@ -115,7 +118,7 @@ public abstract class SelectorScreen implements Screen {
 		initStage();
 
 		// initNavigationButtons();
-
+		refreshAllButtons();
 		popQueManager = new PopQueManager(gameLoader, stage);
 
 		if (loadingLock.tryAcquire()) {
@@ -286,6 +289,8 @@ public abstract class SelectorScreen implements Screen {
 		});
 	}
 
+	Table contentTable;
+
 	protected void refreshAllButtons() {
 
 		if (!initButtons) {
@@ -293,26 +298,41 @@ public abstract class SelectorScreen implements Screen {
 			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
 			baseTable.setBackground("transparent");
 			baseTable.setFillParent(true);
+			TitleBar.create(baseTable, getScreenType(), popQueManager,
+					gameState, null, true);
 
+			contentTable = new Table();
+			contentTable.clear();
+			contentTable.setTouchable(Touchable.childrenOnly);
+
+			populateContentTable(contentTable);
+
+			baseTable.add(contentTable).expand().pad(20);
+
+			BottomBar.create(baseTable, getScreenType(), gameState, false);
+
+			stage.addActor(baseTable);
 		} else {
-			baseTable.clear();
+			// baseTable.clear();
+			contentTable.clear();
+			contentTable.setTouchable(Touchable.childrenOnly);
+
+			populateContentTable(contentTable);
 		}
 
-		TitleBar.create(baseTable, getScreenType(), popQueManager, gameState,
-				null, false);
+		/*
+		 * Table contentTable = new Table(); contentTable.clear();
+		 * contentTable.setTouchable(Touchable.childrenOnly);
+		 * 
+		 * populateContentTable(contentTable);
+		 * 
+		 * baseTable.add(contentTable).expand().pad(20);
+		 */
 
-		Table contentTable = new Table();
-		contentTable.setTouchable(Touchable.childrenOnly);
-
-		populateContentTable(contentTable);
-
-		baseTable.add(contentTable).expand().pad(20);
-
-		BottomBar.create(baseTable, getScreenType(), gameState, false);
+		// BottomBar.create(baseTable, getScreenType(), gameState, false);
 
 		// initNavigationButtons();
 
-		stage.addActor(baseTable);
 	}
 
 	private void initStage() {
@@ -402,6 +422,18 @@ public abstract class SelectorScreen implements Screen {
 	}
 
 	@Override
+	public boolean successful() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean failed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
 
@@ -446,4 +478,5 @@ public abstract class SelectorScreen implements Screen {
 		stage.dispose();
 
 	}
+
 }

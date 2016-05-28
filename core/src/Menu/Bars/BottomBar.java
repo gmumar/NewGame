@@ -39,8 +39,8 @@ public class BottomBar {
 
 		Image nextImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/start.png"));
 
-		next.add(nextImage).width(Globals.baseSize * 2)
-				.height(Globals.baseSize * 2).pad(18);
+		next.add(nextImage).width(Globals.baseSize * 3)
+				.height(Globals.baseSize * 3).pad(18);
 
 		next.addListener(new ClickListener() {
 
@@ -62,7 +62,7 @@ public class BottomBar {
 
 		bottomBar.add(next).right().expand();
 
-		base.add(bottomBar).fillX().height(Globals.baseSize * 2.5f).expandX()
+		base.add(bottomBar).fillX().height(Globals.baseSize * 3.5f).expandX()
 				.bottom();
 
 		if (animate){

@@ -19,30 +19,36 @@ import com.badlogic.gdx.utils.Array;
 
 public class AssemblyRules {
 
+	public enum BuildErrors {
+		BUILD_CLEAN,NOT_ENOUGH_BARS, TOO_MANY_BARS, NOT_ENOUGH_TIRES, TOO_MANY_TIRES, NOT_ENOUGH_SPRINGS, TOO_MANY_SPRINGS, DANGLING_PARTS
+	}
+
 	private class SimpleJoint {
 		Body bodyA;
 		Body bodyB;
 	}
 
 	// return true if all checks pass
-	public boolean checkBuild(World world, Body baseObject,
+	public BuildErrors checkBuild(World world, Body baseObject,
 			ArrayList<Component> parts) {
+		
+		BuildErrors status = BuildErrors.BUILD_CLEAN;
 		ArrayList<Body> partsConnectedToLife = getLifeConnectedParts(world,
 				baseObject);
 
-		if (!checkDanglingParts(partsConnectedToLife, parts)) {
-			return false;
+		status = checkDanglingParts(partsConnectedToLife, parts);
+		
+		if(status!= BuildErrors.BUILD_CLEAN){
+			return status;
 		}
 		
-		if(!checkPartCounts(partsConnectedToLife)){
-			return false;
-		}
+		status = checkPartCounts(partsConnectedToLife);
 
-		return true;
+		return status;
 
 	}
 
-	public boolean checkPartCounts(ArrayList<Body> connectedParts) {
+	public BuildErrors checkPartCounts(ArrayList<Body> connectedParts) {
 
 		// return true if all counts are within limits
 		HashMap<String, Integer> counts = new HashMap<String, Integer>();
@@ -52,56 +58,58 @@ public class AssemblyRules {
 				continue;
 
 			JSONComponentName name = (JSONComponentName) part.getUserData();
-			
-			if(counts.containsKey(name.getBaseName())){
-				counts.put(name.getBaseName(), counts.get(name.getBaseName())+1);
+
+			if (counts.containsKey(name.getBaseName())) {
+				counts.put(name.getBaseName(),
+						counts.get(name.getBaseName()) + 1);
 			} else {
 				counts.put(name.getBaseName(), 1);
 			}
 
 		}
-		
-		for(Entry<String, Integer> bla : counts.entrySet()){
-			System.out.println("AssemblyRules: " + bla.getKey() +  " " + bla.getValue());
+
+		for (Entry<String, Integer> bla : counts.entrySet()) {
+			System.out.println("AssemblyRules: " + bla.getKey() + " "
+					+ bla.getValue());
+		}
+
+		if (counts.containsKey(ComponentNames.BAR3)
+				&& counts.get(ComponentNames.BAR3) < 3){
+			return BuildErrors.NOT_ENOUGH_BARS;
 		}
 		
-		if(counts.containsKey(ComponentNames.BAR3)
-				&& counts.get(ComponentNames.BAR3) >= 3 
-				&& counts.get(ComponentNames.BAR3) <= 10 ){
+		if (counts.containsKey(ComponentNames.BAR3)
+				&& counts.get(ComponentNames.BAR3) > 10) {
+			return BuildErrors.TOO_MANY_BARS;
+		}
 
-		} else {
-			return false;
+		if (counts.containsKey(ComponentNames.AXLE)
+				&& counts.get(ComponentNames.AXLE) < 2){
+			return BuildErrors.NOT_ENOUGH_TIRES;
 		}
 		
-		if(counts.containsKey(ComponentNames.AXLE)
-				&& counts.get(ComponentNames.AXLE) >= 2 
-				&& counts.get(ComponentNames.AXLE) <= 14 ){
-
-		} else {
-			return false;
+		if (counts.containsKey(ComponentNames.AXLE)			
+				&& counts.get(ComponentNames.AXLE) > 14) {
+			return BuildErrors.TOO_MANY_TIRES;
 		}
-		
-		if(counts.containsKey(ComponentNames.SPRINGJOINT)
-				//&& counts.get(ComponentNames.SPRINGJOINT) >= 2 
-				&& counts.get(ComponentNames.SPRINGJOINT) <= 14 ){
 
-		} else {
-			return false;
+		if (counts.containsKey(ComponentNames.SPRINGJOINT)
+		// && counts.get(ComponentNames.SPRINGJOINT) >= 2
+				&& counts.get(ComponentNames.SPRINGJOINT) > 14) {
+
+			return BuildErrors.TOO_MANY_SPRINGS;
 		}
-		
-		
-		
 
-		return true;
+		return BuildErrors.BUILD_CLEAN;
 
 	}
 
-	public boolean checkDanglingParts(ArrayList<Body> connectedParts,
+	public BuildErrors checkDanglingParts(ArrayList<Body> connectedParts,
 			ArrayList<Component> allParts) {
 		// return true if all parts connected
 		// even if one part missing return false
-		
-		for (Component part : allParts ) {
+
+		for (Component part : allParts) {
 			Body allPart = part.getObject().getPhysicsBody();
 			if (allPart.getUserData() == null)
 				continue;
@@ -109,12 +117,12 @@ public class AssemblyRules {
 				;
 			} else {
 
-				return false;
+				return BuildErrors.DANGLING_PARTS;
 
 			}
 		}
 
-		return true;
+		return BuildErrors.BUILD_CLEAN;
 
 	}
 

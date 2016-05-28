@@ -10,6 +10,7 @@ import wrapper.GamePhysicalState;
 import wrapper.GameState;
 import wrapper.Globals;
 import Assembly.AssemblyRules;
+import Assembly.AssemblyRules.BuildErrors;
 import Component.Component;
 import Component.Component.PropertyTypes;
 import Component.ComponentBuilder;
@@ -26,6 +27,7 @@ import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
 import RESTWrapper.BackendFunctions;
+import User.TwoButtonDialogFlow;
 import User.User;
 
 import com.badlogic.gdx.InputProcessor;
@@ -59,7 +61,7 @@ import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 
-public class MenuBuilder implements  InputProcessor{
+public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 	public final static String BUILDER_SELECTED = "builder_selected";
 	public final static String BUILDER = "builder";
@@ -105,6 +107,7 @@ public class MenuBuilder implements  InputProcessor{
 	private Label titleBar;
 	private Integer currentMoney;
 	private final float buttonWidth = 110;
+	private PopQueManager popQueManager;
 
 	// private final float buttonHeight = 100;
 
@@ -122,6 +125,7 @@ public class MenuBuilder implements  InputProcessor{
 		this.mouseJoined = false;
 		this.user = User.getInstance();
 		this.instance = this;
+		this.popQueManager = popQueManager;
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		// this.user = user;
@@ -804,9 +808,8 @@ public class MenuBuilder implements  InputProcessor{
 			part.draw(batch, BUILDER);
 		}
 
-		currentMoney = Animations.money(titleBar, user.getMoney(),
-				currentMoney);
-
+		currentMoney = Animations
+				.money(titleBar, user.getMoney(), currentMoney);
 
 		if (lastSelected == null)
 			return;
@@ -981,9 +984,43 @@ public class MenuBuilder implements  InputProcessor{
 	}
 
 	public boolean buildCar() {
-		if (assemblyRules.checkBuild(world, baseObject, parts)) {
+
+		BuildErrors buildState = assemblyRules.checkBuild(world, baseObject,
+				parts);
+
+		if (buildState == BuildErrors.BUILD_CLEAN) {
 			user.setCurrentCar(compiler.compile(world, parts, jointTypes));
 			return true;
+		} else if (buildState == BuildErrors.NOT_ENOUGH_BARS) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
+					"Error", "All cars must have atleast 3 bars", instance));
+			return false;
+		} else if (buildState == BuildErrors.NOT_ENOUGH_SPRINGS) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
+					"Error", "All cars must have atleast 1 springs", instance));
+			return false;
+		} else if (buildState == BuildErrors.NOT_ENOUGH_TIRES) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
+					"Error", "All cars must have atleaset 2 tires", instance));
+			return false;
+		} else if (buildState == BuildErrors.TOO_MANY_BARS) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
+					"Error", "Your design has more than 10 bars", instance));
+			return false;
+		} else if (buildState == BuildErrors.TOO_MANY_SPRINGS) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
+					"Error", "Your design has more than 14 springs", instance));
+			return false;
+		} else if (buildState == BuildErrors.TOO_MANY_TIRES) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
+					"Error", "Your design has more than 14 tires", instance));
+			return false;
+		} else if (buildState == BuildErrors.DANGLING_PARTS) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
+					"Error",
+					"All parts in the design must connect to the life",
+					instance));
+			return false;
 		} else {
 			return false;
 		}
@@ -1367,6 +1404,18 @@ public class MenuBuilder implements  InputProcessor{
 
 	@Override
 	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean successful() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean failed() {
 		// TODO Auto-generated method stub
 		return false;
 	}

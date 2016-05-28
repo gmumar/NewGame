@@ -1,11 +1,15 @@
 package Menu;
 
+import User.TwoButtonDialogFlow;
+
+import com.gudesigns.climber.CarModeScreen;
+import com.gudesigns.climber.GameModeScreen;
 import com.gudesigns.climber.GamePlayScreen;
 
 public class PopQueObject {
 
 	public enum PopQueObjectType {
-		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE
+		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE, UNLOCK_TRACK, UNLOCK_MODE, UNLOCK_CAR_MODE, USER_ERROR, USER_BUILD_ERROR
 	};
 
 	private PopQueObjectType type;
@@ -13,7 +17,17 @@ public class PopQueObject {
 	private String componentName;
 	private MenuBuilder menuBuilderInstance;
 	private GamePlayScreen gamePlayScreenInstance;
-	//private MainMenuScreen mainMenuScreenInstance;
+	private GameModeScreen gameModeScreenInstance;
+	private SelectorScreen selectorScreenInstance;
+	private CarModeScreen carModeScreenInstance;
+	private TwoButtonDialogFlow twoButtonFlowContext;
+	// private MainMenuScreen mainMenuScreenInstance;
+
+	private String unlockDialogHeader;
+	private int unlockDialogPrice;
+	private String unlockDialogDes;
+	private String errorString;
+	private String errorHeaderString;
 
 	public PopQueObject(PopQueObjectType type) {
 		this.type = type;
@@ -36,16 +50,78 @@ public class PopQueObject {
 		this.gamePlayScreenInstance = instance;
 	}
 
-	/*public PopQueObject(PopQueObjectType type, MainMenuScreen instance) {
-		if (type != PopQueObjectType.STORE_BUY)
-			return;
-		this.type = type;
-		//this.mainMenuScreenInstance = instance;
-	}*/
+	public PopQueObject(PopQueObjectType unlockMode, String text,
+			String description, int price, TwoButtonDialogFlow context) {
 
-	//public MainMenuScreen getMainMenuInstance() {
-	//	return mainMenuScreenInstance;
-	//}
+		if (!(unlockMode == PopQueObjectType.UNLOCK_CAR_MODE
+				|| unlockMode == PopQueObjectType.UNLOCK_MODE || unlockMode == PopQueObjectType.UNLOCK_TRACK))
+			return;
+
+		twoButtonFlowContext = context;
+		type = unlockMode;
+		unlockDialogHeader = text;
+		unlockDialogPrice = price;
+		unlockDialogDes = description;
+	}
+
+	public PopQueObject(PopQueObjectType userError, String header,
+			String string, TwoButtonDialogFlow instance) {
+		if (!(userError == PopQueObjectType.USER_ERROR || userError == PopQueObjectType.USER_BUILD_ERROR))
+			return;
+
+		twoButtonFlowContext = instance;
+		type = userError;
+		errorString = string;
+		errorHeaderString = header;
+	}
+
+	public String getErrorHeaderString() {
+		return errorHeaderString;
+	}
+
+	public String getErrorString() {
+		return errorString;
+	}
+
+	public TwoButtonDialogFlow getTwoButtonFlowContext() {
+		return twoButtonFlowContext;
+	}
+
+	public CarModeScreen getCarModeScreenInstance() {
+		return carModeScreenInstance;
+	}
+
+	public SelectorScreen getSelectorScreenInstance() {
+		return selectorScreenInstance;
+	}
+
+	public GameModeScreen getGameModeScreenInstance() {
+		return gameModeScreenInstance;
+	}
+
+	public String getUnlockDialogDes() {
+		return unlockDialogDes;
+	}
+
+	public void setUnlockDialogDes(String unlockDialogDes) {
+		this.unlockDialogDes = unlockDialogDes;
+	}
+
+	public String getUnlockDialogHeader() {
+		return unlockDialogHeader;
+	}
+
+	public void setUnlockDialogHeader(String unlockDialogHeader) {
+		this.unlockDialogHeader = unlockDialogHeader;
+	}
+
+	public int getUnlockDialogPrice() {
+		return unlockDialogPrice;
+	}
+
+	public void setUnlockDialogPrice(int unlockDialogPrice) {
+		this.unlockDialogPrice = unlockDialogPrice;
+	}
 
 	public MenuBuilder getCallingInstance() {
 		return menuBuilderInstance;

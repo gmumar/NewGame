@@ -12,6 +12,8 @@ import wrapper.Globals;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
+import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
 import Menu.SelectorScreen;
 import Menu.Buttons.AdventureTrackButton;
@@ -32,7 +34,6 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -214,7 +215,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	@Override
 	protected void addButton(final JSONParentClass item) {
-		JSONTrack track = JSONTrack.objectify(item.jsonify());
+		final JSONTrack track = JSONTrack.objectify(item.jsonify());
 		final ButtonLockWrapper b = AdventureTrackButton.create(gameLoader,
 				track, false);
 
@@ -226,6 +227,14 @@ public class TrackSelectorScreen extends SelectorScreen {
 					gameState.getUser().setCurrentTrack(item.jsonify());
 					gameLoader.setScreen(new CarModeScreen(gameState));
 					super.clicked(event, x, y);
+				} else {
+
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.UNLOCK_TRACK, "Unlock Track",
+							"\t\tUnlock track "
+									+ Integer.toString(track.getIndex())
+									+ "\t\t", 2000, context));
+
 				}
 			}
 
@@ -303,6 +312,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 			@Override
 			public int compare(Table o1, Table o2) {
+			
 				Integer table1 = Integer.parseInt((String) o1.getUserObject());
 				Integer table2 = Integer.parseInt((String) o2.getUserObject());
 

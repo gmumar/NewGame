@@ -160,6 +160,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/dull_forward.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/mute.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/start.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/warning.png", Texture.class);
 
 		gameLoader.Assets.load("menu/icons/up.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/down.png", Texture.class);

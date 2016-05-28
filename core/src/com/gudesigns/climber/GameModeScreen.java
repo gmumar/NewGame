@@ -6,12 +6,15 @@ import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
 import Menu.PopQueManager;
+import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
 import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
+import User.TwoButtonDialogFlow;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -25,7 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class GameModeScreen implements Screen {
+public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 
 	private CameraManager camera;
 	private SpriteBatch batch;
@@ -39,8 +42,11 @@ public class GameModeScreen implements Screen {
 
 	private Skin skin;
 	private GameLoader gameLoader;
+	
+	private GameModeScreen context;
 
 	public GameModeScreen(final GameState gameState) {
+		context = this;
 		gameLoader = gameState.getGameLoader();
 		skin = Skins.loadDefault(gameLoader, 1);
 
@@ -81,6 +87,10 @@ public class GameModeScreen implements Screen {
 			public void clicked(InputEvent event, float x, float y) {
 				if (!infinityMode.locked) {
 					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				} else {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.UNLOCK_MODE, "Unlock Mode",
+							"Unlock Infinite tracks for: ", 2000, context));
 				}
 			}
 		});
@@ -161,6 +171,7 @@ public class GameModeScreen implements Screen {
 
 	}
 
+
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
@@ -184,4 +195,17 @@ public class GameModeScreen implements Screen {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public boolean successful() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean failed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
