@@ -23,6 +23,7 @@ public class GameLoader extends Game {
 
 	public GameAssetManager Assets;
 	public ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
+	public ArrayList<JSONCar> communityCars = new ArrayList<JSONCar>();
 	public PurchaseManager purchaseManager = new PurchaseManager();
 	public final HashMap<String,GameItemInformation> IAPItemInformation = new HashMap<String,GameItemInformation>();
 

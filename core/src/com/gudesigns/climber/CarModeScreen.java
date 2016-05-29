@@ -92,14 +92,14 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 		});
 
 		communityCars = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_COMMUNITY_CARS, true, true);
+				ModeButtonTypes.CAR_COMMUNITY_CARS, true, false);
 
 		communityCars.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!communityCars.locked) {
-					gameLoader.setScreen(new CarSelectorScreen(gameState));
+					gameLoader.setScreen(new CommunityCarSelectorScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.UNLOCK_MODE, "Unlock Mode",

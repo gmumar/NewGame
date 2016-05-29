@@ -111,7 +111,8 @@ public class LoaderScreen implements Screen {
 	}
 
 	private void loadAssets() {
-		loadLocalCars();
+		loadLocalCars(FileManager.CAR_FILE_NAME);
+		loadLocalCars(FileManager.COMMUNITY_FILE_NAME);
 		GameMesh.create();
 
 		// Textures
@@ -273,7 +274,7 @@ public class LoaderScreen implements Screen {
 
 	}
 
-	public void loadLocalCars() {
+	public void loadLocalCars(final String fileName) {
 		carLoader.tryAcquire();
 
 		ae.submit(new AsyncTask<String>() {
@@ -282,7 +283,7 @@ public class LoaderScreen implements Screen {
 			public String call() throws Exception {
 				Gson gson = new Gson();
 				Reader stream = FileManager
-						.getFileStream(FileManager.CAR_FILE_NAME);
+						.getFileStream(fileName);
 
 				if (stream == null) {
 					carLoader.release();
@@ -297,7 +298,11 @@ public class LoaderScreen implements Screen {
 							final JSONCar car = gson.fromJson(reader,
 									JSONCar.class);
 
-							gameLoader.cars.add(car);
+							if(fileName.compareTo(FileManager.CAR_FILE_NAME)==0){
+								gameLoader.cars.add(car);
+							} else if(fileName.compareTo(FileManager.COMMUNITY_FILE_NAME)==0){
+								gameLoader.communityCars.add(car);
+							}
 							break;
 						}
 

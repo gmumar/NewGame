@@ -262,7 +262,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);
 
-		FileManager.writeTracksToFileGson(list);
+		FileManager.writeTracksToFileGson(list,FileManager.TRACK_FILE_NAME);
 	}
 
 	@Override

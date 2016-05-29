@@ -12,6 +12,7 @@ import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import Purchases.GamePurchaseObserver;
 import RESTWrapper.BackendFunctions;
+import RESTWrapper.RESTPaths;
 import User.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -140,7 +141,7 @@ public class TitleBar {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					if (barObjects.menuBuilder.buildCar()) {
-						BackendFunctions.uploadCar(user.getCurrentCar());
+						BackendFunctions.uploadCar(user.getCurrentCar(), RESTPaths.COMMUNITY_CARS_DUMP);
 					}
 
 					super.clicked(event, x, y);

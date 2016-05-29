@@ -34,7 +34,7 @@ public class MainMenuScreen implements Screen {
 	private User user;
 
 	private Button builder, playGame, buildTrack, selectTrack, selectCar,
-			quickNext, buyCoins, soundControl, tapToPlay;
+			quickNext, buyCoins, soundControl, tapToPlay,communityCars;
 
 	private static CarAnimationRunner carAnimation;
 	
@@ -137,6 +137,17 @@ public class MainMenuScreen implements Screen {
 
 			buildTrack.setPosition(200, 0);
 			stage.addActor(buildTrack);
+			
+			
+			communityCars = new Button("community backend") {
+				@Override
+				public void Clicked() {
+					gameLoader.setScreen(new ADMINCarSelectorScreen(gameState));
+				}
+			};
+
+			communityCars.setPosition(200, 100);
+			stage.addActor(communityCars);
 		}
 
 		selectTrack = new Button("select track") {

@@ -3,6 +3,7 @@ package Menu;
 import java.util.ArrayList;
 
 import Dialog.BuyDialog;
+import Dialog.CarDisplayDialog;
 import Dialog.DialogBase;
 import Dialog.PauseDialog;
 import Dialog.Skins;
@@ -96,7 +97,9 @@ public class PopQueManager {
 		} else if (popQueObject.getType() == PopQueObjectType.USER_ERROR 
 				|| popQueObject.getType() == PopQueObjectType.USER_BUILD_ERROR ) {
 			createUserErrorDialog(popQueObject);
-		} else {
+		}  else if (popQueObject.getType() == PopQueObjectType.CAR_DISPLAY) {
+			createCarDisplayDialog(popQueObject);
+		}else {
 			System.out.println("ERROR: Unknown PopQueObjectType: "
 					+ popQueObject.getType().toString());
 		}
@@ -136,6 +139,13 @@ public class PopQueManager {
 		 */
 
 		stage.addActor(StoreBuyDialog.CreateDialog(gameLoader, popQueObject));
+
+	}
+	
+	private void createCarDisplayDialog(PopQueObject popQueObject) {
+
+		dialog = CarDisplayDialog.CreateDialog(gameLoader, popQueObject);
+		dialog.show(stage).top();
 
 	}
 

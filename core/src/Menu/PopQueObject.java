@@ -9,7 +9,7 @@ import com.gudesigns.climber.GamePlayScreen;
 public class PopQueObject {
 
 	public enum PopQueObjectType {
-		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE, UNLOCK_TRACK, UNLOCK_MODE, UNLOCK_CAR_MODE, USER_ERROR, USER_BUILD_ERROR
+		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE, UNLOCK_TRACK, UNLOCK_MODE, UNLOCK_CAR_MODE, USER_ERROR, USER_BUILD_ERROR, CAR_DISPLAY
 	};
 
 	private PopQueObjectType type;
@@ -28,6 +28,8 @@ public class PopQueObject {
 	private String unlockDialogDes;
 	private String errorString;
 	private String errorHeaderString;
+	private String carJson;
+	private boolean Admin = false;
 
 	public PopQueObject(PopQueObjectType type) {
 		this.type = type;
@@ -73,6 +75,24 @@ public class PopQueObject {
 		type = userError;
 		errorString = string;
 		errorHeaderString = header;
+	}
+
+	public PopQueObject(PopQueObjectType carDisplay, String carJson, boolean admin) {
+		if (!(carDisplay == PopQueObjectType.CAR_DISPLAY ))
+			return;
+
+		type = carDisplay;
+		this.carJson = carJson;
+		this.Admin = admin;
+		
+	}
+	
+	public String getCarJson() {
+		return carJson;
+	}
+
+	public boolean isAdmin() {
+		return Admin;
 	}
 
 	public String getErrorHeaderString() {

@@ -33,7 +33,9 @@ public class REST {
 		request.setHeader(SECRET_KEY, SECRET_KEY_VALUE);
 		request.setHeader(APP_ID, APP_ID_VALUE);
 		request.setHeader(APP_TYPE, APP_TYPE_VALUE);
-		request.setHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+		if(method != HttpMethods.DELETE){
+			request.setHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+		}
 		request.setTimeOut(10000);
 
 		return request;
@@ -72,7 +74,7 @@ public class REST {
 	public static HttpRequest getData(String path,
 			final HttpResponseListener listener) {
 		final HttpRequest request = getRequest(path, HttpMethods.GET);
-		request.setContent("");
+		//request.setContent("");
 
 		// System.out.println(path);
 
@@ -81,6 +83,19 @@ public class REST {
 		return request;
 
 	}
+	
+	public static HttpRequest deleteEntry(String path,String objectId,
+			final HttpResponseListener listener) {
+		final HttpRequest request = getRequest(path + "/" + objectId, HttpMethods.DELETE);
+		request.setContent("");
+
+		System.out.println(path + "/" + objectId);
+
+		Gdx.net.sendHttpRequest(request, listener);
+
+		return request;
+
+	}	
 
 	/*
 	 * private static String Backendless_JsonifyParameters(HashMap<String,

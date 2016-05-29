@@ -21,6 +21,7 @@ public class FileManager {
 	public final static String FILE_NAME = "myfile.txt";
 	public final static String CAR_FILE_NAME = "mycarfile.txt";
 	public final static String TRACK_FILE_NAME = "mytrackfile_1.txt";
+	public static final String COMMUNITY_FILE_NAME = "mycommcarfile.txt";
 
 	public static void writeToFile(FileObject objectIn) {
 
@@ -43,12 +44,12 @@ public class FileManager {
 		handle.writeString(strToWrite, false);
 	}
 
-	public static void writeCarsToFileGson(ArrayList<JSONCar> objectIn) {
+	public static void writeCarsToFileGson(ArrayList<JSONCar> objectIn, String fileName) {
 
 		Gson json = new Gson();
 		String strToWrite;
 
-		FileHandle handle = Gdx.files.external(CAR_FILE_NAME);
+		FileHandle handle = Gdx.files.external(fileName);
 
 		strToWrite = json.toJson(objectIn);
 		// handle.writeString(strToWrite, false);
@@ -62,12 +63,12 @@ public class FileManager {
 
 	}
 	
-	public static void writeTracksToFileGson(ArrayList<JSONTrack> objectIn) {
+	public static void writeTracksToFileGson(ArrayList<JSONTrack> objectIn, String fileName) {
 
 		Gson json = new Gson();
 		String strToWrite;
 
-		FileHandle handle = Gdx.files.external(TRACK_FILE_NAME);
+		FileHandle handle = Gdx.files.external(fileName);
 
 		strToWrite = json.toJson(objectIn);
 		// handle.writeString(strToWrite, false);

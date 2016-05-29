@@ -59,7 +59,7 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/car_community.png"));
 			buttonName = new Label("Community Cars", skin);
-			isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.CAR_COMMUNITY_CAR);
+			//isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.CAR_COMMUNITY_CAR);
 		} else if (type == ModeButtonTypes.CAR_MY_PICKS) {
 			image = new Image(
 					gameLoader.Assets

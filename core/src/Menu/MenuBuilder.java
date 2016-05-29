@@ -27,6 +27,7 @@ import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
 import RESTWrapper.BackendFunctions;
+import RESTWrapper.RESTPaths;
 import User.TwoButtonDialogFlow;
 import User.User;
 
@@ -302,7 +303,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 			@Override
 			public void Clicked() {
 				if (buildCar()) {
-					BackendFunctions.uploadCar(user.getCurrentCar());
+					BackendFunctions.uploadCar(user.getCurrentCar(), RESTPaths.COMMUNITY_CARS_DUMP);
 				}
 			}
 

@@ -44,7 +44,7 @@ public class WinDialog extends Table {
 
 	private void buildTable(GameLoader gameLoader,
 			final PopQueObject popQueObject) {
-		int position = 100;
+		
 		final float wrapperWidths = Globals.baseSize*10;
 		final float textWidth = Globals.baseSize*5;
 

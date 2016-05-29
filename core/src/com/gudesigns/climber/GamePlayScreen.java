@@ -3,8 +3,6 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
-
 import wrapper.CameraManager;
 import wrapper.GameContactListener;
 import wrapper.GamePhysicalState;
