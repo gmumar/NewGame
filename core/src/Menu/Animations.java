@@ -85,7 +85,7 @@ public class Animations {
 	}
 
 	public static final void fadeInFromBottom(Table table, int distance) {
-		table.addAction(Actions.moveTo(0, -distance));
+		table.addAction(Actions.moveBy(0, -distance));
 		table.addAction(new SequenceAction(Actions.delay(0.5f),
 				new ParallelAction(Actions.fadeIn(0.5f), Actions.moveBy(0,
 						distance, 0.2f))));
@@ -123,7 +123,7 @@ public class Animations {
 				timePassed = 0;
 			}
 		}
-		coinLabel.setText(currentMoney.toString());
+		coinLabel.setText(Globals.makeMoneyString(currentMoney));
 
 		return currentMoney;
 	}

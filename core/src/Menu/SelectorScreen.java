@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
@@ -53,8 +54,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected SelectorScreen context;
 	public GameLoader gameLoader;
 
-	protected Button nextPage;
-	protected Button prevPage;
+	protected ImageButton prevPage, nextPage;
 
 	public volatile boolean resultsRemaining = true;
 	private boolean loadingComplete = false;
@@ -117,10 +117,10 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		this.gameLoader = gameState.getGameLoader();
 		initStage();
 
+		popQueManager = new PopQueManager(gameLoader, stage);
 		// initNavigationButtons();
 		refreshAllButtons();
-		popQueManager = new PopQueManager(gameLoader, stage);
-
+		
 		if (loadingLock.tryAcquire()) {
 			popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
 		}
@@ -298,6 +298,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
 			baseTable.setBackground("transparent");
 			baseTable.setFillParent(true);
+			
 			TitleBar.create(baseTable, getScreenType(), popQueManager,
 					gameState, null, true);
 
@@ -313,6 +314,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 			stage.addActor(baseTable);
 		} else {
+
 			// baseTable.clear();
 			contentTable.clear();
 			contentTable.setTouchable(Touchable.childrenOnly);

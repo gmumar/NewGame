@@ -37,56 +37,56 @@ public class CarBuilderButton {
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_bar.png"));
-			buttonName = new Label("Bar", skin);
+			buttonName = new Label("Bar", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.SPRING) {
 			base = new Button(skin, "carBuilder_general");
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_spring.png"));
-			buttonName = new Label("Spring", skin);
+			buttonName = new Label("Spring", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.WHEEL) {
 			base = new Button(skin, "carBuilder_general");
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_wheel.png"));
-			buttonName = new Label("Wheel", skin);
+			buttonName = new Label("Wheel", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.ROTATE_LEFT) {
 			base = new Button(skin, "carBuilder_general");
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_rotate_left.png"));
 			sizeYAdjust = 0.5f;
-			buttonName = new Label("Rotate Left", skin);
+			buttonName = new Label("Rotate Left", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.ROTATE_RIGHT) {
 			base = new Button(skin, "carBuilder_general");
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_rotate_right.png"));
 			sizeYAdjust = 0.5f;
-			buttonName = new Label("Rotate Right", skin);
+			buttonName = new Label("Rotate Right", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.DELETE) {
 			base = new Button(skin, "carBuilder_delete");
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/icons/builder_clear.png"));
-			buttonName = new Label("Delete/Clear", skin);
+			buttonName = new Label("Delete/Clear", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.PLAY) {
 			base = new Button(skin, "carBuilder_play");
 			image = new Image(
 					gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
-			buttonName = new Label("Play", skin);
+			buttonName = new Label("Play", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.LEVEL_DOWN) {
 			base = new Button(skin, "carBuilder_general");
 			image = new Image(
 					gameLoader.Assets.getFilteredTexture("menu/icons/down.png"));
 			sizeYAdjust = 0.5f;
-			buttonName = new Label("-", skin);
+			buttonName = new Label("-", skin, "defaultWhite");
 		} else if (type == CarBuilderButtonType.LEVEL_UP) {
 			base = new Button(skin, "carBuilder_general");
 			image = new Image(
 					gameLoader.Assets.getFilteredTexture("menu/icons/up.png"));
 			sizeYAdjust = 0.5f;
-			buttonName = new Label("Level Up", skin);
+			buttonName = new Label("Level Up", skin, "defaultWhite");
 		}
 
 		Stack stack = new Stack();

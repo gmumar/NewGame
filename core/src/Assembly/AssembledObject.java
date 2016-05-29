@@ -31,7 +31,7 @@ public class AssembledObject {
 	private long idleId;
 	private RollingAverage rotationSpeed;
 	private float ratio;
-	// private Component leftMost, rightMost;
+	private Component leftMost, rightMost;
 	// private int basePartIndex;
 
 	private final float ANGULAR_DAMPING = 1f;
@@ -117,24 +117,39 @@ public class AssembledObject {
 		}
 	}
 
-	/*
-	 * public void setLeftMost() { Iterator<Component> iter =
-	 * partList.iterator(); float minY = Float.POSITIVE_INFINITY;
-	 * 
-	 * while (iter.hasNext()) { Component component = iter.next(); if
-	 * (component.getObject().getPosition().x < minY) { leftMost = component;
-	 * minY = component.getObject().getPosition().x; } }
-	 * 
-	 * //System.out.println("left Most: " + leftMost.getComponentName()); }
-	 * 
-	 * public void setRightMost() { Iterator<Component> iter =
-	 * partList.iterator(); float maxY = Float.NEGATIVE_INFINITY;
-	 * 
-	 * while (iter.hasNext()) { Component component = iter.next(); if
-	 * (component.getObject().getPosition().x > maxY) { rightMost = component;
-	 * maxY = component.getObject().getPosition().x; } }
-	 * //System.out.println("right Most: " + rightMost.getComponentName()); }
-	 */
+	public Component setLeftMost() {
+		Iterator<Component> iter = partList.iterator();
+		float minY = Float.POSITIVE_INFINITY;
+
+		while (iter.hasNext()) {
+			Component component = iter.next();
+			if (component.getObject().getPosition().x < minY) {
+				leftMost = component;
+				minY = component.getObject().getPosition().x;
+			}
+		}
+
+		//System.out.println("left Most: " + leftMost.getComponentName());
+		
+		return leftMost;
+	}
+
+	public Component setRightMost() {
+		Iterator<Component> iter = partList.iterator();
+		float maxY = Float.NEGATIVE_INFINITY;
+
+		while (iter.hasNext()) {
+			Component component = iter.next();
+			if (component.getObject().getPosition().x > maxY) {
+				rightMost = component;
+				maxY = component.getObject().getPosition().x;
+			}
+		}
+
+		//System.out.println("right Most: " + rightMost.getComponentName());
+		
+		return rightMost;
+	}
 
 	public Vector2 getCenter() {
 		float sumX = 0, sumY = 0;

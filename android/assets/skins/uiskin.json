@@ -103,6 +103,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: { imageUp: paint_brush, up: default-round, down: default-round-down }
 	transparentButton: { up: transparent, down: transparent}
+	blackButton: { up: blackOut, down: blackOut}
 },
 com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 	default-vertical: { handle: default-splitpane-vertical },
@@ -177,8 +178,39 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: default-font,
 		fontColor: { a: 1, r: 1 }
 	},
+	defaultWhite: {
+		font: white-4,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 }
+	},
+	
+	winTitle: {
+		font: white-bold-5,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 }
+	}
+	
 	title: {
-		font: default-font-white,
+		font: white-5,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 }
+	}
+	
+	dialogTitle: {
+		font: black-5,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 }
+	}
+	
+	
+	glowing-text: {
+		font: glowing-5,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 }
+	}
+	
+	glowing-text-small: {
+		font: glowing-4,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 }
+	}
+	
+	index: {
+		font: black-bold-5,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 }
 	}
 },

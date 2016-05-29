@@ -3,6 +3,8 @@ package com.gudesigns.climber;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
+
 import wrapper.CameraManager;
 import wrapper.GameContactListener;
 import wrapper.GamePhysicalState;
@@ -26,6 +28,7 @@ import ParallexBackground.ScrollingBackground;
 import ParallexBackground.ScrollingBackground.BackgroundType;
 import Shader.GameMesh;
 import Sounds.SoundManager;
+import User.LockingPrefix;
 import User.User;
 import User.User.STARS;
 
@@ -86,7 +89,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private User user;
 
 	private Color clearColor;
-	
 
 	// private Box2DDebugRenderer debugRenderer ;
 
@@ -120,12 +122,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		} else if (trackType == TrackType.ARTIC) {
 			clearColor = new Color(Globals.ARTIC_BLUE_BG);
 		}
-		
+
 		Globals.updateScreenInfo();
 
 		this.user = gameState.getUser();
-		
-		//currentMoney = user.getMoney();
+
+		// currentMoney = user.getMoney();
 
 		batch = new SpriteBatch();
 		initStage();
@@ -274,7 +276,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// renderWorld(delta);
 
 		// dlTime = delta;
-		
+
 		fixedStep += delta;
 
 		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b,
@@ -321,7 +323,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		builtCar.updateSound();
 
-		scrollingBackground.draw(paused ? BackgroundType.STATIONARY : BackgroundType.NORMAL);
+		scrollingBackground.draw(paused ? BackgroundType.STATIONARY
+				: BackgroundType.NORMAL);
 
 		attachCameraTo(builtCar.getCameraFocusPart());
 		ground.drawShapes();
@@ -384,7 +387,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	}
 
-	public int calculatePosition() {
+	public int calculateWinings() {
 		JSONTrack track = JSONTrack.objectify(user.getCurrentTrack());
 
 		float bestTime = track.getBestTime();
@@ -392,21 +395,27 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		if (mapTime <= bestTime) {
 			// first place
-			user.setStars(track.getObjectId(),STARS.THREE);
-			position =  Globals.POSITION_FIRST;
+			user.setStars(track.getObjectId(), STARS.THREE);
+			position = Globals.POSITION_FIRST;
 		} else if (mapTime <= bestTime * 1.10) {
 			// second place
-			user.setStars(track.getObjectId(),STARS.TWO);
-			position =  Globals.POSITION_SECOND;
+			user.setStars(track.getObjectId(), STARS.TWO);
+			position = Globals.POSITION_SECOND;
 		} else if (mapTime <= bestTime * 1.20) {
 			// third
-			user.setStars(track.getObjectId(),STARS.ONE);
-			position =  Globals.POSITION_THIRD;
+			user.setStars(track.getObjectId(), STARS.ONE);
+			position = Globals.POSITION_THIRD;
 		} else {
-			user.setStars(track.getObjectId(),STARS.NONE);
-			position =  Globals.POSITION_LOST;
+			user.setStars(track.getObjectId(), STARS.NONE);
+			position = Globals.POSITION_LOST;
 		}
-		
+
+		// unlock the next track
+		if (position != Globals.POSITION_LOST) {
+			int nextIndex = track.getIndex() + 1;
+			user.Unlock(LockingPrefix.getForrestPrefix()
+					+ Integer.toString(nextIndex));
+		}
 		return position;
 
 	}

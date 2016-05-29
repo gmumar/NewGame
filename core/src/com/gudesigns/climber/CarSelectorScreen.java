@@ -9,11 +9,12 @@ import Assembly.Assembler;
 import Dialog.Skins;
 import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
-import Menu.Button;
 import Menu.PopQueObject;
-import Menu.ScreenType;
 import Menu.PopQueObject.PopQueObjectType;
+import Menu.ScreenType;
 import Menu.SelectorScreen;
+import Menu.Buttons.SimpleImageButton;
+import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.Backendless_Car;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.REST;
@@ -28,9 +29,12 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncTask;
@@ -39,9 +43,9 @@ public class CarSelectorScreen extends SelectorScreen {
 
 	@Override
 	protected int getItemsPerPage() {
-		return 6;
+		return 3;
 	}
-	
+
 	public CarSelectorScreen(GameState gameState) {
 		super(gameState);
 	}
@@ -87,15 +91,16 @@ public class CarSelectorScreen extends SelectorScreen {
 										.processDownloadedCars(httpResponse
 												.getResultAsString());
 
-
-								for (ServerDataUnit fromServer :  obj.getData()) {
+								for (ServerDataUnit fromServer : obj.getData()) {
 
 									// carLock.lock();
 
 									final JSONCar carJson = JSONCar
 											.objectify(fromServer.getData());
-									carJson.setObjectId(fromServer.getObjectId());
-									carJson.setCreationTime(fromServer.getCreationTime());
+									carJson.setObjectId(fromServer
+											.getObjectId());
+									carJson.setCreationTime(fromServer
+											.getCreationTime());
 
 									addItemToList(carJson);
 
@@ -118,7 +123,8 @@ public class CarSelectorScreen extends SelectorScreen {
 
 							@Override
 							public void failed(Throwable t) {
-								System.out.println("CarSelectorScreen: download failed Stack printing");
+								System.out
+										.println("CarSelectorScreen: download failed Stack printing");
 								t.printStackTrace();
 								loaderSemaphore.release();
 								// stallSemaphore.release();
@@ -189,17 +195,17 @@ public class CarSelectorScreen extends SelectorScreen {
 		Table wrapper = new Table();
 
 		final String itemJson = item.jsonify();
-		
+
 		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, itemJson,
 				false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
-		trd.setMinWidth(200);
-		trd.setMinHeight(140);
+		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH);
+		trd.setMinHeight(Globals.CAR_DISPLAY_BUTTON_HEIGHT);
 
 		ImageButton image = new ImageButton(trd);
-		image.setZIndex(100);
+		// image.setZIndex(100);
 		// b.setPosition(100, 100);
-		image.setSize(100, 100);
+		// image.setSize(100, 100);
 
 		image.addListener(new ClickListener() {
 
@@ -215,41 +221,64 @@ public class CarSelectorScreen extends SelectorScreen {
 
 		// image.row();
 
+		Skin skin = Skins.loadDefault(gameLoader, 0);
+
 		wrapper.add(image);
 
 		wrapper.row();
 
 		Table buttonsWrapper = new Table();
 
-		TextButton play = new TextButton("play", Skins.loadDefault(gameLoader,
-				0), "noButton");
-		play.addListener(new ClickListener() {
+		final Table playButton = new Table(skin);
+		playButton.setBackground("gameGreen");
+
+		Label chooseCarText = new Label("Choose Car", skin);
+		playButton.add(chooseCarText).pad(5);
+
+		Image playImage = new Image(
+				gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
+		playButton.add(playImage).width(Globals.baseSize)
+				.height(Globals.baseSize).pad(5);
+
+		// TextButton play = new TextButton("play",skin, "noButton");
+		playButton.addListener(new ActorGestureListener() {
 
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
 
+				playButton.setBackground("grey");
 				gameState.getUser().setCurrentCar(itemJson);
 				gameLoader.setScreen(new GamePlayScreen(gameState));
-				super.clicked(event, x, y);
+				super.touchDown(event, x, y, pointer, button);
 			}
 
 		});
-		buttonsWrapper.add(play).height(10).colspan(20).expand().fill();
+		buttonsWrapper.add(playButton).colspan(20).expand().fill();
 
-		TextButton edit = new TextButton("edit", Skins.loadDefault(gameLoader,
-				0), "noButton");
-		edit.addListener(new ClickListener() {
+		ImageButton editImage = SimpleImageButton.create(
+				SimpleImageButtonTypes.EDIT, gameLoader);
+
+		final Table edit = new Table(skin);
+		edit.setBackground("gameYellow");
+
+		edit.add(editImage);
+
+		edit.addListener(new ActorGestureListener() {
 
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
 
+				edit.setBackground("grey");
 				gameState.getUser().setCurrentCar(itemJson);
 				gameLoader.setScreen(new CarBuilderScreen(gameState));
-				super.clicked(event, x, y);
+				super.touchDown(event, x, y, pointer, button);
 			}
 
 		});
-		buttonsWrapper.add(edit).height(10).colspan(1).expand().fill();
+
+		buttonsWrapper.add(edit).colspan(1).expand().fill();
 
 		wrapper.add(buttonsWrapper).expand().fill();
 
@@ -267,13 +296,13 @@ public class CarSelectorScreen extends SelectorScreen {
 	protected void writeObjectsToFile() {
 		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
 		gameLoader.cars.clear();
-		
+
 		for (JSONParentClass car : items) {
 			// String car = iter.next();
 			list.add((JSONCar) car);
 			gameLoader.cars.add((JSONCar) car);
 		}
-		
+
 		System.out.println("CarSelectorScreen: written " + list.size());
 
 		if (list.isEmpty())
@@ -294,7 +323,7 @@ public class CarSelectorScreen extends SelectorScreen {
 		}
 		loaderSemaphore.release();
 		localLoading.release();
-		
+
 	}
 
 	@Override
@@ -321,14 +350,16 @@ public class CarSelectorScreen extends SelectorScreen {
 		}
 
 	}
-	
 
 	@Override
 	protected void populateContentTable(Table contentTable) {
 
-		prevPage = new Button("<") {
+		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT, gameLoader);
+		prevPage.addListener(new ClickListener(){
+
 			@Override
-			public void Clicked() {
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
 				pageNumber--;
 
 				if (pageNumber < 0) {
@@ -348,21 +379,22 @@ public class CarSelectorScreen extends SelectorScreen {
 				}
 
 			}
-		};
+			
+		});
 		
-
 		contentTable.add(prevPage).colspan(1).left().width(Globals.baseSize);
-		//stage.addActor(prevPage);
-		
-		
+		// stage.addActor(prevPage);
+
 		createItemsTable(contentTable);
 		initButtons();
 		itemsTable.invalidate();
+
+		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT, gameLoader);
 		
-		
-		nextPage = new Button(">") {
+		nextPage.addListener(new ClickListener(){
+
 			@Override
-			public void Clicked() {
+			public void clicked(InputEvent event, float x, float y) {
 				pageNumber++;
 				if (loadingLock.tryAcquire()) {
 					popQueManager.push(new PopQueObject(
@@ -375,33 +407,36 @@ public class CarSelectorScreen extends SelectorScreen {
 				currentPageEnd += getItemsPerPage();
 
 				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
+				super.clicked(event, x, y);
 			}
-		};
-		
-		contentTable.add(nextPage).colspan(1).right().width(Globals.baseSize);
-		
-	}
+			
+		});
 	
+
+		contentTable.add(nextPage).colspan(1).right().width(Globals.baseSize);
+
+	}
+
 	@Override
 	protected void createItemsTable(Table container) {
 		itemsTable = new Table();
 
 		container.add(itemsTable).width(600f).pad(20);
-		//container.row();
+		// container.row();
 	}
-	
+
 	@Override
-	protected ScreenType getScreenType(){
+	protected ScreenType getScreenType() {
 		return ScreenType.CAR_SELECTOR;
 	}
-	
+
 	@Override
 	protected void selectorRender(float delta) {
-		
+
 	}
-	
+
 	@Override
-	protected  void clearScreen(){
+	protected void clearScreen() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 	}
 }

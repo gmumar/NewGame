@@ -37,7 +37,7 @@ public class UserErrorDialog {
 				.height(Globals.baseSize).pad(5);
 
 		Label warningHeaderText = new Label(
-				popQueObject.getErrorHeaderString(), skin);
+				popQueObject.getErrorHeaderString(), skin,"dialogTitle");
 		header.add(warningHeaderText);
 
 		base.add(header).center();

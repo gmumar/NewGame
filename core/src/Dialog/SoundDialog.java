@@ -55,7 +55,7 @@ public class SoundDialog {
 		header.add(soundImage).width(Globals.baseSize).height(Globals.baseSize)
 				.pad(imagePadding);
 
-		Label soundText = new Label("Sound Control", skin);
+		Label soundText = new Label("Sound Control", skin, "dialogTitle");
 		header.add(soundText).pad(textPadding);
 
 		content.add(header).center();

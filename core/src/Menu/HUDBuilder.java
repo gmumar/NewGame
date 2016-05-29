@@ -144,7 +144,7 @@ public class HUDBuilder {
 		coin.setSize(40, 40);
 		stage.addActor(coin);
 
-		money = new Label("Money", Skins.loadDefault(gameLoader, 1));
+		money = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text-small");
 		money.setPosition(moneyLocation.x + 30 + 4, moneyLocation.y
 				+ Globals.ScreenHeight + 6.5f);
 		stage.addActor(money);

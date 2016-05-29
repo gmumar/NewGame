@@ -3,7 +3,6 @@ package Menu.Bars;
 import wrapper.GameState;
 import wrapper.Globals;
 import Dialog.Skins;
-import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
@@ -36,9 +35,9 @@ public class TitleBar {
 	public final static Label create(Table base, final ScreenType type,
 			final PopQueManager popQueManager, final GameState gameState,
 			final BarObjects barObjects, boolean animate) {
-		
+
 		final int imagePadding = 8;
-		
+
 		final GameLoader gameLoader = gameState.getGameLoader();
 		Skin skin = Skins.loadDefault(gameLoader, 0);
 
@@ -111,7 +110,7 @@ public class TitleBar {
 						.getFilteredTexture("menu/icons/glowing_coin.png"));
 		buyCoins.add(glowingCoin).width(Globals.baseSize * 2.5f)
 				.height(Globals.baseSize * 2f);
-		coins = new Label(user.getMoney().toString(), skin, "title");
+		coins = new Label(Globals.makeMoneyString(user.getMoney()), skin, "glowing-text");
 		buyCoins.add(coins);
 
 		titleBar.add(buyCoins).left().colspan(1).pad(4);
@@ -129,7 +128,7 @@ public class TitleBar {
 		} else if (type == ScreenType.CAR_SELECTOR) {
 			titleLabel.setText("Select Car");
 		} else if (type == ScreenType.CAR_MODE_SCREEN) {
-					titleLabel.setText("Select Car");
+			titleLabel.setText("Select Car");
 		} else if (type == ScreenType.CAR_BUILDER) {
 			titleLabel.setText("Build Car");
 
@@ -173,8 +172,8 @@ public class TitleBar {
 
 		base.row();
 
-		if (animate){
-		//	Animations.slideInFromTop(titleBar, -50);
+		if (animate) {
+			// Animations.slideInFromTop(titleBar, -50);
 		}
 		return coins;
 

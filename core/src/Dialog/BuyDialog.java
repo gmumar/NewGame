@@ -39,7 +39,7 @@ public class BuyDialog {
 		header.add(upgradeImage).width(Globals.baseSize)
 				.height(Globals.baseSize).pad(5);
 
-		Label upgradeText = new Label("Upgrade", skin);
+		Label upgradeText = new Label("Upgrade", skin,"dialogTitle");
 		header.add(upgradeText);
 
 		base.add(header).center();

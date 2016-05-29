@@ -367,7 +367,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		partInfo.add(partLevelLabel).pad(5);
 		partInfo.row();
 
-		partLevelText = new Label("1", skin);
+		partLevelText = new Label("1", skin, "index");
 		partInfo.add(partLevelText).expandY().fillY();
 		partInfo.row();
 

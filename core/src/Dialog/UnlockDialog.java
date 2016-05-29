@@ -34,10 +34,10 @@ public class UnlockDialog {
 		Image lockImage = new Image(
 				gameLoader.Assets.getFilteredTexture("menu/tags/lock.png"));
 
-		header.add(lockImage).width(Globals.baseSize)
-				.height(Globals.baseSize * 1.2f).pad(5);
+		header.add(lockImage).width(Globals.baseSize*0.6f)
+				.height(Globals.baseSize * 0.8f).pad(5);
 
-		Label unlockText = new Label(popQueObject.getUnlockDialogHeader(), skin);
+		Label unlockText = new Label(popQueObject.getUnlockDialogHeader(), skin,"dialogTitle");
 		header.add(unlockText);
 
 		base.add(header).center();

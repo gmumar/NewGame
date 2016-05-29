@@ -83,7 +83,7 @@ public class AdventureTrackButton {
 				.width(starWidth);
 		content.row();
 
-		Label index = new Label("index", skin);
+		Label index = new Label("index", skin, "index");
 		index.setText(indexTxt);
 
 		content.add(index);

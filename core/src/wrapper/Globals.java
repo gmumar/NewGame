@@ -1,5 +1,6 @@
 package wrapper;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /*
@@ -45,6 +46,8 @@ public class Globals {
 	public static final Color GREEN = new Color(0x94C409ff);
 	final static public Color FORREST_GREEN = new Color(0x646600ff);
 	final static public Color FORREST_GREEN_BG = new Color(0xf2e4bdff);
+	final static public Color GLOWING_LIGHT = new Color(0xFFFBDFff);
+	final static public Color GREY = new Color(0xC6C6C6ff);
 
 	final static public Color ARTIC_BLUE = new Color(0x809AB7ff);
 	final static public Color ARTIC_BLUE_BG = new Color(0x91afb6ff);
@@ -82,13 +85,17 @@ public class Globals {
 
 	public static Music bgMusic;
 
-	public static int baseSize = 24;
+	public final static int baseSize = 24;
 	public static final float BUTTON_OPACITY = 0.5f;
 
 	public static final int POSITION_FIRST = 1;
 	public static final int POSITION_SECOND = 2;
 	public static final int POSITION_THIRD = 3;
 	public static final int POSITION_LOST = 4;
+
+	public final static int CAR_DISPLAY_BUTTON_HEIGHT = baseSize * 8;
+	public final static int CAR_DISPLAY_BUTTON_CAMERA_HEIGHT = baseSize * 8;
+	public final static int CAR_DISPLAY_BUTTON_WIDTH = baseSize * 8;
 
 	public static void toast(String text) {
 		if (nativeRequestHandler != null) {
@@ -110,9 +117,9 @@ public class Globals {
 
 	public static void updateScreenInfo() {
 
-		ScreenWidth = GameWidth;//(int) (GameWidth * widthRatio);
-		ScreenHeight = GameHeight;//(int) (GameHeight * heightRatio);
-		
+		ScreenWidth = GameWidth;// (int) (GameWidth * widthRatio);
+		ScreenHeight = GameHeight;// (int) (GameHeight * heightRatio);
+
 		calculateAspectRatio();
 	}
 
@@ -149,6 +156,28 @@ public class Globals {
 
 		}
 		return false;
+	}
+
+	public static String makeMoneyString(Integer money) {
+		String str = money.toString();
+		str.length();
+
+		int count = str.length();
+
+		String ret = new String();
+		char c ;
+		for (int i = 0; i < str.length(); i++) {
+			c = str.charAt(i);
+
+			ret += c;
+			count--;
+			if (count % 3 == 0 && count != 0) {
+				ret += ",";
+			}
+
+		}
+
+		return ret;
 	}
 
 	public static String makeTimeStr(float input) {

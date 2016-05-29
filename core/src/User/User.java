@@ -17,7 +17,8 @@ public class User {
 	public static final String TRACK_PREFIX = "track_";
 
 	public enum STARS implements Serializable {
-		ONE, TWO, THREE, NONE
+		NONE, ONE, TWO, THREE
+
 	}
 
 	public static final Integer MAX_BAR3_LEVEL = 15;
@@ -267,6 +268,13 @@ public class User {
 	}
 
 	public void setStars(String trackId, STARS stars) {
+
+		STARS currentStars = getStars(trackId);
+
+		if (currentStars.ordinal() >= stars.ordinal()) {
+			return;
+		}
+
 		prefs.putString(TRACK_PREFIX + trackId, stars.toString());
 		prefs.flush();
 

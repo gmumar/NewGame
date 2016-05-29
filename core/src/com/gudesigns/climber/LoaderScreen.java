@@ -83,12 +83,14 @@ public class LoaderScreen implements Screen {
 
 			shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 			shapeRenderer.setColor(Color.WHITE);
-			
-			/*shapeRenderer.rect(-Gdx.graphics.getWidth() / 2,
-					-Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth()
-							* progress, Gdx.graphics.getHeight(), Color.WHITE,
-					Color.BLACK, Color.BLACK, Color.WHITE);*/
-			
+
+			/*
+			 * shapeRenderer.rect(-Gdx.graphics.getWidth() / 2,
+			 * -Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() progress,
+			 * Gdx.graphics.getHeight(), Color.WHITE, Color.BLACK, Color.BLACK,
+			 * Color.WHITE);
+			 */
+
 			shapeRenderer.rect(-Gdx.graphics.getWidth() / 2,
 					-Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth()
 							* progress, Gdx.graphics.getHeight());
@@ -103,11 +105,8 @@ public class LoaderScreen implements Screen {
 		loaderBar = new LoaderBar();
 
 		initStage();
-		
-		
-		
+
 		loadAssets();
-		
 
 	}
 
@@ -157,10 +156,13 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/upload.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/upgrade.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/dull_coin.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/white_coin.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/dull_forward.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/mute.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/start.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/warning.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/clock_white.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/wrench.png", Texture.class);
 
 		gameLoader.Assets.load("menu/icons/up.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/down.png", Texture.class);
@@ -175,6 +177,11 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/images/one_star.png", Texture.class);
 		gameLoader.Assets.load("menu/images/two_stars.png", Texture.class);
 		gameLoader.Assets.load("menu/images/three_stars.png", Texture.class);
+		gameLoader.Assets.load("menu/images/one_gold_star.png", Texture.class);
+		gameLoader.Assets.load("menu/images/two_gold_stars.png", Texture.class);
+		gameLoader.Assets.load("menu/images/three_gold_stars.png",
+				Texture.class);
+		gameLoader.Assets.load("menu/images/no_gold_stars.png", Texture.class);
 
 		gameLoader.Assets.load("menu/tags/new.png", Texture.class);
 		gameLoader.Assets.load("menu/tags/lock.png", Texture.class);
@@ -227,7 +234,40 @@ public class LoaderScreen implements Screen {
 
 		BitmapFont fontWhite = FontManager.GenerateFont(
 				"fonts/chivoRegular.ttf", 4, Color.WHITE);
-		resources.put("default-font-white", fontWhite);
+		resources.put("white-4", fontWhite);
+		
+		BitmapFont fontGlowingSmall = FontManager.GenerateFont(
+				"fonts/chivoBlack.ttf", 4, Globals.GLOWING_LIGHT);
+		resources.put("glowing-4", fontGlowingSmall);
+		
+		BitmapFont fontGlowingLarge = FontManager.GenerateFont(
+				"fonts/chivoBlack.ttf", 5, Globals.GLOWING_LIGHT);
+		resources.put("glowing-5", fontGlowingLarge);
+		
+		BitmapFont fontWhiteLarge = FontManager.GenerateFont(
+				"fonts/chivoRegular.ttf", 5, Color.WHITE);
+		resources.put("white-5", fontWhiteLarge);
+		
+		BitmapFont fontWhiteBold = FontManager.GenerateFont(
+				"fonts/chivoBlack.ttf", 4, Color.WHITE);
+		resources.put("white-bold-4", fontWhiteBold);
+
+		BitmapFont fontWhiteBoldLarge = FontManager.GenerateFont(
+				"fonts/chivoBlack.ttf", 5, Color.WHITE);
+		resources.put("white-bold-5", fontWhiteBoldLarge);
+		
+		BitmapFont fontBold = FontManager.GenerateFont("fonts/chivoBlack.ttf", 4,
+				Color.BLACK);
+		resources.put("default-font-bold", fontBold);
+		
+		BitmapFont fontBoldLarge = FontManager.GenerateFont(
+				"fonts/chivoBlack.ttf", 5, Color.BLACK);
+		resources.put("black-bold-5", fontBoldLarge);
+		
+		BitmapFont fontLarge = FontManager.GenerateFont(
+				"fonts/chivoRegular.ttf", 5, Color.BLACK);
+		resources.put("black-5", fontLarge);
+		
 		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
 				new SkinParameter("skins/uiskin.atlas", resources));
 
@@ -293,8 +333,6 @@ public class LoaderScreen implements Screen {
 		// loaderBar
 		// .setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
 		stage.addActor(t);
-		
-
 
 	}
 
