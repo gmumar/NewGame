@@ -31,7 +31,7 @@ public class HUDBuilder {
 
 	private Button exit, restart;
 	private TextBox fps;
-	private Label clockTime, money;
+	private Label clockTime, money, moneyAnimation;
 	private ProgressBarW mapProgress;
 	private User user;
 	private ImageButton pause;
@@ -144,6 +144,11 @@ public class HUDBuilder {
 		coin.setSize(50, 50);
 		stage.addActor(coin);
 
+		moneyAnimation = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text");
+		moneyAnimation.setPosition(moneyLocation.x + 40 + 4, moneyLocation.y
+				+ Globals.ScreenHeight + 6.5f);
+		stage.addActor(moneyAnimation);
+		
 		money = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text");
 		money.setPosition(moneyLocation.x + 40 + 4, moneyLocation.y
 				+ Globals.ScreenHeight + 6.5f);
@@ -163,7 +168,7 @@ public class HUDBuilder {
 		clockTime.setText(Globals.makeTimeStr(timeIn));
 		// money.setText(user.getMoney().toString());
 
-		currentMoney = Animations.money(money, user.getMoney(), currentMoney);
+		currentMoney = Animations.money(moneyAnimation, money, user.getMoney(), currentMoney);
 
 		mapProgress.setValue(progress > 100 ? 100 : progress);
 		// mapProgress.act(delta);

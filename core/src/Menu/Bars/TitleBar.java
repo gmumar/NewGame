@@ -3,6 +3,7 @@ package Menu.Bars;
 import wrapper.GameState;
 import wrapper.Globals;
 import Dialog.Skins;
+import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.CarModeScreen;
@@ -31,13 +33,16 @@ import com.gudesigns.climber.TrackSelectorScreen;
 public class TitleBar {
 
 	static Label coins;
+	static Label animationCoins;
 	static User user;
 
-	public final static Label create(Table base, final ScreenType type,
+	public final static TitleBarObject create(Table base, final ScreenType type,
 			final PopQueManager popQueManager, final GameState gameState,
 			final BarObjects barObjects, boolean animate) {
 
 		final int imagePadding = 8;
+
+		Animations.InitMoneyAnimation();
 
 		final GameLoader gameLoader = gameState.getGameLoader();
 		Skin skin = Skins.loadDefault(gameLoader, 0);
@@ -111,8 +116,12 @@ public class TitleBar {
 						.getFilteredTexture("menu/icons/glowing_coin.png"));
 		buyCoins.add(glowingCoin).width(Globals.baseSize * 2.5f)
 				.height(Globals.baseSize * 2f);
+		Stack coinsStack = new Stack();
 		coins = new Label(Globals.makeMoneyString(user.getMoney()), skin, "glowing-text");
-		buyCoins.add(coins);
+		animationCoins = new Label(Globals.makeMoneyString(user.getMoney()), skin, "glowing-text");
+		coinsStack.add(coins);
+		coinsStack.add(animationCoins);
+		buyCoins.add(coinsStack);
 
 		titleBar.add(buyCoins).left().colspan(1).pad(4);
 
@@ -176,7 +185,7 @@ public class TitleBar {
 		if (animate) {
 			// Animations.slideInFromTop(titleBar, -50);
 		}
-		return coins;
+		return new TitleBarObject(coins, animationCoins);
 
 	}
 

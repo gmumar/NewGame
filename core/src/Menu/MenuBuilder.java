@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import wrapper.BaseActor;
 import wrapper.CameraManager;
@@ -24,6 +25,7 @@ import JSONifier.JSONComponentName;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BarObjects;
 import Menu.Bars.TitleBar;
+import Menu.Bars.TitleBarObject;
 import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
@@ -106,7 +108,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 	private MenuBuilder instance;
 
-	private Label titleBar;
+	private TitleBarObject titleBar;
 	private Integer currentMoney;
 	private final float buttonWidth = 110;
 	private PopQueManager popQueManager;
@@ -128,6 +130,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		this.user = User.getInstance();
 		this.instance = this;
 		this.popQueManager = popQueManager;
+		
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		// this.user = user;
@@ -304,7 +307,8 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 			@Override
 			public void Clicked() {
 				if (buildCar()) {
-					BackendFunctions.uploadCar(user.getCurrentCar(), RESTPaths.COMMUNITY_CARS_DUMP);
+					BackendFunctions.uploadCar(user.getCurrentCar(),
+							RESTPaths.COMMUNITY_CARS_DUMP);
 				}
 			}
 
@@ -813,8 +817,8 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 			part.draw(batch, BUILDER);
 		}
 
-		currentMoney = Animations
-				.money(titleBar, user.getMoney(), currentMoney);
+		currentMoney = Animations.money(titleBar.getAnimationMoney(),
+				titleBar.getBaseMoney(), user.getMoney(), currentMoney);
 
 		if (lastSelected == null)
 			return;
@@ -997,32 +1001,38 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 			user.setCurrentCar(compiler.compile(world, parts, jointTypes));
 			return true;
 		} else if (buildState == BuildErrors.NOT_ENOUGH_BARS) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
-					"Error", "All cars must have atleast 3 bars", instance));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					"All cars must have atleast 3 bars", instance));
 			return false;
 		} else if (buildState == BuildErrors.NOT_ENOUGH_SPRINGS) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
-					"Error", "All cars must have atleast 1 springs", instance));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					"All cars must have atleast 1 springs", instance));
 			return false;
 		} else if (buildState == BuildErrors.NOT_ENOUGH_TIRES) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
-					"Error", "All cars must have atleaset 2 tires", instance));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					"All cars must have atleaset 2 tires", instance));
 			return false;
 		} else if (buildState == BuildErrors.TOO_MANY_BARS) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
-					"Error", "Your design has more than 10 bars", instance));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					"Your design has more than 10 bars", instance));
 			return false;
 		} else if (buildState == BuildErrors.TOO_MANY_SPRINGS) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
-					"Error", "Your design has more than 14 springs", instance));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					"Your design has more than 14 springs", instance));
 			return false;
 		} else if (buildState == BuildErrors.TOO_MANY_TIRES) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
-					"Error", "Your design has more than 14 tires", instance));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					"Your design has more than 14 tires", instance));
 			return false;
 		} else if (buildState == BuildErrors.DANGLING_PARTS) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_BUILD_ERROR,
-					"Error",
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.USER_BUILD_ERROR, "Error",
 					"All parts in the design must connect to the life",
 					instance));
 			return false;

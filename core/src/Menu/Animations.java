@@ -1,9 +1,11 @@
 package Menu;
 
+import java.util.concurrent.Semaphore;
+
 import wrapper.Globals;
 import Dialog.DialogBase;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
@@ -91,39 +93,77 @@ public class Animations {
 						distance, 0.2f))));
 	}
 
-	static float timePassed = 0;
+	// static float timePassed = 0;
+	private volatile static boolean moneyAnimationComplete;
+	private static Semaphore moneyAnimationLock;
 
-	public static final Integer money(Label coinLabel, Integer previousMoney,
-			Integer currentMoney) {
+	public static void InitMoneyAnimation() {
 
-		timePassed += Gdx.graphics.getDeltaTime();
+		moneyAnimationComplete = true;
+		moneyAnimationLock = new Semaphore(1);
+	}
+
+	public static final Integer money(Label animationLabel, Label baseLabel,
+			Integer previousMoney, Integer currentMoney) {
+
+		// timePassed += Gdx.graphics.getDeltaTime();
+
+		Vector2 orignalPos = new Vector2(baseLabel.getX(), baseLabel.getY());
 
 		if (previousMoney > currentMoney) {
 			currentMoney++;
 
-			Action completeAction = new ParallelAction(Actions.moveBy(0, -1,
-					0.01f), Actions.fadeIn(0.1f));
-			Action mainAction = new ParallelAction(Actions.moveBy(0, 1, 0.01f),
+			Action completeAction = new ParallelAction(Actions.moveTo(
+					orignalPos.x, orignalPos.y), Actions.fadeIn(0.0F));
+			Action mainAction = new ParallelAction(Actions.moveBy(0, 1, 0.1f),
+					Actions.fadeOut(0.3f));
+
+			animationLabel.addAction(new SequenceAction(mainAction,
+					completeAction));
+		} else if (previousMoney < currentMoney) {
+			if (moneyAnimationLock.tryAcquire()) {
+
+				if (currentMoney - previousMoney >= 10) {
+					currentMoney -= 10;
+				} else if (currentMoney - previousMoney >= 5) {
+					currentMoney -= 5;
+				} else {
+					currentMoney--;
+				}
+				moneyAnimationLock.release();
+			}
+
+			Action completeAction = new ParallelAction(Actions.moveTo(
+					orignalPos.x, orignalPos.y), Actions.fadeIn(0.0F));
+			Action mainAction = new ParallelAction(Actions.moveBy(0, -6, 0.1f),
 					Actions.fadeOut(0.1f));
 
-			coinLabel.addAction(new SequenceAction(mainAction, completeAction));
-		}
+			if (moneyAnimationComplete) {
+				animationLabel.addAction(new SequenceAction(new Action() {
 
-		if (previousMoney < currentMoney) {
-			currentMoney--;
+					@Override
+					public boolean act(float delta) {
+						moneyAnimationLock.tryAcquire();
+						moneyAnimationComplete = false;
+						return true;
+					}
 
-			if (timePassed > 0.5f) {
-				Action completeAction = new ParallelAction(Actions.moveBy(0,
-						-2, 0.1f), Actions.fadeIn(0.25f));
-				Action mainAction = new ParallelAction(Actions.moveBy(0, 2,
-						0.1f), Actions.fadeOut(0.25f));
+				}, mainAction, completeAction, new Action() {
 
-				coinLabel.addAction(new SequenceAction(mainAction,
-						completeAction));
-				timePassed = 0;
+					@Override
+					public boolean act(float delta) {
+						moneyAnimationLock.release();
+						moneyAnimationComplete = true;
+						return true;
+					}
+
+				}));
 			}
+			// timePassed = 0;
+			// }
 		}
-		coinLabel.setText(Globals.makeMoneyString(currentMoney));
+		baseLabel.setText(Globals.makeMoneyString(currentMoney));
+		animationLabel.setText(Globals.makeMoneyString(currentMoney));
 
 		return currentMoney;
 	}
