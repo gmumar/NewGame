@@ -1,8 +1,11 @@
 package wrapper;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
 /*
  * black #000000 - menu backgrounds, reading text, button text
  50% opacity - menu icons, unplayed levels
@@ -18,14 +21,9 @@ import java.util.ArrayList;
  country green #646600 - for borders around played levels in country mode
  arctic blue #627689 - for borders around played levels in arctic mode
  */
-
 import AdsInterface.IActivityRequestHandler;
-import JSONifier.JSONJoint;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.utils.async.AsyncExecutor;
+import JSONifier.JSONJoint;
 
 public class Globals {
 

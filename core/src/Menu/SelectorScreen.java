@@ -303,12 +303,13 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 					gameState, null, true);
 
 			contentTable = new Table();
+			
 			contentTable.clear();
 			contentTable.setTouchable(Touchable.childrenOnly);
 
 			populateContentTable(contentTable);
 
-			baseTable.add(contentTable).expand().pad(20);
+			baseTable.add(contentTable).fill().expand().pad(20);
 
 			BottomBar.create(baseTable, getScreenType(), gameState, false);
 

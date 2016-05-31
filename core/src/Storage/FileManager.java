@@ -21,6 +21,7 @@ public class FileManager {
 	public final static String FILE_NAME = "myfile.txt";
 	public final static String CAR_FILE_NAME = "mycarfile.txt";
 	public final static String TRACK_FILE_NAME = "mytrackfile_1.txt";
+	public final static String INFINITE_TRACK_FILE_NAME = "mytrackfile1_1.txt";
 	public static final String COMMUNITY_FILE_NAME = "mycommcarfile.txt";
 
 	public static void writeToFile(FileObject objectIn) {

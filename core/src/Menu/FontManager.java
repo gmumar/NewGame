@@ -9,19 +9,18 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.Hinting;
+import com.gudesigns.climber.GameLoader;
 
 public class FontManager {
 
 	private static final int SCALE = 10;
 
-	private static HashMap<String, BitmapFont> fonts = new HashMap<String, BitmapFont>();
-
-	public static BitmapFont GenerateFont(String fontFile, int size, Color color) {
+	public static BitmapFont GenerateFont(GameLoader gameLoader, String fontFile, int size, Color color) {
 
 		String key = color + "_" + fontFile + "_" + Integer.toString(size);
 
-		if (fonts.containsKey(key)) {
-			return fonts.get(key);
+		if (gameLoader.fonts.containsKey(key)) {
+			return gameLoader.fonts.get(key);
 		} else {
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
 					Gdx.files.internal(fontFile));
@@ -42,10 +41,12 @@ public class FontManager {
 			bfont.getData().setScale((float) size / SCALE);
 			bfont.getRegion().getTexture()
 					.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-			fonts.put(key, bfont);
+			gameLoader.fonts.put(key, bfont);
 			return bfont;
 		}
 	}
+	
+	private static  HashMap<String, BitmapFont> fonts = new HashMap<String, BitmapFont>();
 
 	public static BitmapFont GenerateScaledFont(String fontFile, int size,
 			Color color, int Scale, float boader) {

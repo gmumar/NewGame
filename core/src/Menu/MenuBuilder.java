@@ -3,6 +3,7 @@ package Menu;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import wrapper.BaseActor;
 import wrapper.CameraManager;
@@ -90,7 +91,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	private ArrayList<Component> parts = new ArrayList<Component>();
 	private JSONCompiler compiler = new JSONCompiler();
 	private AssemblyRules assemblyRules = new AssemblyRules();
-	private HashMap<String, Integer> jointTypes = new HashMap<String, Integer>();
+	private Map<String, Integer> jointTypes = new HashMap<String, Integer>();
 
 	private HashMap<String, Integer> componentCounts = new HashMap<String, Integer>();;
 
@@ -671,7 +672,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		ArrayList<JSONComponent> additionalComps = currentCarJson
 				.getAddComponents();
 
-		// for(Entry<String, Component> part : carPartsSet){
+		// Iterate all components in the car
 		for (JSONComponent jcomponent : jcomponents) {
 			// Component comp = part.getValue();
 			JSONComponentName name = jcomponent.getjComponentName();// comp.getjComponentName();
@@ -683,6 +684,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 				seenComponents.add(key);
 
+				// instantiate the components
 				if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
 					addedComponents = addTire(name.getLevel());
 				} else if (name.getBaseName().compareTo(
@@ -698,6 +700,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 					System.exit(1);
 				}
 
+				// Position all the components
 				for (Component addedComponent : addedComponents) {
 					if (addedComponent.getLevel() == Globals.DISABLE_LEVEL) {
 						if (additionalComps != null) {
@@ -756,6 +759,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 			 */
 		}
 
+		jointTypes = currentCarJson.getJointTypeList();
 		// tmpWorld.dispose();
 
 	}

@@ -123,29 +123,29 @@ public class HUDBuilder {
 		// stage.addActor(pause);
 
 		// Timer
-		Vector2 timerLocation = new Vector2(20, -50);
+		Vector2 timerLocation = new Vector2(20, -55);
 		Image clock = new Image(
 				gameLoader.Assets.getFilteredTexture("worlds/hud/clock.png"));
 		clock.setPosition(timerLocation.x, timerLocation.y
 				+ Globals.ScreenHeight);
-		clock.setSize(30, 30);
+		clock.setSize(40, 40);
 		stage.addActor(clock);
 
-		clockTime = new Label("Time", Skins.loadDefault(gameLoader, 1));
-		clockTime.setPosition(timerLocation.x + 30 + 4, timerLocation.y
-				+ Globals.ScreenHeight + 6.5f);
+		clockTime = new Label("Time", Skins.loadDefault(gameLoader, 1), "dialogTitle");
+		clockTime.setPosition(timerLocation.x + 40 + 4, timerLocation.y
+				+ Globals.ScreenHeight + 5.5f);
 		stage.addActor(clockTime);
 
 		// Money
-		Vector2 moneyLocation = new Vector2(20, -85);
+		Vector2 moneyLocation = new Vector2(20, -100);
 		Image coin = new Image(gameLoader.Assets.getFilteredTexture("coin.png"));
 		coin.setPosition(moneyLocation.x - 5, moneyLocation.y - 5
 				+ Globals.ScreenHeight);
-		coin.setSize(40, 40);
+		coin.setSize(50, 50);
 		stage.addActor(coin);
 
-		money = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text-small");
-		money.setPosition(moneyLocation.x + 30 + 4, moneyLocation.y
+		money = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text");
+		money.setPosition(moneyLocation.x + 40 + 4, moneyLocation.y
 				+ Globals.ScreenHeight + 6.5f);
 		stage.addActor(money);
 

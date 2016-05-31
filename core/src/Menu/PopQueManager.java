@@ -2,6 +2,7 @@ package Menu;
 
 import java.util.ArrayList;
 
+import wrapper.Globals;
 import Dialog.BuyDialog;
 import Dialog.CarDisplayDialog;
 import Dialog.DialogBase;
@@ -18,6 +19,7 @@ import Menu.PopQueObject.PopQueObjectType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Align;
 import com.gudesigns.climber.GameLoader;
 
 public class PopQueManager {
@@ -184,7 +186,9 @@ public class PopQueManager {
 		dialog = new TextDialog("Loading", skin, "default");
 		dialog.setTouchable(Touchable.disabled);
 		dialog.setZIndex(1);
-		dialog.show(stage);
+		dialog.show(stage).align(Align.top);
+		//	dialog.setPosition(300,450);
+		dialog.setPosition( Globals.ScreenWidth/2  , Globals.ScreenHeight-100);
 		Animations.fadeIn(dialog);
 	}
 

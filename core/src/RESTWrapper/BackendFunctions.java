@@ -41,7 +41,7 @@ public class BackendFunctions {
 
 	}
 
-	public static void uploadTrack(String mapString, float mapTime, int difficulty, int index) {
+	public static void uploadTrack(String mapString, String restPath, float mapTime, int difficulty, int index) {
 		
 		System.out.println("BackendFunctions: " + Integer.toString(difficulty));
 
@@ -51,7 +51,7 @@ public class BackendFunctions {
 		parameters.put(RESTProperties.TRACK_DIFFICULTY, Integer.toString(difficulty));
 		parameters.put(RESTProperties.TRACK_INDEX, Integer.toString(index));
 
-		REST.postData(RESTPaths.MAPS, parameters, new HttpResponseListener() {
+		REST.postData(restPath, parameters, new HttpResponseListener() {
 
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {

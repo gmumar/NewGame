@@ -3,6 +3,7 @@ package JSONifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import com.badlogic.gdx.utils.Array;
 public class JSONCompiler {
 
 	public String compile(World world, ArrayList<Component> parts,
-			HashMap<String, Integer> jointTypes) {
+			Map<String, Integer> jointTypes) {
 
 		JSONCar car = new JSONCar();
 		/*

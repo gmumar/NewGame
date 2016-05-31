@@ -229,46 +229,46 @@ public class LoaderScreen implements Screen {
 
 		// https://www.google.com/fonts/specimen/Chivo
 		ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
-		BitmapFont font = FontManager.GenerateFont("fonts/chivoRegular.ttf", 4,
-				Color.BLACK);
+		BitmapFont font = FontManager.GenerateFont(gameLoader,
+				"fonts/chivoRegular.ttf", 4, Color.BLACK);
 		resources.put("default-font", font);
 
-		BitmapFont fontWhite = FontManager.GenerateFont(
+		BitmapFont fontWhite = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoRegular.ttf", 4, Color.WHITE);
 		resources.put("white-4", fontWhite);
-		
-		BitmapFont fontGlowingSmall = FontManager.GenerateFont(
+
+		BitmapFont fontGlowingSmall = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoBlack.ttf", 4, Globals.GLOWING_LIGHT);
 		resources.put("glowing-4", fontGlowingSmall);
-		
-		BitmapFont fontGlowingLarge = FontManager.GenerateFont(
+
+		BitmapFont fontGlowingLarge = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoBlack.ttf", 5, Globals.GLOWING_LIGHT);
 		resources.put("glowing-5", fontGlowingLarge);
-		
-		BitmapFont fontWhiteLarge = FontManager.GenerateFont(
+
+		BitmapFont fontWhiteLarge = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoRegular.ttf", 5, Color.WHITE);
 		resources.put("white-5", fontWhiteLarge);
-		
-		BitmapFont fontWhiteBold = FontManager.GenerateFont(
+
+		BitmapFont fontWhiteBold = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoBlack.ttf", 4, Color.WHITE);
 		resources.put("white-bold-4", fontWhiteBold);
 
-		BitmapFont fontWhiteBoldLarge = FontManager.GenerateFont(
+		BitmapFont fontWhiteBoldLarge = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoBlack.ttf", 5, Color.WHITE);
 		resources.put("white-bold-5", fontWhiteBoldLarge);
-		
-		BitmapFont fontBold = FontManager.GenerateFont("fonts/chivoBlack.ttf", 4,
-				Color.BLACK);
+
+		BitmapFont fontBold = FontManager.GenerateFont(gameLoader,
+				"fonts/chivoBlack.ttf", 4, Color.BLACK);
 		resources.put("default-font-bold", fontBold);
-		
-		BitmapFont fontBoldLarge = FontManager.GenerateFont(
+
+		BitmapFont fontBoldLarge = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoBlack.ttf", 5, Color.BLACK);
 		resources.put("black-bold-5", fontBoldLarge);
-		
-		BitmapFont fontLarge = FontManager.GenerateFont(
+
+		BitmapFont fontLarge = FontManager.GenerateFont(gameLoader,
 				"fonts/chivoRegular.ttf", 5, Color.BLACK);
 		resources.put("black-5", fontLarge);
-		
+
 		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
 				new SkinParameter("skins/uiskin.atlas", resources));
 
@@ -282,8 +282,7 @@ public class LoaderScreen implements Screen {
 			@Override
 			public String call() throws Exception {
 				Gson gson = new Gson();
-				Reader stream = FileManager
-						.getFileStream(fileName);
+				Reader stream = FileManager.getFileStream(fileName);
 
 				if (stream == null) {
 					carLoader.release();
@@ -298,9 +297,10 @@ public class LoaderScreen implements Screen {
 							final JSONCar car = gson.fromJson(reader,
 									JSONCar.class);
 
-							if(fileName.compareTo(FileManager.CAR_FILE_NAME)==0){
+							if (fileName.compareTo(FileManager.CAR_FILE_NAME) == 0) {
 								gameLoader.cars.add(car);
-							} else if(fileName.compareTo(FileManager.COMMUNITY_FILE_NAME)==0){
+							} else if (fileName
+									.compareTo(FileManager.COMMUNITY_FILE_NAME) == 0) {
 								gameLoader.communityCars.add(car);
 							}
 							break;

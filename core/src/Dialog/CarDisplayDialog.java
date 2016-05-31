@@ -29,7 +29,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.gudesigns.climber.ADMINCarSelectorScreen;
 import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
@@ -47,14 +46,14 @@ public class CarDisplayDialog {
 		base.clear();
 		base.setMovable(false);
 		base.setModal(true);
-		
+
 		base.setTouchable(Touchable.enabled);
-		
-		base.addListener(new ClickListener(){
+
+		base.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				
+
 				Action completeAction = new Action() {
 					public boolean act(float delta) {
 						base.remove();
@@ -66,7 +65,7 @@ public class CarDisplayDialog {
 						completeAction));
 				super.clicked(event, x, y);
 			}
-			
+
 		});
 
 		Table images = new Table();
@@ -74,7 +73,7 @@ public class CarDisplayDialog {
 		// Images
 		// Vector2 originalOrigin = null;
 		Table currentItem = new Table(skin);
-		currentItem.setBackground("dialogDim");
+		// currentItem.setBackground("dialogDim");
 
 		// ----- car display ----------
 		final String itemJson = popQueObject.getCarJson();
@@ -161,63 +160,60 @@ public class CarDisplayDialog {
 		});
 
 		buttonsWrapper.add(edit).colspan(1).expand().fill();
-		
-		if(popQueObject.isAdmin()){
+
+		if (popQueObject.isAdmin()) {
 			buttonsWrapper.row();
 			Button delete = new Button("delete");
 			buttonsWrapper.add(delete);
-			
-			delete.addListener(new ClickListener(){
+
+			delete.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 
 					deleteCar(itemJson);
-					
+
 					super.clicked(event, x, y);
 				}
-				
+
 			});
-			
-			
+
 			Button community = new Button("community");
 			buttonsWrapper.add(community);
-			
-			community.addListener(new ClickListener(){
+
+			community.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					
-					BackendFunctions.uploadCar(itemJson, RESTPaths.COMMUNITY_CARS);
+
+					BackendFunctions.uploadCar(itemJson,
+							RESTPaths.COMMUNITY_CARS);
 					deleteCar(itemJson);
-					
+
 					super.clicked(event, x, y);
 				}
-				
+
 			});
-			
+
 			Button myPick = new Button("my Pick");
 			buttonsWrapper.add(myPick);
-			
-			myPick.addListener(new ClickListener(){
+
+			myPick.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					BackendFunctions.uploadCar(itemJson, RESTPaths.CARS);
 					deleteCar(itemJson);
-					
+
 					super.clicked(event, x, y);
 				}
-				
-			});
-			
-			
-		}
 
+			});
+
+		}
 
 		currentItem.add(buttonsWrapper).expand().fill();
 
-		currentItem.pad(5);
 		// ----------------------------
 
 		images.add(currentItem);
@@ -227,27 +223,28 @@ public class CarDisplayDialog {
 
 		return base;
 	}
-	
-	private static void deleteCar(String itemJson){
+
+	private static void deleteCar(String itemJson) {
 		String objectId = JSONTrack.objectify(itemJson).getObjectId();
-		REST.deleteEntry(RESTPaths.COMMUNITY_CARS_DUMP, objectId, new HttpResponseListener() {
-			
-			@Override
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				System.out.println(httpResponse.getResultAsString());
-			}
-			
-			@Override
-			public void failed(Throwable t) {
-				System.out.println("Delete failed");
-			}
-			
-			@Override
-			public void cancelled() {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		REST.deleteEntry(RESTPaths.COMMUNITY_CARS_DUMP, objectId,
+				new HttpResponseListener() {
+
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						System.out.println(httpResponse.getResultAsString());
+					}
+
+					@Override
+					public void failed(Throwable t) {
+						System.out.println("Delete failed");
+					}
+
+					@Override
+					public void cancelled() {
+						// TODO Auto-generated method stub
+
+					}
+				});
 	}
 
 }

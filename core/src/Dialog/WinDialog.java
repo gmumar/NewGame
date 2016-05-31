@@ -8,6 +8,7 @@ import Menu.TextBox;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.BackendFunctions;
+import RESTWrapper.RESTPaths;
 import User.User;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -44,9 +45,9 @@ public class WinDialog extends Table {
 
 	private void buildTable(GameLoader gameLoader,
 			final PopQueObject popQueObject) {
-		
-		final float wrapperWidths = Globals.baseSize*10;
-		final float textWidth = Globals.baseSize*5;
+
+		final float wrapperWidths = Globals.baseSize * 10;
+		final float textWidth = Globals.baseSize * 5;
 
 		// Skin skin = Skins.loadDefault(gameLoader, 0);
 		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
@@ -57,7 +58,6 @@ public class WinDialog extends Table {
 		base.setBackground("dialogDim");
 		base.setFillParent(true);
 		Animations.fadeIn(base);
-
 
 		Table contentWrapper = new Table(skin);
 		Table header = new Table(skin);
@@ -74,7 +74,7 @@ public class WinDialog extends Table {
 		contentWrapper.row();
 
 		// Time Wrapper
-		Label timeRemainingText = new Label("Level Time", skin,"defaultWhite");
+		Label timeRemainingText = new Label("Level Time", skin, "defaultWhite");
 		Image clockImage = new Image(
 				gameLoader.Assets
 						.getFilteredTexture("menu/icons/clock_white.png"));
@@ -84,27 +84,28 @@ public class WinDialog extends Table {
 				.height(Globals.baseSize).left().expand();
 
 		Label bestTime = new Label(Globals.makeTimeStr(playedTrack
-				.getBestTime()), skin,"defaultWhite");
+				.getBestTime()), skin, "defaultWhite");
 		timeWrapper.add(bestTime).right().expand();
 		contentWrapper.add(timeWrapper).expand().width(wrapperWidths).pad(5);
 		contentWrapper.row();
 
 		// Coins Earned
-		Label coinsEarnedText = new Label("Coins Earned", skin,"defaultWhite");
+		Label coinsEarnedText = new Label("Coins Earned", skin, "defaultWhite");
 		Image coinImage = new Image(
-				gameLoader.Assets.getFilteredTexture("menu/icons/white_coin.png"));
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/white_coin.png"));
 
 		coinsWrapper.add(coinsEarnedText).left().width(textWidth);
 		coinsWrapper.add(coinImage).width(Globals.baseSize)
 				.height(Globals.baseSize).left().expand();
 
-		coinsEarned = new Label("coins", skin,"defaultWhite");
+		coinsEarned = new Label("coins", skin, "defaultWhite");
 		coinsWrapper.add(coinsEarned).right().expand();
 		contentWrapper.add(coinsWrapper).width(wrapperWidths).expand().pad(5);
 		contentWrapper.row();
 
 		// Stars Won
-		Label starsText = new Label("Stars Won", skin,"defaultWhite");
+		Label starsText = new Label("Stars Won", skin, "defaultWhite");
 		stars = new Image(gameLoader.Assets.getFilteredTexture("coin.png"));
 
 		performanceWrapper.add(starsText).left().expand().width(textWidth);
@@ -133,13 +134,13 @@ public class WinDialog extends Table {
 			contentWrapper.row();
 			contentWrapper.add(difficulty).pad(5);
 
-			TextButton upload = new TextButton("upload", skin, "yesButton");
+			Menu.Button upload = new Menu.Button("adventure");
 			upload.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					BackendFunctions.uploadTrack(User.getInstance()
-							.getCurrentTrack(), popQueObject
+							.getCurrentTrack(), RESTPaths.MAPS, popQueObject
 							.getGamePlayInstance().getMapTime(), Integer
 							.parseInt(difficulty.getText()), Integer
 							.parseInt(index.getText()));
@@ -148,14 +149,31 @@ public class WinDialog extends Table {
 
 			});
 			contentWrapper.row();
-			contentWrapper.add(upload).width(Globals.baseSize*2).height(Globals.baseSize*2);
+			contentWrapper.add(upload);
+
+			Menu.Button infiniteUpload = new Menu.Button("infinte");
+			infiniteUpload.addListener(new ClickListener() {
+
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					BackendFunctions.uploadTrack(User.getInstance()
+							.getCurrentTrack(), RESTPaths.INFINITE_MAPS, popQueObject
+							.getGamePlayInstance().getMapTime(), Integer
+							.parseInt(difficulty.getText()), Integer
+							.parseInt(index.getText()));
+					super.clicked(event, x, y);
+				}
+
+			});
+			contentWrapper.add(infiniteUpload);
 		}
 
 		base.add(contentWrapper).expandY().center();
 
 		base.row();
-		
-		ImageButton home = SimpleImageButton.create(SimpleImageButtonTypes.HOME, gameLoader);
+
+		ImageButton home = SimpleImageButton.create(
+				SimpleImageButtonTypes.HOME, gameLoader);
 		home.addListener(new ClickListener() {
 
 			@Override
@@ -178,13 +196,15 @@ public class WinDialog extends Table {
 			}
 
 		});
-		
+
 		Label nextLevelText = new Label("Next Level", skin);
 		nextLevel.add(nextLevelText).pad(20);
-		
-		Image nextLevelImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
-		nextLevel.add(nextLevelImage).width(Globals.baseSize).height(Globals.baseSize*1.2f).pad(10);
-		
+
+		Image nextLevelImage = new Image(
+				gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
+		nextLevel.add(nextLevelImage).width(Globals.baseSize)
+				.height(Globals.baseSize * 1.2f).pad(10);
+
 		TextButton exit = new TextButton("exit", skin, "noButton");
 		exit.addListener(new ClickListener() {
 
@@ -196,8 +216,9 @@ public class WinDialog extends Table {
 			}
 
 		});
-		
-		ImageButton restart = SimpleImageButton.create(SimpleImageButtonTypes.RESTART, gameLoader);
+
+		ImageButton restart = SimpleImageButton.create(
+				SimpleImageButtonTypes.RESTART, gameLoader);
 		restart.addListener(new ClickListener() {
 
 			@Override
@@ -208,7 +229,7 @@ public class WinDialog extends Table {
 			}
 
 		});
-		
+
 		Table bottomBar = new Table(skin);
 
 		bottomBar.setBackground("blackOut");

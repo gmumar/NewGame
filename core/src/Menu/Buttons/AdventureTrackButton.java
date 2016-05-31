@@ -25,8 +25,8 @@ import com.gudesigns.climber.GameLoader;
 
 public class AdventureTrackButton {
 
-	public static final ButtonLockWrapper create(GameLoader gameLoader, JSONTrack track,
-			boolean isNew) {
+	public static final ButtonLockWrapper create(GameLoader gameLoader,
+			JSONTrack track, boolean isNew, boolean forInfinite) {
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		String indexTxt = Integer.toString(track.getIndex());
@@ -39,10 +39,23 @@ public class AdventureTrackButton {
 
 		Button base = null;
 
-		if (track.getType() == TrackType.FORREST) {
-			base = new Button(skin, "adventureTrack_forrest");
-		} else if (track.getType() == TrackType.ARTIC) {
-			base = new Button(skin, "adventureTrack_artic");
+		if (forInfinite) {
+			if (track.getDifficulty() == 1) {
+				base = new Button(skin, "adventureTrack_diff_1");
+			} else if (track.getDifficulty() == 2) {
+				base = new Button(skin, "adventureTrack_diff_2");
+			} else if (track.getDifficulty() == 3) {
+				base = new Button(skin, "adventureTrack_diff_3");
+			} else {
+				base = new Button(skin, "adventureTrack_diff_x");
+			}
+
+		} else {
+			if (track.getType() == TrackType.FORREST) {
+				base = new Button(skin, "adventureTrack_forrest");
+			} else if (track.getType() == TrackType.ARTIC) {
+				base = new Button(skin, "adventureTrack_artic");
+			}
 		}
 
 		Stack stack = new Stack();

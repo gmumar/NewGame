@@ -118,6 +118,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	transparentButton: { up: transparent, down: transparent},
 	adventureTrack_forrest: { up: forrestGreen, down: grey	}
 	adventureTrack_artic: { up: articBlue, down: grey	}
+	adventureTrack_diff_1: { up: gameGreen, down: grey	}
+	adventureTrack_diff_2: { up: gameYellow, down: grey	}
+	adventureTrack_diff_3: { up: deleteRed, down: grey	}
+	adventureTrack_diff_x: { up: blackOut, down: grey	}
 	carBuilder_general: { up: mediumGrey, down: grey	}
 	carBuilder_delete: { up: deleteRed, down: grey	}
 	carBuilder_play: { up: gameGreen, down: grey	}

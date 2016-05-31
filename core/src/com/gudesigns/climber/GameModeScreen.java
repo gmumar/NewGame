@@ -86,7 +86,7 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!infinityMode.locked) {
-					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+					gameLoader.setScreen(new InfiniteTrackSelectorScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.UNLOCK_MODE, "Unlock Mode",

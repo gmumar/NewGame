@@ -29,6 +29,7 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -354,8 +355,10 @@ public class CarSelectorScreen extends SelectorScreen {
 	@Override
 	protected void populateContentTable(Table contentTable) {
 
+		Table prevHolder = new Table(Skins.loadDefault(gameLoader, 1));
+		prevHolder.setTouchable(Touchable.enabled);
 		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT, gameLoader);
-		prevPage.addListener(new ClickListener(){
+		prevHolder.addListener(new ClickListener(){
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -382,16 +385,20 @@ public class CarSelectorScreen extends SelectorScreen {
 			
 		});
 		
-		contentTable.add(prevPage).colspan(1).left().width(Globals.baseSize);
+		prevHolder.add(prevPage).width(Globals.baseSize);
+		contentTable.add(prevHolder).left().expand().fill().height(Globals.baseSize*10).width(Globals.baseSize*1.5f);
 		// stage.addActor(prevPage);
 
 		createItemsTable(contentTable);
 		initButtons();
 		itemsTable.invalidate();
+		
+		Table nextHolder = new Table(Skins.loadDefault(gameLoader, 1));
+		nextHolder.setTouchable(Touchable.enabled);
 
 		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT, gameLoader);
 		
-		nextPage.addListener(new ClickListener(){
+		nextHolder.addListener(new ClickListener(){
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -413,8 +420,9 @@ public class CarSelectorScreen extends SelectorScreen {
 		});
 	
 
-		contentTable.add(nextPage).colspan(1).right().width(Globals.baseSize);
-
+		nextHolder.add(nextPage).width(Globals.baseSize);
+		contentTable.add(nextHolder).right().expand().fill().height(Globals.baseSize*10).width(Globals.baseSize*1.5f);
+		
 	}
 
 	@Override

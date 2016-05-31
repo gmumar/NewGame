@@ -36,7 +36,7 @@ public class GroundBuilder {
 	final static float VARIATION = 1f;
 	final static float BIASING = 2f;
 	final static float PERIOD = 0.3f;
-	
+
 	// This is used to find the back edge of the camera
 	public final static int BACK_EDGE_UNITS = 30;
 
@@ -87,14 +87,14 @@ public class GroundBuilder {
 	private ShaderProgram colorShader;
 	private static int vertexCount;
 
-	//private int initial = 0 * 8;
+	// private int initial = 0 * 8;
 	public boolean loading = true;
 
 	private AssembledTrack track;
 
 	private JSONComponentName groundFixtureName = new JSONComponentName();
 	private Fixture groundFixture;
-	
+
 	private Color LAYER_COLOR;
 
 	// drawEdge looks up type everytime, try to optimize.
@@ -106,28 +106,27 @@ public class GroundBuilder {
 		this.camera = camera;
 		this.shader = shader;
 		this.colorShader = colorShader;
-		
+
 		String mapString = null;
-		
-		if(!forMainMenu){
+
+		if (!forMainMenu) {
 			mapString = user.getCurrentTrack();
 			trackType = JSONTrack.objectify(mapString).getType();
 		}
-		
-		
-		//System.out.println(mapString);
+
+		// System.out.println(mapString);
 
 		createFloor();
 		decor = new GroundDecor(gameState);
-		
+
 		if (mapString == null) {
 			infinate = true;
 		} else {
 			infinate = false;
 			mapListCounter = 0;
 
-			track = assembler.assembleTrack(mapString, gameState, new Vector2(TRACK_X_OFFSET,
-					TRACK_Y_OFFSET),forMainMenu);
+			track = assembler.assembleTrack(mapString, gameState, new Vector2(
+					TRACK_X_OFFSET, TRACK_Y_OFFSET), forMainMenu);
 
 			preMadeMapList = track.getPoints();
 
@@ -140,11 +139,11 @@ public class GroundBuilder {
 			// + shaderEnd);
 		}
 
-		if(trackType==TrackType.FORREST){
+		if (trackType == TrackType.FORREST) {
 			groundFiller = gameLoader.Assets.get("worlds/forrest/texture.png",
 					Texture.class);
 			LAYER_COLOR = Globals.FORREST_GREEN;
-		} else if(trackType==TrackType.ARTIC) {
+		} else if (trackType == TrackType.ARTIC) {
 			groundFiller = gameLoader.Assets.get("worlds/artic/texture.png",
 					Texture.class);
 			LAYER_COLOR = Globals.ARTIC_BLUE;
@@ -157,11 +156,11 @@ public class GroundBuilder {
 		groundFixtureName.setBaseName(ComponentNames.GROUND);
 
 	}
-	
-	public void reset(){
+
+	public void reset() {
 		lastDrawnPointer = 0;
 		lastRemovedPointer = 1;
-		
+
 		mapList = new ArrayList<GroundUnitDescriptor>();
 		createFloor();
 	}
@@ -176,10 +175,10 @@ public class GroundBuilder {
 		// float w = Gdx.graphics.getWidth();
 		// float h = Gdx.graphics.getHeight() - 300;
 		floor = world.createBody(bodyDef2);
-		
+
 		JSONComponentName floorName = new JSONComponentName();
 		floorName.setBaseName(ComponentNames.GROUND);
-		
+
 		floor.setUserData(floorName);
 
 		GroundUnitDescriptor gud = new GroundUnitDescriptor(new Vector2(-60
@@ -223,7 +222,7 @@ public class GroundBuilder {
 
 			}
 		} else {
-			//initial = 0;
+			// initial = 0;
 			loading = false;
 			ADD_FLOOR_COUNT_FINAL = 3;
 		}
@@ -331,10 +330,8 @@ public class GroundBuilder {
 
 		++addFloorCount;
 
-			decor.draw(batch);
-			track.draw(batch);
-		
-
+		decor.draw(batch);
+		track.draw(batch);
 
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
@@ -351,7 +348,7 @@ public class GroundBuilder {
 		 */
 
 	}
-	
+
 	public void drawMainMenu(SpriteBatch batch) {
 
 		if (addFloorCount > ADD_FLOOR_COUNT) {
@@ -377,22 +374,20 @@ public class GroundBuilder {
 		vertexCount = (shaderEnd - shaderStart) * 2;
 
 		shader.begin();
-		shader
-		.setUniformMatrix("u_projTrans",
-				camera.combined);
-		//shader.setUniformi("u_texture", 0);
+		shader.setUniformMatrix("u_projTrans", camera.combined);
+		// shader.setUniformi("u_texture", 0);
 		GameMesh.drawLayer(camera, shader, shaderStart, shaderEnd,
 				groundFiller, 30, Color.WHITE, 0f, 0, vertexCount);
 		shader.end();
 
 		colorShader.begin();
 		colorShader.setUniformMatrix("u_projTrans", camera.combined);
-		//GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
-		//		0.8f, Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
+		// GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
+		// 0.8f, Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
 		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
 				0.6f, LAYER_COLOR, 0.1f, 2, vertexCount);
-		//GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
-			//	0.1f, Globals.GREEN1, 0.6f, 3, vertexCount);
+		// GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
+		// 0.1f, Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();
 
 	}
@@ -402,8 +397,8 @@ public class GroundBuilder {
 		edgeShape.set(v1, v2);
 		fixtureDef.shape = edgeShape;
 		// fixtureDef.density = 1;
-		
-		if(trackType == TrackType.FORREST){
+
+		if (trackType == TrackType.FORREST) {
 			fixtureDef.friction = 1f;
 			fixtureDef.restitution = 0.8f;
 		} else if (trackType == TrackType.ARTIC) {
@@ -439,7 +434,7 @@ public class GroundBuilder {
 
 	public boolean destroyComponent(JSONComponentName name) {
 		return track.destroyComponent(name);
-		
+
 	}
 
 }

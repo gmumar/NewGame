@@ -13,6 +13,7 @@ import Purchases.PurchaseManager;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class GameLoader extends Game {
 
@@ -21,7 +22,9 @@ public class GameLoader extends Game {
 	// private MainMenuScreen menuScreen;
 	private LoaderScreen loadScreen;
 
+	
 	public GameAssetManager Assets;
+	public HashMap<String, BitmapFont> fonts = new HashMap<String, BitmapFont>();
 	public ArrayList<JSONCar> cars = new ArrayList<JSONCar>();
 	public ArrayList<JSONCar> communityCars = new ArrayList<JSONCar>();
 	public PurchaseManager purchaseManager = new PurchaseManager();

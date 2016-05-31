@@ -28,7 +28,8 @@ public class TextBox extends TextField {
 	
 	private static Skin defaultSkin() {
 		Skin skin = new Skin();
-		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4, Color.GREEN);
+		BitmapFont bfont = FontManager.GenerateScaledFont("fonts/simpleFont.ttf", 4,
+				Color.GREEN,10,1);
 		skin.add("font", bfont);
 		return skin;
 	}

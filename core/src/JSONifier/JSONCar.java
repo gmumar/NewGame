@@ -5,15 +5,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 public class JSONCar extends JSONParentClass {
 
 	private ArrayList<JSONJoint> jointList = null;
 	private ArrayList<JSONComponent> componentList = null;
 	private Map<String, Integer> jointTypeList = null;
-	private static JsonParser parser = new JsonParser();
 	private ArrayList<JSONComponent> addComponents = null;
 
 

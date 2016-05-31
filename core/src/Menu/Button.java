@@ -67,8 +67,8 @@ public class Button extends TextButton {
 
 		skin.add("white", new Texture(pixmap));
 
-		BitmapFont bfont = FontManager.GenerateFont("fonts/simpleFont.ttf", 4,
-				Color.WHITE);
+		BitmapFont bfont = FontManager.GenerateScaledFont("fonts/simpleFont.ttf", 4,
+				Color.WHITE,10,1);
 
 		skin.add("default", bfont);
 

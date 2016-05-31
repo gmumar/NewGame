@@ -17,6 +17,7 @@ import JSONifier.JSONCompiler;
 import JSONifier.JSONComponentName;
 import JSONifier.JSONTrack.TrackType;
 import RESTWrapper.BackendFunctions;
+import RESTWrapper.RESTPaths;
 import User.User;
 
 import com.badlogic.gdx.graphics.Color;
@@ -115,7 +116,7 @@ public class TrackMenuBuilder {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				BackendFunctions.uploadTrack(User.getInstance()
-						.getCurrentTrack(), 0.0f, 0,0);
+						.getCurrentTrack(), RESTPaths.MAPS, 0.0f, 0,0);
 				super.clicked(event, x, y);
 			}
 

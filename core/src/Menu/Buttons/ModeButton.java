@@ -43,7 +43,7 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/infinity.png"));
 			buttonName = new Label("Infinity Mode", skin);
-			isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.INFINITY);
+			//isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.INFINITY);
 		} else if (type == ModeButtonTypes.ADVENTURE) {
 			image = new Image(
 					gameLoader.Assets
