@@ -31,6 +31,9 @@ import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
+import User.Costs;
+import User.ItemsLookupPrefix;
+import User.TrackMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -220,23 +223,34 @@ public class TrackSelectorScreen extends SelectorScreen {
 	protected void addButton(final JSONParentClass item) {
 		final JSONTrack track = JSONTrack.objectify(item.jsonify());
 		final ButtonLockWrapper b = AdventureTrackButton.create(gameLoader,
-				track, false, false);
+				track, false);
 
 		b.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!b.locked) {
-					gameState.getUser().setCurrentTrack(item.jsonify());
+					gameState.getUser().setCurrentTrack(item.jsonify(),
+							TrackMode.ADVENTURE);
 					gameLoader.setScreen(new CarModeScreen(gameState));
 					super.clicked(event, x, y);
 				} else {
 
+					String itemName = null;
+
+					if (track.getType() == TrackType.ARTIC) {
+						itemName = ItemsLookupPrefix.getArticPrefix(Integer
+								.toString(track.getIndex()));
+					} else if (track.getType() == TrackType.FORREST) {
+						itemName = ItemsLookupPrefix.getForrestPrefix(Integer
+								.toString(track.getIndex()));
+					}
+
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_TRACK, "Unlock Track",
-							"\t\tUnlock track "
+							PopQueObjectType.UNLOCK_TRACK, itemName,
+							"Unlock Track", "\t\tUnlock track "
 									+ Integer.toString(track.getIndex())
-									+ "\t\t", 2000, context));
+									+ "\t\t", Costs.ADVENTURE_TRACK, instance));
 
 				}
 			}
@@ -251,9 +265,12 @@ public class TrackSelectorScreen extends SelectorScreen {
 	@Override
 	protected void writeObjectsToFile() {
 		ArrayList<JSONTrack> list = new ArrayList<JSONTrack>();
+		gameLoader.tracks.clear();
+
 		for (JSONParentClass track : items) {
 			// String car = iter.next();
 			list.add((JSONTrack) track);
+			gameLoader.tracks.add((JSONTrack) track);
 
 		}
 
@@ -265,7 +282,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);
 
-		FileManager.writeTracksToFileGson(list,FileManager.TRACK_FILE_NAME);
+		FileManager.writeTracksToFileGson(list, FileManager.TRACK_FILE_NAME);
 	}
 
 	@Override
@@ -315,7 +332,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 			@Override
 			public int compare(Table o1, Table o2) {
-			
+
 				Integer table1 = Integer.parseInt((String) o1.getUserObject());
 				Integer table2 = Integer.parseInt((String) o2.getUserObject());
 
@@ -348,11 +365,12 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 		// contentTable.add(prevPage).colspan(1).left();
 		// stage.addActor(prevPage);
-		
+
 		Table prevHolder = new Table(Skins.loadDefault(gameLoader, 1));
 		prevHolder.setTouchable(Touchable.enabled);
-		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT, gameLoader);
-		prevHolder.addListener(new ClickListener(){
+		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT,
+				gameLoader);
+		prevHolder.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -376,26 +394,25 @@ public class TrackSelectorScreen extends SelectorScreen {
 				}
 
 			}
-			
+
 		});
-		
+
 		prevHolder.add(prevPage).width(Globals.baseSize);
-		contentTable.add(prevHolder).left().expand().fill().height(Globals.baseSize*10).width(Globals.baseSize*1.5f);
-		
+		contentTable.add(prevHolder).left().expand().fill()
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
 
 		createItemsTable(contentTable);
 		initButtons();
 		itemsTable.invalidate();
 		scrollPane.invalidate();
-		
-		
-		
+
 		Table nextHolder = new Table(Skins.loadDefault(gameLoader, 1));
 		nextHolder.setTouchable(Touchable.enabled);
 
-		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT, gameLoader);
-		
-		nextHolder.addListener(new ClickListener(){
+		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT,
+				gameLoader);
+
+		nextHolder.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -413,12 +430,12 @@ public class TrackSelectorScreen extends SelectorScreen {
 				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
 				super.clicked(event, x, y);
 			}
-			
+
 		});
-	
 
 		nextHolder.add(nextPage).width(Globals.baseSize);
-		contentTable.add(nextHolder).right().expand().fill().height(Globals.baseSize*10).width(Globals.baseSize*1.5f);
+		contentTable.add(nextHolder).right().expand().fill()
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
 
 		// contentTable.add(nextPage).colspan(1).right();
 

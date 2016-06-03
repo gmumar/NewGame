@@ -11,14 +11,11 @@ import wrapper.GameState;
 import wrapper.Globals;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
-import JSONifier.JSONTrack.TrackType;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
 import Menu.Buttons.AdventureTrackButton;
 import Menu.Buttons.ButtonLockWrapper;
-import ParallexBackground.ScrollingBackground;
-import ParallexBackground.ScrollingBackground.BackgroundType;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
@@ -27,14 +24,14 @@ import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
+import User.Costs;
+import User.ItemsLookupPrefix;
+import User.TrackMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.async.AsyncTask;
@@ -179,28 +176,30 @@ public class InfiniteTrackSelectorScreen extends TrackSelectorScreen {
 
 	}
 
-
 	@Override
 	protected void addButton(final JSONParentClass item) {
 		final JSONTrack track = JSONTrack.objectify(item.jsonify());
 		final ButtonLockWrapper b = AdventureTrackButton.create(gameLoader,
-				track, false, true);
+				track, true);
 
 		b.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!b.locked) {
-					gameState.getUser().setCurrentTrack(item.jsonify());
+					gameState.getUser().setCurrentTrack(item.jsonify(),
+							TrackMode.INFINTE);
 					gameLoader.setScreen(new CarModeScreen(gameState));
 					super.clicked(event, x, y);
 				} else {
 
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_TRACK, "Unlock Track",
-							"\t\tUnlock track "
+							PopQueObjectType.UNLOCK_TRACK, ItemsLookupPrefix
+									.getInfiniteTrackPrefix(Integer
+											.toString(track.getIndex())),
+							"Unlock Track", "\t\tUnlock track "
 									+ Integer.toString(track.getIndex())
-									+ "\t\t", 2000, context));
+									+ "\t\t", Costs.INFINITY_TRACK, instance));
 
 				}
 			}
@@ -215,9 +214,12 @@ public class InfiniteTrackSelectorScreen extends TrackSelectorScreen {
 	@Override
 	protected void writeObjectsToFile() {
 		ArrayList<JSONTrack> list = new ArrayList<JSONTrack>();
+		gameLoader.infiniteTracks.clear();
+
 		for (JSONParentClass track : items) {
 			// String car = iter.next();
 			list.add((JSONTrack) track);
+			gameLoader.infiniteTracks.add((JSONTrack) track);
 
 		}
 
@@ -229,13 +231,15 @@ public class InfiniteTrackSelectorScreen extends TrackSelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);
 
-		FileManager.writeTracksToFileGson(list,FileManager.INFINITE_TRACK_FILE_NAME);
+		FileManager.writeTracksToFileGson(list,
+				FileManager.INFINITE_TRACK_FILE_NAME);
 	}
 
 	@Override
 	protected void addSpecificItemToList() {
 		Gson gson = new Gson();
-		Reader stream = FileManager.getFileStream(FileManager.INFINITE_TRACK_FILE_NAME);
+		Reader stream = FileManager
+				.getFileStream(FileManager.INFINITE_TRACK_FILE_NAME);
 
 		if (stream == null) {
 			loaderSemaphore.release();
@@ -279,7 +283,7 @@ public class InfiniteTrackSelectorScreen extends TrackSelectorScreen {
 
 			@Override
 			public int compare(Table o1, Table o2) {
-			
+
 				Integer table1 = Integer.parseInt((String) o1.getUserObject());
 				Integer table2 = Integer.parseInt((String) o2.getUserObject());
 
@@ -314,13 +318,13 @@ public class InfiniteTrackSelectorScreen extends TrackSelectorScreen {
 
 	@Override
 	protected void selectorRender(float delta) {
-		//scrollingBackground.draw(BackgroundType.SCROLLING);
+		// scrollingBackground.draw(BackgroundType.SCROLLING);
 
 	}
 
 	@Override
 	protected void clearScreen() {
-		Gdx.gl.glClearColor(0,0,0,1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 	}
 
 }

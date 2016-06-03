@@ -12,6 +12,7 @@ import Component.Component;
 import Component.Component.ComponentTypes;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONTrack.TrackType;
+import User.TrackMode;
 import User.User;
 
 import com.badlogic.gdx.math.Vector2;
@@ -133,7 +134,7 @@ public class JSONCompiler {
 	}
 
 	public String compile(World world, ArrayList<GroundUnitDescriptor> mapList,
-			ArrayList<Component> parts, HashMap<String, Integer> jointTypes, TrackType type) {
+			ArrayList<Component> parts, HashMap<String, Integer> jointTypes, TrackType type, TrackMode mode) {
 		JSONTrack track = new JSONTrack();
 
 		// Preferences prefs = Gdx.app
@@ -204,7 +205,7 @@ public class JSONCompiler {
 		track.setPoints(trackArray);
 		track.setType(type);
 
-		User.getInstance().setCurrentTrack(track.jsonify());
+		User.getInstance().setCurrentTrack(track.jsonify(), mode);
 
 		// prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
 		// prefs.flush();

@@ -4,7 +4,7 @@ import wrapper.Globals;
 import Dialog.Skins;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
-import User.LockingPrefix;
+import User.ItemsLookupPrefix;
 import User.User;
 import User.User.STARS;
 
@@ -26,20 +26,24 @@ import com.gudesigns.climber.GameLoader;
 public class AdventureTrackButton {
 
 	public static final ButtonLockWrapper create(GameLoader gameLoader,
-			JSONTrack track, boolean isNew, boolean forInfinite) {
+			JSONTrack track, boolean forInfinite) {
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		String indexTxt = Integer.toString(track.getIndex());
 		User user = User.getInstance();
 
-		boolean isLocked = user.isLocked(LockingPrefix.getForrestPrefix()
-				+ indexTxt);
+		boolean isLocked = true;
+		boolean isNew = true;
 
 		Table stackInlay = new Table();
 
 		Button base = null;
 
 		if (forInfinite) {
+			isNew = user.isNew(ItemsLookupPrefix
+					.getInfiniteTrackPrefix(indexTxt));
+			isLocked = false;
+
 			if (track.getDifficulty() == 1) {
 				base = new Button(skin, "adventureTrack_diff_1");
 			} else if (track.getDifficulty() == 2) {
@@ -51,10 +55,15 @@ public class AdventureTrackButton {
 			}
 
 		} else {
+			isNew = false;
 			if (track.getType() == TrackType.FORREST) {
 				base = new Button(skin, "adventureTrack_forrest");
+				isLocked = user.isLocked(ItemsLookupPrefix
+						.getForrestPrefix(indexTxt));
 			} else if (track.getType() == TrackType.ARTIC) {
 				base = new Button(skin, "adventureTrack_artic");
+				isLocked = user.isLocked(ItemsLookupPrefix
+						.getArticPrefix(indexTxt));
 			}
 		}
 
@@ -151,5 +160,4 @@ public class AdventureTrackButton {
 
 		return new ButtonLockWrapper(base, isLocked);
 	}
-
 }

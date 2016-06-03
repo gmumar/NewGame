@@ -51,13 +51,13 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected Table baseTable;
 	protected ScrollPane scrollPane;
 	protected PopQueManager popQueManager;
-	protected SelectorScreen context;
+	protected SelectorScreen instance;
 	public GameLoader gameLoader;
 
 	protected ImageButton prevPage, nextPage;
 
 	public volatile boolean resultsRemaining = true;
-	private boolean loadingComplete = false;
+	volatile private boolean loadingComplete = false;
 	// public volatile boolean stall = true;
 	protected int currentOffset = 0;
 	protected AsyncExecutor ae = new AsyncExecutor(2);
@@ -108,7 +108,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
-		context = this;
+		instance = this;
 
 		currentPageEnd = getItemsPerPage();
 
@@ -294,7 +294,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected void refreshAllButtons() {
 
 		if (!initButtons) {
-			initButtons = !initButtons;
+			System.out.println("SelectorScreen: initing buttons");
+			initButtons = true;
 			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
 			baseTable.setBackground("transparent");
 			baseTable.setFillParent(true);
@@ -414,6 +415,21 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		}
 
 	}
+	
+	@Override
+	public boolean successfulTwoButtonFlow(String itemName) {
+		System.out.println("SelectorScreen: Successful buy " + itemName);
+		loadingComplete = false;
+		//showCars();
+		//refreshAllButtons();
+		return false;
+	}
+
+	@Override
+	public boolean failedTwoButtonFlow(Integer moneyRequired) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	private void renderWorld() {
 
@@ -422,18 +438,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 		batch.setProjectionMatrix(camera.combined);
 
-	}
-
-	@Override
-	public boolean successful() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean failed() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

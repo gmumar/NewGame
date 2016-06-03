@@ -23,6 +23,7 @@ import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
+import User.GameErrors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -212,9 +213,16 @@ public class CarSelectorScreen extends SelectorScreen {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-
-				gameState.getUser().setCurrentCar(itemJson);
-				gameLoader.setScreen(new GamePlayScreen(gameState));
+				if (gameState.getUser().setCurrentCar(itemJson, false)) {
+					gameLoader.setScreen(new GamePlayScreen(gameState));
+				} else {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.USER_ERROR, "Error",
+							GameErrors.PARTS_NOT_UNLOCKED,
+							instance));
+				}
+				// gameState.getUser().setCurrentCar(itemJson);
+				// gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
 			}
 
@@ -249,8 +257,15 @@ public class CarSelectorScreen extends SelectorScreen {
 					int pointer, int button) {
 
 				playButton.setBackground("grey");
-				gameState.getUser().setCurrentCar(itemJson);
-				gameLoader.setScreen(new GamePlayScreen(gameState));
+				if (gameState.getUser().setCurrentCar(itemJson, false)) {
+					gameLoader.setScreen(new GamePlayScreen(gameState));
+				} else {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.USER_ERROR, "Error",
+							GameErrors.PARTS_NOT_UNLOCKED,
+							instance));
+				}
+				//gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.touchDown(event, x, y, pointer, button);
 			}
 
@@ -272,8 +287,15 @@ public class CarSelectorScreen extends SelectorScreen {
 					int pointer, int button) {
 
 				edit.setBackground("grey");
-				gameState.getUser().setCurrentCar(itemJson);
-				gameLoader.setScreen(new CarBuilderScreen(gameState));
+				if (gameState.getUser().setCurrentCar(itemJson, false)) {
+					gameLoader.setScreen(new GamePlayScreen(gameState));
+				} else {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.USER_ERROR, "Error",
+							GameErrors.PARTS_NOT_UNLOCKED,
+							instance));
+				}
+				//gameLoader.setScreen(new CarBuilderScreen(gameState));
 				super.touchDown(event, x, y, pointer, button);
 			}
 
@@ -357,8 +379,9 @@ public class CarSelectorScreen extends SelectorScreen {
 
 		Table prevHolder = new Table(Skins.loadDefault(gameLoader, 1));
 		prevHolder.setTouchable(Touchable.enabled);
-		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT, gameLoader);
-		prevHolder.addListener(new ClickListener(){
+		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT,
+				gameLoader);
+		prevHolder.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -382,23 +405,25 @@ public class CarSelectorScreen extends SelectorScreen {
 				}
 
 			}
-			
+
 		});
-		
+
 		prevHolder.add(prevPage).width(Globals.baseSize);
-		contentTable.add(prevHolder).left().expand().fill().height(Globals.baseSize*10).width(Globals.baseSize*1.5f);
+		contentTable.add(prevHolder).left().expand().fill()
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
 		// stage.addActor(prevPage);
 
 		createItemsTable(contentTable);
 		initButtons();
 		itemsTable.invalidate();
-		
+
 		Table nextHolder = new Table(Skins.loadDefault(gameLoader, 1));
 		nextHolder.setTouchable(Touchable.enabled);
 
-		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT, gameLoader);
-		
-		nextHolder.addListener(new ClickListener(){
+		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT,
+				gameLoader);
+
+		nextHolder.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -416,13 +441,13 @@ public class CarSelectorScreen extends SelectorScreen {
 				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
 				super.clicked(event, x, y);
 			}
-			
+
 		});
-	
 
 		nextHolder.add(nextPage).width(Globals.baseSize);
-		contentTable.add(nextHolder).right().expand().fill().height(Globals.baseSize*10).width(Globals.baseSize*1.5f);
-		
+		contentTable.add(nextHolder).right().expand().fill()
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
+
 	}
 
 	@Override
@@ -447,4 +472,5 @@ public class CarSelectorScreen extends SelectorScreen {
 	protected void clearScreen() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 	}
+
 }

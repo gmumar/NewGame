@@ -6,11 +6,8 @@ import Menu.PopQueObject;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -18,16 +15,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.gudesigns.climber.GameLoader;
 
-public class PauseDialog extends Table {
+public class KilledDialog extends Table {
 
 	// reference : https://github.com/EsotericSoftware/tablelayout
 
 	Table base;
 	Skin skin;
 
-	public PauseDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
+	public KilledDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
 		super();
 		skin = Skins.loadDefault(gameLoader, 0);
 		buildTable(gameLoader, popQueObject);
@@ -92,28 +90,10 @@ public class PauseDialog extends Table {
 		Table textWrapper = new Table(skin);
 		textWrapper.setTouchable(Touchable.enabled);
 
-		Image resume = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
+		Label text = new Label("Killed!", skin, "winTitle");
+		text.setAlignment(Align.center);
 		
-		textWrapper.add(resume).width(Globals.baseSize*4).height(Globals.baseSize*4);
-		
-		textWrapper.addListener(new ClickListener(){
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Action completeAction = new Action() {
-					public boolean act(float delta) {
-						base.remove();
-						popQueObject.getGamePlayInstance().resume();
-						return true;
-					}
-				};
-
-				base.addAction(new SequenceAction(Actions.fadeOut(0.5f),
-						completeAction));
-				super.clicked(event, x, y);
-			}
-			
-		});
+		textWrapper.add(text);
 
 		base.add(textWrapper).fill().expand().center();
 

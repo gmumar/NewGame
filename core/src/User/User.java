@@ -1,12 +1,15 @@
 package User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import wrapper.GamePreferences;
 import wrapper.Globals;
 import Component.ComponentNames;
 import DataMutators.TrippleDes;
+import JSONifier.JSONCar;
+import JSONifier.JSONComponent;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -27,11 +30,12 @@ public class User {
 
 	private UserState userState = new UserState();
 
-	class LockedItemsType {
+	class LookupItemsType {
 		HashMap<String, Boolean> items = new HashMap<String, Boolean>();
 	};
 
-	public LockedItemsType lockedItems = null;
+	public LookupItemsType lockedItems = null;
+	public LookupItemsType nonNewItems = null;
 
 	private String currentCar = null;
 	private String currentTrack = null;
@@ -55,47 +59,52 @@ public class User {
 	private void saveUserState() {
 
 		Gson json = new Gson();
-
-		System.out.println("User: Saving: " + json.toJson(userState));
-
 		String encrypted = encryptor.encrypt(json.toJson(userState));
-
-		System.out.println("User: Saving: " + json.toJson(lockedItems));
-
 		String encryptedLocked = encryptor.encrypt(json.toJson(lockedItems));
+		String encryptednonNew = encryptor.encrypt(json.toJson(nonNewItems));
 
 		prefs.putString(GamePreferences.USR_STR, encrypted);
 		prefs.putString(GamePreferences.USR_LOCKED, encryptedLocked);
+		prefs.putString(GamePreferences.USR_NON_NEW, encryptednonNew);
 		prefs.flush();
 
 	}
 
 	private void restoreUserState() {
+		Gson json = new Gson();
+
 		String inputString = prefs
 				.getString(
 						GamePreferences.USR_STR,
 						"cveSuvxEjX1GNBw7FDuABebTQF0Dz9fsJxrLH/Mwy7GrJkIonjtO0icayx/zMMuxSm9j+vdJQwq6typf+G0FHw==");
 
-		String lockedItemsString = prefs.getString(GamePreferences.USR_LOCKED,
-				null);
-
-		Gson json = new Gson();
 		userState = json.fromJson(encryptor.decrypt(inputString),
 				UserState.class);
 
+		String lockedItemsString = prefs.getString(GamePreferences.USR_LOCKED,
+				null);
+
 		if (lockedItemsString != null) {
 			lockedItems = json.fromJson(encryptor.decrypt(lockedItemsString),
-					LockedItemsType.class);
+					LookupItemsType.class);
+		}
+
+		String nonNewItemsString = prefs.getString(GamePreferences.USR_NON_NEW,
+				null);
+
+		if (nonNewItemsString != null) {
+			nonNewItems = json.fromJson(encryptor.decrypt(nonNewItemsString),
+					LookupItemsType.class);
 		}
 
 		// Initially unlocked
 		if (lockedItems == null) {
-			lockedItems = new LockedItemsType();
+			lockedItems = new LookupItemsType();
 		}
 
-		lockedItems.items.put(LockingPrefix.getForrestPrefix() + "1", false);
-		lockedItems.items.put(LockingPrefix.getForrestPrefix() + "2", false);
-		lockedItems.items.put(LockingPrefix.getForrestPrefix() + "3", false);
+		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("1"), false);
+		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("2"), false);
+		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("3"), false);
 
 		saveUserState();
 		// System.out.println("Restored: " + json.toJson(userState));
@@ -109,11 +118,51 @@ public class User {
 		return currentCar;
 	}
 
-	public void setCurrentCar(String currentCar) {
-		prefs.putString(GamePreferences.CAR_MAP_STR, currentCar);
-		prefs.flush();
+	// return true if all parts are available to user
+	public boolean setCurrentCar(String currentCar, boolean test) {
 
-		this.currentCar = currentCar;
+		JSONCar car = JSONCar.objectify(currentCar);
+		ArrayList<JSONComponent> parts = car.getComponentList();
+
+		Integer barLevel = 0, springLevel = 0, tireLevel = 0;
+
+		for (JSONComponent part : parts) {
+			if (part.getBaseName().compareTo(ComponentNames.BAR3) == 0) {
+				if (part.getjComponentName().getLevel() > barLevel) {
+					barLevel = part.getjComponentName().getLevel();
+				}
+			} else if (part.getBaseName().compareTo(ComponentNames.SPRINGJOINT) == 0) {
+				if (part.getjComponentName().getLevel() > springLevel) {
+					springLevel = part.getjComponentName().getLevel();
+				}
+			} else if (part.getBaseName().compareTo(ComponentNames.TIRE) == 0
+					|| part.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+				if (part.getjComponentName().getLevel() > tireLevel) {
+					tireLevel = part.getjComponentName().getLevel();
+				}
+			}
+		}
+		
+		if(barLevel > userState.smallBarLevel){
+			return false;
+		}
+		
+		if(springLevel > userState.springLevel){
+			return false;
+		}
+		
+		if(tireLevel > userState.tireLevel){
+			return false;
+		}
+
+		if(!test){
+			prefs.putString(GamePreferences.CAR_MAP_STR, currentCar);
+			prefs.flush();
+	
+			this.currentCar = currentCar;
+		}
+
+		return true;
 	}
 
 	public String getCurrentTrack() {
@@ -125,14 +174,14 @@ public class User {
 		return currentTrack;
 	}
 
-	public void setCurrentTrack(String currentTrack) {
+	public void setCurrentTrack(String currentTrack, TrackMode mode) {
 
 		// prefs.clear();
 
 		System.out.println("User: Track saved!");
 
 		prefs.putString(GamePreferences.TRACK_MAP_STR, currentTrack);
-
+		prefs.putString(GamePreferences.TRACK_MODE_STR, mode.toString());
 		prefs.flush();
 
 		this.currentTrack = currentTrack;
@@ -151,22 +200,40 @@ public class User {
 		return 1;
 	}
 
-	public boolean buyItem(String itemName, Integer cash) {
+	public Integer buyItem(String itemName, Integer cash) {
 
-		decrementMoney(cash);
+		Integer moneyRequired = decrementMoney(cash);
 
-		if (itemName.compareTo(ComponentNames.BAR3) == 0) {
-			incrementSmallBarLevel();
-		} else if (itemName.compareTo(ComponentNames.TIRE) == 0
-				|| itemName.compareTo(ComponentNames.AXLE) == 0) {
-			incrementTireLevel();
-		} else if (itemName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			incrementSpringLevel();
+		if (moneyRequired == -1) {
+			if (itemName.compareTo(ComponentNames.BAR3) == 0) {
+				incrementSmallBarLevel();
+			} else if (itemName.compareTo(ComponentNames.TIRE) == 0
+					|| itemName.compareTo(ComponentNames.AXLE) == 0) {
+				incrementTireLevel();
+			} else if (itemName.compareTo(ComponentNames.SPRINGJOINT) == 0) {
+				incrementSpringLevel();
+			} else if (itemName
+					.contains(ItemsLookupPrefix.getForrestPrefix(""))
+					|| itemName.contains(ItemsLookupPrefix.getArticPrefix(""))) {
+				Unlock(itemName);
+			} else if (itemName
+					.compareTo(ItemsLookupPrefix.COMMUNITY_CARS_MODE) == 0) {
+				Unlock(ItemsLookupPrefix.COMMUNITY_CARS_MODE);
+			} else if (itemName.contains(ItemsLookupPrefix
+					.getInfiniteTrackPrefix(""))) {
+				Unlock(itemName);
+			} else if (itemName
+					.compareTo(ItemsLookupPrefix.INFINITY_TRACK_MODE) == 0) {
+				Unlock(ItemsLookupPrefix.INFINITY_TRACK_MODE);
+			}
+
+			saveUserState();
+
+			return -1;
+		} else {
+			return moneyRequired;
 		}
 
-		saveUserState();
-
-		return true;
 	}
 
 	public static User getInstance() {
@@ -245,8 +312,15 @@ public class User {
 		return userState.money;
 	}
 
-	private void decrementMoney(Integer value) {
+	private Integer decrementMoney(Integer value) {
+		// Always returns positive difference when not enough money unless
+		// purchase successful
+		if (this.userState.money - value < 0) {
+			return Math.abs(this.userState.money - value);
+		}
+
 		this.userState.money -= value;
+		return -1;
 	}
 
 	public void setMusicPlayState(boolean playing) {
@@ -304,25 +378,60 @@ public class User {
 	}
 
 	public void Unlock(String id) {
+		System.out.println("User: unlocking " + id);
 		setLock(id, false);
 	}
 
 	private void setLock(String id, Boolean lock) {
 		if (lockedItems == null) {
-			lockedItems = new LockedItemsType();
+			lockedItems = new LookupItemsType();
 		}
 		lockedItems.items.put(id, lock);
 		saveUserState();
 	}
 
 	public Boolean isLocked(String id) {
-
+		System.out.println("User: checking lock " + id);
 		if (lockedItems == null) {
 			return true;
 		}
 
 		return lockedItems.items.get(id) == null ? true : lockedItems.items
 				.get(id);
+	}
+
+	public void setNonNew(String id, Boolean isNew) {
+		if (nonNewItems == null) {
+			nonNewItems = new LookupItemsType();
+		}
+		nonNewItems.items.put(id, isNew);
+		saveUserState();
+	}
+
+	public Boolean isNew(String id) {
+
+		if (nonNewItems == null) {
+			return true;
+		}
+
+		return nonNewItems.items.get(id) == null ? true : nonNewItems.items
+				.get(id);
+	}
+
+	public TrackMode getCurrentTrackMode() {
+		TrackMode ret = TrackMode.ADVENTURE;
+
+		String inputString = prefs.getString(GamePreferences.TRACK_MODE_STR,
+				TrackMode.ADVENTURE.toString());
+		String currentTrackMode = inputString;
+
+		if (currentTrackMode.compareTo(TrackMode.ADVENTURE.toString()) == 0) {
+			ret = TrackMode.ADVENTURE;
+		} else if (currentTrackMode.compareTo(TrackMode.INFINTE.toString()) == 0) {
+			ret = TrackMode.INFINTE;
+		}
+
+		return ret;
 	}
 
 }

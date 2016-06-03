@@ -10,6 +10,11 @@ public class Costs {
 	static private final HashMap<Integer, Integer> tireCosts = new HashMap<Integer, Integer>();
 	static private final HashMap<Integer, Integer> springCosts = new HashMap<Integer, Integer>();
 	
+	static public final Integer ADVENTURE_TRACK = 5000;
+	public static final Integer INFINITY_TRACK_MODE = 5000;
+	public static final Integer INFINITY_TRACK = 2000;
+	public static final Integer COMMUNITY_CARS_MODE = 2000;
+	
 	static {
 		bar3Costs.put(1, 10);
 		bar3Costs.put(2, 20);

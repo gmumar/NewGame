@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 import wrapper.BaseActor;
 import wrapper.CameraManager;
@@ -31,6 +30,7 @@ import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
+import User.GameErrors;
 import User.TwoButtonDialogFlow;
 import User.User;
 
@@ -130,7 +130,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		this.user = User.getInstance();
 		this.instance = this;
 		this.popQueManager = popQueManager;
-		
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		// this.user = user;
@@ -856,7 +855,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				.getUserData()).getBaseName()));
 	}
 
-	public void failedBuy() {
+	public void failedBuy(Integer moneyRequired) {
 
 	}
 
@@ -998,8 +997,15 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				parts);
 
 		if (buildState == BuildErrors.BUILD_CLEAN) {
-			user.setCurrentCar(compiler.compile(world, parts, jointTypes));
-			return true;
+			if (user.setCurrentCar(compiler.compile(world, parts, jointTypes),
+					false)) {
+				return true;
+			} else {
+				popQueManager.push(new PopQueObject(
+						PopQueObjectType.USER_ERROR, "Error",
+						GameErrors.PARTS_NOT_UNLOCKED, instance));
+				return false;
+			}
 		} else if (buildState == BuildErrors.NOT_ENOUGH_BARS) {
 			popQueManager.push(new PopQueObject(
 					PopQueObjectType.USER_BUILD_ERROR, "Error",
@@ -1424,13 +1430,13 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	}
 
 	@Override
-	public boolean successful() {
+	public boolean successfulTwoButtonFlow(String itemName) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean failed() {
+	public boolean failedTwoButtonFlow(Integer moneyRequired) {
 		// TODO Auto-generated method stub
 		return false;
 	}

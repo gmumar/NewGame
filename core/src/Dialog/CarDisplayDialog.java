@@ -94,7 +94,7 @@ public class CarDisplayDialog {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				user.setCurrentCar(itemJson);
+				user.setCurrentCar(itemJson, false);
 				gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
 			}
@@ -128,7 +128,7 @@ public class CarDisplayDialog {
 					int pointer, int button) {
 
 				playButton.setBackground("grey");
-				gameState.getUser().setCurrentCar(itemJson);
+				gameState.getUser().setCurrentCar(itemJson, false);
 				gameLoader.setScreen(new GamePlayScreen(new GameState(
 						gameLoader, user)));
 				super.touchDown(event, x, y, pointer, button);
@@ -152,7 +152,7 @@ public class CarDisplayDialog {
 					int pointer, int button) {
 
 				edit.setBackground("grey");
-				gameState.getUser().setCurrentCar(itemJson);
+				gameState.getUser().setCurrentCar(itemJson, false);
 				gameLoader.setScreen(new CarBuilderScreen(gameState));
 				super.touchDown(event, x, y, pointer, button);
 			}

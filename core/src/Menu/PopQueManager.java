@@ -6,6 +6,7 @@ import wrapper.Globals;
 import Dialog.BuyDialog;
 import Dialog.CarDisplayDialog;
 import Dialog.DialogBase;
+import Dialog.KilledDialog;
 import Dialog.PauseDialog;
 import Dialog.Skins;
 import Dialog.SoundDialog;
@@ -32,6 +33,7 @@ public class PopQueManager {
 
 	private WinDialog winTable;
 	private PauseDialog pauseTable;
+	private KilledDialog killedTable;
 
 	Skin skin;
 
@@ -49,6 +51,10 @@ public class PopQueManager {
 
 	public void initPauseTable(PopQueObject popQueObject) {
 		pauseTable = new PauseDialog(gameLoader, popQueObject);
+	}
+	
+	public void initKilledTable(PopQueObject popQueObject) {
+		killedTable = new KilledDialog(gameLoader, popQueObject);
 	}
 
 	public void update() {
@@ -165,10 +171,12 @@ public class PopQueManager {
 	}
 
 	private void createLostDialog(PopQueObject popQueObject) {
-		dialog = new TextDialog("Killed", skin, "default");
-		dialog.setTouchable(Touchable.disabled);
-		dialog.show(stage);
-		Animations.fadeIn(dialog);
+		//dialog = new TextDialog("Killed", skin, "default");
+		//dialog.setTouchable(Touchable.disabled);
+		//dialog.show(stage);
+		//Animations.fadeIn(dialog);
+		killedTable.update(gameLoader, popQueObject);
+		stage.addActor(killedTable.getBase());
 	}
 
 	private void createWinDialog(PopQueObject popQueObject) {

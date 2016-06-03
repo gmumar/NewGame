@@ -2,7 +2,7 @@ package User;
 
 public abstract interface TwoButtonDialogFlow {
 	
-	abstract public boolean successful();
-	abstract public boolean failed();	
+	abstract public boolean successfulTwoButtonFlow(String string);
+	abstract public boolean failedTwoButtonFlow(Integer moneyRequired);	
 
 }

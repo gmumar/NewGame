@@ -18,6 +18,7 @@ import JSONifier.JSONComponentName;
 import JSONifier.JSONTrack.TrackType;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
+import User.TrackMode;
 import User.User;
 
 import com.badlogic.gdx.graphics.Color;
@@ -162,7 +163,7 @@ public class TrackMenuBuilder {
 			@Override
 			public void Clicked() {
 				compiler.compile(world, trackBuilder.getMapList(), parts,
-						jointTypes, trackType);
+						jointTypes, trackType, TrackMode.ADVENTURE);
 				gameLoader.setScreen(new GamePlayScreen(new GameState(
 						gameLoader, user)));
 				Destroy();

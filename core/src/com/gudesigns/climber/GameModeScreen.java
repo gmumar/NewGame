@@ -14,6 +14,8 @@ import Menu.Bars.TitleBar;
 import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
+import User.Costs;
+import User.ItemsLookupPrefix;
 import User.TwoButtonDialogFlow;
 
 import com.badlogic.gdx.Gdx;
@@ -42,6 +44,7 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 
 	private Skin skin;
 	private GameLoader gameLoader;
+	private GameState gameState;
 	
 	private GameModeScreen context;
 
@@ -49,6 +52,7 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 		context = this;
 		gameLoader = gameState.getGameLoader();
 		skin = Skins.loadDefault(gameLoader, 1);
+		this.gameState = gameState;
 
 		initStage();
 
@@ -65,7 +69,7 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 		buttonHolder = new Table(skin);
 
 		adventrueMode = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.ADVENTURE, true, false);
+				ModeButtonTypes.ADVENTURE, false, false);
 		adventrueMode.button.setChecked(true);
 
 		adventrueMode.button.addListener(new ClickListener() {
@@ -89,8 +93,8 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 					gameLoader.setScreen(new InfiniteTrackSelectorScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_MODE, "Unlock Mode",
-							"Unlock Infinite tracks for: ", 2000, context));
+							PopQueObjectType.UNLOCK_MODE, ItemsLookupPrefix.INFINITY_TRACK_MODE, "Unlock Mode",
+							"Unlock Infinite tracks for: ", Costs.INFINITY_TRACK_MODE, context));
 				}
 			}
 		});
@@ -197,13 +201,13 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 	}
 
 	@Override
-	public boolean successful() {
-		// TODO Auto-generated method stub
+	public boolean successfulTwoButtonFlow(String item) {
+		gameLoader.setScreen(new GameModeScreen(gameState));
 		return false;
 	}
 
 	@Override
-	public boolean failed() {
+	public boolean failedTwoButtonFlow(Integer moneyRequired) {
 		// TODO Auto-generated method stub
 		return false;
 	}

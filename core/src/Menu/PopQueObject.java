@@ -14,7 +14,7 @@ public class PopQueObject {
 
 	private PopQueObjectType type;
 	private Integer nextLevel;
-	private String componentName;
+	private String itemToBeSoldName;
 	private MenuBuilder menuBuilderInstance;
 	private GamePlayScreen gamePlayScreenInstance;
 	private GameModeScreen gameModeScreenInstance;
@@ -41,18 +41,18 @@ public class PopQueObject {
 			return;
 		this.type = type;
 		this.nextLevel = nextLevel;
-		this.componentName = componentName;
+		this.itemToBeSoldName = componentName;
 		this.menuBuilderInstance = instance;
 	}
 
 	public PopQueObject(PopQueObjectType type, GamePlayScreen instance) {
-		if (!(type == PopQueObjectType.WIN || type == PopQueObjectType.PAUSE))
+		if (!(type == PopQueObjectType.WIN || type == PopQueObjectType.PAUSE || type == PopQueObjectType.KILLED))
 			return;
 		this.type = type;
 		this.gamePlayScreenInstance = instance;
 	}
 
-	public PopQueObject(PopQueObjectType unlockMode, String text,
+	public PopQueObject(PopQueObjectType unlockMode, String itemToBeSold, String text,
 			String description, int price, TwoButtonDialogFlow context) {
 
 		if (!(unlockMode == PopQueObjectType.UNLOCK_CAR_MODE
@@ -64,6 +64,7 @@ public class PopQueObject {
 		unlockDialogHeader = text;
 		unlockDialogPrice = price;
 		unlockDialogDes = description;
+		this.itemToBeSoldName = itemToBeSold;
 	}
 
 	public PopQueObject(PopQueObjectType userError, String header,
@@ -77,16 +78,17 @@ public class PopQueObject {
 		errorHeaderString = header;
 	}
 
-	public PopQueObject(PopQueObjectType carDisplay, String carJson, boolean admin) {
-		if (!(carDisplay == PopQueObjectType.CAR_DISPLAY ))
+	public PopQueObject(PopQueObjectType carDisplay, String carJson,
+			boolean admin) {
+		if (!(carDisplay == PopQueObjectType.CAR_DISPLAY))
 			return;
 
 		type = carDisplay;
 		this.carJson = carJson;
 		this.Admin = admin;
-		
+
 	}
-	
+
 	public String getCarJson() {
 		return carJson;
 	}
@@ -155,12 +157,12 @@ public class PopQueObject {
 		this.nextLevel = nextLevel;
 	}
 
-	public String getComponentName() {
-		return componentName;
+	public String getItemToBeBoughtName() {
+		return itemToBeSoldName;
 	}
 
 	public void setComponentName(String componentName) {
-		this.componentName = componentName;
+		this.itemToBeSoldName = componentName;
 	}
 
 	public PopQueObjectType getType() {

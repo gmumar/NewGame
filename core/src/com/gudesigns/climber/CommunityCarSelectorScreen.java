@@ -6,15 +6,10 @@ import java.util.Iterator;
 import wrapper.GameState;
 import wrapper.Globals;
 import Assembly.Assembler;
-import Dialog.Skins;
 import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
-import Menu.ScreenType;
-import Menu.SelectorScreen;
-import Menu.Buttons.SimpleImageButton;
-import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.Backendless_Car;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.REST;
@@ -23,18 +18,14 @@ import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
+import User.GameErrors;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncTask;
@@ -199,8 +190,8 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, itemJson,
 				false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
-		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH*3/5);
-		trd.setMinHeight(Globals.CAR_DISPLAY_BUTTON_HEIGHT*3/5);
+		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH * 3 / 5);
+		trd.setMinHeight(Globals.CAR_DISPLAY_BUTTON_HEIGHT * 3 / 5);
 
 		ImageButton image = new ImageButton(trd);
 		// image.setZIndex(100);
@@ -212,9 +203,18 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				popQueManager.push(new PopQueObject(PopQueObjectType.CAR_DISPLAY,itemJson,false));
-				//gameState.getUser().setCurrentCar(itemJson);
-				//gameLoader.setScreen(new GamePlayScreen(gameState));
+				if (gameState.getUser().setCurrentCar(itemJson, true)) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.CAR_DISPLAY, itemJson, false));
+				} else {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.USER_ERROR, "Error",
+							GameErrors.PARTS_NOT_UNLOCKED,
+							instance));
+				}
+
+				// gameState.getUser().setCurrentCar(itemJson);
+				// gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.clicked(event, x, y);
 			}
 
@@ -255,7 +255,7 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setCars(list);
 
-		FileManager.writeCarsToFileGson(list,FileManager.COMMUNITY_FILE_NAME);
+		FileManager.writeCarsToFileGson(list, FileManager.COMMUNITY_FILE_NAME);
 
 	}
 

@@ -26,7 +26,8 @@ import ParallexBackground.ScrollingBackground;
 import ParallexBackground.ScrollingBackground.BackgroundType;
 import Shader.GameMesh;
 import Sounds.SoundManager;
-import User.LockingPrefix;
+import User.ItemsLookupPrefix;
+import User.TrackMode;
 import User.User;
 import User.User.STARS;
 
@@ -163,6 +164,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		popQueManager
 				.initWinTable(new PopQueObject(PopQueObjectType.WIN, this));
 		popQueManager.initPauseTable(new PopQueObject(PopQueObjectType.PAUSE,
+				this));
+		popQueManager.initKilledTable(new PopQueObject(PopQueObjectType.KILLED,
 				this));
 		initHud();
 		/*
@@ -357,7 +360,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private void monitorProgress() {
 		if (!gameWon && contactListener.isKilled()) {
 			if (!gameLost) {
-				popQueManager.push(new PopQueObject(PopQueObjectType.KILLED));
+				popQueManager.push(new PopQueObject(PopQueObjectType.KILLED,
+						this));
 				gameLost = true;
 			}
 		}
@@ -411,14 +415,34 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// unlock the next track
 		if (position != Globals.POSITION_LOST) {
 			int nextIndex = track.getIndex() + 1;
-			user.Unlock(LockingPrefix.getForrestPrefix()
-					+ Integer.toString(nextIndex));
+			user.Unlock(ItemsLookupPrefix.getForrestPrefix(Integer
+					.toString(nextIndex)));
 		}
 		return position;
 
 	}
 
+	public void carModeSelector() {
+		gameLoader.setScreen(new CarModeScreen(gameState));
+	}
+
+	public void infiniteTrackSelector() {
+		gameLoader.setScreen(new InfiniteTrackSelectorScreen(gameState));
+	}
+
 	public void restart() {
+		gameLoader.setScreen(new GamePlayScreen(gameState));
+	}
+
+	public void nextLevel(JSONTrack playedTrack) {
+		int nextLevelindex = playedTrack.getIndex() + 1;
+
+		for (JSONTrack track : gameLoader.tracks) {
+			if (track.getIndex() == nextLevelindex) {
+				user.setCurrentTrack(track.jsonify(), TrackMode.ADVENTURE);
+				break;
+			}
+		}
 		gameLoader.setScreen(new GamePlayScreen(gameState));
 	}
 

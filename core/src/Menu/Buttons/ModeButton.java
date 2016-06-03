@@ -1,7 +1,7 @@
 package Menu.Buttons;
 
 import wrapper.Globals;
-import User.LockingPrefix;
+import User.ItemsLookupPrefix;
 import User.User;
 
 import com.badlogic.gdx.graphics.Pixmap;
@@ -31,10 +31,10 @@ public class ModeButton {
 		Button button = new Button(skin, "modeButton");//
 		Image image = null;
 		Label buttonName = null;
-		
+
 		User user = User.getInstance();
-		
-		//boolean isLocked = false;
+
+		// boolean isLocked = false;
 
 		Table stackInlay = new Table();
 
@@ -43,7 +43,9 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/infinity.png"));
 			buttonName = new Label("Infinity Mode", skin);
-			//isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.INFINITY);
+			isLocked = user.isLocked(ItemsLookupPrefix.INFINITY_TRACK_MODE);
+			isNew = isLocked ? false : user
+					.isNew(ItemsLookupPrefix.INFINITY_TRACK_MODE);
 		} else if (type == ModeButtonTypes.ADVENTURE) {
 			image = new Image(
 					gameLoader.Assets
@@ -59,12 +61,15 @@ public class ModeButton {
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/car_community.png"));
 			buttonName = new Label("Community Cars", skin);
-			//isLocked = user.isLocked(LockingPrefix.getModePrefix() + LockingPrefix.CAR_COMMUNITY_CAR);
+			isLocked = user.isLocked(ItemsLookupPrefix.COMMUNITY_CARS_MODE);
+			isNew = isLocked ? false : user
+					.isNew(ItemsLookupPrefix.COMMUNITY_CARS_MODE);
 		} else if (type == ModeButtonTypes.CAR_MY_PICKS) {
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/car_my_picks.png"));
 			buttonName = new Label("Author's Pick", skin);
+			isNew = user.isNew(ItemsLookupPrefix.CAR_MY_PICKS);
 		}
 
 		Stack stack = new Stack();

@@ -3,6 +3,7 @@ package Dialog;
 import wrapper.Globals;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
+import User.ItemsLookupPrefix;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -69,7 +70,7 @@ public class UserErrorDialog {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				popQueObject.getTwoButtonFlowContext().failed();
+				//popQueObject.getTwoButtonFlowContext().failedTwoButtonFlow();
 				/*
 				 * if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE) {
 				 * popQueObject.getGameModeScreenInstance().failedBuy(); } else
@@ -93,7 +94,7 @@ public class UserErrorDialog {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					popQueObject.getTwoButtonFlowContext().successful();
+					popQueObject.getTwoButtonFlowContext().successfulTwoButtonFlow(ItemsLookupPrefix.NONE);
 					/*
 					 * if (popQueObject.getType() ==
 					 * PopQueObjectType.UNLOCK_MODE) {

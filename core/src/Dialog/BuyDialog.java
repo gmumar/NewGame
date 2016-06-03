@@ -6,7 +6,6 @@ import User.Costs;
 import User.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -39,7 +38,7 @@ public class BuyDialog {
 		header.add(upgradeImage).width(Globals.baseSize)
 				.height(Globals.baseSize).pad(5);
 
-		Label upgradeText = new Label("Upgrade", skin,"dialogTitle");
+		Label upgradeText = new Label("Upgrade", skin, "dialogTitle");
 		header.add(upgradeText);
 
 		base.add(header).center();
@@ -94,7 +93,8 @@ public class BuyDialog {
 		base.row();
 
 		// Price
-		final Integer itemCost = Costs.lookup(popQueObject.getComponentName(),
+		final Integer itemCost = Costs.lookup(
+				popQueObject.getItemToBeBoughtName(),
 				popQueObject.getNextLevel());
 		Image coinImage = new Image(
 				gameLoader.Assets
@@ -120,7 +120,7 @@ public class BuyDialog {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				popQueObject.getCallingInstance().failedBuy();
+				//popQueObject.getCallingInstance().failedBuy();
 				base.hide();
 				super.clicked(event, x, y);
 			}
@@ -134,10 +134,17 @@ public class BuyDialog {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				User.getInstance().buyItem(popQueObject.getComponentName(),
-						itemCost);
-				popQueObject.getCallingInstance().successfulBuy();
+
+				Integer moneyRequired = User.getInstance().buyItem(
+						popQueObject.getItemToBeBoughtName(), itemCost);
+
+				if (moneyRequired == -1) {
+					popQueObject.getCallingInstance().successfulBuy();
+				} else {
+					popQueObject.getCallingInstance().failedBuy(moneyRequired);
+				}
 				base.hide();
+
 				super.clicked(event, x, y);
 			}
 

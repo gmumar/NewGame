@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.Array;
 public class AssemblyRules {
 
 	public enum BuildErrors {
-		BUILD_CLEAN,NOT_ENOUGH_BARS, TOO_MANY_BARS, NOT_ENOUGH_TIRES, TOO_MANY_TIRES, NOT_ENOUGH_SPRINGS, TOO_MANY_SPRINGS, DANGLING_PARTS
+		BUILD_CLEAN, NOT_ENOUGH_BARS, TOO_MANY_BARS, NOT_ENOUGH_TIRES, TOO_MANY_TIRES, NOT_ENOUGH_SPRINGS, TOO_MANY_SPRINGS, DANGLING_PARTS
 	}
 
 	private class SimpleJoint {
@@ -31,17 +31,17 @@ public class AssemblyRules {
 	// return true if all checks pass
 	public BuildErrors checkBuild(World world, Body baseObject,
 			ArrayList<Component> parts) {
-		
+
 		BuildErrors status = BuildErrors.BUILD_CLEAN;
 		ArrayList<Body> partsConnectedToLife = getLifeConnectedParts(world,
 				baseObject);
 
 		status = checkDanglingParts(partsConnectedToLife, parts);
-		
-		if(status!= BuildErrors.BUILD_CLEAN){
+
+		if (status != BuildErrors.BUILD_CLEAN) {
 			return status;
 		}
-		
+
 		status = checkPartCounts(partsConnectedToLife);
 
 		return status;
@@ -73,22 +73,34 @@ public class AssemblyRules {
 					+ bla.getValue());
 		}
 
-		if (counts.containsKey(ComponentNames.BAR3)
-				&& counts.get(ComponentNames.BAR3) < 3){
+		if (!counts.containsKey(ComponentNames.BAR3)) {
 			return BuildErrors.NOT_ENOUGH_BARS;
 		}
-		
+
+		if (!counts.containsKey(ComponentNames.AXLE)) {
+			return BuildErrors.NOT_ENOUGH_TIRES;
+		}
+
+		if (!counts.containsKey(ComponentNames.SPRINGJOINT)) {
+			return BuildErrors.NOT_ENOUGH_SPRINGS;
+		}
+
+		if (counts.containsKey(ComponentNames.BAR3)
+				&& counts.get(ComponentNames.BAR3) < 3) {
+			return BuildErrors.NOT_ENOUGH_BARS;
+		}
+
 		if (counts.containsKey(ComponentNames.BAR3)
 				&& counts.get(ComponentNames.BAR3) > 10) {
 			return BuildErrors.TOO_MANY_BARS;
 		}
 
 		if (counts.containsKey(ComponentNames.AXLE)
-				&& counts.get(ComponentNames.AXLE) < 2){
+				&& counts.get(ComponentNames.AXLE) < 2) {
 			return BuildErrors.NOT_ENOUGH_TIRES;
 		}
-		
-		if (counts.containsKey(ComponentNames.AXLE)			
+
+		if (counts.containsKey(ComponentNames.AXLE)
 				&& counts.get(ComponentNames.AXLE) > 14) {
 			return BuildErrors.TOO_MANY_TIRES;
 		}

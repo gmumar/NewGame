@@ -9,6 +9,7 @@ import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
+import User.TrackMode;
 import User.User;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -48,9 +49,10 @@ public class WinDialog extends Table {
 
 		final float wrapperWidths = Globals.baseSize * 10;
 		final float textWidth = Globals.baseSize * 5;
+		final TrackMode trackMode = User.getInstance().getCurrentTrackMode();
 
 		// Skin skin = Skins.loadDefault(gameLoader, 0);
-		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
+		final JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
 				.getCurrentTrack());
 
 		base = new Table(skin);
@@ -157,10 +159,10 @@ public class WinDialog extends Table {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					BackendFunctions.uploadTrack(User.getInstance()
-							.getCurrentTrack(), RESTPaths.INFINITE_MAPS, popQueObject
-							.getGamePlayInstance().getMapTime(), Integer
-							.parseInt(difficulty.getText()), Integer
-							.parseInt(index.getText()));
+							.getCurrentTrack(), RESTPaths.INFINITE_MAPS,
+							popQueObject.getGamePlayInstance().getMapTime(),
+							Integer.parseInt(difficulty.getText()), Integer
+									.parseInt(index.getText()));
 					super.clicked(event, x, y);
 				}
 
@@ -190,14 +192,27 @@ public class WinDialog extends Table {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				popQueObject.getGamePlayInstance().restart();
+				
+				if (trackMode == TrackMode.ADVENTURE) {
+					popQueObject.getGamePlayInstance().nextLevel(playedTrack);
+				} else if (trackMode == TrackMode.INFINTE) {
+					popQueObject.getGamePlayInstance().infiniteTrackSelector();
+				}
+				
+				
 				// base.hide();
 				super.clicked(event, x, y);
 			}
 
 		});
-
 		Label nextLevelText = new Label("Next Level", skin);
+
+		if (trackMode == TrackMode.ADVENTURE) {
+			nextLevelText = new Label("Next Level", skin);
+		} else if (trackMode == TrackMode.INFINTE) {
+			nextLevelText = new Label("Track Selector", skin);
+		}
+
 		nextLevel.add(nextLevelText).pad(20);
 
 		Image nextLevelImage = new Image(
@@ -223,7 +238,7 @@ public class WinDialog extends Table {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				popQueObject.getGamePlayInstance().exit();
+				popQueObject.getGamePlayInstance().restart();
 				// base.hide();
 				super.clicked(event, x, y);
 			}

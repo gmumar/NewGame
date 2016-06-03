@@ -34,10 +34,11 @@ public class UnlockDialog {
 		Image lockImage = new Image(
 				gameLoader.Assets.getFilteredTexture("menu/tags/lock.png"));
 
-		header.add(lockImage).width(Globals.baseSize*0.6f)
+		header.add(lockImage).width(Globals.baseSize * 0.6f)
 				.height(Globals.baseSize * 0.8f).pad(5);
 
-		Label unlockText = new Label(popQueObject.getUnlockDialogHeader(), skin,"dialogTitle");
+		Label unlockText = new Label(popQueObject.getUnlockDialogHeader(),
+				skin, "dialogTitle");
 		header.add(unlockText);
 
 		base.add(header).center();
@@ -80,14 +81,16 @@ public class UnlockDialog {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				popQueObject.getTwoButtonFlowContext().failed();
-				/*if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE) {
-					popQueObject.getGameModeScreenInstance().failedBuy();
-				} else if (popQueObject.getType() == PopQueObjectType.UNLOCK_TRACK) {
-					popQueObject.getSelectorScreenInstance().failedBuy();
-				} else if (popQueObject.getType() == PopQueObjectType.UNLOCK_CAR_MODE){
-					//popQueObject.ge.failedBuy();
-				}*/
+				//popQueObject.getTwoButtonFlowContext().failedTwoButtonFlow();
+				/*
+				 * if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE) {
+				 * popQueObject.getGameModeScreenInstance().failedBuy(); } else
+				 * if (popQueObject.getType() == PopQueObjectType.UNLOCK_TRACK)
+				 * { popQueObject.getSelectorScreenInstance().failedBuy(); }
+				 * else if (popQueObject.getType() ==
+				 * PopQueObjectType.UNLOCK_CAR_MODE){
+				 * //popQueObject.ge.failedBuy(); }
+				 */
 				base.hide();
 				super.clicked(event, x, y);
 			}
@@ -101,14 +104,24 @@ public class UnlockDialog {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				User.getInstance().buyItem(popQueObject.getComponentName(),
-						itemCost);
-				popQueObject.getTwoButtonFlowContext().successful();
-				/*if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE) {
-					popQueObject.getGameModeScreenInstance().successfulBuy();
-				} else if (popQueObject.getType() == PopQueObjectType.UNLOCK_TRACK) {
-					popQueObject.getSelectorScreenInstance().successfulBuy();
-				}*/
+				
+				Integer moneyRequired = User.getInstance().buyItem(
+						popQueObject.getItemToBeBoughtName(), itemCost);
+						
+				if (moneyRequired == -1) {
+					popQueObject.getTwoButtonFlowContext()
+							.successfulTwoButtonFlow(
+									popQueObject.getItemToBeBoughtName());
+				} else {
+					popQueObject.getTwoButtonFlowContext().failedTwoButtonFlow(moneyRequired);
+				}
+				/*
+				 * if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE) {
+				 * popQueObject.getGameModeScreenInstance().successfulBuy(); }
+				 * else if (popQueObject.getType() ==
+				 * PopQueObjectType.UNLOCK_TRACK) {
+				 * popQueObject.getSelectorScreenInstance().successfulBuy(); }
+				 */
 				base.hide();
 				super.clicked(event, x, y);
 			}

@@ -14,6 +14,8 @@ import Menu.Bars.TitleBar;
 import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
+import User.Costs;
+import User.ItemsLookupPrefix;
 import User.TwoButtonDialogFlow;
 
 import com.badlogic.gdx.Gdx;
@@ -43,10 +45,12 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 
 	private Skin skin;
 	private GameLoader gameLoader;
+	private GameState gameState;
 
 	public CarModeScreen(final GameState gameState) {
 		context = this;
 		gameLoader = gameState.getGameLoader();
+		this.gameState = gameState;
 		skin = Skins.loadDefault(gameLoader, 1);
 
 		initStage();
@@ -64,7 +68,7 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 		buttonHolder = new Table(skin);
 
 		carBuilder = ModeButton.create(skin, gameLoader,
-				ModeButtonTypes.CAR_BUILDER, true, false);
+				ModeButtonTypes.CAR_BUILDER, false, false);
 		carBuilder.button.setChecked(true);
 
 		carBuilder.button.addListener(new ClickListener() {
@@ -102,8 +106,8 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 					gameLoader.setScreen(new CommunityCarSelectorScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_MODE, "Unlock Mode",
-							"Unlock Infinite Cars for: ", 2000, context));
+							PopQueObjectType.UNLOCK_MODE, ItemsLookupPrefix.COMMUNITY_CARS_MODE, "Unlock Mode",
+							"Unlock Infinite Cars for: ", Costs.COMMUNITY_CARS_MODE, context));
 				}
 			}
 		});
@@ -136,14 +140,18 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 
 	}
 	
-	public boolean successful(){
-		return false;
-	}
-	
-	public boolean fialedBuy(){
+	@Override
+	public boolean successfulTwoButtonFlow(String itemName) {
+		gameLoader.setScreen(new CarModeScreen(gameState));
 		return false;
 	}
 
+	@Override
+	public boolean failedTwoButtonFlow(Integer moneyRequired) {
+		
+		return false;
+	}
+	
 	private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
@@ -219,11 +227,5 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public boolean failed() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }
