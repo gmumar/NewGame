@@ -30,7 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class GameModeScreen implements Screen,TwoButtonDialogFlow {
+public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 
 	private CameraManager camera;
 	private SpriteBatch batch;
@@ -45,7 +45,7 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 	private Skin skin;
 	private GameLoader gameLoader;
 	private GameState gameState;
-	
+
 	private GameModeScreen context;
 
 	public GameModeScreen(final GameState gameState) {
@@ -90,11 +90,14 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!infinityMode.locked) {
-					gameLoader.setScreen(new InfiniteTrackSelectorScreen(gameState));
+					gameLoader.setScreen(new InfiniteTrackSelectorScreen(
+							gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_MODE, ItemsLookupPrefix.INFINITY_TRACK_MODE, "Unlock Mode",
-							"Unlock Infinite tracks for: ", Costs.INFINITY_TRACK_MODE, context));
+							PopQueObjectType.UNLOCK_MODE,
+							ItemsLookupPrefix.INFINITY_TRACK_MODE,
+							"Unlock Mode", "Unlock Infinite tracks for: ",
+							Costs.INFINITY_TRACK_MODE, context));
 				}
 			}
 		});
@@ -175,7 +178,6 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 
 	}
 
-
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
@@ -201,14 +203,20 @@ public class GameModeScreen implements Screen,TwoButtonDialogFlow {
 	}
 
 	@Override
-	public boolean successfulTwoButtonFlow(String item) {
-		gameLoader.setScreen(new GameModeScreen(gameState));
+	public boolean successfulTwoButtonFlow(String itemName) {
+		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+		} else {
+			gameLoader.setScreen(new GameModeScreen(gameState));
+		}
 		return false;
 	}
 
 	@Override
 	public boolean failedTwoButtonFlow(Integer moneyRequired) {
-		// TODO Auto-generated method stub
+		popQueManager.push(new PopQueObject(PopQueObjectType.ERROR_NOT_ENOUGH_MONEY,
+				"Not Enough Coins", "You need " + moneyRequired.toString()
+						+ " more coins", this));
 		return false;
 	}
 

@@ -217,7 +217,7 @@ public class CarSelectorScreen extends SelectorScreen {
 					gameLoader.setScreen(new GamePlayScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.USER_ERROR, "Error",
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED,
 							instance));
 				}
@@ -261,7 +261,7 @@ public class CarSelectorScreen extends SelectorScreen {
 					gameLoader.setScreen(new GamePlayScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.USER_ERROR, "Error",
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED,
 							instance));
 				}
@@ -291,7 +291,7 @@ public class CarSelectorScreen extends SelectorScreen {
 					gameLoader.setScreen(new GamePlayScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.USER_ERROR, "Error",
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED,
 							instance));
 				}

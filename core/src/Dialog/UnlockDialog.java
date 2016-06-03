@@ -81,7 +81,6 @@ public class UnlockDialog {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				//popQueObject.getTwoButtonFlowContext().failedTwoButtonFlow();
 				/*
 				 * if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE) {
 				 * popQueObject.getGameModeScreenInstance().failedBuy(); } else

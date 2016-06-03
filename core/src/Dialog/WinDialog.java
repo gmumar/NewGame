@@ -192,14 +192,13 @@ public class WinDialog extends Table {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				
+
 				if (trackMode == TrackMode.ADVENTURE) {
 					popQueObject.getGamePlayInstance().nextLevel(playedTrack);
 				} else if (trackMode == TrackMode.INFINTE) {
 					popQueObject.getGamePlayInstance().infiniteTrackSelector();
 				}
-				
-				
+
 				// base.hide();
 				super.clicked(event, x, y);
 			}
@@ -297,14 +296,12 @@ public class WinDialog extends Table {
 		}
 		stars.act(1 / 60f);
 
-		coinsEarned.setText(position.toString());
+		Integer coinsWon = (Globals.POSITION_LOST - position)
+				* playedTrack.getIndex() * 10;
+
+		coinsEarned.setText(coinsWon.toString());
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
-		User.getInstance()
-				.addCoin(
-						(popQueObject.getGamePlayInstance().calculateWinings() >= Globals.POSITION_LOST ? 0
-								: popQueObject.getGamePlayInstance()
-										.calculateWinings())
-								* playedTrack.getDifficulty());
+		User.getInstance().addCoin((coinsWon));
 
 	}
 }

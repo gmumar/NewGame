@@ -38,10 +38,10 @@ public class UserErrorDialog {
 				.height(Globals.baseSize).pad(5);
 
 		Label warningHeaderText = new Label(
-				popQueObject.getErrorHeaderString(), skin,"dialogTitle");
+				popQueObject.getErrorHeaderString(), skin, "dialogTitle");
 		header.add(warningHeaderText);
 
-		base.add(header).center();
+		base.add(header).center().pad(10);
 		base.row();
 
 		// text
@@ -56,7 +56,7 @@ public class UserErrorDialog {
 
 		String noButtonText;
 
-		if (popQueObject.getType() == PopQueObjectType.USER_BUILD_ERROR) {
+		if (popQueObject.getType() == PopQueObjectType.ERROR_USER_BUILD) {
 			noButtonText = "ok";
 		} else {
 			noButtonText = "cancel";
@@ -70,7 +70,6 @@ public class UserErrorDialog {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				//popQueObject.getTwoButtonFlowContext().failedTwoButtonFlow();
 				/*
 				 * if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE) {
 				 * popQueObject.getGameModeScreenInstance().failedBuy(); } else
@@ -87,14 +86,34 @@ public class UserErrorDialog {
 		});
 		buttons.add(noButton).height(Globals.baseSize * 2).fillX().expandX();
 
-		if (popQueObject.getType() == PopQueObjectType.USER_ERROR) {
-			TextButton yesButton = new TextButton("purchase",
+		String yesButtonText = null;
+
+		if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED) {
+			yesButtonText = "Unlock Parts";
+		} else if (popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY) {
+			yesButtonText = "Buy Coins";
+		}
+
+		if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
+				|| popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY) {
+			TextButton yesButton = new TextButton(yesButtonText,
 					Skins.loadDefault(gameLoader, 1), "yesButton");
 			yesButton.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					popQueObject.getTwoButtonFlowContext().successfulTwoButtonFlow(ItemsLookupPrefix.NONE);
+					if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED) {
+						System.out.println("UserErrorDialog: parts not unlocked ");
+						popQueObject
+								.getTwoButtonFlowContext()
+								.successfulTwoButtonFlow(
+										ItemsLookupPrefix.ERROR_PARTS_NOT_UNLOCKED);
+					} else if (popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY) {
+						popQueObject
+								.getTwoButtonFlowContext()
+								.successfulTwoButtonFlow(
+										ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY);
+					}
 					/*
 					 * if (popQueObject.getType() ==
 					 * PopQueObjectType.UNLOCK_MODE) {

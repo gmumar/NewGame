@@ -9,7 +9,7 @@ import com.gudesigns.climber.GamePlayScreen;
 public class PopQueObject {
 
 	public enum PopQueObjectType {
-		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE, UNLOCK_TRACK, UNLOCK_MODE, UNLOCK_CAR_MODE, USER_ERROR, USER_BUILD_ERROR, CAR_DISPLAY
+		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE, UNLOCK_TRACK, UNLOCK_MODE, UNLOCK_CAR_MODE, ERROR_PARTS_NOT_UNLOCKED, ERROR_USER_BUILD, CAR_DISPLAY, ERROR_NOT_ENOUGH_MONEY
 	};
 
 	private PopQueObjectType type;
@@ -52,8 +52,9 @@ public class PopQueObject {
 		this.gamePlayScreenInstance = instance;
 	}
 
-	public PopQueObject(PopQueObjectType unlockMode, String itemToBeSold, String text,
-			String description, int price, TwoButtonDialogFlow context) {
+	public PopQueObject(PopQueObjectType unlockMode, String itemToBeSold,
+			String text, String description, int price,
+			TwoButtonDialogFlow context) {
 
 		if (!(unlockMode == PopQueObjectType.UNLOCK_CAR_MODE
 				|| unlockMode == PopQueObjectType.UNLOCK_MODE || unlockMode == PopQueObjectType.UNLOCK_TRACK))
@@ -69,7 +70,9 @@ public class PopQueObject {
 
 	public PopQueObject(PopQueObjectType userError, String header,
 			String string, TwoButtonDialogFlow instance) {
-		if (!(userError == PopQueObjectType.USER_ERROR || userError == PopQueObjectType.USER_BUILD_ERROR))
+		if (!(userError == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
+				|| userError == PopQueObjectType.ERROR_USER_BUILD 
+				|| userError == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY))
 			return;
 
 		twoButtonFlowContext = instance;

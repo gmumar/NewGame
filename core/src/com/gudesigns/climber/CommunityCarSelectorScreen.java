@@ -208,7 +208,7 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 							PopQueObjectType.CAR_DISPLAY, itemJson, false));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.USER_ERROR, "Error",
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED,
 							instance));
 				}

@@ -31,6 +31,7 @@ import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
 import User.GameErrors;
+import User.ItemsLookupPrefix;
 import User.TwoButtonDialogFlow;
 import User.User;
 
@@ -62,6 +63,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 
@@ -856,7 +858,9 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	}
 
 	public void failedBuy(Integer moneyRequired) {
-
+		popQueManager.push(new PopQueObject(PopQueObjectType.ERROR_NOT_ENOUGH_MONEY,
+				"Not Enough Coins", "You need " + moneyRequired.toString()
+						+ " more coins", this));
 	}
 
 	public void drawShapes(SpriteBatch batch) {
@@ -1002,43 +1006,43 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				return true;
 			} else {
 				popQueManager.push(new PopQueObject(
-						PopQueObjectType.USER_ERROR, "Error",
+						PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 						GameErrors.PARTS_NOT_UNLOCKED, instance));
 				return false;
 			}
 		} else if (buildState == BuildErrors.NOT_ENOUGH_BARS) {
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					PopQueObjectType.ERROR_USER_BUILD, "Error",
 					"All cars must have atleast 3 bars", instance));
 			return false;
 		} else if (buildState == BuildErrors.NOT_ENOUGH_SPRINGS) {
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					PopQueObjectType.ERROR_USER_BUILD, "Error",
 					"All cars must have atleast 1 springs", instance));
 			return false;
 		} else if (buildState == BuildErrors.NOT_ENOUGH_TIRES) {
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					PopQueObjectType.ERROR_USER_BUILD, "Error",
 					"All cars must have atleaset 2 tires", instance));
 			return false;
 		} else if (buildState == BuildErrors.TOO_MANY_BARS) {
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					PopQueObjectType.ERROR_USER_BUILD, "Error",
 					"Your design has more than 10 bars", instance));
 			return false;
 		} else if (buildState == BuildErrors.TOO_MANY_SPRINGS) {
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					PopQueObjectType.ERROR_USER_BUILD, "Error",
 					"Your design has more than 14 springs", instance));
 			return false;
 		} else if (buildState == BuildErrors.TOO_MANY_TIRES) {
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					PopQueObjectType.ERROR_USER_BUILD, "Error",
 					"Your design has more than 14 tires", instance));
 			return false;
 		} else if (buildState == BuildErrors.DANGLING_PARTS) {
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.USER_BUILD_ERROR, "Error",
+					PopQueObjectType.ERROR_USER_BUILD, "Error",
 					"All parts in the design must connect to the life",
 					instance));
 			return false;
@@ -1431,13 +1435,17 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 	@Override
 	public boolean successfulTwoButtonFlow(String itemName) {
-		// TODO Auto-generated method stub
+		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+		} 
 		return false;
 	}
 
 	@Override
 	public boolean failedTwoButtonFlow(Integer moneyRequired) {
-		// TODO Auto-generated method stub
+		popQueManager.push(new PopQueObject(PopQueObjectType.ERROR_NOT_ENOUGH_MONEY,
+				"Not Enough Coins", "You need " + moneyRequired.toString()
+						+ " more coins", this));
 		return false;
 	}
 }

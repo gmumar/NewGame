@@ -17,6 +17,7 @@ import JSONifier.JSONTrack;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
+import User.ItemsLookupPrefix;
 import User.TwoButtonDialogFlow;
 
 import com.badlogic.gdx.Gdx;
@@ -31,6 +32,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
+import com.gudesigns.climber.CarBuilderScreen;
+import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 
 public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
@@ -57,7 +60,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected ImageButton prevPage, nextPage;
 
 	public volatile boolean resultsRemaining = true;
-	volatile private boolean loadingComplete = false;
+	private boolean loadingComplete = false;
+	volatile private boolean resetPage = true;
 	// public volatile boolean stall = true;
 	protected int currentOffset = 0;
 	protected AsyncExecutor ae = new AsyncExecutor(2);
@@ -120,7 +124,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		popQueManager = new PopQueManager(gameLoader, stage);
 		// initNavigationButtons();
 		refreshAllButtons();
-		
+
 		if (loadingLock.tryAcquire()) {
 			popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
 		}
@@ -299,12 +303,12 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
 			baseTable.setBackground("transparent");
 			baseTable.setFillParent(true);
-			
+
 			TitleBar.create(baseTable, getScreenType(), popQueManager,
 					gameState, null, true);
 
 			contentTable = new Table();
-			
+
 			contentTable.clear();
 			contentTable.setTouchable(Touchable.childrenOnly);
 
@@ -403,9 +407,10 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			uniqueListLock.unlock();
 		}
 
-		if (!isLoading() && !loadingComplete) {
+		if (!isLoading() && !loadingComplete && resetPage) {
 			// refresh the page when loading complete
 			loadingComplete = true;
+			resetPage = false;
 			pageDisplayed = false;
 		}
 
@@ -415,19 +420,29 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		}
 
 	}
-	
+
 	@Override
 	public boolean successfulTwoButtonFlow(String itemName) {
-		System.out.println("SelectorScreen: Successful buy " + itemName);
-		loadingComplete = false;
-		//showCars();
-		//refreshAllButtons();
+		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+		} else if (itemName
+				.compareTo(ItemsLookupPrefix.ERROR_PARTS_NOT_UNLOCKED) == 0) {
+			System.out.println("ScreenSelector : parts not unlocked ");
+			gameLoader.setScreen(new CarBuilderScreen(gameState));
+		} else {
+			System.out.println("SelectorScreen: Successful buy " + itemName);
+			resetPage = true;
+		}
+		// showCars();
+		// refreshAllButtons();
 		return false;
 	}
 
 	@Override
 	public boolean failedTwoButtonFlow(Integer moneyRequired) {
-		// TODO Auto-generated method stub
+		popQueManager.push(new PopQueObject(
+				PopQueObjectType.ERROR_NOT_ENOUGH_MONEY, "Not Enough Coins",
+				"You need " + moneyRequired.toString() + " more coins", this));
 		return false;
 	}
 

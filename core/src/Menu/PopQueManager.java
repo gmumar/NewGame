@@ -102,8 +102,9 @@ public class PopQueManager {
 				|| popQueObject.getType() == PopQueObjectType.UNLOCK_TRACK
 				|| popQueObject.getType() == PopQueObjectType.UNLOCK_CAR_MODE) {
 			createUnlockModeDialog(popQueObject);
-		} else if (popQueObject.getType() == PopQueObjectType.USER_ERROR 
-				|| popQueObject.getType() == PopQueObjectType.USER_BUILD_ERROR ) {
+		} else if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED 
+				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_BUILD
+				|| popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY) {
 			createUserErrorDialog(popQueObject);
 		}  else if (popQueObject.getType() == PopQueObjectType.CAR_DISPLAY) {
 			createCarDisplayDialog(popQueObject);

@@ -103,11 +103,14 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!communityCars.locked) {
-					gameLoader.setScreen(new CommunityCarSelectorScreen(gameState));
+					gameLoader.setScreen(new CommunityCarSelectorScreen(
+							gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_MODE, ItemsLookupPrefix.COMMUNITY_CARS_MODE, "Unlock Mode",
-							"Unlock Infinite Cars for: ", Costs.COMMUNITY_CARS_MODE, context));
+							PopQueObjectType.UNLOCK_MODE,
+							ItemsLookupPrefix.COMMUNITY_CARS_MODE,
+							"Unlock Mode", "Unlock Infinite Cars for: ",
+							Costs.COMMUNITY_CARS_MODE, context));
 				}
 			}
 		});
@@ -139,19 +142,26 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 		stage.addActor(base);
 
 	}
-	
+
 	@Override
 	public boolean successfulTwoButtonFlow(String itemName) {
-		gameLoader.setScreen(new CarModeScreen(gameState));
+		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
+			popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+			
+		} else {
+			gameLoader.setScreen(new CarModeScreen(gameState));
+		}
 		return false;
 	}
 
 	@Override
 	public boolean failedTwoButtonFlow(Integer moneyRequired) {
-		
+		popQueManager.push(new PopQueObject(
+				PopQueObjectType.ERROR_NOT_ENOUGH_MONEY, "Not Enough Coins",
+				"You need " + moneyRequired.toString() + " more coins", this));
 		return false;
 	}
-	
+
 	private void initStage() {
 
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
