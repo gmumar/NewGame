@@ -57,6 +57,8 @@ public class User {
 	}
 
 	private void saveUserState() {
+		
+		System.out.println("User:Saving user state");
 
 		Gson json = new Gson();
 		String encrypted = encryptor.encrypt(json.toJson(userState));

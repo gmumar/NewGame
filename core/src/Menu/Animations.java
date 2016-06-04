@@ -123,7 +123,13 @@ public class Animations {
 		} else if (previousMoney < currentMoney) {
 			if (moneyAnimationLock.tryAcquire()) {
 
-				if (currentMoney - previousMoney > 10) {
+				if (currentMoney - previousMoney > 1000) {
+					currentMoney -= 1000;
+				} else if (currentMoney - previousMoney > 500) {
+					currentMoney -= 500;
+				} else	if (currentMoney - previousMoney > 100) {
+					currentMoney -= 100;
+				} else 	if (currentMoney - previousMoney > 10) {
 					currentMoney -= 10;
 				} else if (currentMoney - previousMoney > 5) {
 					currentMoney -= 5;

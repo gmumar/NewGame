@@ -438,7 +438,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		int nextLevelindex = playedTrack.getIndex() + 1;
 
 		for (JSONTrack track : gameLoader.tracks) {
-			if (track.getIndex() == nextLevelindex) {
+			if (track.getType() == playedTrack.getType()
+					&& track.getIndex() == nextLevelindex) {
 				user.setCurrentTrack(track.jsonify(), TrackMode.ADVENTURE);
 				break;
 			}

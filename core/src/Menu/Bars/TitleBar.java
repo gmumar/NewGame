@@ -3,6 +3,7 @@ package Menu.Bars;
 import wrapper.GameState;
 import wrapper.Globals;
 import Dialog.Skins;
+import Dialog.StoreBuyDialog;
 import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -36,9 +37,10 @@ public class TitleBar {
 	static Label animationCoins;
 	static User user;
 
-	public final static TitleBarObject create(Table base, final ScreenType type,
-			final PopQueManager popQueManager, final GameState gameState,
-			final BarObjects barObjects, boolean animate) {
+	public final static TitleBarObject create(Table base,
+			final ScreenType type, final PopQueManager popQueManager,
+			final GameState gameState, final BarObjects barObjects,
+			boolean animate) {
 
 		final int imagePadding = 8;
 
@@ -86,26 +88,25 @@ public class TitleBar {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
-
-				Globals.runOnUIThread(new Runnable() {
-
-					@Override
-					public void run() {
-						gameLoader.getPlatformResolver().requestInformation(
-								new GamePurchaseObserver() {
-									@Override
-									public void handleRecievedInformation(
-											Purchases.GamePurchaseResult gamePurchaseResult) {
-										popQueManager.push(new PopQueObject(
-												PopQueObjectType.DELETE));
-
-										popQueManager.push(new PopQueObject(
-												PopQueObjectType.STORE_BUY));
-									}
-								});
-					}
-				});
+				/*
+				 * popQueManager.push(new
+				 * PopQueObject(PopQueObjectType.LOADING));
+				 * 
+				 * Globals.runOnUIThread(new Runnable() {
+				 * 
+				 * @Override public void run() {
+				 * gameLoader.getPlatformResolver().requestInformation( new
+				 * GamePurchaseObserver() {
+				 * 
+				 * @Override public void handleRecievedInformation(
+				 * Purchases.GamePurchaseResult gamePurchaseResult) {
+				 * popQueManager.push(new PopQueObject(
+				 * PopQueObjectType.DELETE));
+				 * 
+				 * popQueManager.push(new PopQueObject(
+				 * PopQueObjectType.STORE_BUY)); } }); } });
+				 */
+				StoreBuyDialog.launchDialogFlow(gameLoader, popQueManager);
 				super.clicked(event, x, y);
 			}
 
@@ -117,8 +118,10 @@ public class TitleBar {
 		buyCoins.add(glowingCoin).width(Globals.baseSize * 2.5f)
 				.height(Globals.baseSize * 2f);
 		Stack coinsStack = new Stack();
-		coins = new Label(Globals.makeMoneyString(user.getMoney()), skin, "glowing-text");
-		animationCoins = new Label(Globals.makeMoneyString(user.getMoney()), skin, "glowing-text");
+		coins = new Label(Globals.makeMoneyString(user.getMoney()), skin,
+				"glowing-text");
+		animationCoins = new Label(Globals.makeMoneyString(user.getMoney()),
+				skin, "glowing-text");
 		coinsStack.add(coins);
 		coinsStack.add(animationCoins);
 		buyCoins.add(coinsStack);
@@ -150,7 +153,8 @@ public class TitleBar {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					if (barObjects.menuBuilder.buildCar()) {
-						BackendFunctions.uploadCar(user.getCurrentCar(), RESTPaths.COMMUNITY_CARS_DUMP);
+						BackendFunctions.uploadCar(user.getCurrentCar(),
+								RESTPaths.COMMUNITY_CARS_DUMP);
 					}
 
 					super.clicked(event, x, y);

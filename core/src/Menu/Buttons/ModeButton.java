@@ -94,8 +94,8 @@ public class ModeButton {
 				gameLoader.Assets.getFilteredTexture("menu/tags/new.png"));
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 
-		trd.setMinWidth(Globals.baseSize * 1.4f);
-		trd.setMinHeight(Globals.baseSize * 1.4f);
+		trd.setMinWidth(Globals.baseSize * 2.4f);
+		trd.setMinHeight(Globals.baseSize * 2.4f);
 
 		ImageButton newTag = new ImageButton(trd);
 		newTag.align(Align.top | Align.right);

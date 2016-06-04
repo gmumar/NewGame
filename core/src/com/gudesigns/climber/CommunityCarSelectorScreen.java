@@ -19,6 +19,7 @@ import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
 import User.GameErrors;
+import User.ItemsLookupPrefix;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
@@ -39,6 +40,10 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 
 	public CommunityCarSelectorScreen(GameState gameState) {
 		super(gameState);
+		
+		if(gameState.getUser().isNew(ItemsLookupPrefix.COMMUNITY_CARS_MODE)){
+			gameState.getUser().setNonNew(ItemsLookupPrefix.COMMUNITY_CARS_MODE, false);
+		}
 	}
 
 	@Override

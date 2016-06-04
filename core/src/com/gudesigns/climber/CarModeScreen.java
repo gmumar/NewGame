@@ -5,18 +5,22 @@ import wrapper.GameState;
 import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
+import Dialog.StoreBuyDialog;
+import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
+import Menu.Bars.TitleBarObject;
 import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
 import User.Costs;
 import User.ItemsLookupPrefix;
 import User.TwoButtonDialogFlow;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -47,11 +51,17 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 	private GameLoader gameLoader;
 	private GameState gameState;
 
+	private TitleBarObject titleBar;
+	private Integer currentMoney;
+
+	private User user;
+
 	public CarModeScreen(final GameState gameState) {
 		context = this;
 		gameLoader = gameState.getGameLoader();
 		this.gameState = gameState;
 		skin = Skins.loadDefault(gameLoader, 1);
+		user = gameState.getUser();
 
 		initStage();
 
@@ -61,12 +71,26 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 		base.setFillParent(true);
 		// base.pad(25);
 
-		TitleBar.create(base, ScreenType.CAR_MODE_SCREEN, popQueManager,
-				gameState, null, true);
+		titleBar = TitleBar.create(base, ScreenType.CAR_MODE_SCREEN,
+				popQueManager, gameState, null, true);
+
+		currentMoney = user.getMoney();
 
 		// Main Buttons
 		buttonHolder = new Table(skin);
 
+		initButtons();
+		base.add(buttonHolder).expand().fill();
+
+		BottomBar.create(base, ScreenType.CAR_MODE_SCREEN, gameState, true);
+
+		// Animations.fadeInAndSlideSide(base);
+
+		stage.addActor(base);
+
+	}
+
+	private void initButtons() {
 		carBuilder = ModeButton.create(skin, gameLoader,
 				ModeButtonTypes.CAR_BUILDER, false, false);
 		carBuilder.button.setChecked(true);
@@ -133,23 +157,18 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 				.height(Globals.baseSize * 10).width(Globals.baseSize * 8)
 				.center();
 
-		base.add(buttonHolder).expand().fill();
-
-		BottomBar.create(base, ScreenType.CAR_MODE_SCREEN, gameState, true);
-
-		// Animations.fadeInAndSlideSide(base);
-
-		stage.addActor(base);
-
 	}
 
 	@Override
 	public boolean successfulTwoButtonFlow(String itemName) {
 		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
-			
+			//popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+			StoreBuyDialog.launchDialogFlow(gameLoader, popQueManager);
+
 		} else {
-			gameLoader.setScreen(new CarModeScreen(gameState));
+			//gameLoader.setScreen(new CarModeScreen(gameState));
+			buttonHolder.clear();
+			initButtons();
 		}
 		return false;
 	}
@@ -193,6 +212,9 @@ public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 
 	@Override
 	public void render(float delta) {
+		currentMoney = Animations.money(titleBar.getAnimationMoney(),
+				titleBar.getBaseMoney(), user.getMoney(), currentMoney);
+
 		renderWorld();
 		popQueManager.update();
 

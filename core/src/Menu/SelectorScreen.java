@@ -10,6 +10,7 @@ import wrapper.GameState;
 import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
+import Dialog.StoreBuyDialog;
 import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONParentClass.JSONParentType;
@@ -17,8 +18,10 @@ import JSONifier.JSONTrack;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
+import Menu.Bars.TitleBarObject;
 import User.ItemsLookupPrefix;
 import User.TwoButtonDialogFlow;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -33,7 +36,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.gudesigns.climber.CarBuilderScreen;
-import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 
 public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
@@ -60,8 +62,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected ImageButton prevPage, nextPage;
 
 	public volatile boolean resultsRemaining = true;
+	volatile public boolean pageDisplayed = false;
 	private boolean loadingComplete = false;
-	volatile private boolean resetPage = true;
 	// public volatile boolean stall = true;
 	protected int currentOffset = 0;
 	protected AsyncExecutor ae = new AsyncExecutor(2);
@@ -88,6 +90,11 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	public GameState gameState;
 
+	private User user;
+
+	private TitleBarObject titleBar;
+	private Integer currentMoney;
+
 	abstract protected void addButton(final JSONParentClass jsonParentClass);
 
 	abstract protected void downloadItems();
@@ -113,6 +120,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
 		instance = this;
+		user = gameState.getUser();
 
 		currentPageEnd = getItemsPerPage();
 
@@ -304,8 +312,10 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			baseTable.setBackground("transparent");
 			baseTable.setFillParent(true);
 
-			TitleBar.create(baseTable, getScreenType(), popQueManager,
-					gameState, null, true);
+			titleBar = TitleBar.create(baseTable, getScreenType(),
+					popQueManager, gameState, null, true);
+
+			currentMoney = user.getMoney();
 
 			contentTable = new Table();
 
@@ -371,8 +381,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		Globals.updateScreenInfo();
 	}
 
-	public boolean pageDisplayed = false;
-
 	private void showCars() {
 		if (pageDisplayed == false) {
 			buttons.clear();
@@ -391,6 +399,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	@Override
 	public void render(float delta) {
+		currentMoney = Animations.money(titleBar.getAnimationMoney(),
+				titleBar.getBaseMoney(), user.getMoney(), currentMoney);
 
 		renderWorld();
 
@@ -407,11 +417,10 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			uniqueListLock.unlock();
 		}
 
-		if (!isLoading() && !loadingComplete && resetPage) {
+		if (!isLoading() && !loadingComplete) {
 			// refresh the page when loading complete
 			loadingComplete = true;
-			resetPage = false;
-			pageDisplayed = false;
+			refershPage();
 		}
 
 		if (localLoading.tryAcquire() || loadedCount >= currentPageEnd) {
@@ -421,17 +430,22 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	}
 
+	private void refershPage() {
+		pageDisplayed = false;
+	}
+
 	@Override
 	public boolean successfulTwoButtonFlow(String itemName) {
 		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+			// popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+			StoreBuyDialog.launchDialogFlow(gameLoader, popQueManager);
 		} else if (itemName
 				.compareTo(ItemsLookupPrefix.ERROR_PARTS_NOT_UNLOCKED) == 0) {
 			System.out.println("ScreenSelector : parts not unlocked ");
 			gameLoader.setScreen(new CarBuilderScreen(gameState));
 		} else {
 			System.out.println("SelectorScreen: Successful buy " + itemName);
-			resetPage = true;
+			refershPage();
 		}
 		// showCars();
 		// refreshAllButtons();

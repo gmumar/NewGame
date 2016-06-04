@@ -17,6 +17,7 @@ import Component.Component.PropertyTypes;
 import Component.ComponentBuilder;
 import Component.ComponentNames;
 import Dialog.Skins;
+import Dialog.StoreBuyDialog;
 import JSONifier.JSONCar;
 import JSONifier.JSONCompiler;
 import JSONifier.JSONComponent;
@@ -1436,7 +1437,8 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	@Override
 	public boolean successfulTwoButtonFlow(String itemName) {
 		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
-			popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+			//popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+			StoreBuyDialog.launchDialogFlow(gameLoader, popQueManager);
 		} 
 		return false;
 	}

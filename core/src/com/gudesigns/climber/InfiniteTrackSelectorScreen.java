@@ -27,6 +27,7 @@ import Storage.FileObject;
 import User.Costs;
 import User.ItemsLookupPrefix;
 import User.TrackMode;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -49,6 +50,11 @@ public class InfiniteTrackSelectorScreen extends TrackSelectorScreen {
 
 	public InfiniteTrackSelectorScreen(GameState gameState) {
 		super(gameState);
+
+		if (gameState.getUser().isNew(ItemsLookupPrefix.INFINITY_TRACK_MODE)) {
+			gameState.getUser().setNonNew(
+					ItemsLookupPrefix.INFINITY_TRACK_MODE, false);
+		}
 	}
 
 	@Override
@@ -186,9 +192,15 @@ public class InfiniteTrackSelectorScreen extends TrackSelectorScreen {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				User user = gameState.getUser();
+
 				if (!b.locked) {
-					gameState.getUser().setCurrentTrack(item.jsonify(),
-							TrackMode.INFINTE);
+					user.setCurrentTrack(item.jsonify(), TrackMode.INFINTE);
+					
+					if(user.isNew(ItemsLookupPrefix.getInfiniteTrackPrefix(Integer.toString(track.getIndex())))){
+						user.setNonNew(ItemsLookupPrefix.getInfiniteTrackPrefix(Integer.toString(track.getIndex())), false);
+					}
+					
 					gameLoader.setScreen(new CarModeScreen(gameState));
 					super.clicked(event, x, y);
 				} else {

@@ -215,7 +215,7 @@ public class WinDialog extends Table {
 		nextLevel.add(nextLevelText).pad(20);
 
 		Image nextLevelImage = new Image(
-				gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
+				gameLoader.Assets.getFilteredTexture("menu/icons/play_black.png"));
 		nextLevel.add(nextLevelImage).width(Globals.baseSize)
 				.height(Globals.baseSize * 1.2f).pad(10);
 

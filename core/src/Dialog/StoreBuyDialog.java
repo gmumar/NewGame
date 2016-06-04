@@ -1,7 +1,11 @@
 package Dialog;
 
+import wrapper.Globals;
 import Menu.Animations;
+import Menu.PopQueManager;
 import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
+import Purchases.GamePurchaseObserver;
 import Purchases.IAPManager;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -99,8 +103,8 @@ public class StoreBuyDialog {
 			centeredBox.row();
 
 			TextButton packOne = new TextButton("pack_one "
-					+ gameLoader.IAPItemInformation.get(IAPManager.PACK_ONE).getPrice(),
-					skin, "noButton");
+					+ gameLoader.IAPItemInformation.get(IAPManager.PACK_ONE)
+							.getPrice(), skin, "noButton");
 			packOne.addListener(new ClickListener() {
 
 				@Override
@@ -122,6 +126,32 @@ public class StoreBuyDialog {
 		base.add(centeredBox).expandY().center();
 
 		return base;
+	}
+
+	public static void launchDialogFlow(final GameLoader gameLoader,
+			final PopQueManager popQueManager) {
+
+		popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
+
+		Globals.runOnUIThread(new Runnable() {
+
+			@Override
+			public void run() {
+				gameLoader.getPlatformResolver().requestInformation(
+						new GamePurchaseObserver() {
+							@Override
+							public void handleRecievedInformation(
+									Purchases.GamePurchaseResult gamePurchaseResult) {
+								popQueManager.push(new PopQueObject(
+										PopQueObjectType.DELETE));
+
+								popQueManager.push(new PopQueObject(
+										PopQueObjectType.STORE_BUY));
+							}
+						});
+			}
+		});
+
 	}
 
 }

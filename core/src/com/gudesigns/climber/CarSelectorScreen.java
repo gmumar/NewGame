@@ -24,6 +24,7 @@ import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
 import User.GameErrors;
+import User.ItemsLookupPrefix;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -50,6 +51,10 @@ public class CarSelectorScreen extends SelectorScreen {
 
 	public CarSelectorScreen(GameState gameState) {
 		super(gameState);
+		
+		if(gameState.getUser().isNew(ItemsLookupPrefix.CAR_MY_PICKS)){
+			gameState.getUser().setNonNew(ItemsLookupPrefix.CAR_MY_PICKS, false);
+		}
 	}
 
 	@Override
@@ -208,7 +213,7 @@ public class CarSelectorScreen extends SelectorScreen {
 		// image.setZIndex(100);
 		// b.setPosition(100, 100);
 		// image.setSize(100, 100);
-
+		image.setTouchable(Touchable.enabled);
 		image.addListener(new ClickListener() {
 
 			@Override
@@ -218,8 +223,7 @@ public class CarSelectorScreen extends SelectorScreen {
 				} else {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
-							GameErrors.PARTS_NOT_UNLOCKED,
-							instance));
+							GameErrors.PARTS_NOT_UNLOCKED, instance));
 				}
 				// gameState.getUser().setCurrentCar(itemJson);
 				// gameLoader.setScreen(new GamePlayScreen(gameState));
@@ -245,10 +249,11 @@ public class CarSelectorScreen extends SelectorScreen {
 		playButton.add(chooseCarText).pad(5);
 
 		Image playImage = new Image(
-				gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/play_black.png"));
 		playButton.add(playImage).width(Globals.baseSize)
 				.height(Globals.baseSize).pad(5);
-
+		playButton.setTouchable(Touchable.enabled);
 		// TextButton play = new TextButton("play",skin, "noButton");
 		playButton.addListener(new ActorGestureListener() {
 
@@ -262,11 +267,17 @@ public class CarSelectorScreen extends SelectorScreen {
 				} else {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
-							GameErrors.PARTS_NOT_UNLOCKED,
-							instance));
+							GameErrors.PARTS_NOT_UNLOCKED, instance));
 				}
-				//gameLoader.setScreen(new GamePlayScreen(gameState));
+				// gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.touchDown(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y,
+					int pointer, int button) {
+				playButton.setBackground("gameGreen");
+				super.touchUp(event, x, y, pointer, button);
 			}
 
 		});
@@ -279,6 +290,7 @@ public class CarSelectorScreen extends SelectorScreen {
 		edit.setBackground("gameYellow");
 
 		edit.add(editImage);
+		edit.setTouchable(Touchable.enabled);
 
 		edit.addListener(new ActorGestureListener() {
 
@@ -288,15 +300,21 @@ public class CarSelectorScreen extends SelectorScreen {
 
 				edit.setBackground("grey");
 				if (gameState.getUser().setCurrentCar(itemJson, false)) {
-					gameLoader.setScreen(new GamePlayScreen(gameState));
+					gameLoader.setScreen(new CarBuilderScreen(gameState));
 				} else {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
-							GameErrors.PARTS_NOT_UNLOCKED,
-							instance));
+							GameErrors.PARTS_NOT_UNLOCKED, instance));
 				}
-				//gameLoader.setScreen(new CarBuilderScreen(gameState));
+				// gameLoader.setScreen(new CarBuilderScreen(gameState));
 				super.touchDown(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y,
+					int pointer, int button) {
+				edit.setBackground("gameYellow");
+				super.touchUp(event, x, y, pointer, button);
 			}
 
 		});
@@ -307,6 +325,7 @@ public class CarSelectorScreen extends SelectorScreen {
 
 		wrapper.pad(5);
 
+		wrapper.setTouchable(Touchable.childrenOnly);
 		// b.setBackground(trd);
 
 		buttons.add(wrapper);

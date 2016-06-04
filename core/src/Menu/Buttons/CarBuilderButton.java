@@ -96,8 +96,8 @@ public class CarBuilderButton {
 				gameLoader.Assets.getFilteredTexture("menu/tags/new.png"));
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 
-		trd.setMinWidth(Globals.baseSize * 1.5f);
-		trd.setMinHeight(Globals.baseSize * 1.5f);
+		trd.setMinWidth(Globals.baseSize * 2.2f);
+		trd.setMinHeight(Globals.baseSize * 2.2f);
 
 		ImageButton newTag = new ImageButton(trd);
 		newTag.align(Align.top | Align.right);

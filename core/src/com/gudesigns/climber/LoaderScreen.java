@@ -148,6 +148,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/home.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/pause.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/play.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/play_black.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/restart_black.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/restart_white.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/sound_black.png", Texture.class);
@@ -242,7 +243,7 @@ public class LoaderScreen implements Screen {
 		resources.put("glowing-4", fontGlowingSmall);
 
 		BitmapFont fontGlowingLarge = FontManager.GenerateFont(gameLoader,
-				"fonts/chivoBlack.ttf", 5, Globals.GLOWING_LIGHT);
+				"fonts/chivoRegular.ttf", 5, Globals.GLOWING_LIGHT);
 		resources.put("glowing-5", fontGlowingLarge);
 
 		BitmapFont fontWhiteLarge = FontManager.GenerateFont(gameLoader,
