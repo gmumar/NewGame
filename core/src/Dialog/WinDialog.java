@@ -295,9 +295,14 @@ public class WinDialog extends Table {
 									.getFilteredTexture("menu/images/no_gold_stars.png"))));
 		}
 		stars.act(1 / 60f);
-
-		Integer coinsWon = (Globals.POSITION_LOST - position)
+		Integer coinsWon = 0;
+		if(User.getInstance().getCurrentTrackMode() == TrackMode.ADVENTURE){
+			coinsWon = (Globals.POSITION_LOST - position)
 				* playedTrack.getIndex() * 10;
+		} else if (User.getInstance().getCurrentTrackMode() == TrackMode.INFINTE){
+			coinsWon = (Globals.POSITION_LOST - position)
+					* playedTrack.getDifficulty() * 10;
+		}
 
 		coinsEarned.setText(coinsWon.toString());
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()

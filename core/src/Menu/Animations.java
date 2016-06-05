@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.gudesigns.climber.SplashScreen.SplashActor;
@@ -127,9 +128,9 @@ public class Animations {
 					currentMoney -= 1000;
 				} else if (currentMoney - previousMoney > 500) {
 					currentMoney -= 500;
-				} else	if (currentMoney - previousMoney > 100) {
+				} else if (currentMoney - previousMoney > 100) {
 					currentMoney -= 100;
-				} else 	if (currentMoney - previousMoney > 10) {
+				} else if (currentMoney - previousMoney > 10) {
 					currentMoney -= 10;
 				} else if (currentMoney - previousMoney > 5) {
 					currentMoney -= 5;
@@ -172,6 +173,29 @@ public class Animations {
 		animationLabel.setText(Globals.makeMoneyString(currentMoney));
 
 		return currentMoney;
+	}
+
+	// 0 = left, 1 = top, 2 = right , 3 = down
+	public static void slideAndBlink(Image arrow, int direction) {
+
+		int moveX = 0, moveY = 0;
+
+		if (direction == 0) {
+			moveX = 10;
+		} else if (direction == 1) {
+			moveY = -10;
+		} else if (direction == 2) {
+			moveX = -10;
+		} else if (direction == 3) {
+			moveY = 10;
+		}
+
+		Action s = new SequenceAction(Actions.moveBy(-moveX, -moveY, 0.5f),
+				Actions.fadeOut(0.1f), Actions.moveBy(moveX, moveY, 0.1f),
+				Actions.fadeIn(0.4f), Actions.delay(0.5f));
+
+		arrow.addAction(Actions.repeat(100, s));
+
 	}
 
 }

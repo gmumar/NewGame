@@ -9,7 +9,12 @@ com.badlogic.gdx.graphics.Color: {
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: {
 		name: white,
-		color: { a: 0.5, b: 0.2, g: 0.2, r: 0.2 }
+		color: { a: 0.5, b: 0, g: 0, r: 0 }
+	}
+	
+	dialogDimer: {
+		name: white,
+		color: { a: 0.85, b: 0, g: 0, r: 0 }
 	}
 	
 	transparent: {
@@ -133,6 +138,12 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 		titleFont: default-font,
 		titleFontColor: { a: 1, b: 1, g: 1, r: 1 }
 	},
+	tutorialDialog: {
+		background: white,
+		titleFont: default-font,
+		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
+		stageBackground: transparent
+	},
 	buyDialog: {
 		background: white,
 		titleFont: default-font,
@@ -158,6 +169,11 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		background: textfield,
 		cursor: cursor,
 		selection: selection
+	}
+	tutorial: {
+		font: white-5,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 },
+		background: transparent
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {

@@ -10,12 +10,16 @@ import wrapper.Globals;
 import wrapper.TouchUnit;
 import Menu.MenuBuilder;
 import Menu.PopQueManager;
+import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
+import User.ItemsLookupPrefix;
+import User.TwoButtonDialogFlow;
+import User.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -28,7 +32,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class CarBuilderScreen implements Screen, InputProcessor,
-		GestureListener {
+		GestureListener, TwoButtonDialogFlow {
 
 	// private GameLoader gameLoader;
 	private SpriteBatch batch;
@@ -65,16 +69,54 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 
 		debugRenderer = new Box2DDebugRenderer();
 
-		debugRenderer.AABB_COLOR.set(Color.WHITE);
-		debugRenderer.SHAPE_NOT_ACTIVE.set(Color.WHITE);
+		User user = gameState.getUser();
 
-		debugRenderer.JOINT_COLOR.set(Color.WHITE);
-		debugRenderer.SHAPE_AWAKE.set(Color.WHITE);
-		debugRenderer.SHAPE_KINEMATIC.set(Color.WHITE);
+		if (user.isNew(ItemsLookupPrefix.CAR_BUILDER)) {
+			popQueManager.initTutorialTable(new PopQueObject(
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_INTRO, this));
 
-		debugRenderer.SHAPE_NOT_AWAKE.set(Color.WHITE);
-		debugRenderer.VELOCITY_COLOR.set(Color.WHITE);
+			// user.setNonNew(ItemsLookupPrefix.CAR_BUILDER, false);
+		}
 
+	}
+
+	@Override
+	public boolean successfulTwoButtonFlow(String string) {
+		if (string.compareTo(PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP1
+				.toString()) == 0) {
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP1, this));
+		} else if (string
+				.compareTo(PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP2
+						.toString()) == 0) {
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP2, this));
+		} else if (string
+				.compareTo(PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP3
+						.toString()) == 0) {
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP3, this));
+		} else if (string
+				.compareTo(PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP4
+						.toString()) == 0) {
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP4, this));
+		} else if (string
+				.compareTo(PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP5
+						.toString()) == 0) {
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP5, this));
+		} 
+
+		return false;
+	}
+
+	@Override
+	public boolean failedTwoButtonFlow(Integer moneyRequired) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	private void initStage() {

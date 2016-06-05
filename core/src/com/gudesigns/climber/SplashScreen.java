@@ -46,12 +46,14 @@ public class SplashScreen implements Screen {
 		this.gameLoader = gameLoader;
 
 		initStage();
+		
+		
 
 		SplashActor splashActor = new SplashActor();
-		splashActor.setSize(Globals.ScreenWidth * 1 / 6,
-				Globals.ScreenWidth * 1 / 6);
-		splashActor.setX(Globals.ScreenWidth * 1 / 2 - splashActor.getWidth()/2);
-		splashActor.setY(Globals.ScreenHeight * 1 / 2 - 20 - splashActor.getHeight()/2);
+		splashActor.setSize(stage.getWidth() * 1 / 6,
+				stage.getWidth() * 1 / 6);
+		splashActor.setX(stage.getWidth() * 1 / 2 - splashActor.getWidth()/2);
+		splashActor.setY(stage.getHeight() * 1 / 2 - 20 - splashActor.getHeight()/2);
 
 
 		Animations.fadeInAndSlideUp(splashActor);

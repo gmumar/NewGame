@@ -12,6 +12,7 @@ import Dialog.Skins;
 import Dialog.SoundDialog;
 import Dialog.StoreBuyDialog;
 import Dialog.TextDialog;
+import Dialog.TutorialDialog;
 import Dialog.UnlockDialog;
 import Dialog.UserErrorDialog;
 import Dialog.WinDialog;
@@ -34,6 +35,7 @@ public class PopQueManager {
 	private WinDialog winTable;
 	private PauseDialog pauseTable;
 	private KilledDialog killedTable;
+	private TutorialDialog tutotialTable;
 
 	Skin skin;
 
@@ -52,9 +54,13 @@ public class PopQueManager {
 	public void initPauseTable(PopQueObject popQueObject) {
 		pauseTable = new PauseDialog(gameLoader, popQueObject);
 	}
-	
+
 	public void initKilledTable(PopQueObject popQueObject) {
 		killedTable = new KilledDialog(gameLoader, popQueObject);
+	}
+	
+	public void initTutorialTable(PopQueObject popQueObject) {
+		tutotialTable = new TutorialDialog(gameLoader, popQueObject, stage);
 	}
 
 	public void update() {
@@ -66,6 +72,7 @@ public class PopQueManager {
 			handlePop(currentMsg);
 		}
 		stage.act();
+		stage.draw();
 	}
 
 	public void push(PopQueObject obj) {
@@ -102,21 +109,38 @@ public class PopQueManager {
 				|| popQueObject.getType() == PopQueObjectType.UNLOCK_TRACK
 				|| popQueObject.getType() == PopQueObjectType.UNLOCK_CAR_MODE) {
 			createUnlockModeDialog(popQueObject);
-		} else if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED 
+		} else if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
 				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_BUILD
 				|| popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY) {
 			createUserErrorDialog(popQueObject);
-		}  else if (popQueObject.getType() == PopQueObjectType.CAR_DISPLAY) {
+		} else if (popQueObject.getType() == PopQueObjectType.CAR_DISPLAY) {
 			createCarDisplayDialog(popQueObject);
-		}else {
+		} else if (popQueObject.getType() == PopQueObjectType.TUTORIAL_BUILDER_SCREEN
+				|| popQueObject.getType() == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_INTRO
+				|| popQueObject.getType() == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP1
+				|| popQueObject.getType() == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP2
+				|| popQueObject.getType() == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP3
+				|| popQueObject.getType() == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP4
+				|| popQueObject.getType() == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP5) {
+			createTutorialDialog(popQueObject);
+		} else {
 			System.out.println("ERROR: Unknown PopQueObjectType: "
 					+ popQueObject.getType().toString());
 		}
 	}
 
+	private void createTutorialDialog(PopQueObject popQueObject) {
+		//dialog = TutorialDialog.CreateDialog(gameLoader, stage, popQueObject);
+
+		//dialog.show(stage);
+		
+		tutotialTable.setStep(popQueObject);
+		stage.addActor(tutotialTable.getBase());
+		//dialog.setPosition(0, 0);
+	}
+
 	private void createUserErrorDialog(PopQueObject popQueObject) {
 		dialog = UserErrorDialog.CreateDialog(gameLoader, popQueObject);
-
 		dialog.show(stage);
 
 	}
@@ -150,7 +174,7 @@ public class PopQueManager {
 		stage.addActor(StoreBuyDialog.CreateDialog(gameLoader, popQueObject));
 
 	}
-	
+
 	private void createCarDisplayDialog(PopQueObject popQueObject) {
 
 		dialog = CarDisplayDialog.CreateDialog(gameLoader, popQueObject);
@@ -172,10 +196,10 @@ public class PopQueManager {
 	}
 
 	private void createLostDialog(PopQueObject popQueObject) {
-		//dialog = new TextDialog("Killed", skin, "default");
-		//dialog.setTouchable(Touchable.disabled);
-		//dialog.show(stage);
-		//Animations.fadeIn(dialog);
+		// dialog = new TextDialog("Killed", skin, "default");
+		// dialog.setTouchable(Touchable.disabled);
+		// dialog.show(stage);
+		// Animations.fadeIn(dialog);
 		killedTable.update(gameLoader, popQueObject);
 		stage.addActor(killedTable.getBase());
 	}
@@ -196,8 +220,8 @@ public class PopQueManager {
 		dialog.setTouchable(Touchable.disabled);
 		dialog.setZIndex(1);
 		dialog.show(stage).align(Align.top);
-		//	dialog.setPosition(300,450);
-		dialog.setPosition( Globals.ScreenWidth/2  , Globals.ScreenHeight-100);
+		// dialog.setPosition(300,450);
+		dialog.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight - 100);
 		Animations.fadeIn(dialog);
 	}
 

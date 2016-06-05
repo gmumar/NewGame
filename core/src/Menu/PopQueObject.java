@@ -9,7 +9,7 @@ import com.gudesigns.climber.GamePlayScreen;
 public class PopQueObject {
 
 	public enum PopQueObjectType {
-		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE, UNLOCK_TRACK, UNLOCK_MODE, UNLOCK_CAR_MODE, ERROR_PARTS_NOT_UNLOCKED, ERROR_USER_BUILD, CAR_DISPLAY, ERROR_NOT_ENOUGH_MONEY
+		TEST, DELETE, LOADING, BUY, WIN, KILLED, STORE_BUY, SOUND, PAUSE, UNLOCK_TRACK, UNLOCK_MODE, UNLOCK_CAR_MODE, ERROR_PARTS_NOT_UNLOCKED, ERROR_USER_BUILD, CAR_DISPLAY, ERROR_NOT_ENOUGH_MONEY, TUTORIAL_BUILDER_SCREEN, TUTORIAL_BUILDER_SCREEN_STEP1, TUTORIAL_BUILDER_SCREEN_STEP2, TUTORIAL_BUILDER_SCREEN_STEP3, TUTORIAL_BUILDER_SCREEN_STEP4, TUTORIAL_BUILDER_SCREEN_INTRO, TUTORIAL_BUILDER_SCREEN_STEP5
 	};
 
 	private PopQueObjectType type;
@@ -51,6 +51,19 @@ public class PopQueObject {
 		this.type = type;
 		this.gamePlayScreenInstance = instance;
 	}
+	
+	public PopQueObject(PopQueObjectType type, TwoButtonDialogFlow instance) {
+		if (!(type == PopQueObjectType.TUTORIAL_BUILDER_SCREEN
+				|| type == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_INTRO
+				|| type == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP1
+				|| type == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP2
+				|| type == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP3
+				|| type == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP4
+				|| type == PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP5))
+			return;
+		this.type = type;
+		this.twoButtonFlowContext = instance;
+	}
 
 	public PopQueObject(PopQueObjectType unlockMode, String itemToBeSold,
 			String text, String description, int price,
@@ -71,8 +84,7 @@ public class PopQueObject {
 	public PopQueObject(PopQueObjectType userError, String header,
 			String string, TwoButtonDialogFlow instance) {
 		if (!(userError == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
-				|| userError == PopQueObjectType.ERROR_USER_BUILD 
-				|| userError == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY))
+				|| userError == PopQueObjectType.ERROR_USER_BUILD || userError == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY))
 			return;
 
 		twoButtonFlowContext = instance;
