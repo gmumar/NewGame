@@ -22,7 +22,7 @@ import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
-import com.gudesigns.climber.TrackSelectorScreen;
+import com.gudesigns.climber.ForrestTrackSelectorScreen;
 
 public class BottomBar {
 
@@ -37,7 +37,8 @@ public class BottomBar {
 
 		Button next = new Button(skin, "transparentButton");
 
-		Image nextImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/start.png"));
+		Image nextImage = new Image(
+				gameLoader.Assets.getFilteredTexture("menu/icons/start.png"));
 
 		next.add(nextImage).width(Globals.baseSize * 3)
 				.height(Globals.baseSize * 3).pad(18);
@@ -47,8 +48,11 @@ public class BottomBar {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (type == ScreenType.MODE_SCREEN) {
-					gameLoader.setScreen(new TrackSelectorScreen(gameState));
-				} else if (type == ScreenType.TRACK_SELECTOR) {
+					gameLoader.setScreen(new ForrestTrackSelectorScreen(
+							gameState));
+				} else if (type == ScreenType.FORREST_TRACK_SELECTOR
+						|| type == ScreenType.ARCTIC_TRACK_SELECTOR
+						|| type == ScreenType.INFINITE_TRACK_SELECTOR) {
 					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_SELECTOR) {
 					gameLoader.setScreen(new GamePlayScreen(gameState));
@@ -65,8 +69,8 @@ public class BottomBar {
 		base.add(bottomBar).fillX().height(Globals.baseSize * 3.5f).expandX()
 				.bottom();
 
-		if (animate){
-			//Animations.fadeInFromBottom(bottomBar, 50);
+		if (animate) {
+			// Animations.fadeInFromBottom(bottomBar, 50);
 		}
 
 		return bottomBar;

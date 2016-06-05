@@ -40,8 +40,6 @@ public class FileManager {
 			strToWrite = json.toJson(objectIn);
 		}
 
-		// System.out.println( strToWrite);
-
 		handle.writeString(strToWrite, false);
 	}
 
@@ -99,8 +97,6 @@ public class FileManager {
 		} else {
 			strToWrite = json.toJson(objectIn);
 		}
-
-		// System.out.println( strToWrite);
 
 		handle.writeString(strToWrite, false);
 	}

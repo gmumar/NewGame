@@ -149,8 +149,6 @@ public class TrackBuilder {
 					newObj.setFixture(fixture);
 					mapList.add(newObj);
 					
-					//System.out.println(newObj.end + " " + point);
-
 					/*if (box != null) {
 						world.destroyBody(box);
 						box = null;

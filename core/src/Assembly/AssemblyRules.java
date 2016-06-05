@@ -69,8 +69,6 @@ public class AssemblyRules {
 		}
 
 		for (Entry<String, Integer> bla : counts.entrySet()) {
-			System.out.println("AssemblyRules: " + bla.getKey() + " "
-					+ bla.getValue());
 		}
 
 		if (!counts.containsKey(ComponentNames.BAR3)) {
@@ -193,13 +191,6 @@ public class AssemblyRules {
 
 		}
 
-		/*
-		 * //System.out.println("-------------------------"); Iterator<Body>
-		 * bodyIter = partsSeen.iterator(); while (bodyIter.hasNext()) { Body
-		 * obj = bodyIter.next(); //System.out.println(obj.getUserData()); }
-		 * //System.out.println("-------------------------");
-		 */
-
 		return partsSeen;
 	}
 
@@ -208,8 +199,6 @@ public class AssemblyRules {
 
 		Iterator<SimpleJoint> iter = joints.iterator();
 		ArrayList<Body> connectedBodies = new ArrayList<Body>();
-
-		// System.out.println(currentBody.getUserData());
 
 		while (iter.hasNext()) {
 			SimpleJoint joint = iter.next();
@@ -227,7 +216,6 @@ public class AssemblyRules {
 					connectedBodies.add(bodyIter.next().other);
 				}
 
-				// System.out.println(joint.bodyB.getUserData());
 				continue;
 			}
 
@@ -239,7 +227,6 @@ public class AssemblyRules {
 			if (((JSONComponentName) joint.bodyB.getUserData())
 					.equals((JSONComponentName) currentBody.getUserData())) {
 				connectedBodies.add(joint.bodyA);
-				// System.out.println(joint.bodyA.getUserData());
 				Iterator<JointEdge> bodyIter = joint.bodyA.getJointList()
 						.iterator();
 				while (bodyIter.hasNext()) {

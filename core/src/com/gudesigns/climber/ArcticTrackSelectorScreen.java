@@ -9,7 +9,6 @@ import java.util.Iterator;
 
 import wrapper.GameState;
 import wrapper.Globals;
-import Dialog.Skins;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
@@ -19,8 +18,6 @@ import Menu.ScreenType;
 import Menu.SelectorScreen;
 import Menu.Buttons.AdventureTrackButton;
 import Menu.Buttons.ButtonLockWrapper;
-import Menu.Buttons.SimpleImageButton;
-import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import ParallexBackground.ScrollingBackground;
 import ParallexBackground.ScrollingBackground.BackgroundType;
 import RESTWrapper.Backendless_JSONParser;
@@ -47,9 +44,9 @@ import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-public class TrackSelectorScreen extends SelectorScreen {
+public class ArcticTrackSelectorScreen extends SelectorScreen {
 
-	private final static int itemsPerRow = 5;
+	private final static int itemsPerRow = 15;
 
 	@Override
 	protected int getItemsPerPage() {
@@ -58,11 +55,11 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	private ScrollingBackground scrollingBackground;
 
-	public TrackSelectorScreen(GameState gameState) {
+	public ArcticTrackSelectorScreen(GameState gameState) {
 		super(gameState);
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader, null,
-				TrackType.FORREST, BackgroundType.SELECTOR);
+				TrackType.ARTIC, BackgroundType.SELECTOR);
 	}
 
 	@Override
@@ -120,9 +117,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 								for (ServerDataUnit fromServer : obj.getData()) {
 
-									System.out.println("TrackSelectorScreen: "
-											+ fromServer.getTrackIndex());
-
+									
 									final JSONTrack trackJson = JSONTrack
 											.objectify(fromServer.getData());
 									trackJson.setObjectId(fromServer
@@ -203,7 +198,6 @@ public class TrackSelectorScreen extends SelectorScreen {
 	 * new ArrayList<JSONTrack>(); for (JSONParentClass track : items) { //
 	 * String car = iter.next(); list.add((JSONTrack) track); }
 	 * 
-	 * System.out.println("writing " + list.size());
 	 * 
 	 * FileObject fileObject = new FileObject(); fileObject.setTracks(list);
 	 * 
@@ -223,7 +217,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 	protected void addButton(final JSONParentClass item) {
 		final JSONTrack track = JSONTrack.objectify(item.jsonify());
 		final ButtonLockWrapper b = AdventureTrackButton.create(gameLoader,
-				track, false);
+				track, false, ScreenType.NONE);
 
 		b.button.addListener(new ClickListener() {
 
@@ -273,9 +267,6 @@ public class TrackSelectorScreen extends SelectorScreen {
 			gameLoader.tracks.add((JSONTrack) track);
 
 		}
-
-		System.out.println("TrackSelectorScreen: writting " + list.size());
-
 		if (list.isEmpty())
 			return;
 
@@ -328,6 +319,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 		Table b;
 		int count = 0;
 
+		// Add previously built tracks
 		Collections.sort(buttons, new Comparator<Table>() {
 
 			@Override
@@ -358,86 +350,16 @@ public class TrackSelectorScreen extends SelectorScreen {
 			scrollPane.invalidate();
 		}
 
+		// Only two worlds third world would go here
 	}
 
 	@Override
 	protected void populateContentTable(Table contentTable) {
 
-		// contentTable.add(prevPage).colspan(1).left();
-		// stage.addActor(prevPage);
-
-		Table prevHolder = new Table(Skins.loadDefault(gameLoader, 1));
-		prevHolder.setTouchable(Touchable.enabled);
-		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT,
-				gameLoader);
-		prevHolder.addListener(new ClickListener() {
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				super.clicked(event, x, y);
-				pageNumber--;
-
-				if (pageNumber < 0) {
-					pageNumber = 0;
-				} else {
-					pageDisplayed = false;
-					if (loadingLock.tryAcquire()) {
-						popQueManager.push(new PopQueObject(
-								PopQueObjectType.LOADING));
-					}
-					// buttons.clear();
-
-					currentPageStart -= getItemsPerPage();
-					if (currentPageStart <= 0)
-						currentPageStart = 0;
-					currentPageEnd = currentPageStart + getItemsPerPage();
-				}
-
-			}
-
-		});
-
-		prevHolder.add(prevPage).width(Globals.baseSize);
-		contentTable.add(prevHolder).left().expand().fill()
-				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
-
 		createItemsTable(contentTable);
 		initButtons();
 		itemsTable.invalidate();
 		scrollPane.invalidate();
-
-		Table nextHolder = new Table(Skins.loadDefault(gameLoader, 1));
-		nextHolder.setTouchable(Touchable.enabled);
-
-		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT,
-				gameLoader);
-
-		nextHolder.addListener(new ClickListener() {
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				pageNumber++;
-				if (loadingLock.tryAcquire()) {
-					popQueManager.push(new PopQueObject(
-							PopQueObjectType.LOADING));
-				}
-
-				pageDisplayed = false;
-				// buttons.clear();
-				currentPageStart += getItemsPerPage();
-				currentPageEnd += getItemsPerPage();
-
-				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
-				super.clicked(event, x, y);
-			}
-
-		});
-
-		nextHolder.add(nextPage).width(Globals.baseSize);
-		contentTable.add(nextHolder).right().expand().fill()
-				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
-
-		// contentTable.add(nextPage).colspan(1).right();
 
 	}
 
@@ -461,7 +383,7 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	@Override
 	protected ScreenType getScreenType() {
-		return ScreenType.TRACK_SELECTOR;
+		return ScreenType.ARCTIC_TRACK_SELECTOR;
 	}
 
 	@Override
@@ -472,8 +394,16 @@ public class TrackSelectorScreen extends SelectorScreen {
 
 	@Override
 	protected void clearScreen() {
-		Gdx.gl.glClearColor(Globals.FORREST_GREEN_BG.r,
-				Globals.FORREST_GREEN_BG.g, Globals.FORREST_GREEN_BG.b, 1);
+		Gdx.gl.glClearColor(Globals.ARTIC_BLUE_BG.r, Globals.ARTIC_BLUE_BG.g,
+				Globals.ARTIC_BLUE_BG.b, 1);
+	}
+
+	@Override
+	protected boolean isCorrectTrackType(TrackType type) {
+		if (type == TrackType.ARTIC) {
+			return true;
+		}
+		return false;
 	}
 
 }

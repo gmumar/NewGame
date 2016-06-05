@@ -108,7 +108,7 @@ public class MainMenuScreen implements Screen {
 		quickNext = new Button("Next") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				gameLoader.setScreen(new ForrestTrackSelectorScreen(gameState));
 			}
 		};
 
@@ -153,7 +153,7 @@ public class MainMenuScreen implements Screen {
 		selectTrack = new Button("select track") {
 			@Override
 			public void Clicked() {
-				gameLoader.setScreen(new TrackSelectorScreen(gameState));
+				gameLoader.setScreen(new ForrestTrackSelectorScreen(gameState));
 			}
 		};
 

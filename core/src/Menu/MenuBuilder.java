@@ -29,8 +29,8 @@ import Menu.Bars.TitleBarObject;
 import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
-import RESTWrapper.BackendFunctions;
-import RESTWrapper.RESTPaths;
+import Menu.Buttons.SimpleImageButton;
+import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import User.GameErrors;
 import User.ItemsLookupPrefix;
 import User.TwoButtonDialogFlow;
@@ -58,13 +58,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.gudesigns.climber.CarModeScreen;
+import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 
@@ -82,7 +83,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	private World world;
 
 	private ButtonLockWrapper spring_but, but, tire_but, delete, rotateLeft,
-			rotateRight, build, upload, levelUp, levelDown;
+			rotateRight, build, /*upload,*/ levelUp, levelDown;
 
 	private Label partLevelText, partNameLabel;
 
@@ -123,7 +124,8 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 	public MenuBuilder(final GamePhysicalState gamePhysicalState, Stage stage,
 			CameraManager secondCamera, ShapeRenderer shapeRenderer,
-			final User user, final PopQueManager popQueManager) {
+			final User user, final PopQueManager popQueManager,
+			final CarBuilderScreen parentInstance) {
 
 		this.world = gamePhysicalState.getWorld();
 		this.gameLoader = gamePhysicalState.getGameLoader();
@@ -162,7 +164,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		Table menuHolders = new Table();
 
 		Table leftMenu = new Table();
-
+		Table centerMenu = new Table();
 		Table rightMenu = new Table();
 
 		/*
@@ -267,7 +269,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		// delete.setWidth(50);
 		leftMenu.add(delete.button).width(buttonWidth).expandY().fillY();
 
-		menuHolders.add(leftMenu).left().expand().fillY().top();
+		menuHolders.add(leftMenu).left().expandY().fillY().top();
 
 		/*
 		 * zoomIn = new Button("+") {
@@ -305,19 +307,18 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		build.button.setHeight(50);
 		// stage.addActor(build);
 
-		upload = new ButtonLockWrapper(new Button("^") {
-			@Override
-			public void Clicked() {
-				if (buildCar()) {
-					BackendFunctions.uploadCar(user.getCurrentCar(),
-							RESTPaths.COMMUNITY_CARS_DUMP);
-				}
-			}
-
-		}, false);
-
-		upload.button.setPosition(0, Globals.ScreenHeight - 50);
-		upload.button.setHeight(50);
+		/*
+		 * upload = new ButtonLockWrapper(new Button("^") {
+		 * 
+		 * @Override public void Clicked() { if (buildCar()) {
+		 * BackendFunctions.uploadCar(user.getCurrentCar(),
+		 * RESTPaths.COMMUNITY_CARS_DUMP); } }
+		 * 
+		 * }, false);
+		 * 
+		 * upload.button.setPosition(0, Globals.ScreenHeight - 50);
+		 * upload.button.setHeight(50);
+		 */
 		// stage.addActor(upload);
 
 		rotateLeft = CarBuilderButton.create(gameLoader,
@@ -448,7 +449,24 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		rightMenu.row();
 		// stage.addActor(levelDown);
 
-		menuHolders.add(rightMenu).right().expand().fillY().top();
+		Button help = SimpleImageButton.create(SimpleImageButtonTypes.HELP,
+				gameLoader);
+		help.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				popQueManager.initTutorialTable(new PopQueObject(
+						PopQueObjectType.TUTORIAL_BUILDER_SCREEN));
+				popQueManager.push(new PopQueObject(
+						PopQueObjectType.TUTORIAL_BUILDER_SCREEN_INTRO,
+						parentInstance));
+
+			}
+		});
+		centerMenu.add(help).top().right().expand();
+
+		menuHolders.add(centerMenu).expand().fill();
+
+		menuHolders.add(rightMenu).right().expandY().fillY().top();
 
 		base.add(menuHolders).fill().expand();
 
@@ -466,13 +484,8 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 	private void deleteLastSelected() {
 		if (lastSelected == null) {
-			System.out.println("MenuBuilder: delete is null");
 			return;
 		}
-
-		System.out.println("MenuBuilder: deleting "
-				+ ((JSONComponentName) lastSelected.getUserData())
-						.getBaseName());
 
 		// ----------------------- HACK ----------------------
 		if (((JSONComponentName) lastSelected.getUserData()).getBaseName()
@@ -511,7 +524,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 			parts.remove(toRemove);
 		} else {
-			System.out.println("MenuBuilder: to remove null");
 		}
 		Array<JointEdge> joints = lastSelected.getJointList();
 
@@ -537,7 +549,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				.get(ComponentNames.LIFE)));
 		name.setMountId("*");
 		c.setUpForBuilder(name, partLevel);
-		System.out.println("MenuBuilder: " + name);
 
 		baseObject = c.getObject().getPhysicsBody();// lastSelected =
 		parts.add(c);
@@ -553,7 +564,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		} else {
 			partLevel = inLevel;
 		}
-		System.out.println(partLevel);
 		incrementCount(ComponentNames.BAR3);
 		Component c = ComponentBuilder.buildBar3(new GamePhysicalState(world,
 				gameLoader), partLevel, true);
@@ -568,9 +578,13 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		name.setLevel(partLevel);
 		c.setUpForBuilder(name, partLevel);
 
-		System.out.println("MenuBuilder: " + name);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
+
+		if (inLevel == -1) {
+			c.setPosition(camera.position.x - 2.50f, camera.position.y + 1.50f);
+		}
+
 		// lastSelected =
 		// parts.get(parts.size()-1).getObject().getPhysicsBody();
 		ArrayList<Component> tmp = new ArrayList<Component>();
@@ -585,7 +599,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 			partLevel = inLevel;
 		}
 
-		System.out.println(partLevel);
 		incrementCount(ComponentNames.TIRE);
 		Component c = ComponentBuilder.buildTire(new GamePhysicalState(world,
 				gameLoader), partLevel, true);
@@ -599,9 +612,12 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		name.setComponentId(Integer.toString(componentCounts
 				.get(ComponentNames.TIRE)));
 		c.setUpForBuilder(name, partLevel);
-		System.out.println("MenuBuilder: " + name);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
+
+		if (inLevel == -1) {
+			c.setPosition(camera.position.x - 2.50f, camera.position.y + 1.50f);
+		}
 
 		// --------------- HACK ------------------
 		// if (((JSONComponentName) lastSelected.getUserData()).getBaseName()
@@ -643,9 +659,12 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		name.setComponentId(Integer.toString(componentCounts
 				.get(ComponentNames.SPRINGJOINT)));
 		c.setUpForBuilder(name, partLevel);
-		System.out.println("MenuBuilder: " + name);
 		lastSelected = c.getObject().getPhysicsBody();
 		parts.add(c);
+
+		if (inLevel == -1) {
+			c.setPosition(camera.position.x - 2.50f, camera.position.y + 1.50f);
+		}
 
 		Component otherComponent = list.get(1);
 		otherComponent.setComponentId(Integer.toString(componentCounts
@@ -776,8 +795,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		 * Array<Fixture> fixtures = lastSelected.getFixtureList(); Fixture
 		 * fixture = null;
 		 * 
-		 * System.out.println("here " + (JSONComponentName)
-		 * lastSelected.getUserData() + " connected size " + fixtures.size);
 		 * 
 		 * for (Fixture fixtureIter : fixtures) {
 		 * 
@@ -859,9 +876,9 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	}
 
 	public void failedBuy(Integer moneyRequired) {
-		popQueManager.push(new PopQueObject(PopQueObjectType.ERROR_NOT_ENOUGH_MONEY,
-				"Not Enough Coins", "You need " + moneyRequired.toString()
-						+ " more coins", this));
+		popQueManager.push(new PopQueObject(
+				PopQueObjectType.ERROR_NOT_ENOUGH_MONEY, "Not Enough Coins",
+				"You need " + moneyRequired.toString() + " more coins", this));
 	}
 
 	public void drawShapes(SpriteBatch batch) {
@@ -1277,9 +1294,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				// }
 				// ---------------------------------------
 
-				System.out.println("mouse: "
-						+ ((JSONComponentName) hitBody.getUserData())
-								.getBaseName());
 
 				// JSONComponentName hitBodyName = ((JSONComponentName) hitBody
 				// .getUserData());
@@ -1437,17 +1451,17 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	@Override
 	public boolean successfulTwoButtonFlow(String itemName) {
 		if (itemName.compareTo(ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY) == 0) {
-			//popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
+			// popQueManager.push(new PopQueObject(PopQueObjectType.STORE_BUY));
 			StoreBuyDialog.launchDialogFlow(gameLoader, popQueManager);
-		} 
+		}
 		return false;
 	}
 
 	@Override
 	public boolean failedTwoButtonFlow(Integer moneyRequired) {
-		popQueManager.push(new PopQueObject(PopQueObjectType.ERROR_NOT_ENOUGH_MONEY,
-				"Not Enough Coins", "You need " + moneyRequired.toString()
-						+ " more coins", this));
+		popQueManager.push(new PopQueObject(
+				PopQueObjectType.ERROR_NOT_ENOUGH_MONEY, "Not Enough Coins",
+				"You need " + moneyRequired.toString() + " more coins", this));
 		return false;
 	}
 }

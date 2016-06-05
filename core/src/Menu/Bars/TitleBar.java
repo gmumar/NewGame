@@ -12,7 +12,6 @@ import Menu.ScreenType;
 import Menu.TableW;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
-import Purchases.GamePurchaseObserver;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
 import User.User;
@@ -26,10 +25,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.CarModeScreen;
+import com.gudesigns.climber.ForrestTrackSelectorScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GameModeScreen;
 import com.gudesigns.climber.MainMenuScreen;
-import com.gudesigns.climber.TrackSelectorScreen;
 
 public class TitleBar {
 
@@ -42,7 +41,7 @@ public class TitleBar {
 			final GameState gameState, final BarObjects barObjects,
 			boolean animate) {
 
-		final int imagePadding = 8;
+		
 
 		Animations.InitMoneyAnimation();
 
@@ -66,14 +65,17 @@ public class TitleBar {
 			public void clicked(InputEvent event, float x, float y) {
 				if (type == ScreenType.MODE_SCREEN) {
 					gameLoader.setScreen(new MainMenuScreen(gameLoader));
-				} else if (type == ScreenType.TRACK_SELECTOR) {
+				} else if (type == ScreenType.FORREST_TRACK_SELECTOR
+						|| type == ScreenType.ARCTIC_TRACK_SELECTOR
+						|| type == ScreenType.INFINITE_TRACK_SELECTOR) {
 					gameLoader.setScreen(new GameModeScreen(gameState));
 				} else if (type == ScreenType.CAR_SELECTOR) {
 					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_BUILDER) {
 					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_MODE_SCREEN) {
-					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+					gameLoader.setScreen(new ForrestTrackSelectorScreen(
+							gameState));
 				}
 				super.clicked(event, x, y);
 			}
@@ -136,7 +138,9 @@ public class TitleBar {
 
 		if (type == ScreenType.MODE_SCREEN) {
 			titleLabel.setText("Game Mode");
-		} else if (type == ScreenType.TRACK_SELECTOR) {
+		} else if (type == ScreenType.FORREST_TRACK_SELECTOR
+				|| type == ScreenType.ARCTIC_TRACK_SELECTOR
+				|| type == ScreenType.INFINITE_TRACK_SELECTOR) {
 			titleLabel.setText("Select Track");
 		} else if (type == ScreenType.CAR_SELECTOR) {
 			titleLabel.setText("Select Car");

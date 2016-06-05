@@ -51,7 +51,6 @@ public class GameLoader extends Game {
 
 	@Override
 	public void setScreen(Screen screen) {
-		// System.out.println("switching screen");
 		Screen curScreen = this.getScreen();
 		if (curScreen != null) {
 			this.getScreen().dispose();

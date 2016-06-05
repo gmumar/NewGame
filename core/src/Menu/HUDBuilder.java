@@ -66,7 +66,6 @@ public class HUDBuilder {
 			restart = new Button("restart") {
 				@Override
 				public void Clicked() {
-					// System.out.println("restarting");
 					gameLoader.setScreen(new GamePlayScreen(gameState));
 				}
 			};
@@ -144,6 +143,7 @@ public class HUDBuilder {
 		coin.setSize(50, 50);
 		stage.addActor(coin);
 
+		Animations.InitMoneyAnimation();
 		moneyAnimation = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text");
 		moneyAnimation.setPosition(moneyLocation.x + 40 + 4, moneyLocation.y
 				+ Globals.ScreenHeight + 6.5f);

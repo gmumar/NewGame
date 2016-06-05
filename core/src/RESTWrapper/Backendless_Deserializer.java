@@ -32,8 +32,6 @@ public class Backendless_Deserializer implements
 
 		JsonObject obj = json.getAsJsonObject();
 		
-		//System.out.println("Backendless_Deserializer: " + obj.toString());
-
 		dataSet.setTotalObjects(obj.get("totalObjects").getAsInt());
 		dataSet.setOffset(obj.get("offset").getAsInt());
 

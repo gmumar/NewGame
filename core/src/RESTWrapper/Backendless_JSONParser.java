@@ -12,8 +12,6 @@ public class Backendless_JSONParser {
 		
 		Backendless_Car obj = json.fromJson(input,Backendless_Car.class);
 		
-		//System.out.println(obj.getTotalObjects());
-		
 		return obj;
 		
 	}
@@ -24,8 +22,6 @@ public class Backendless_JSONParser {
 		Gson json = builder.create();
 		
 		Backendless_Track obj = json.fromJson(input,Backendless_Track.class);
-		
-		//System.out.println(obj.getTotalObjects());
 		
 		return obj;
 		

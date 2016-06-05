@@ -64,15 +64,13 @@ public class Assembler {
 		// gameState);
 		HashMap<String, Component> parts = extractComponents(source, gameState,
 				forBuilder);
-		// System.out.println("Assembler :" + parts);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
 		Iterator<JSONJoint> JointIter = jcomponents.iterator();
 		JSONJoint join;
 
 		Map<String, Integer> jointTypeList = source.getJointTypeList();
-		// System.out.println("Assembler : jointType" + jointTypeList);
-
+		
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
 
@@ -82,13 +80,12 @@ public class Assembler {
 
 			/*
 			 * String componentAName = Globals.parseName(join.m1)[0]; //
-			 * System.out.println(componentAName); BaseActor bodyA =
+			 * BaseActor bodyA =
 			 * parts.get(componentAName).getObject(); int componentAMountId =
 			 * Globals.getMountId(join.m1);
 			 */
 
 			String componentAName = join.getMount1().getId();
-			// System.out.println("Assembler : componentA " +
 			// join.getMount1().getMountedId());
 
 			// if(parts.get(componentAName) == null) continue;
@@ -103,7 +100,7 @@ public class Assembler {
 
 			/*
 			 * String componentBName = Globals.parseName(join.m2)[0]; //
-			 * System.out.println(componentBName); BaseActor bodyB =
+			 * BaseActor bodyB =
 			 * parts.get(componentBName).getObject(); int componentBMountId =
 			 * Globals.getMountId(join.m2);
 			 */
@@ -111,8 +108,6 @@ public class Assembler {
 				continue;
 
 			String componentBName = join.getMount2().getId();
-			// System.out.println("Assembler : componentB " +
-			// join.getMount2().getMountedId());
 			// if(parts.get(componentBName) == null) continue;
 
 			BaseActor bodyB = parts.get(componentBName).getObject();
@@ -234,8 +229,6 @@ public class Assembler {
 			if (componentName == null)
 				continue;
 
-			// System.out.println(componentName);
-
 			Integer partLevel = componentName.getLevel() == null ? 1
 					: componentName.getLevel();
 
@@ -301,11 +294,7 @@ public class Assembler {
 				componentList.get(1).setMountId(Integer.toString(0));
 				componentList.get(1).setPartLevel(partLevel);
 
-				// System.out.println("Assembler:  Extracting springA: " +
-				// componentList.get(0).getjComponentName());
-				// System.out.println("Assembler:  Extracting springB: " +
-				// componentList.get(1).getjComponentName());
-
+				
 				/*
 				 * ret.put(componentList.get(0).getComponentName(),
 				 * componentList.get(0)); ret.put(jointComponentName +
@@ -328,8 +317,6 @@ public class Assembler {
 				}
 				// -----------------------------------------------
 
-				// System.out.println("Assembler : sourceComponet: " +
-				// componentName);
 
 				component = ComponentBuilder.buildComponent(
 						componentName.getBaseName(), partLevel, gameState,
@@ -372,8 +359,6 @@ public class Assembler {
 
 		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
 
-		// System.out.println("AssembleTrack: " + mapString);
-
 		HashMap<String, Component> parts = extractComponents(jsonTrack,
 				gameState, buildForMainMenu);
 		Collection<Component> partsCollection = parts.values();
@@ -388,21 +373,17 @@ public class Assembler {
 
 		HashMap<String, Integer> jointTypeList = jsonTrack
 				.getComponentJointTypes();
-		// System.out.println("Assembler : jointType" + jointTypeList);
-
+	
 		for (JSONJoint join : jcomponents) {
 
 			/*
 			 * String componentAName = Globals.parseName(join.m1)[0]; //
-			 * System.out.println(componentAName); BaseActor bodyA =
+			 *  BaseActor bodyA =
 			 * parts.get(componentAName).getObject(); int componentAMountId =
 			 * Globals.getMountId(join.m1);
 			 */
 
 			String componentAName = join.getMount1().getId();
-			// System.out.println("Assembler : componentA " +
-			// join.getMount1().getMountedId());
-
 			// if(parts.get(componentAName) == null) continue;
 
 			BaseActor bodyA = parts.get(componentAName).getObject();
@@ -414,15 +395,13 @@ public class Assembler {
 
 			/*
 			 * String componentBName = Globals.parseName(join.m2)[0]; //
-			 * System.out.println(componentBName); BaseActor bodyB =
+			 *  BaseActor bodyB =
 			 * parts.get(componentBName).getObject(); int componentBMountId =
 			 * Globals.getMountId(join.m2);
 			 */
 			// if(join.getMount2().getMountId().contains("*")) continue;
 
 			String componentBName = join.getMount2().getId();
-			// System.out.println("Assembler : componentB " +
-			// join.getMount2().getMountedId());
 			// if(parts.get(componentBName) == null) continue;
 
 			BaseActor bodyB = parts.get(componentBName).getObject();

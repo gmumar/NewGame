@@ -40,7 +40,7 @@ public class ScrollingBackground {
 		            		,new Vector2(-50, 330)
 		            		,new Vector2(0,400)),
 	        		new ParallaxLayer(
-		            		new TextureRegion(gameLoader.Assets.get(hills, Texture.class))
+		            		new TextureRegion(gameLoader.Assets.getFilteredTexture(hills))
 		            		,new Vector2(7,0)
 		            		,new Vector2(0, -330)
 		            		,new Vector2(-5,400)),

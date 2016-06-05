@@ -15,6 +15,7 @@ import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONParentClass.JSONParentType;
 import JSONifier.JSONTrack;
+import JSONifier.JSONTrack.TrackType;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
@@ -117,6 +118,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	protected abstract int getItemsPerPage();
 
+	protected abstract boolean isCorrectTrackType(TrackType type);
+
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
 		instance = this;
@@ -178,37 +181,36 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 			JSONTrack trackToBeAdded = (JSONTrack) item;
 
-			if (uniquenessButtonList.contains(trackToBeAdded)) {
+			if (isCorrectTrackType(trackToBeAdded.getType())) {
 
-				System.out.println("SelectorScreen: found");
+				if (uniquenessButtonList.contains(trackToBeAdded)) {
 
-				Integer indexInList = uniquenessButtonList
-						.indexOf(trackToBeAdded);
-				JSONParentClass otherItem = uniquenessButtonList
-						.get(indexInList);
-				JSONTrack trackInList = (JSONTrack) otherItem;
+					Integer indexInList = uniquenessButtonList
+							.indexOf(trackToBeAdded);
+					JSONParentClass otherItem = uniquenessButtonList
+							.get(indexInList);
+					JSONTrack trackInList = (JSONTrack) otherItem;
 
-				Long time1 = Long.parseLong(trackToBeAdded.getCreationTime());
-				Long time2 = Long.parseLong(trackInList.getCreationTime());
+					Long time1 = Long.parseLong(trackToBeAdded
+							.getCreationTime());
+					Long time2 = Long.parseLong(trackInList.getCreationTime());
 
-				if (time1 > time2) {
-					System.out.println("SelectorScreen: newer " + time1 + " > "
-							+ time2);
-					items.add(item);
-					items.remove(otherItem);
-					totalLoadedCounter.release();
-					uniquenessButtonList.remove(trackInList);
-					uniquenessButtonList.add(trackToBeAdded);
+					if (time1 > time2) {
+						items.add(item);
+						items.remove(otherItem);
+						totalLoadedCounter.release();
+						uniquenessButtonList.remove(trackInList);
+						uniquenessButtonList.add(trackToBeAdded);
+
+					} else {
+						;
+					}
 
 				} else {
-					System.out.println("SelectorScreen: skipping");
-					;
+					items.add(item);
+					totalLoadedCounter.release();
+					uniquenessButtonList.add(trackToBeAdded);
 				}
-
-			} else {
-				items.add(item);
-				totalLoadedCounter.release();
-				uniquenessButtonList.add(trackToBeAdded);
 			}
 
 		} else if (item.getParentType() == JSONParentType.CAR) {
@@ -225,9 +227,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		/*
 		 * JsonElement catElem = parser.parse(item.jsonify());
 		 * 
-		 * if (uniquenessButtonList.contains(catElem)) {
-		 * System.out.println("SelectorScreen: Found"); } else{
-		 * System.out.println("SelectorScreen: Not Found"); items.add(item);
+		 * if (uniquenessButtonList.contains(catElem)) { items.add(item);
 		 * totalLoadedCounter.release(); uniquenessButtonList.add(catElem); }
 		 */
 
@@ -245,7 +245,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			public void run() {
 
 				for (int i = from; i < actualTo; i++) {
-					// System.out.println("SelectorScreen: " +
 					// items.get(i).jsonify());
 					addButton(items.get(i));
 				}
@@ -278,10 +277,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 						return null;
 					}
 
-					System.out.println("SelectorScreen: "
-							+ localLoadedCounter.availablePermits() + " "
-							+ totalLoadedCounter.availablePermits());
-
 					if (localLoadedCounter.availablePermits() - 2 >= totalLoadedCounter
 							.availablePermits()) {
 						return null;
@@ -306,7 +301,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected void refreshAllButtons() {
 
 		if (!initButtons) {
-			System.out.println("SelectorScreen: initing buttons");
 			initButtons = true;
 			baseTable = new Table(Skins.loadDefault(gameLoader, 1));
 			baseTable.setBackground("transparent");
@@ -330,12 +324,22 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 			stage.addActor(baseTable);
 		} else {
-
+			float scrollPos = 0;
+			if (scrollPane != null) {
+				scrollPos = scrollPane.getScrollX();
+			}
 			// baseTable.clear();
-			contentTable.clear();
-			contentTable.setTouchable(Touchable.childrenOnly);
+			// contentTable.clear();
+			// contentTable.setTouchable(Touchable.childrenOnly);
 
-			populateContentTable(contentTable);
+			// populateContentTable(contentTable);
+
+			itemsTable.clear();
+			initButtons();
+
+			if (scrollPane != null) {
+				scrollPane.setScrollX(scrollPos);
+			}
 		}
 
 		/*
@@ -399,6 +403,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	@Override
 	public void render(float delta) {
+
 		currentMoney = Animations.money(titleBar.getAnimationMoney(),
 				titleBar.getBaseMoney(), user.getMoney(), currentMoney);
 
@@ -441,10 +446,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			StoreBuyDialog.launchDialogFlow(gameLoader, popQueManager);
 		} else if (itemName
 				.compareTo(ItemsLookupPrefix.ERROR_PARTS_NOT_UNLOCKED) == 0) {
-			System.out.println("ScreenSelector : parts not unlocked ");
 			gameLoader.setScreen(new CarBuilderScreen(gameState));
 		} else {
-			System.out.println("SelectorScreen: Successful buy " + itemName);
 			refershPage();
 		}
 		// showCars();

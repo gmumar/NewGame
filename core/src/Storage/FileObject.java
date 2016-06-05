@@ -29,8 +29,6 @@ public class FileObject  {
 	
 	public void append(FileObject objectIn) {
 		
-		//System.out.println(objectIn.getCars().size());
-		
 		Iterator<JSONCar> carIter = objectIn.getCars().iterator();
 		while(carIter.hasNext()){
 			JSONCar car = carIter.next();

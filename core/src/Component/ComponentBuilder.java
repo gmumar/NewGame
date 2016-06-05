@@ -448,8 +448,6 @@ public class ComponentBuilder {
 	public static Component buildTrackPost(GamePhysicalState gamePhysicalState,
 			int partLevel, boolean forBuilder) {
 
-		// System.out.println("ComponentBuilder: building Post");
-
 		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.POST);

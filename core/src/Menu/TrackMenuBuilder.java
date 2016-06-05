@@ -378,7 +378,6 @@ public class TrackMenuBuilder {
 				name.setMountId("*");
 				name.setLevel(partLevel);
 				c.setUpForBuilder(name, partLevel);
-				System.out.println("TrackBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				c.setPosition(camera.position.x, camera.position.y);
 				parts.add(c);
@@ -408,7 +407,6 @@ public class TrackMenuBuilder {
 				name.setMountId("*");
 				name.setLevel(partLevel);
 				c.setUpForBuilder(name, partLevel);
-				System.out.println("TrackBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				c.setPosition(camera.position.x, camera.position.y);
 				parts.add(c);
@@ -439,7 +437,6 @@ public class TrackMenuBuilder {
 				name.setMountId("*");
 				name.setLevel(partLevel);
 				c.setUpForBuilder(name, partLevel);
-				System.out.println("TrackBuilder: " + name);
 				lastSelected = c.getObject().getPhysicsBody();
 				c.setPosition(camera.position.x, camera.position.y);
 				parts.add(c);
@@ -464,7 +461,7 @@ public class TrackMenuBuilder {
 		 * name.setComponentId(Integer.toString(componentCounts
 		 * .get(ComponentNames.TRACKBALL))); name.setMountId("*");
 		 * name.setLevel(partLevel); c.setUpForBuilder(name, partLevel);
-		 * System.out.println("TrackBuilder: " + name); lastSelected =
+		 *  lastSelected =
 		 * c.getObject().getPhysicsBody(); c.setPosition(camera.position.x,
 		 * camera.position.y); parts.add(c);
 		 * 

@@ -66,38 +66,32 @@ public class JointLimits {
 			
 			if (jointHas(joint, ComponentNames.LIFE)) {
 				if (torque > LIFE_BAR_BREAKING_TORQUE) {
-					// System.out.println("break 2 torque " + torque);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > LIFE_BAR_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					// System.out.println("break 2 force " + force);
 					continue;
 				}
 			} else if (jointHas(joint, ComponentNames.BAR3)) {
 				if (torque > BAR_BAR_BREAKING_TORQUE) {
 					world.destroyJoint(joint);
-					// System.out.println("break 1 torque " + torque);
 					continue;
 				}
 
 				if (force > BAR_BAR_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					// System.out.println("break 1 force " + force);
 					continue;
 				}
 			} else {
 				if (torque > DEFAULT_BREAKING_TORQUE) {
-					// System.out.println("break default torque " + torque);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > DEFAULT_BREAKING_FORCE) {
 					world.destroyJoint(joint);
-					// System.out.println("break default force " + force);
 					continue;
 				}
 			}
@@ -107,23 +101,22 @@ public class JointLimits {
 			 * ComponentNames.TIRE)) { continue; } else if (jointBetween(joint,
 			 * ComponentNames.BAR3, ComponentNames.BAR3)) { if (torque >
 			 * BAR_BAR_BREAKING_TORQUE) { world.destroyJoint(joint);
-			 * System.out.println("break 1 torque " + torque); continue; }
+			 *  continue; }
 			 * 
 			 * if (force > BAR_BAR_BREAKING_FORCE) { world.destroyJoint(joint);
-			 * System.out.println("break 1 force " + force); continue; } } else
+			 * continue; } } else
 			 * if (jointBetween(joint, ComponentNames.LIFE,
 			 * ComponentNames.BAR3)) { if (torque > LIFE_BAR_BREAKING_TORQUE) {
-			 * System.out.println("break 2 torque " + torque);
+			 * 
 			 * world.destroyJoint(joint); continue; }
 			 * 
 			 * if (force > LIFE_BAR_BREAKING_FORCE) { world.destroyJoint(joint);
-			 * System.out.println("break 2 force " + force); continue; } } else
+			 * continue; } } else
 			 * { if (torque > DEFAULT_BREAKING_TORQUE) {
-			 * System.out.println("break default torque " + torque);
 			 * world.destroyJoint(joint); continue; }
 			 * 
 			 * if (force > DEFAULT_BREAKING_FORCE) { world.destroyJoint(joint);
-			 * System.out.println("break default force " + force); continue; } }
+			 *  continue; } }
 			 */
 		}
 	}

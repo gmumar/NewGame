@@ -134,7 +134,6 @@ public class JSONTrack extends JSONParentClass {
 
 	public static JSONTrack objectify(String data) {
 		Gson json = new Gson();
-		//System.out.println("JSONTrack: " + data);
 		// json.setIgnoreUnknownFields(true);
 		return json.fromJson(data, JSONTrack.class);
 	}

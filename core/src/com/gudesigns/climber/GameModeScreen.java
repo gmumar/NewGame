@@ -102,7 +102,7 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!adventrueMode.locked) {
-					gameLoader.setScreen(new TrackSelectorScreen(gameState));
+					gameLoader.setScreen(new ForrestTrackSelectorScreen(gameState));
 				}
 			}
 		});

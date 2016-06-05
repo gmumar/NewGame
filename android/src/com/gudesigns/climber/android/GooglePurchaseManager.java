@@ -93,7 +93,6 @@ public class GooglePurchaseManager extends IAPManager {
 
 	@Override
 	protected void getInformation(final GamePurchaseObserver listener) {
-		System.out.println("GooglePurchase: getting information");
 
 		Thread t = new Thread(new Runnable() {
 
@@ -115,10 +114,7 @@ public class GooglePurchaseManager extends IAPManager {
 					listener.handleRecievedInformation(GamePurchaseResult(null,
 							inv));
 
-					System.out.println("GooglePurchase: sent request");
 				} catch (Exception e) {
-					System.out
-							.println("GooglePurchase: getting information failed");
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

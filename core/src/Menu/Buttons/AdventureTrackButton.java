@@ -4,6 +4,7 @@ import wrapper.Globals;
 import Dialog.Skins;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
+import Menu.ScreenType;
 import User.ItemsLookupPrefix;
 import User.User;
 import User.User.STARS;
@@ -26,10 +27,10 @@ import com.gudesigns.climber.GameLoader;
 public class AdventureTrackButton {
 
 	public static final ButtonLockWrapper create(GameLoader gameLoader,
-			JSONTrack track, boolean forInfinite) {
+			JSONTrack track, boolean forInfinite, ScreenType screenType) {
 
 		Skin skin = Skins.loadDefault(gameLoader, 1);
-		String indexTxt = Integer.toString(track.getIndex());
+		String indexTxt = "";
 		User user = User.getInstance();
 
 		boolean isLocked = true;
@@ -39,32 +40,38 @@ public class AdventureTrackButton {
 
 		Button base = null;
 
-		if (forInfinite) {
-			isNew = user.isNew(ItemsLookupPrefix
-					.getInfiniteTrackPrefix(indexTxt));
-			isLocked = false;
+		if (screenType == ScreenType.NONE) {
+			indexTxt = Integer.toString(track.getIndex());
+			if (forInfinite) {
+				isNew = user.isNew(ItemsLookupPrefix
+						.getInfiniteTrackPrefix(indexTxt));
+				isLocked = false;
 
-			if (track.getDifficulty() == 1) {
-				base = new Button(skin, "adventureTrack_diff_1");
-			} else if (track.getDifficulty() == 2) {
-				base = new Button(skin, "adventureTrack_diff_2");
-			} else if (track.getDifficulty() == 3) {
-				base = new Button(skin, "adventureTrack_diff_3");
+				if (track.getDifficulty() == 1) {
+					base = new Button(skin, "adventureTrack_diff_1");
+				} else if (track.getDifficulty() == 2) {
+					base = new Button(skin, "adventureTrack_diff_2");
+				} else if (track.getDifficulty() == 3) {
+					base = new Button(skin, "adventureTrack_diff_3");
+				} else {
+					base = new Button(skin, "adventureTrack_diff_x");
+				}
+
 			} else {
-				base = new Button(skin, "adventureTrack_diff_x");
+				isNew = false;
+				if (track.getType() == TrackType.FORREST) {
+					base = new Button(skin, "adventureTrack_forrest");
+					isLocked = user.isLocked(ItemsLookupPrefix
+							.getForrestPrefix(indexTxt));
+				} else if (track.getType() == TrackType.ARTIC) {
+					base = new Button(skin, "adventureTrack_artic");
+					isLocked = user.isLocked(ItemsLookupPrefix
+							.getArticPrefix(indexTxt));
+				}
 			}
-
-		} else {
-			isNew = false;
-			if (track.getType() == TrackType.FORREST) {
-				base = new Button(skin, "adventureTrack_forrest");
-				isLocked = user.isLocked(ItemsLookupPrefix
-						.getForrestPrefix(indexTxt));
-			} else if (track.getType() == TrackType.ARTIC) {
-				base = new Button(skin, "adventureTrack_artic");
-				isLocked = user.isLocked(ItemsLookupPrefix
-						.getArticPrefix(indexTxt));
-			}
+		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+			base = new Button(skin, "adventureTrack_artic");
+			isLocked = user.isLocked(ItemsLookupPrefix.ARCTIC_WORLD);
 		}
 
 		Stack stack = new Stack();
@@ -75,8 +82,16 @@ public class AdventureTrackButton {
 
 		Image stars = new Image();
 		float starWidth = Globals.baseSize * 3 / 5;
+		STARS userStars = null;
 
-		if (user.getStars(track.getObjectId()) == STARS.NONE) {
+		if (screenType == ScreenType.NONE) {
+			userStars = user.getStars(track.getObjectId());
+		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+
+			userStars = STARS.NONE;
+		}
+
+		if (userStars == STARS.NONE) {
 			;
 		} else if (user.getStars(track.getObjectId()) == STARS.ONE) {
 			stars = new Image((new TextureRegionDrawable(new TextureRegion(
@@ -84,14 +99,14 @@ public class AdventureTrackButton {
 							.getFilteredTexture("menu/images/one_star.png")))));
 
 			starWidth *= 1;
-		} else if (user.getStars(track.getObjectId()) == STARS.TWO) {
+		} else if (userStars == STARS.TWO) {
 			stars = new Image((new TextureRegionDrawable(new TextureRegion(
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/two_stars.png")))));
 
 			starWidth *= 2;
 
-		} else if (user.getStars(track.getObjectId()) == STARS.THREE) {
+		} else if (userStars == STARS.THREE) {
 			stars = new Image(
 					(new TextureRegionDrawable(
 							new TextureRegion(
@@ -106,13 +121,23 @@ public class AdventureTrackButton {
 		content.row();
 
 		Label index = new Label("index", skin, "index");
-		index.setText(indexTxt);
+
+		if (screenType == ScreenType.NONE) {
+			index.setText(indexTxt);
+		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+			index.setText("Arctic");
+		}
 
 		content.add(index);
 
 		// stack.add(content);
-		stackInlay.add(content).width(Globals.baseSize * 3)
-				.height(Globals.baseSize * 3);
+		if (screenType == ScreenType.NONE) {
+			stackInlay.add(content).width(Globals.baseSize * 3)
+					.height(Globals.baseSize * 3);
+		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+			stackInlay.add(content).width(Globals.baseSize * 6)
+					.height(Globals.baseSize * 3);
+		}
 
 		stack.add(stackInlay);
 

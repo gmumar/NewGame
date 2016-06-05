@@ -9,6 +9,7 @@ import Assembly.Assembler;
 import Dialog.Skins;
 import JSONifier.JSONCar;
 import JSONifier.JSONParentClass;
+import JSONifier.JSONTrack.TrackType;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
@@ -180,7 +181,6 @@ public class CarSelectorScreen extends SelectorScreen {
 	 * ArrayList<JSONCar>(); for (JSONParentClass car : items) { // String car =
 	 * iter.next(); list.add((JSONCar) car); }
 	 * 
-	 * System.out.println("writing " + list.size());
 	 * 
 	 * FileObject fileObject = new FileObject(); fileObject.setCars(list);
 	 * 
@@ -345,8 +345,6 @@ public class CarSelectorScreen extends SelectorScreen {
 			gameLoader.cars.add((JSONCar) car);
 		}
 
-		System.out.println("CarSelectorScreen: written " + list.size());
-
 		if (list.isEmpty())
 			return;
 
@@ -490,6 +488,13 @@ public class CarSelectorScreen extends SelectorScreen {
 	@Override
 	protected void clearScreen() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
+	}
+	
+
+	@Override
+	protected boolean isCorrectTrackType(TrackType type) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

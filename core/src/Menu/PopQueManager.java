@@ -107,7 +107,8 @@ public class PopQueManager {
 			createPauseDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE
 				|| popQueObject.getType() == PopQueObjectType.UNLOCK_TRACK
-				|| popQueObject.getType() == PopQueObjectType.UNLOCK_CAR_MODE) {
+				|| popQueObject.getType() == PopQueObjectType.UNLOCK_CAR_MODE
+				|| popQueObject.getType() == PopQueObjectType.UNLOCK_ARCTIC_WORLD) {
 			createUnlockModeDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
 				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_BUILD

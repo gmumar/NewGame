@@ -27,8 +27,6 @@ public class Backendless_Track extends Backendless_ParentContainer {//implements
 			//byte[] bytes = Base64Coder.decode(b);//.decodeBase64(b);
 			String track = null;
 
-			//System.out.println(b);
-			
 			try {
 				track = Gzip.decompress(b);
 			} catch (IOException e) {

@@ -23,7 +23,6 @@ public class BackendFunctions {
 
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				//System.out.println(httpResponse.getResultAsString());
 				Globals.toast("Car uploaded");
 			}
 
@@ -43,7 +42,6 @@ public class BackendFunctions {
 
 	public static void uploadTrack(String mapString, String restPath, float mapTime, int difficulty, int index) {
 		
-		System.out.println("BackendFunctions: " + Integer.toString(difficulty));
 
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.TRACK_POINTS_JSON, Compress.Track(mapString));

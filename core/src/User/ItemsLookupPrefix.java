@@ -5,6 +5,7 @@ public class ItemsLookupPrefix {
 	
 	public final static String INFINITY_TRACK_MODE = "m_infin";
 	public final static String ADVENTURE_TRACK_MODE = "m_adven";
+	public final static String ARCTIC_WORLD = "m_arctic_world";
 	public final static String CAR_BUILDER = "car_build";
 	public final static String CAR_MY_PICKS = "car_pick";
 	public final static String COMMUNITY_CARS_MODE = "car_comm";

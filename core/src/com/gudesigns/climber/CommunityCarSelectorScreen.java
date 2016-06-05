@@ -169,7 +169,6 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 	 * ArrayList<JSONCar>(); for (JSONParentClass car : items) { // String car =
 	 * iter.next(); list.add((JSONCar) car); }
 	 * 
-	 * System.out.println("writing " + list.size());
 	 * 
 	 * FileObject fileObject = new FileObject(); fileObject.setCars(list);
 	 * 
@@ -251,8 +250,6 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 			list.add((JSONCar) car);
 			gameLoader.communityCars.add((JSONCar) car);
 		}
-
-		System.out.println("CarSelectorScreen: written " + list.size());
 
 		if (list.isEmpty())
 			return;

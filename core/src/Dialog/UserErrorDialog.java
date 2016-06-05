@@ -103,7 +103,6 @@ public class UserErrorDialog {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED) {
-						System.out.println("UserErrorDialog: parts not unlocked ");
 						popQueObject
 								.getTwoButtonFlowContext()
 								.successfulTwoButtonFlow(

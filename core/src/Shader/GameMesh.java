@@ -187,8 +187,6 @@ public class GameMesh {
 		int index = ret.index - startDiff ;// 0
 		final int vertexLen = ret.vertices.length - 16;
 
-		// System.out.println("vertices len: " + ret.vertices.length);
-
 		colorr = color.r;
 		colorg = color.g;
 		colorb = color.b;
@@ -264,7 +262,7 @@ public class GameMesh {
 	 * retGlobal.vertices[index++] = colorg; retGlobal.vertices[index++] =
 	 * colorb; retGlobal.vertices[index++] = colora; retGlobal.vertices[index++]
 	 * = pointXt; retGlobal.vertices[index++] = pointYt - depth / 2 + offset; //
-	 * System.out.println("added " + tmpVerts[i - start]); }
+	 *  }
 	 * 
 	 * retGlobal.indices = getIndices(vertexCount);
 	 * 
@@ -296,7 +294,6 @@ public class GameMesh {
 
 			vertex += 1;
 			i += 8;
-			// System.out.println("added " + tmpVerts[i - start]);
 		}
 
 		return solvedIndices;

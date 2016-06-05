@@ -231,12 +231,10 @@ public class CarDisplayDialog {
 
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
-						System.out.println(httpResponse.getResultAsString());
 					}
 
 					@Override
 					public void failed(Throwable t) {
-						System.out.println("Delete failed");
 					}
 
 					@Override

@@ -5,6 +5,7 @@ import Menu.Animations;
 import Menu.PopQueObject;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
+import User.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -42,6 +43,8 @@ public class KilledDialog extends Table {
 		base.setBackground("dialogDim");
 		base.setFillParent(true);
 		Animations.fadeIn(base);
+		
+		Table contextWrapper = new Table();
 
 		Button restart = new Button(skin, "carBuilder_play");
 		restart.addListener(new ClickListener() {
@@ -54,15 +57,18 @@ public class KilledDialog extends Table {
 			}
 
 		});
-		
+
 		Label restartText = new Label("restart", skin);
 		restart.add(restartText).pad(20);
-		
-		Image restartImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/restart_black.png"));
-		restart.add(restartImage).width(Globals.baseSize).height(Globals.baseSize*1.2f).pad(10);
-		
 
-		ImageButton home = SimpleImageButton.create(SimpleImageButtonTypes.HOME, gameLoader);
+		Image restartImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/restart_black.png"));
+		restart.add(restartImage).width(Globals.baseSize)
+				.height(Globals.baseSize * 1.2f).pad(10);
+
+		ImageButton home = SimpleImageButton.create(
+				SimpleImageButtonTypes.HOME, gameLoader);
 		home.addListener(new ClickListener() {
 
 			@Override
@@ -73,8 +79,9 @@ public class KilledDialog extends Table {
 			}
 
 		});
-		
-		ImageButton car = SimpleImageButton.create(SimpleImageButtonTypes.CAR, gameLoader);
+
+		ImageButton car = SimpleImageButton.create(SimpleImageButtonTypes.CAR,
+				gameLoader);
 		car.addListener(new ClickListener() {
 
 			@Override
@@ -86,20 +93,39 @@ public class KilledDialog extends Table {
 
 		});
 
-
 		Table textWrapper = new Table(skin);
 		textWrapper.setTouchable(Touchable.enabled);
 
 		Label text = new Label("Killed!", skin, "winTitle");
 		text.setAlignment(Align.center);
-		
+
 		textWrapper.add(text);
 
-		base.add(textWrapper).fill().expand().center();
+		contextWrapper.add(textWrapper).fill().expand().center();
 
-		base.row();
-		Table bottomBar = new Table(skin);
+		contextWrapper.row();
 		
+		// Coins Earned
+		Table coinsWrapper = new Table();
+		Label coinsEarnedText = new Label("Coins Lost", skin, "defaultWhite");
+		Image coinImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/white_coin.png"));
+
+		coinsWrapper.add(coinsEarnedText).left().width(Globals.baseSize * 5);
+		coinsWrapper.add(coinImage).width(Globals.baseSize)
+				.height(Globals.baseSize).left().expand();
+
+		Label coinsEarned = new Label("100", skin, "defaultWhite");
+		coinsWrapper.add(coinsEarned).right().expand();
+		contextWrapper.add(coinsWrapper).width(Globals.baseSize * 10).expand().pad(5);
+		contextWrapper.row();
+		
+		base.add(contextWrapper).expandY().center();
+		base.row();
+		
+		Table bottomBar = new Table(skin);
+
 		bottomBar.setBackground("blackOut");
 
 		Table bottomWrapper = new Table(skin);
@@ -108,13 +134,13 @@ public class KilledDialog extends Table {
 		bottomWrapper.add(car).width(90).fillY().expandY();
 
 		bottomBar.add(bottomWrapper).expand().left().fillY();
-		
+
 		bottomBar.add(restart).right().fillY().expand();
 		// bottomBar.moveBy(0, -100);
 
-		//Animations.fadeInFromBottom(bottomBar, 50);
+		// Animations.fadeInFromBottom(bottomBar, 50);
 
-		base.add(bottomBar).height(80).expandX().fillX();
+		base.add(bottomBar).height(80).expandX().fillX().bottom();
 	}
 
 	public Table getBase() {
@@ -122,16 +148,11 @@ public class KilledDialog extends Table {
 	}
 
 	public void update(GameLoader gameLoader, PopQueObject popQueObject) {
-		//JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
-			//	.getCurrentTrack());
+		// JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
+		// .getCurrentTrack());
 		buildTable(gameLoader, popQueObject);
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
-		/*User.getInstance()
-				.addCoin(
-						(popQueObject.getGamePlayInstance().calculatePosition() >= Globals.POSITION_LOST ? 0
-								: popQueObject.getGamePlayInstance()
-										.calculatePosition())
-								* playedTrack.getDifficulty());*/
+		User.getInstance().addCoin(-100);
 
 	}
 }

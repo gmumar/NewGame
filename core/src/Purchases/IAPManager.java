@@ -41,7 +41,6 @@ public abstract class IAPManager {
 
 		if (initialized) {
 			purchase(productString, purchaseObserver);
-			System.out.println("calls purchasemanager.purchase()");
 		} else {
 			System.out
 					.println("ERROR: requestPurchase(): purchaseManager == null");
@@ -57,7 +56,6 @@ public abstract class IAPManager {
 	public void requestPurchaseRestore() {
 		if (initialized) {
 			purchaseRestore(purchaseObserver); 
-			System.out.println("calls purchasemanager.purchaseRestore()");
 		} else {
 			System.out
 					.println("ERROR: requestPurchaseRestore(): purchaseManager == null");
@@ -70,7 +68,6 @@ public abstract class IAPManager {
 
 	public void dispose() {
 		if (mgr != null) {
-			System.out.println("calls purchasemanager.dispose()");
 			mgr = null;
 		}
 	}

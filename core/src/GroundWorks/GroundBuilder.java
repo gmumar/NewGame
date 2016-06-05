@@ -114,8 +114,6 @@ public class GroundBuilder {
 			trackType = JSONTrack.objectify(mapString).getType();
 		}
 
-		// System.out.println(mapString);
-
 		createFloor();
 		decor = new GroundDecor(gameState);
 
@@ -135,8 +133,7 @@ public class GroundBuilder {
 			// Vector2(-10,-50)));
 			// shaderEnd = 8*15;//= mapList.get(mapList.size()-1).vertexId;
 
-			// System.out.println("point on map " + mapList.size() + " vertex: "
-			// + shaderEnd);
+		
 		}
 
 		if (trackType == TrackType.FORREST) {

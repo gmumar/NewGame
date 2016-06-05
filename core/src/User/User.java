@@ -57,8 +57,6 @@ public class User {
 	}
 
 	private void saveUserState() {
-		
-		System.out.println("User:Saving user state");
 
 		Gson json = new Gson();
 		String encrypted = encryptor.encrypt(json.toJson(userState));
@@ -109,7 +107,6 @@ public class User {
 		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("3"), false);
 
 		saveUserState();
-		// System.out.println("Restored: " + json.toJson(userState));
 	}
 
 	public String getCurrentCar() {
@@ -180,8 +177,6 @@ public class User {
 
 		// prefs.clear();
 
-		System.out.println("User: Track saved!");
-
 		prefs.putString(GamePreferences.TRACK_MAP_STR, currentTrack);
 		prefs.putString(GamePreferences.TRACK_MODE_STR, mode.toString());
 		prefs.flush();
@@ -227,6 +222,11 @@ public class User {
 			} else if (itemName
 					.compareTo(ItemsLookupPrefix.INFINITY_TRACK_MODE) == 0) {
 				Unlock(ItemsLookupPrefix.INFINITY_TRACK_MODE);
+			} else if (itemName
+					.compareTo(ItemsLookupPrefix.ARCTIC_WORLD) == 0) {
+				Unlock(ItemsLookupPrefix.ARCTIC_WORLD);
+			} else {
+				System.out.println("ERROR: User: Trying to buy unknown Item");
 			}
 
 			saveUserState();
@@ -380,7 +380,6 @@ public class User {
 	}
 
 	public void Unlock(String id) {
-		System.out.println("User: unlocking " + id);
 		setLock(id, false);
 	}
 
@@ -393,7 +392,6 @@ public class User {
 	}
 
 	public Boolean isLocked(String id) {
-		System.out.println("User: checking lock " + id);
 		if (lockedItems == null) {
 			return true;
 		}

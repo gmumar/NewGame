@@ -460,7 +460,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	final private void attachCameraTo(Body actor) {
-		// System.out.println();
 		rollingAvg.add(actor.getLinearVelocity().x);
 		speedZoom = (float) rollingAvg.getAverage() * 0.025f;
 		if (speedZoom < 0) {

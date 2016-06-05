@@ -15,14 +15,11 @@ public class Backendless_Car extends Backendless_ParentContainer {
 	@Override
 	public void read(Json json, JsonValue jsonData) {
 		
-		System.out.println("");
-
 		totalObjects = jsonData.getInt("totalObjects");
 		offset = jsonData.getInt("offset");
 
 		JsonValue localData = jsonData.get("data");
 		
-		//System.out.println(totalObjects);
 
 		JsonIterator iter = localData.iterator();
 		while (iter.hasNext()) {
@@ -31,7 +28,6 @@ public class Backendless_Car extends Backendless_ParentContainer {
 			//byte[] bytes = Base64Coder.decode(b);//.decodeBase64(b);
 			String car = null;
 
-			//System.out.println(b);
 			
 			try {
 				car = Gzip.decompress(b);
@@ -39,7 +35,6 @@ public class Backendless_Car extends Backendless_ParentContainer {
 				e.printStackTrace();
 			}
 
-			//System.out.println(car);
 			data.add(car);
 		}
 

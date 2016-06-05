@@ -82,7 +82,7 @@ public class LoaderScreen implements Screen {
 			 */
 
 			shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-			shapeRenderer.setColor(Color.WHITE);
+			shapeRenderer.setColor(Color.GRAY);
 
 			/*
 			 * shapeRenderer.rect(-Gdx.graphics.getWidth() / 2,
@@ -145,6 +145,7 @@ public class LoaderScreen implements Screen {
 
 		// // Menus
 		gameLoader.Assets.load("menu/icons/car.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/cart.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/home.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/pause.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/play.png", Texture.class);
@@ -165,6 +166,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/warning.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/clock_white.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/wrench.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/help.png", Texture.class);
 
 		gameLoader.Assets.load("menu/icons/up.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/down.png", Texture.class);
@@ -382,7 +384,7 @@ public class LoaderScreen implements Screen {
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);

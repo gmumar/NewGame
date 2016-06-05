@@ -15,6 +15,8 @@ public class Costs {
 	public static final Integer INFINITY_TRACK = 2000;
 	public static final Integer COMMUNITY_CARS_MODE = 2000;
 	
+	static public final Integer ARCTIC_WORLD = 5000;
+	
 	static {
 		bar3Costs.put(1, 10);
 		bar3Costs.put(2, 20);

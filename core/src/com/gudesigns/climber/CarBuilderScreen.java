@@ -46,6 +46,8 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 	private Box2DDebugRenderer debugRenderer;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 	private PopQueManager popQueManager;
+	
+	private CarBuilderScreen instance;
 
 	private float zoom = 0.015f;
 
@@ -56,6 +58,8 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 		shapeRenderer = new ShapeRenderer();
 		initStage();
 		initWorld();
+		
+		instance = this;
 
 		popQueManager = new PopQueManager(gameState.getGameLoader(), stage);
 
@@ -65,7 +69,7 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 
 		menu = new MenuBuilder(new GamePhysicalState(world,
 				gameState.getGameLoader()), stage, camera, shapeRenderer,
-				gameState.getUser(), popQueManager);
+				gameState.getUser(), popQueManager, instance);
 
 		debugRenderer = new Box2DDebugRenderer();
 
@@ -75,9 +79,9 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 			popQueManager.initTutorialTable(new PopQueObject(
 					PopQueObjectType.TUTORIAL_BUILDER_SCREEN));
 			popQueManager.push(new PopQueObject(
-					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_INTRO, this));
+					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_INTRO, instance));
 
-			// user.setNonNew(ItemsLookupPrefix.CAR_BUILDER, false);
+			user.setNonNew(ItemsLookupPrefix.CAR_BUILDER, false);
 		}
 
 	}
@@ -259,9 +263,6 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 		if (camera.position.y < -5.5f) {
 			camera.position.y = -5.5f;
 		}
-
-		// System.out.println("BuilderScreen: " + camera.position.x + " " +
-		// camera.position.y);
 
 		camera.update();
 		return true;

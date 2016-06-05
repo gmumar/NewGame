@@ -115,7 +115,6 @@ public class Component {
 				}
 			}
 
-			// System.out.println(this + " " + property);
 		}
 
 	}
@@ -150,8 +149,6 @@ public class Component {
 				// + mountId++);
 				fixtureName.setMountId(Integer.toString(mountId++));
 
-				System.out.println("Component: Creating mount fixture:"
-						+ fixtureName);
 				fixture.setUserData(fixtureName);
 			}
 		} else if (this.componentTypes == ComponentTypes.JOINT) {
@@ -163,8 +160,6 @@ public class Component {
 
 				this.setComponentId(name.getComponentId());
 				this.setPartLevel(partLevel);
-				System.out.println("Componenet : jointBodyCount "
-						+ body.getjName());
 				// TODO: finalize this
 				body.setSensor();
 				// body.setBodyType(BodyType.KinematicBody);
@@ -179,9 +174,7 @@ public class Component {
 				 * body.getPhysicsBody().getUserData() + name);
 				 */
 				// name.setMountId(Integer.toString(mountId));
-				System.out.println("Before Componenet : bodyName: "
-						+ ((JSONComponentName) body.getPhysicsBody()
-								.getUserData()));
+
 				// name.setBaseName(body.getPhysicsBody().getUserData() +
 				// name.getBaseName());
 
@@ -200,8 +193,6 @@ public class Component {
 
 	// public JSONComponent toJSONComponent(String name) {
 	public JSONComponent toJSONComponent(JSONComponentName name) {
-
-		//System.out.println("Component: creatingJSONComponent: " + name);
 
 		JSONComponent jComponent = new JSONComponent();
 		// jComponent.setComponentName(name);
@@ -387,8 +378,6 @@ public class Component {
 				}
 				body.setPosition(body.getPosition().x + f, body.getPosition().y
 						+ g); // This line is the TODO
-				// System.out.println(body + " " + body.getName()
-				// + " Setting position " + body.getPosition());
 			}
 		}
 

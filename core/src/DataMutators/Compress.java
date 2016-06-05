@@ -10,8 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 public class Compress {
 
 	public static final String Track(String mapString) {
-		
-		System.out.println("Compress: " + mapString);
 
 		JSONTrack jsonTrack = JSONTrack.objectify(mapString);
 		ArrayList<Vector2> points = jsonTrack.getPoints();
@@ -32,7 +30,6 @@ public class Compress {
 
 		jsonTrack.setSmallPoints(smallPoints);
 		
-		System.out.println("Compress: " + jsonTrack.jsonify());
 
 		String compressed = null;
 

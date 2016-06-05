@@ -1,7 +1,6 @@
 package Menu.Buttons;
 
 import wrapper.Globals;
-import Dialog.Skins;
 import Menu.Animations;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,7 +19,7 @@ public class SimpleImageButton extends ImageButton {
 	}
 
 	public enum SimpleImageButtonTypes {
-		PAUSE, BACK, SOUND, UPLOAD, HOME, CAR, RESTART, EDIT, LEFT, RIGHT
+		PAUSE, BACK, SOUND, UPLOAD, HOME, CAR, RESTART, EDIT, LEFT, RIGHT, HELP
 	};
 
 	public static ImageButton create(SimpleImageButtonTypes type,
@@ -96,6 +95,14 @@ public class SimpleImageButton extends ImageButton {
 							.getFilteredTexture("menu/icons/right.png")));
 			scaleY = 2f;
 			paddingOffset = -18;
+		} else if (type == SimpleImageButtonTypes.HELP) {
+			trd = new TextureRegionDrawable(
+					new TextureRegion(
+							gameLoader.Assets
+									.getFilteredTexture("menu/icons/help.png")));
+			scaleY = 1f;
+			scaleX = 1f;
+			paddingOffset = -8;
 		}
 
 		trd.setMinHeight(Globals.baseSize * scaleY);
@@ -109,15 +116,17 @@ public class SimpleImageButton extends ImageButton {
 		// button.setBackground("blackOut");
 		// }
 
-		button.addListener(new ClickListener() {
+		if (type != SimpleImageButtonTypes.EDIT) {
+			button.addListener(new ClickListener() {
 
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Animations.click(button);
-				super.clicked(event, x, y);
-			}
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					Animations.click(button);
+					super.clicked(event, x, y);
+				}
 
-		});
+			});
+		}
 
 		button.pad(18.5f + paddingOffset);
 		if (type != SimpleImageButtonTypes.CAR
