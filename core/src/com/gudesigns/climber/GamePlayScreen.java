@@ -46,6 +46,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
+import com.gudesigns.climber.SelectorScreens.InfiniteTrackSelectorScreen;
 
 public class GamePlayScreen implements Screen, InputProcessor {
 
@@ -57,7 +58,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private CameraManager camera, secondCamera;
 	private HUDBuilder hud;
 	private Stage stage;
-	private GameViewport vp;
+	private GameViewport stageVp, gameVp;
 	private ShaderProgram shader, colorShader;
 
 	private RollingAverage rollingAvg;
@@ -435,12 +436,22 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	public void nextLevel(JSONTrack playedTrack) {
+
 		int nextLevelindex = playedTrack.getIndex() + 1;
 
-		for (JSONTrack track : gameLoader.tracks) {
+		ArrayList<JSONTrack> tracks = null;
+
+		if (playedTrack.getType() == TrackType.ARTIC) {
+			tracks = gameLoader.arcticTracks;
+		} else if (playedTrack.getType() == TrackType.FORREST) {
+			tracks = gameLoader.forrestTracks;
+		}
+
+		for (JSONTrack track : tracks) {
+
 			if (track.getType() == playedTrack.getType()
 					&& track.getIndex() == nextLevelindex) {
-				user.setCurrentTrack(track.jsonify(), TrackMode.ADVENTURE);
+				user.setCurrentTrack(track.jsonify(), TrackMode.ADVENTURE, false);
 				break;
 			}
 		}
@@ -494,10 +505,12 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				Globals.ScreenHeight);
 		secondCamera.update();
 
-		vp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
+		stageVp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				secondCamera);
+		
+		gameVp = new GameViewport(Globals.ScreenWidth/80, Globals.ScreenHeight/80, camera);
 
-		stage = new Stage(vp);
+		stage = new Stage(stageVp);
 
 	}
 
@@ -514,7 +527,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void resize(int width, int height) {
 		camera.viewportWidth = Globals.PixelToMeters(width);
 		camera.viewportHeight = Globals.PixelToMeters(height);
-		vp.update(width, height);
+		stageVp.update(width, height);
+		gameVp.update(width, height);
 
 	}
 

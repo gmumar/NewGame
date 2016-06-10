@@ -207,6 +207,16 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("bar/level3.png", Texture.class);
 		gameLoader.Assets.load("bar/level4.png", Texture.class);
 		gameLoader.Assets.load("bar/level5.png", Texture.class);
+		gameLoader.Assets.load("bar/level6.png", Texture.class);
+		gameLoader.Assets.load("bar/level7.png", Texture.class);
+		gameLoader.Assets.load("bar/level8.png", Texture.class);
+		gameLoader.Assets.load("bar/level9.png", Texture.class);
+		gameLoader.Assets.load("bar/level10.png", Texture.class);
+		gameLoader.Assets.load("bar/level11.png", Texture.class);
+		gameLoader.Assets.load("bar/level12.png", Texture.class);
+		gameLoader.Assets.load("bar/level13.png", Texture.class);
+		gameLoader.Assets.load("bar/level14.png", Texture.class);
+		gameLoader.Assets.load("bar/level15.png", Texture.class);
 
 		// // Tire
 		gameLoader.Assets.load("tire/builder.png", Texture.class);
@@ -301,7 +311,7 @@ public class LoaderScreen implements Screen {
 									JSONCar.class);
 
 							if (fileName.compareTo(FileManager.CAR_FILE_NAME) == 0) {
-								gameLoader.cars.add(car);
+								gameLoader.autherCars.add(car);
 							} else if (fileName
 									.compareTo(FileManager.COMMUNITY_FILE_NAME) == 0) {
 								gameLoader.communityCars.add(car);

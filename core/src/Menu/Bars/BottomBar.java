@@ -22,7 +22,7 @@ import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
-import com.gudesigns.climber.ForrestTrackSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.ForrestTrackSelectorScreen;
 
 public class BottomBar {
 
@@ -58,6 +58,8 @@ public class BottomBar {
 					gameLoader.setScreen(new GamePlayScreen(gameState));
 				} else if (type == ScreenType.CAR_MODE_SCREEN) {
 					gameLoader.setScreen(new CarBuilderScreen(gameState));
+				} else if (type == ScreenType.MAIN_MENU_SCREEN) {
+					gameLoader.setScreen(new GamePlayScreen(gameState));
 				}
 				super.clicked(event, x, y);
 			}
@@ -67,7 +69,7 @@ public class BottomBar {
 		bottomBar.add(next).right().expand();
 
 		base.add(bottomBar).fillX().height(Globals.baseSize * 3.5f).expandX()
-				.bottom();
+				.bottom().padBottom(12).padLeft(12).padRight(12);
 
 		if (animate) {
 			// Animations.fadeInFromBottom(bottomBar, 50);

@@ -25,10 +25,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.CarModeScreen;
-import com.gudesigns.climber.ForrestTrackSelectorScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GameModeScreen;
 import com.gudesigns.climber.MainMenuScreen;
+import com.gudesigns.climber.SelectorScreens.ForrestTrackSelectorScreen;
 
 public class TitleBar {
 
@@ -40,8 +40,6 @@ public class TitleBar {
 			final ScreenType type, final PopQueManager popQueManager,
 			final GameState gameState, final BarObjects barObjects,
 			boolean animate) {
-
-		
 
 		Animations.InitMoneyAnimation();
 
@@ -82,7 +80,9 @@ public class TitleBar {
 
 		});
 
-		titleBar.add(back).left().colspan(1);
+		if (type != ScreenType.MAIN_MENU_SCREEN) {
+			titleBar.add(back).left().colspan(1);
+		}
 
 		// Buy coins button
 		Button buyCoins = new Button(skin, "transparentButton");
@@ -127,14 +127,20 @@ public class TitleBar {
 		coinsStack.add(coins);
 		coinsStack.add(animationCoins);
 		buyCoins.add(coinsStack);
-
-		titleBar.add(buyCoins).left().colspan(1).pad(4);
+		if (type != ScreenType.MAIN_MENU_SCREEN) {
+			titleBar.add(buyCoins).left().colspan(1).pad(4);
+		}
 
 		// Title
 		Label titleLabel = new Label("", skin, "title");
-		titleLabel.setPosition(Globals.ScreenWidth / 2,
-				Globals.ScreenHeight / 12);
-		titleBar.add(titleLabel).expand().center().padRight(100);
+
+		// titleLabel.setPosition(Globals.ScreenWidth / 2,
+		// Globals.ScreenHeight / 12);
+		if (type == ScreenType.CAR_BUILDER) {
+			titleBar.add(titleLabel).expand().right().padRight(200);
+		} else {
+			titleBar.add(titleLabel).expand().right().padRight(260);
+		}
 
 		if (type == ScreenType.MODE_SCREEN) {
 			titleLabel.setText("Game Mode");
@@ -150,9 +156,9 @@ public class TitleBar {
 			titleLabel.setText("Build Car");
 
 			// Upload
-			Button sound = SimpleImageButton.create(
+			Button upload = SimpleImageButton.create(
 					SimpleImageButtonTypes.UPLOAD, gameLoader);
-			sound.addListener(new ClickListener() {
+			upload.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
@@ -166,8 +172,10 @@ public class TitleBar {
 
 			});
 
-			titleBar.add(sound).right();
+			titleBar.add(upload).right();
 
+		} else if (type == ScreenType.MAIN_MENU_SCREEN) {
+			titleLabel.setText(" ");
 		}
 
 		// Sound
@@ -184,9 +192,17 @@ public class TitleBar {
 		});
 
 		titleBar.add(sound).right();
+		
+		Table container = new Table(skin);
+		
+		container.add(titleBar).fillX().height(Globals.baseSize * 2.5f).expandX()
+		.center().pad(12);
+		if (type == ScreenType.CAR_BUILDER) {
+			container.setBackground("darkGrey");
+		}
 
-		base.add(titleBar).fillX().height(Globals.baseSize * 2.5f).expandX()
-				.center();
+		base.add(container).fillX().height(Globals.baseSize * 3f).expandX()
+		.center();
 
 		base.row();
 

@@ -65,7 +65,7 @@ public class ComponentBuilder {
 		JSONComponentName componentName = new JSONComponentName();
 		componentName.setBaseName(ComponentNames.BAR3);
 
-		int textureLevel = (int) Math.ceil(level / 3f);
+		int textureLevel = level;
 
 		properties.setDensity(10 * 15 / level);
 		properties.setTexture("bar/level" + textureLevel + ".png");

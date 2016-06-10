@@ -18,19 +18,19 @@ import com.google.gson.Gson;
 
 public class FileManager {
 
-	public final static String FILE_NAME = "myfile.txt";
 	public final static String CAR_FILE_NAME = "mycarfile.txt";
-	public final static String TRACK_FILE_NAME = "mytrackfile_1.txt";
+	public final static String FORREST_TRACK_FILE_NAME = "mytrackfile2_1.txt";
+	public final static String ARTIC_TRACK_FILE_NAME = "mytrackfile3_1.txt";
 	public final static String INFINITE_TRACK_FILE_NAME = "mytrackfile1_1.txt";
-	public static final String COMMUNITY_FILE_NAME = "mycommcarfile.txt";
+	public static final String COMMUNITY_FILE_NAME = "mycommcarfile_1.txt";
 
-	public static void writeToFile(FileObject objectIn) {
+	/*private static void writeToFile(FileObject objectIn) {
 
 		FileObject objectCur = null;
 		Gson json = new Gson();
 		String strToWrite;
 
-		FileHandle handle = Gdx.files.external(FILE_NAME);
+		FileHandle handle = Gdx.files.external("");
 
 		if (handle != null && handle.exists()) {
 			objectCur = json.fromJson(handle.readString(), FileObject.class);
@@ -41,7 +41,7 @@ public class FileManager {
 		}
 
 		handle.writeString(strToWrite, false);
-	}
+	}*/
 
 	public static void writeCarsToFileGson(ArrayList<JSONCar> objectIn, String fileName) {
 
@@ -81,7 +81,7 @@ public class FileManager {
 
 	}
 
-	public static void writeToFileGson(FileObject objectIn) {
+	/*public static void writeToFileGson(FileObject objectIn) {
 
 		FileObject objectCur = null;
 		Gson json = new Gson();
@@ -115,7 +115,7 @@ public class FileManager {
 		}
 
 		return objectCur;
-	}
+	}*/
 
 	public static Reader getFileStream(String fileName) {
 

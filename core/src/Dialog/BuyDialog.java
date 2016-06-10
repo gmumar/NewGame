@@ -49,7 +49,9 @@ public class BuyDialog {
 		Table currentItem = new Table(skin);
 		currentItem.setBackground("dialogDim");
 		Image currentItemImage = new Image(
-				gameLoader.Assets.getFilteredTexture("bar/level1.png"));
+				gameLoader.Assets.getFilteredTexture("bar/level"
+						+ Integer.toString(popQueObject.getNextLevel() - 1)
+						+ ".png"));
 		// originalOrigin = new
 		// Vector2(currentItemImage.getOriginX(),currentItemImage.getOriginY());
 		// currentItemImage.setOrigin(currentItemImage.getWidth()/2,
@@ -66,7 +68,9 @@ public class BuyDialog {
 		Table nextItem = new Table(skin);
 		nextItem.setBackground("dialogDim");
 		Image nextItemImage = new Image(
-				gameLoader.Assets.getFilteredTexture("bar/level2.png"));
+				gameLoader.Assets.getFilteredTexture("bar/level"
+						+ Integer.toString(popQueObject.getNextLevel())
+						+ ".png"));
 		// originalOrigin = new
 		// Vector2(nextItemImage.getOriginX(),nextItemImage.getOriginY());
 		// nextItemImage.setOrigin(nextItemImage.getWidth()/2,
@@ -120,7 +124,7 @@ public class BuyDialog {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				//popQueObject.getCallingInstance().failedBuy();
+				// popQueObject.getCallingInstance().failedBuy();
 				base.hide();
 				super.clicked(event, x, y);
 			}

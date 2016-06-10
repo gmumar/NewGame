@@ -50,36 +50,32 @@ public class HUDBuilder {
 		Table base = new Table();
 		base.setFillParent(true);
 
-		if (Globals.ADMIN_MODE) {
-			// Buttons
-			exit = new Button("exit") {
-				@Override
-				public void Clicked() {
-					gameLoader.setScreen(new MainMenuScreen(gameLoader));
-				}
-			};
+		// Buttons
+		exit = new Button("exit") {
+			@Override
+			public void Clicked() {
+				gameLoader.setScreen(new MainMenuScreen(gameLoader));
+			}
+		};
 
-			exit.setPosition(Globals.ScreenWidth - 100,
-					Globals.ScreenHeight - 300);
-			// stage.addActor(exit);
+		exit.setPosition(Globals.ScreenWidth - 100, Globals.ScreenHeight - 300);
+		// stage.addActor(exit);
 
-			restart = new Button("restart") {
-				@Override
-				public void Clicked() {
-					gameLoader.setScreen(new GamePlayScreen(gameState));
-				}
-			};
+		restart = new Button("restart") {
+			@Override
+			public void Clicked() {
+				gameLoader.setScreen(new GamePlayScreen(gameState));
+			}
+		};
 
-			restart.setPosition(Globals.ScreenWidth - 100,
-					Globals.ScreenHeight - 200);
-			// stage.addActor(restart);
+		restart.setPosition(Globals.ScreenWidth - 100,
+				Globals.ScreenHeight - 200);
+		// stage.addActor(restart);
 
-			// Text Feilds
-			fps = new TextBox("fps");
-			// fps.setPosition(0, Globals.ScreenHeight - 50);
-			stage.addActor(fps);
-
-		}
+		// Text Feilds
+		fps = new TextBox("fps");
+		// fps.setPosition(0, Globals.ScreenHeight - 50);
+		stage.addActor(fps);
 
 		// Progress Bars
 		mapProgress = new ProgressBarW(0, 100, 0.01f, false, "mapProgress");
@@ -130,7 +126,8 @@ public class HUDBuilder {
 		clock.setSize(40, 40);
 		stage.addActor(clock);
 
-		clockTime = new Label("Time", Skins.loadDefault(gameLoader, 1), "dialogTitle");
+		clockTime = new Label("Time", Skins.loadDefault(gameLoader, 1),
+				"dialogTitle");
 		clockTime.setPosition(timerLocation.x + 40 + 4, timerLocation.y
 				+ Globals.ScreenHeight + 5.5f);
 		stage.addActor(clockTime);
@@ -144,12 +141,14 @@ public class HUDBuilder {
 		stage.addActor(coin);
 
 		Animations.InitMoneyAnimation();
-		moneyAnimation = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text");
+		moneyAnimation = new Label("Money", Skins.loadDefault(gameLoader, 1),
+				"glowing-text");
 		moneyAnimation.setPosition(moneyLocation.x + 40 + 4, moneyLocation.y
 				+ Globals.ScreenHeight + 6.5f);
 		stage.addActor(moneyAnimation);
-		
-		money = new Label("Money", Skins.loadDefault(gameLoader, 1), "glowing-text");
+
+		money = new Label("Money", Skins.loadDefault(gameLoader, 1),
+				"glowing-text");
 		money.setPosition(moneyLocation.x + 40 + 4, moneyLocation.y
 				+ Globals.ScreenHeight + 6.5f);
 		stage.addActor(money);
@@ -168,7 +167,8 @@ public class HUDBuilder {
 		clockTime.setText(Globals.makeTimeStr(timeIn));
 		// money.setText(user.getMoney().toString());
 
-		currentMoney = Animations.money(moneyAnimation, money, user.getMoney(), currentMoney);
+		currentMoney = Animations.money(moneyAnimation, money, user.getMoney(),
+				currentMoney);
 
 		mapProgress.setValue(progress > 100 ? 100 : progress);
 		// mapProgress.act(delta);

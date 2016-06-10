@@ -187,7 +187,7 @@ public class JSONCompiler {
 		track.setPoints(trackArray);
 		track.setType(type);
 
-		User.getInstance().setCurrentTrack(track.jsonify(), mode);
+		User.getInstance().setCurrentTrack(track.jsonify(), mode, true);
 
 		// prefs.putString(GamePreferences.TRACK_MAP_STR, track.jsonify());
 		// prefs.flush();

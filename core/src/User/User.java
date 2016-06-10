@@ -10,6 +10,8 @@ import Component.ComponentNames;
 import DataMutators.TrippleDes;
 import JSONifier.JSONCar;
 import JSONifier.JSONComponent;
+import JSONifier.JSONTrack;
+import JSONifier.JSONTrack.TrackType;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -141,23 +143,23 @@ public class User {
 				}
 			}
 		}
-		
-		if(barLevel > userState.smallBarLevel){
-			return false;
-		}
-		
-		if(springLevel > userState.springLevel){
-			return false;
-		}
-		
-		if(tireLevel > userState.tireLevel){
+
+		if (barLevel > userState.smallBarLevel) {
 			return false;
 		}
 
-		if(!test){
+		if (springLevel > userState.springLevel) {
+			return false;
+		}
+
+		if (tireLevel > userState.tireLevel) {
+			return false;
+		}
+
+		if (!test) {
 			prefs.putString(GamePreferences.CAR_MAP_STR, currentCar);
 			prefs.flush();
-	
+
 			this.currentCar = currentCar;
 		}
 
@@ -173,9 +175,29 @@ public class User {
 		return currentTrack;
 	}
 
-	public void setCurrentTrack(String currentTrack, TrackMode mode) {
+	public void setCurrentTrack(String currentTrack, TrackMode mode, boolean lockBypass) {
 
 		// prefs.clear();
+
+		JSONTrack track = JSONTrack.objectify(currentTrack);
+		TrackType type = track.getType();
+
+		if(!lockBypass){
+			if (type == TrackType.FORREST) {
+				if (isLocked(ItemsLookupPrefix.getForrestPrefix(Integer
+						.toString(track.getIndex())))) {
+
+					return;
+				}
+			} else if (type == TrackType.ARTIC) {
+				if (isLocked(ItemsLookupPrefix.getArticPrefix(Integer
+						.toString(track.getIndex())))) {
+					return;
+				}
+			} else {
+				return;
+			}
+		}
 
 		prefs.putString(GamePreferences.TRACK_MAP_STR, currentTrack);
 		prefs.putString(GamePreferences.TRACK_MODE_STR, mode.toString());
@@ -222,8 +244,7 @@ public class User {
 			} else if (itemName
 					.compareTo(ItemsLookupPrefix.INFINITY_TRACK_MODE) == 0) {
 				Unlock(ItemsLookupPrefix.INFINITY_TRACK_MODE);
-			} else if (itemName
-					.compareTo(ItemsLookupPrefix.ARCTIC_WORLD) == 0) {
+			} else if (itemName.compareTo(ItemsLookupPrefix.ARCTIC_WORLD) == 0) {
 				Unlock(ItemsLookupPrefix.ARCTIC_WORLD);
 			} else {
 				System.out.println("ERROR: User: Trying to buy unknown Item");
@@ -261,6 +282,10 @@ public class User {
 
 	public Integer addCoin(Integer value) {
 		userState.money += value;
+
+		if (userState.money <= 0) {
+			userState.money = 0;
+		}
 		saveUserState();
 		return userState.money;
 	}

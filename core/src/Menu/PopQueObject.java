@@ -5,6 +5,7 @@ import User.TwoButtonDialogFlow;
 import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameModeScreen;
 import com.gudesigns.climber.GamePlayScreen;
+import com.gudesigns.climber.SelectorScreens.SelectorScreen;
 
 public class PopQueObject {
 

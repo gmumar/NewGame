@@ -119,7 +119,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: { up: default-scroll, down: default-round-down },
-	modeButton: { up: gameYellow, down: forrestGreen, checked: forrestGreen },
+	modeButton: { up: gameYellow, down: gameGreen, checked: gameGreen },
 	transparentButton: { up: transparent, down: transparent},
 	adventureTrack_forrest: { up: forrestGreen, down: grey	}
 	adventureTrack_artic: { up: articBlue, down: grey	}

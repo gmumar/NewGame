@@ -198,4 +198,12 @@ public class Animations {
 
 	}
 
+	public static void fadeInAndOut(Label table) {
+		table.addAction(Actions.repeat(1000,
+				new SequenceAction(Actions.fadeOut(0.5f), Actions.delay(0.5f),
+						Actions.fadeIn(0.5f), Actions.delay(0.5f)
+						
+						)));
+	}
+
 }
