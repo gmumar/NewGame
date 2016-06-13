@@ -1,6 +1,6 @@
 package Purchases;
 
-import User.User;
+import UserPackage.User;
 
 public class GamePurchaseObserver {
 

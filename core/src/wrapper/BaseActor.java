@@ -380,10 +380,6 @@ public class BaseActor {
 		initBody();
 	}
 
-	public void setRestitution(float r) {
-		fixture.setRestitution(r);
-	}
-
 	public float getHeight() {
 		if (!onlyPhysicBody) {
 			return sprite.getHeight();

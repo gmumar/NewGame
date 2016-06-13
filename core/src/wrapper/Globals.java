@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.async.AsyncExecutor;
  country green #646600 - for borders around played levels in country mode
  arctic blue #627689 - for borders around played levels in arctic mode
  
- Wood: http://www.colourlovers.com/palette/106583/picassos_mandolin
+ Wood: http://www.colourlovers.com/palette/42911/Tree_of_Life
  Steel: http://www.colourlovers.com/palette/1415282/%E2%98%A3_biohazard_%E2%98%A3
  diamond: http://www.colourlovers.com/palette/919419/An_Old_Friend
  carbon fibre: http://www.colourlovers.com/palette/2842478/Racing_Fibre

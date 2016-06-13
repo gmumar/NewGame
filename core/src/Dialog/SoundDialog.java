@@ -3,7 +3,7 @@ package Dialog;
 import wrapper.Globals;
 import Menu.PopQueObject;
 import Sounds.SoundManager;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;

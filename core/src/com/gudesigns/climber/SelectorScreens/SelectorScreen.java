@@ -24,9 +24,9 @@ import Menu.PopQueObject.PopQueObjectType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
 import Menu.Bars.TitleBarObject;
-import User.ItemsLookupPrefix;
-import User.TwoButtonDialogFlow;
-import User.User;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.TwoButtonDialogFlow;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpRequest;

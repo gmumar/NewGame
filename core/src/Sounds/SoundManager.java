@@ -1,6 +1,6 @@
 package Sounds;
 
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;

@@ -18,8 +18,8 @@ import JSONifier.JSONComponentName;
 import JSONifier.JSONTrack.TrackType;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
-import User.TrackMode;
-import User.User;
+import UserPackage.TrackMode;
+import UserPackage.User;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

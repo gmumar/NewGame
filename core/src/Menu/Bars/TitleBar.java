@@ -14,7 +14,7 @@ import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;

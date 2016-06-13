@@ -151,41 +151,37 @@ public class Component {
 
 				fixture.setUserData(fixtureName);
 			}
-		} else if (this.componentTypes == ComponentTypes.JOINT) {
-			int mountId = 0;
+		} else if (this.componentTypes == ComponentTypes.JOINT) {			
+			
 			ArrayList<BaseActor> bodies = this.getJointBodies();
-
+			
 			for (BaseActor body : bodies) {
+				int mountId = 0;
 				JSONComponentName subBodyName = new JSONComponentName();
 
 				this.setComponentId(name.getComponentId());
 				this.setPartLevel(partLevel);
 				// TODO: finalize this
 				body.setSensor();
-				// body.setBodyType(BodyType.KinematicBody);
-				FixtureDef fixtureDef = ComponentBuilder.buildMount(
-						new Vector2(0, 0), 1, true);
-				Fixture fixture = body.getPhysicsBody().createFixture(
-						fixtureDef);
-				/*
-				 * fixture.setUserData(body.getPhysicsBody().getUserData() +
-				 * name + Assembler.NAME_MOUNT_SPLIT + mountId);
-				 * body.getPhysicsBody().setUserData(
-				 * body.getPhysicsBody().getUserData() + name);
-				 */
-				// name.setMountId(Integer.toString(mountId));
-
-				// name.setBaseName(body.getPhysicsBody().getUserData() +
-				// name.getBaseName());
-
-				subBodyName.setComponentId(name.getComponentId());
-				subBodyName.setBaseName(name.getBaseName());
-				subBodyName.setSubName(body.getjName().getSubName());
-				subBodyName.setMountId(Integer.toString(mountId));
-				subBodyName.setLevel(partLevel);
-
-				fixture.setUserData(subBodyName);
-				body.getPhysicsBody().setUserData(subBodyName);
+				
+				for(Vector2 mount : this.getObject().getMounts()) {
+							
+					FixtureDef fixtureDef = ComponentBuilder.buildMount(
+							new Vector2(0,0), 1, true);
+					Fixture fixture = body.getPhysicsBody().createFixture(
+							fixtureDef);
+	
+					subBodyName.setComponentId(name.getComponentId());
+					subBodyName.setBaseName(name.getBaseName());
+					subBodyName.setSubName(body.getjName().getSubName());
+					subBodyName.setMountId(Integer.toString(mountId));
+					subBodyName.setLevel(partLevel);
+	
+					fixture.setUserData(subBodyName);
+					body.getPhysicsBody().setUserData(subBodyName);
+					
+					mountId++;
+				}
 
 			}
 		}

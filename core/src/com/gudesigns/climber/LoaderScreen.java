@@ -221,6 +221,16 @@ public class LoaderScreen implements Screen {
 		// // Tire
 		gameLoader.Assets.load("tire/builder.png", Texture.class);
 		gameLoader.Assets.load("tire/builder_selected.png", Texture.class);
+		gameLoader.Assets.load("tire/level1.png", Texture.class);
+		gameLoader.Assets.load("tire/level2.png", Texture.class);
+		gameLoader.Assets.load("tire/level3.png", Texture.class);
+		gameLoader.Assets.load("tire/level4.png", Texture.class);
+		gameLoader.Assets.load("tire/level5.png", Texture.class);
+		gameLoader.Assets.load("tire/level6.png", Texture.class);
+		gameLoader.Assets.load("tire/level7.png", Texture.class);
+		gameLoader.Assets.load("tire/level8.png", Texture.class);
+		gameLoader.Assets.load("tire/level9.png", Texture.class);
+		gameLoader.Assets.load("tire/level10.png", Texture.class);
 
 		// // Springs
 		gameLoader.Assets.load("spring_upper/builder.png", Texture.class);

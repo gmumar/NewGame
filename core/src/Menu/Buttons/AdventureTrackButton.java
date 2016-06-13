@@ -5,9 +5,9 @@ import Dialog.Skins;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
 import Menu.ScreenType;
-import User.ItemsLookupPrefix;
-import User.User;
-import User.User.STARS;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.User;
+import UserPackage.User.STARS;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;

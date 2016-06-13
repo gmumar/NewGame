@@ -9,8 +9,8 @@ import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
-import User.TrackMode;
-import User.User;
+import UserPackage.TrackMode;
+import UserPackage.User;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;

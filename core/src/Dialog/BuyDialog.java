@@ -2,8 +2,8 @@ package Dialog;
 
 import wrapper.Globals;
 import Menu.PopQueObject;
-import User.Costs;
-import User.User;
+import UserPackage.Costs;
+import UserPackage.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;

@@ -1,6 +1,6 @@
 package wrapper;
 
-import User.User;
+import UserPackage.User;
 
 import com.gudesigns.climber.GameLoader;
 

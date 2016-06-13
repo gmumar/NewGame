@@ -13,7 +13,7 @@ import JSONifier.JSONComponentName;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
 import Shader.GameMesh;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -397,10 +397,10 @@ public class GroundBuilder {
 
 		if (trackType == TrackType.FORREST) {
 			fixtureDef.friction = 1f;
-			fixtureDef.restitution = 0.8f;
+			fixtureDef.restitution = 0.4f;
 		} else if (trackType == TrackType.ARTIC) {
 			fixtureDef.friction = 0.5f;
-			fixtureDef.restitution = 0.4f;
+			fixtureDef.restitution = 0.2f;
 		}
 
 		fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;

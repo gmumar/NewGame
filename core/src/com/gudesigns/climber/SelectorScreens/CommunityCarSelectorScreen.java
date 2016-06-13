@@ -18,8 +18,8 @@ import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
-import User.GameErrors;
-import User.ItemsLookupPrefix;
+import UserPackage.GameErrors;
+import UserPackage.ItemsLookupPrefix;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;

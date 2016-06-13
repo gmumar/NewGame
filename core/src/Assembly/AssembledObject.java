@@ -11,7 +11,7 @@ import Component.Component;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 import Sounds.SoundManager;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;

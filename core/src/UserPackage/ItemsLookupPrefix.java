@@ -1,4 +1,4 @@
-package User;
+package UserPackage;
 
 public class ItemsLookupPrefix {
 	

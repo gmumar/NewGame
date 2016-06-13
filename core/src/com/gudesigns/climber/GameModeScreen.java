@@ -17,10 +17,10 @@ import Menu.Bars.TitleBarObject;
 import Menu.Buttons.ButtonLockWrapper;
 import Menu.Buttons.ModeButton;
 import Menu.Buttons.ModeButton.ModeButtonTypes;
-import User.Costs;
-import User.ItemsLookupPrefix;
-import User.TwoButtonDialogFlow;
-import User.User;
+import UserPackage.Costs;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.TwoButtonDialogFlow;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

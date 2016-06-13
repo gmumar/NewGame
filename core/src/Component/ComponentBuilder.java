@@ -7,6 +7,7 @@ import wrapper.GamePhysicalState;
 import Component.Component.ComponentTypes;
 import JSONifier.JSONComponentName;
 import Menu.MenuBuilder;
+import UserPackage.User;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -124,19 +125,19 @@ public class ComponentBuilder {
 		JSONComponentName componentName = new JSONComponentName();
 		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 
-		properties.setFriction(0.1f);
-		properties.setDensity(100);
-		properties.setTexture("temp_tire_2.png");
+		properties.setFriction(0.04f*level);
+		properties.setDensity(100/level);
+		properties.setTexture("tire/level" + level + ".png");
+		properties.setRestituition(0.15f*level);
 		componentName.setBaseName(ComponentNames.WHEEL);
 		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
 		CircleShape shape = new CircleShape();
-
-		tmpActor.setRestitution(20f);
+		
+		shape.setRadius(tmpActor.getWidth() / 2);
+		tmpActor.setShapeBase(shape);
 		// tmpActor.setScale(1.2f);
 		// tmpActor.setPosition(0, 0);
 		// tmpActor.setDensity(40);
-		shape.setRadius(tmpActor.getWidth() / 2);
-		tmpActor.setShapeBase(shape);
 		componentName.setBaseName(ComponentNames.AXLE);
 		ComponentPhysicsProperties axleProperties = new ComponentPhysicsProperties();
 		BaseActor fixture = new BaseActor(componentName, axleProperties,
@@ -213,6 +214,7 @@ public class ComponentBuilder {
 
 		ArrayList<Vector2> mountTop = new ArrayList<Vector2>();
 		mountTop.add(topFixture.getCenter());
+		mountTop.add(new Vector2(topFixture.getCenter().x,topFixture.getCenter().y-1));
 		topFixture.setMounts(mountTop, 0.0f);
 		topFixture.setScaleY(1.2f);
 		topFixture.setScaleY(MenuBuilder.BUILDER,1.2f);
@@ -296,8 +298,8 @@ public class ComponentBuilder {
 		dJoint.length = springHeight;
 		dJoint.collideConnected = false;
 		if (!forBuilder) {
-			dJoint.frequencyHz = 10;
-			dJoint.dampingRatio = 0.5f;
+			dJoint.frequencyHz = 2*(User.MAX_SPRING_LEVEL - level + 1);//10
+			dJoint.dampingRatio = 0.125f*(User.MAX_SPRING_LEVEL - level  + 1);//0.5f
 		}
 		//
 		gameState.getWorld().createJoint(dJoint);
@@ -309,16 +311,19 @@ public class ComponentBuilder {
 				new Vector2(0, 1));
 		rJoint.localAnchorA.set(topFixture.getCenter());
 		rJoint.localAnchorB.set(botFixture.getCenter());
-		rJoint.enableMotor = true;
-		rJoint.collideConnected = false;
-		if (!forBuilder) {
-			rJoint.lowerTranslation = springHeight - springTravel;
-			rJoint.upperTranslation = springHeight + springTravel;
-			rJoint.enableLimit = true;
-		} else {
+
+		if (forBuilder) {
 			rJoint.lowerTranslation = springHeight;
 			rJoint.upperTranslation = springHeight;
 			rJoint.enableLimit = false;
+			rJoint.enableMotor = false;
+			rJoint.collideConnected = true;
+		} else {
+			rJoint.lowerTranslation = springHeight - springTravel;
+			rJoint.upperTranslation = springHeight + springTravel;
+			rJoint.enableLimit = true;
+			rJoint.enableMotor = true;
+			rJoint.collideConnected = false;
 		}
 
 		// if(!forBuilder)

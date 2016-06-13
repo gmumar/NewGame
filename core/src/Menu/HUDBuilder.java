@@ -7,7 +7,7 @@ import Dialog.Skins;
 import Menu.PopQueObject.PopQueObjectType;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

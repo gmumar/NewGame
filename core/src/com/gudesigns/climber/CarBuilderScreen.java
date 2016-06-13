@@ -12,9 +12,9 @@ import Menu.MenuBuilder;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
-import User.ItemsLookupPrefix;
-import User.TwoButtonDialogFlow;
-import User.User;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.TwoButtonDialogFlow;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;

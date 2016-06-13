@@ -3,7 +3,7 @@ package Dialog;
 import wrapper.Globals;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
-import User.ItemsLookupPrefix;
+import UserPackage.ItemsLookupPrefix;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;

@@ -11,7 +11,7 @@ import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;

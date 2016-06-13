@@ -28,10 +28,10 @@ import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
 import Storage.FileManager;
 import Storage.FileObject;
-import User.Costs;
-import User.ItemsLookupPrefix;
-import User.TrackMode;
-import User.User;
+import UserPackage.Costs;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.TrackMode;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;

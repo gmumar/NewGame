@@ -1,4 +1,4 @@
-package User;
+package UserPackage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +19,10 @@ import com.google.gson.Gson;
 
 public class User {
 
+	public static final Integer MAX_BAR3_LEVEL = 15;
+	public static final Integer MAX_TIRE_LEVEL = 8;
+	public static final Integer MAX_SPRING_LEVEL = 15;
+
 	public static final String TRACK_PREFIX = "track_";
 
 	public enum STARS implements Serializable {
@@ -26,9 +30,6 @@ public class User {
 
 	}
 
-	public static final Integer MAX_BAR3_LEVEL = 15;
-	public static final Integer MAX_TIRE_LEVEL = 5;
-	public static final Integer MAX_SPRING_LEVEL = 15;
 
 	private UserState userState = new UserState();
 

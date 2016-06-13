@@ -26,10 +26,10 @@ import ParallexBackground.ScrollingBackground;
 import ParallexBackground.ScrollingBackground.BackgroundType;
 import Shader.GameMesh;
 import Sounds.SoundManager;
-import User.ItemsLookupPrefix;
-import User.TrackMode;
-import User.User;
-import User.User.STARS;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.TrackMode;
+import UserPackage.User;
+import UserPackage.User.STARS;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -481,7 +481,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				- (0.4f - speedZoom * 4) - gameOverOffset,
 				actor.getPosition().y + 3, 1);// +
 		// camera.viewportWidth*2.5f
-		camera.zoom = 3.7f + speedZoom;// 4.5f;
+		camera.zoom = 3.2f + speedZoom;// 4.5f;
 
 		camera.update();
 	}

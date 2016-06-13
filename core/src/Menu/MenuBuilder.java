@@ -31,10 +31,10 @@ import Menu.Buttons.CarBuilderButton;
 import Menu.Buttons.CarBuilderButton.CarBuilderButtonType;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
-import User.GameErrors;
-import User.ItemsLookupPrefix;
-import User.TwoButtonDialogFlow;
-import User.User;
+import UserPackage.GameErrors;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.TwoButtonDialogFlow;
+import UserPackage.User;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;

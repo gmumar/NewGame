@@ -5,7 +5,7 @@ import Menu.Animations;
 import Menu.PopQueObject;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;

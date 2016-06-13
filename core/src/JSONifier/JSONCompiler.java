@@ -12,8 +12,8 @@ import Component.Component;
 import Component.Component.ComponentTypes;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONTrack.TrackType;
-import User.TrackMode;
-import User.User;
+import UserPackage.TrackMode;
+import UserPackage.User;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;

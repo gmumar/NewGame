@@ -1,8 +1,8 @@
 package Menu.Buttons;
 
 import wrapper.Globals;
-import User.ItemsLookupPrefix;
-import User.User;
+import UserPackage.ItemsLookupPrefix;
+import UserPackage.User;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;

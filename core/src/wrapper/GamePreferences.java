@@ -1,6 +1,6 @@
 package wrapper;
 
-import User.TrackMode;
+import UserPackage.TrackMode;
 
 
 public class GamePreferences {

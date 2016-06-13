@@ -15,7 +15,7 @@ import Menu.ScreenType;
 import Menu.Bars.TitleBar;
 import Purchases.GamePurchaseObserver;
 import Shader.GameMesh;
-import User.User;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

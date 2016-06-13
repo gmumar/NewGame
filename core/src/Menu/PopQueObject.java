@@ -1,6 +1,6 @@
 package Menu;
 
-import User.TwoButtonDialogFlow;
+import UserPackage.TwoButtonDialogFlow;
 
 import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameModeScreen;
