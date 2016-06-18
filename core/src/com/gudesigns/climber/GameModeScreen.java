@@ -91,6 +91,8 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 		// Animations.fadeInAndSlideSide(base);
 
 		stage.addActor(base);
+		
+		Globals.setAds(false);
 
 	}
 

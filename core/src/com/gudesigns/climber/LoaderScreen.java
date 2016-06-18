@@ -236,10 +236,40 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("spring_upper/builder.png", Texture.class);
 		gameLoader.Assets.load("spring_upper/builder_selected.png",
 				Texture.class);
+		gameLoader.Assets.load("spring_upper/level1.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level2.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level3.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level4.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level5.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level6.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level7.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level8.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level9.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level10.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level11.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level12.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level13.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level14.png", Texture.class);
+		gameLoader.Assets.load("spring_upper/level15.png", Texture.class);
 
 		gameLoader.Assets.load("spring_lower/builder.png", Texture.class);
 		gameLoader.Assets.load("spring_lower/builder_selected.png",
 				Texture.class);
+		gameLoader.Assets.load("spring_lower/level1.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level2.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level3.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level4.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level5.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level6.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level7.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level8.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level9.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level10.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level11.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level12.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level13.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level14.png", Texture.class);
+		gameLoader.Assets.load("spring_lower/level15.png", Texture.class);
 
 		// // Life
 		gameLoader.Assets.load("life/builder.png", Texture.class);

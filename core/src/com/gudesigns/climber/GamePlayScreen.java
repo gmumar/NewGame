@@ -65,7 +65,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private float speedZoom = 0;
 	// private float dlTime;
 
-	public static final float CAMERA_OFFSET = 10;
+	public static final float CAMERA_OFFSET = 8;
 
 	private GroundBuilder ground;
 	private TrackType trackType;
@@ -304,7 +304,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			if (slowMoFactor != 1) {
 				world.step(Globals.STEP / slowMoFactor, 60, 40);
 			} else {
-				world.step(Globals.STEP, 60, 40);
+				world.step(Globals.STEP, 200, 200);
 			}
 			hud.update(Globals.STEP, progress, mapTime, camera);
 			// builtCar.step();
@@ -472,7 +472,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	final private void attachCameraTo(Body actor) {
 		rollingAvg.add(actor.getLinearVelocity().x);
-		speedZoom = (float) rollingAvg.getAverage() * 0.025f;
+		speedZoom = (float) rollingAvg.getAverage() * 0.035f;
 		if (speedZoom < 0) {
 			speedZoom = 0;
 		}
@@ -481,7 +481,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				- (0.4f - speedZoom * 4) - gameOverOffset,
 				actor.getPosition().y + 3, 1);// +
 		// camera.viewportWidth*2.5f
-		camera.zoom = 3.2f + speedZoom;// 4.5f;
+		camera.zoom = 3.0f + speedZoom;// 4.5f;
 
 		camera.update();
 	}

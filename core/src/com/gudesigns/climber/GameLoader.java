@@ -38,7 +38,7 @@ public class GameLoader extends Game {
 
 	public GameLoader(IActivityRequestHandler handler) {
 		super();
-		Globals.nativeRequestHandler = handler;
+		Globals.setNativeHandler(handler);
 	}
 
 	@Override

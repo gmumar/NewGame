@@ -83,7 +83,7 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 	private World world;
 
 	private ButtonLockWrapper spring_but, but, tire_but, delete, rotateLeft,
-			rotateRight, build, /*upload,*/ levelUp, levelDown;
+			rotateRight, build, /* upload, */levelUp, levelDown;
 
 	private Label partLevelText, partNameLabel;
 
@@ -728,6 +728,13 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				// Position all the components
 				for (Component addedComponent : addedComponents) {
 					if (addedComponent.getLevel() == Globals.DISABLE_LEVEL) {
+
+						if (jcomponent.getProperties() != null) {
+							addedComponent.applyProperties(
+									jcomponent.getProperties(),
+									PropertyTypes.ABSOLUTE);
+						}
+
 						if (additionalComps != null) {
 							for (JSONComponent addcomp : additionalComps) {
 								if (name.getBaseId()
@@ -742,10 +749,10 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 											Float.parseFloat(addcomp
 													.getProperties()
 													.getPositionY()));
-									addedComponent.getObject().setRotation(
-											Float.parseFloat(addcomp
-													.getProperties()
-													.getRotation()));
+									// addedComponent.getObject().setRotation(
+									// Float.parseFloat(addcomp
+									// .getProperties()
+									// .getRotation()));
 								}
 							}
 						}
@@ -858,15 +865,9 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		partLevel = level;
 		Component c = lookupLastPart(lastSelected);
 
-		c.setPartLevel(level);
+		c.setOnlyPartLevel(level);
 
 		((JSONComponentName) lastSelected.getUserData()).setLevel(level);
-
-		Array<JointEdge> joints = c.getObject().getPhysicsBody().getJointList();
-
-		for (JointEdge joint : joints) {
-			((JSONComponentName) joint.other.getUserData()).setLevel(level);
-		}
 
 	}
 
@@ -1293,7 +1294,6 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				// .setBaseName(ComponentNames.TIRE);
 				// }
 				// ---------------------------------------
-
 
 				// JSONComponentName hitBodyName = ((JSONComponentName) hitBody
 				// .getUserData());

@@ -55,6 +55,9 @@ public class MainMenuScreen implements Screen {
 
 		carAnimation = new CarAnimationRunner(gameState);
 		initButtons();
+		
+		
+		Globals.setAds(true);
 	}
 
 	private void initUser() {

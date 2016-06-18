@@ -157,17 +157,17 @@ public class Component {
 			
 			for (BaseActor body : bodies) {
 				int mountId = 0;
-				JSONComponentName subBodyName = new JSONComponentName();
+				
 
 				this.setComponentId(name.getComponentId());
 				this.setPartLevel(partLevel);
 				// TODO: finalize this
 				body.setSensor();
 				
-				for(Vector2 mount : this.getObject().getMounts()) {
-							
+				for(Vector2 mount : body.getMounts()) {
+					JSONComponentName subBodyName = new JSONComponentName();
 					FixtureDef fixtureDef = ComponentBuilder.buildMount(
-							new Vector2(0,0), 1, true);
+							new Vector2(), 1, true);// <------------ This should be using the mount here
 					Fixture fixture = body.getPhysicsBody().createFixture(
 							fixtureDef);
 	
@@ -333,6 +333,11 @@ public class Component {
 				body.getjName().setLevel(level);
 			}
 		}
+	}
+	
+	public void setOnlyPartLevel(Integer level) {
+		jComponentName.setLevel(level);
+		object.getjName().setLevel(level);
 	}
 
 	public Integer getPartLevel() {

@@ -80,6 +80,16 @@ public class GroundUnitDescriptor {
 	public Sprite getGraphic() {
 		return graphic;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		GroundUnitDescriptor other = (GroundUnitDescriptor) obj;
+		
+		
+		return other.end.x == this.end.x;
+	}
+	
+	
 	
 	
 }

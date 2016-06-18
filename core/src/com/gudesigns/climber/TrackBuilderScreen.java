@@ -62,6 +62,7 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 				gameState.getUser(), fixtureRenderer);
 		debugRenderer = new Box2DDebugRenderer();
 
+		Globals.setAds(false);
 	}
 
 	private void initStage() {
@@ -101,8 +102,8 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 	@Override
 	public void render(float delta) {
 		renderWorld();
-		if (!menu.isJoined() && menu.getDrawTrack()) {
-			trackBuilder.handleTouches(touches);
+		if (!menu.isJoined()) {
+			trackBuilder.handleTouches(touches, menu.getDrawTrack());
 		}
 		
 		batch.begin();
