@@ -28,7 +28,7 @@ import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GameModeScreen;
 import com.gudesigns.climber.MainMenuScreen;
-import com.gudesigns.climber.SelectorScreens.ForrestTrackSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ForrestTrackSelectorScreen;
 
 public class TitleBar {
 

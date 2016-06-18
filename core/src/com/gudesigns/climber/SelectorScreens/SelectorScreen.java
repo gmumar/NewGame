@@ -19,17 +19,23 @@ import JSONifier.JSONTrack.TrackType;
 import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
-import Menu.ScreenType;
 import Menu.PopQueObject.PopQueObjectType;
+import Menu.ScreenType;
 import Menu.Bars.BottomBar;
 import Menu.Bars.TitleBar;
 import Menu.Bars.TitleBarObject;
+import RESTWrapper.Backendless_JSONParser;
+import RESTWrapper.Backendless_ParentContainer;
+import RESTWrapper.REST;
+import RESTWrapper.ServerDataUnit;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TwoButtonDialogFlow;
 import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -81,9 +87,12 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected Semaphore loadingLock = new Semaphore(1);
 	public Semaphore localLoading = new Semaphore(1);
 	protected Semaphore localLoadedCounter = new Semaphore(0);
+	protected Semaphore downloadedCounter = new Semaphore(0);
 	protected Semaphore totalLoadedCounter = new Semaphore(0);
 	public volatile boolean downloadCancelled = false;
-	protected Long lastObjectCreationTime = -Long.MAX_VALUE;
+
+	protected Long lastObjectCreationTime = (long) 0.0;
+	public Lock lastObjectCreationTimeLock = new ReentrantLock();
 
 	protected int pageNumber = 0;
 	// protected static final int MAX_ITEMS_PER_PAGE = 6;
@@ -103,11 +112,13 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	abstract protected void addButton(final JSONParentClass jsonParentClass);
 
-	abstract protected void downloadItems();
+	// abstract protected void downloadItems();
+	abstract protected String getDownloadRequestString(int offset,
+			Long lastCreatedTime);
 
-	abstract protected void writeObjectsToFile();
+	abstract protected void writeObjectsToFile(Long lastObjectCreationTime2);
 
-	abstract protected void addSpecificItemToList();
+	abstract protected void readFileForItems();
 
 	abstract protected void initButtons();
 
@@ -126,6 +137,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected abstract boolean isCorrectTrackType(TrackType type);
 
 	protected abstract void updateGameLoaderObjects();
+
+	protected abstract String getFileName();
 
 	public SelectorScreen(GameState gameState) {
 		// carLock.lock();
@@ -163,6 +176,10 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	}
 
 	protected void loadLocalItems() {
+		//TODO: If the file is messed with while the game is playing 
+		// and the user does not restart the game then the file will remain
+		// corrupted and the time stamp will remain stale
+		
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
@@ -172,8 +189,157 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 				 * for (JSONCar car : gameLoader.cars) { addItemToList(car); }
 				 */
 
-				addSpecificItemToList();
+				readFileForItems();
 				updateGameLoaderObjects();
+
+				return null;
+			}
+		});
+
+	}
+
+	protected void downloadItems() {
+		resultsRemaining = true;
+		currentOffset = 0;
+
+		ae.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() {
+
+				while (resultsRemaining && !killThreads) {
+					// stall = true;
+
+					if (killThreads) {
+						loaderSemaphore.release();
+						resultsRemaining = false;
+
+						return null;
+					}
+
+					while (stallSemaphore.tryAcquire()) {
+						downloadRequest = REST.getData(
+								getDownloadRequestString(currentOffset,
+										user.getFileTimeStamp(getFileName())),
+								new HttpResponseListener() {
+
+									@Override
+									public void handleHttpResponse(
+											HttpResponse httpResponse) {
+										System.out
+												.println("SelectorScreen: got a reply ");
+
+										ScreenType screenType = getScreenType();
+										Backendless_ParentContainer obj = null;
+										if (screenType == ScreenType.ARCTIC_TRACK_SELECTOR
+												|| screenType == ScreenType.INFINITE_TRACK_SELECTOR
+												|| screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+											obj = Backendless_JSONParser
+													.processDownloadedTrack(httpResponse
+															.getResultAsString());
+
+										} else if (screenType == ScreenType.CAR_SELECTOR) {
+											obj = Backendless_JSONParser
+													.processDownloadedCars(httpResponse
+															.getResultAsString());
+
+										}
+
+										System.out
+												.println("SelectorScreen: object count "
+														+ obj.getTotalObjects());
+
+										for (ServerDataUnit fromServer : obj
+												.getData()) {
+
+											System.out
+													.println("SelectorScreen: Object ");
+
+											downloadedCounter.release();
+
+											if (screenType == ScreenType.ARCTIC_TRACK_SELECTOR
+													|| screenType == ScreenType.INFINITE_TRACK_SELECTOR
+													|| screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+
+												final JSONTrack trackJson = JSONTrack
+														.objectify(fromServer
+																.getData());
+												trackJson
+														.setObjectId(fromServer
+																.getObjectId());
+												trackJson.setBestTime(fromServer
+														.getTrackBestTime());
+												trackJson
+														.setDifficulty(fromServer
+																.getTrackDifficulty());
+												trackJson.setIndex(fromServer
+														.getTrackIndex());
+												trackJson
+														.setCreationTime(fromServer
+																.getCreationTime());
+
+												addItemToList(trackJson);
+
+											} else if (screenType == ScreenType.CAR_SELECTOR) {
+												final JSONCar carJson = JSONCar
+														.objectify(fromServer
+																.getData());
+												carJson.setObjectId(fromServer
+														.getObjectId());
+												carJson.setCreationTime(fromServer
+														.getCreationTime());
+
+												addItemToList(carJson);
+											} else {
+
+											}
+
+										}
+
+										uniqueListLock.lock();
+										uniqueListLock.unlock();
+
+										if (obj.getTotalObjects()
+												- obj.getOffset() > 0) {
+											resultsRemaining = true;
+										} else {
+											resultsRemaining = false;
+										}
+										stallSemaphore.release();
+										// stall = false;
+
+									}
+
+									@Override
+									public void failed(Throwable t) {
+										System.out
+												.println("SelectorScreen: download failed Stack printing");
+										t.printStackTrace();
+										loaderSemaphore.release();
+										// stallSemaphore.release();
+										// stall = false;
+										resultsRemaining = false;
+										downloadCancelled = true;
+										// return;
+									}
+
+									@Override
+									public void cancelled() {
+										loaderSemaphore.release();
+										// stallSemaphore.release();
+										// stall = false;
+										resultsRemaining = false;
+										downloadCancelled = true;
+										// return;
+									}
+
+								});
+						currentOffset += REST.PAGE_SIZE;
+					}
+					// while (stall);
+
+				}
+				loaderSemaphore.release();
 
 				return null;
 			}
@@ -186,11 +352,12 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		uniqueListLock.lock();
 
 		Long creationTime = Long.parseLong(item.getCreationTime());
+
+		lastObjectCreationTimeLock.lock();
 		if (creationTime > lastObjectCreationTime) {
 			lastObjectCreationTime = creationTime;
 		}
-		
-		System.out.println(creationTime);
+		lastObjectCreationTimeLock.unlock();
 
 		if (item.getParentType() == JSONParentType.TRACK) {
 
@@ -200,6 +367,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 				if (uniquenessButtonList.contains(trackToBeAdded)) {
 
+					// Override older tracks with newer tracks with same
+					// indexes
 					Integer indexInList = uniquenessButtonList
 							.indexOf(trackToBeAdded);
 					JSONParentClass otherItem = uniquenessButtonList
@@ -287,8 +456,9 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 					// loaderSemaphore.acquire(2);
 
 					// Iterator<String> iter = cars.iterator();
-
-					if (downloadCancelled) {
+					
+					if (downloadCancelled
+							|| downloadedCounter.availablePermits() <= 0) {
 						return null;
 					}
 
@@ -297,11 +467,12 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 						return null;
 					}
 
-					writeObjectsToFile();
+					writeObjectsToFile(lastObjectCreationTime);
 
 					updateGameLoaderObjects();
-					
-					System.out.println("last " + lastObjectCreationTime.toString());
+
+					System.out.println("last "
+							+ lastObjectCreationTime.toString());
 
 				} catch (Exception e) {
 					e.printStackTrace();

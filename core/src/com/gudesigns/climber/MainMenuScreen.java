@@ -26,9 +26,9 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.gudesigns.climber.SelectorScreens.ADMINCarSelectorScreen;
-import com.gudesigns.climber.SelectorScreens.CarSelectorScreen;
-import com.gudesigns.climber.SelectorScreens.ForrestTrackSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.CarSelectorScreen.ADMINCarSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.CarSelectorScreen.CarSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ForrestTrackSelectorScreen;
 
 public class MainMenuScreen implements Screen {
 

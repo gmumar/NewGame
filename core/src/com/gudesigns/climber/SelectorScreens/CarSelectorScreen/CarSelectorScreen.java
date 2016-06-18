@@ -1,4 +1,4 @@
-package com.gudesigns.climber.SelectorScreens;
+package com.gudesigns.climber.SelectorScreens.CarSelectorScreen;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,8 +43,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.GamePlayScreen;
+import com.gudesigns.climber.SelectorScreens.SelectorScreen;
 
 public class CarSelectorScreen extends SelectorScreen {
+	
+	@Override
+	protected String getFileName() {
+		// TODO Auto-generated method stub
+		return FileManager.CAR_FILE_NAME;
+	}
 
 	@Override
 	protected int getItemsPerPage() {
@@ -61,7 +68,25 @@ public class CarSelectorScreen extends SelectorScreen {
 	}
 
 	@Override
-	protected void downloadItems() {
+	protected String getDownloadRequestString(int offset, Long lastCreatedTime) {
+		// TODO Auto-generated method stub
+		return RESTPaths.CARS
+				+ RESTProperties.URL_ARG_SPLITTER
+				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.OFFSET + offset
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.PROPS + RESTProperties.CREATED
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.CAR_JSON
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.OBJECT_ID
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.WhereCreatedGreaterThan(lastCreatedTime);
+	}
+
+	//@Override
+	protected void downloadItems_old() {
 		resultsRemaining = true;
 		currentOffset = 0;
 
@@ -347,7 +372,7 @@ public class CarSelectorScreen extends SelectorScreen {
 	}
 
 	@Override
-	protected void writeObjectsToFile() {
+	protected void writeObjectsToFile(Long lastCreationTime) {
 		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
 
 		for (JSONParentClass car : items) {
@@ -361,12 +386,12 @@ public class CarSelectorScreen extends SelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setCars(list);
 
-		FileManager.writeCarsToFileGson(list, FileManager.CAR_FILE_NAME);
+		FileManager.writeCarsToFileGson(list, getFileName(), lastCreationTime);
 
 	}
 
 	@Override
-	protected void addSpecificItemToList() {
+	protected void readFileForItems() {
 		for (JSONCar car : gameLoader.autherCars) {
 			addItemToList(car);
 			localLoadedCounter.release();

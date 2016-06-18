@@ -1,4 +1,4 @@
-package com.gudesigns.climber.SelectorScreens;
+package com.gudesigns.climber.SelectorScreens.TrackSelectorScreen;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 import wrapper.GameState;
 import wrapper.Globals;
-import JSONifier.JSONCar;
+import Dialog.Skins;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
@@ -18,8 +18,8 @@ import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
 import Menu.Buttons.AdventureTrackButton;
 import Menu.Buttons.ButtonLockWrapper;
-import ParallexBackground.ScrollingBackground;
-import ParallexBackground.ScrollingBackground.BackgroundType;
+import Menu.Buttons.SimpleImageButton;
+import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_Track;
 import RESTWrapper.REST;
@@ -31,6 +31,7 @@ import Storage.FileObject;
 import UserPackage.Costs;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TrackMode;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -44,27 +45,78 @@ import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.gudesigns.climber.CarModeScreen;
+import com.gudesigns.climber.SelectorScreens.SelectorScreen;
 
-public class ForrestTrackSelectorScreen extends SelectorScreen {
+public class InfiniteTrackSelectorScreen extends SelectorScreen {
 
-	private final static int itemsPerRow = 15;
+	private final static int itemsPerRow = 5;
+
+	@Override
+	protected String getFileName() {
+		// TODO Auto-generated method stub
+		return FileManager.INFINITE_TRACK_FILE_NAME;
+	}
+
+	@Override
+	protected void createItemsTable(Table container) {
+		itemsTable = new Table();
+
+		scrollPane = new ScrollPane(itemsTable);
+		scrollPane.layout();
+		// scrollPane.setWidth(100);
+		scrollPane.setScrollingDisabled(false, true);
+		scrollPane.setSmoothScrolling(true);
+		scrollPane.setLayoutEnabled(true);
+		scrollPane.setTouchable(Touchable.enabled);
+		scrollPane.setOverscroll(true, false);
+
+		// stage.addActor(scrollPane);
+		container.add(scrollPane).width(600f);
+		// container.row();
+	}
 
 	@Override
 	protected int getItemsPerPage() {
-		return 10;
+		return 20;
 	}
 
-	private ScrollingBackground scrollingBackground;
-
-	public ForrestTrackSelectorScreen(GameState gameState) {
+	public InfiniteTrackSelectorScreen(GameState gameState) {
 		super(gameState);
 
-		scrollingBackground = new ScrollingBackground(this.gameLoader, null,
-				TrackType.FORREST, BackgroundType.SELECTOR);
+		if (gameState.getUser().isNew(ItemsLookupPrefix.INFINITY_TRACK_MODE)) {
+			gameState.getUser().setNonNew(
+					ItemsLookupPrefix.INFINITY_TRACK_MODE, false);
+		}
 	}
+	
+	
 
 	@Override
-	protected void downloadItems() {
+	protected String getDownloadRequestString(int offset, Long lastCreatedTime) {
+		// TODO Auto-generated method stub
+		return RESTPaths.INFINITE_MAPS
+				+ RESTProperties.URL_ARG_SPLITTER
+				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.OFFSET + offset
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.PROPS + RESTProperties.CREATED
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_POINTS_JSON
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.OBJECT_ID
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_BEST_TIME
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_DIFFICULTY
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_INDEX
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.WhereCreatedGreaterThan(lastCreatedTime);
+	}
+
+	//@Override
+	protected void downloadItems_old() {
 		resultsRemaining = true;
 		currentOffset = 0;
 
@@ -84,7 +136,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 					}
 
 					while (stallSemaphore.tryAcquire()) {
-						downloadRequest = REST.getData(RESTPaths.MAPS
+						downloadRequest = REST.getData(RESTPaths.INFINITE_MAPS
 								+ RESTProperties.URL_ARG_SPLITTER
 								+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
 								+ RESTProperties.PROP_ARG_SPLITTER
@@ -185,66 +237,41 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 
 	}
 
-	/*
-	 * @Override protected void writeItemsToFile() { ae.submit(new
-	 * AsyncTask<String>() {
-	 * 
-	 * @Override public String call() throws Exception {
-	 * 
-	 * try { while (isLoading()); //Thread.sleep(5); //
-	 * loaderSemaphore.acquire(2);
-	 * 
-	 * // Iterator<String> iter = cars.iterator(); ArrayList<JSONTrack> list =
-	 * new ArrayList<JSONTrack>(); for (JSONParentClass track : items) { //
-	 * String car = iter.next(); list.add((JSONTrack) track); }
-	 * 
-	 * 
-	 * FileObject fileObject = new FileObject(); fileObject.setTracks(list);
-	 * 
-	 * FileManager.writeTracksToFileGson(list);
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); } finally { //
-	 * loaderSemaphore.release(2); }
-	 * 
-	 * return null;
-	 * 
-	 * } });
-	 * 
-	 * }
-	 */
-
 	@Override
 	protected void addButton(final JSONParentClass item) {
 		final JSONTrack track = JSONTrack.objectify(item.jsonify());
 		final ButtonLockWrapper b = AdventureTrackButton.create(gameLoader,
-				track, false, ScreenType.NONE);
+				track, true, ScreenType.NONE);
 
 		b.button.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				User user = gameState.getUser();
+
 				if (!b.locked) {
-					gameState.getUser().setCurrentTrack(item.jsonify(),
-							TrackMode.ADVENTURE, false);
+					user.setCurrentTrack(item.jsonify(), TrackMode.INFINTE,
+							true);
+
+					if (user.isNew(ItemsLookupPrefix
+							.getInfiniteTrackPrefix(Integer.toString(track
+									.getIndex())))) {
+						user.setNonNew(ItemsLookupPrefix
+								.getInfiniteTrackPrefix(Integer.toString(track
+										.getIndex())), false);
+					}
+
 					gameLoader.setScreen(new CarModeScreen(gameState));
 					super.clicked(event, x, y);
 				} else {
 
-					String itemName = null;
-
-					if (track.getType() == TrackType.ARTIC) {
-						itemName = ItemsLookupPrefix.getArticPrefix(Integer
-								.toString(track.getIndex()));
-					} else if (track.getType() == TrackType.FORREST) {
-						itemName = ItemsLookupPrefix.getForrestPrefix(Integer
-								.toString(track.getIndex()));
-					}
-
 					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_TRACK, itemName,
+							PopQueObjectType.UNLOCK_TRACK, ItemsLookupPrefix
+									.getInfiniteTrackPrefix(Integer
+											.toString(track.getIndex())),
 							"Unlock Track", "\t\tUnlock track "
 									+ Integer.toString(track.getIndex())
-									+ "\t\t", Costs.ADVENTURE_TRACK, instance));
+									+ "\t\t", Costs.INFINITY_TRACK, instance));
 
 				}
 			}
@@ -257,22 +284,14 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 	}
 
 	@Override
-	protected void updateGameLoaderObjects() {
-		gameLoader.forrestTracks.clear();
-
-		for (JSONParentClass track : items) {
-			gameLoader.forrestTracks.add((JSONTrack) track);
-		}
-
-	}
-
-	@Override
-	protected void writeObjectsToFile() {
+	protected void writeObjectsToFile(Long lastCreationTime) {
 		ArrayList<JSONTrack> list = new ArrayList<JSONTrack>();
+		gameLoader.infiniteTracks.clear();
 
 		for (JSONParentClass track : items) {
 			// String car = iter.next();
 			list.add((JSONTrack) track);
+			gameLoader.infiniteTracks.add((JSONTrack) track);
 
 		}
 
@@ -282,13 +301,23 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);
 
-		FileManager.writeTracksToFileGson(list, FileManager.FORREST_TRACK_FILE_NAME);
+		FileManager.writeTracksToFileGson(list, getFileName(), lastCreationTime);
 	}
 
 	@Override
-	protected void addSpecificItemToList() {
+	protected void updateGameLoaderObjects() {
+		gameLoader.infiniteTracks.clear();
+
+		for (JSONParentClass track : items) {
+			gameLoader.infiniteTracks.add((JSONTrack) track);
+		}
+
+	}
+
+	@Override
+	protected void readFileForItems() {
 		Gson gson = new Gson();
-		Reader stream = FileManager.getFileStream(FileManager.FORREST_TRACK_FILE_NAME);
+		Reader stream = FileManager.getFileStream(getFileName());
 
 		if (stream == null) {
 			loaderSemaphore.release();
@@ -328,7 +357,6 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 		Table b;
 		int count = 0;
 
-		// Add previously built tracks
 		Collections.sort(buttons, new Comparator<Table>() {
 
 			@Override
@@ -337,7 +365,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 				Integer table1 = Integer.parseInt((String) o1.getUserObject());
 				Integer table2 = Integer.parseInt((String) o2.getUserObject());
 
-				return table1.compareTo(table2);
+				return table2.compareTo(table1);
 			}
 
 		});
@@ -359,89 +387,111 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 			scrollPane.invalidate();
 		}
 
-		// Build and add button to next world
-		final ButtonLockWrapper acticWorldButton = AdventureTrackButton.create(
-				gameLoader, null, false, getScreenType());
-
-		itemsTable.add(acticWorldButton.button).pad(5)
-				.height(Globals.baseSize * 4).width(Globals.baseSize * 7);
-
-		acticWorldButton.button.addListener(new ClickListener() {
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (!acticWorldButton.locked) {
-					gameLoader.setScreen(new ArcticTrackSelectorScreen(
-							gameState));
-					super.clicked(event, x, y);
-				} else {
-					popQueManager.push(new PopQueObject(
-							PopQueObjectType.UNLOCK_ARCTIC_WORLD,
-							ItemsLookupPrefix.ARCTIC_WORLD, "Unlock World",
-							"\t\tUnlock Arctic World "
-									+ Costs.ARCTIC_WORLD.toString() + "\t\t",
-							Costs.ARCTIC_WORLD, instance));
-
-				}
-			}
-
-		});
-
-		itemsTable.invalidate();
-		scrollPane.invalidate();
 	}
 
 	@Override
 	protected void populateContentTable(Table contentTable) {
+
+		// contentTable.add(prevPage).colspan(1).left();
+		// stage.addActor(prevPage);
+
+		Table prevHolder = new Table(Skins.loadDefault(gameLoader, 1));
+		prevHolder.setTouchable(Touchable.enabled);
+		prevPage = SimpleImageButton.create(SimpleImageButtonTypes.RIGHT,
+				gameLoader);
+		prevHolder.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				pageNumber--;
+
+				if (pageNumber < 0) {
+					pageNumber = 0;
+				} else {
+					pageDisplayed = false;
+					if (loadingLock.tryAcquire()) {
+						popQueManager.push(new PopQueObject(
+								PopQueObjectType.LOADING));
+					}
+					// buttons.clear();
+
+					currentPageStart -= getItemsPerPage();
+					if (currentPageStart <= 0)
+						currentPageStart = 0;
+					currentPageEnd = currentPageStart + getItemsPerPage();
+				}
+
+			}
+
+		});
+
+		prevHolder.add(prevPage).width(Globals.baseSize);
+		contentTable.add(prevHolder).left().expand().fill()
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
 
 		createItemsTable(contentTable);
 		initButtons();
 		itemsTable.invalidate();
 		scrollPane.invalidate();
 
+		Table nextHolder = new Table(Skins.loadDefault(gameLoader, 1));
+		nextHolder.setTouchable(Touchable.enabled);
+
+		nextPage = SimpleImageButton.create(SimpleImageButtonTypes.LEFT,
+				gameLoader);
+
+		nextHolder.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				pageNumber++;
+				if (loadingLock.tryAcquire()) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.LOADING));
+				}
+
+				pageDisplayed = false;
+				// buttons.clear();
+				currentPageStart += getItemsPerPage();
+				currentPageEnd += getItemsPerPage();
+
+				// if(currentPageEnd >= totalCars) currentPageEnd = totalCars;
+				super.clicked(event, x, y);
+			}
+
+		});
+
+		nextHolder.add(nextPage).width(Globals.baseSize);
+		contentTable.add(nextHolder).right().expand().fill()
+				.height(Globals.baseSize * 10).width(Globals.baseSize * 1.5f);
+
+		// contentTable.add(nextPage).colspan(1).right();
+
 	}
 
 	@Override
-	protected void createItemsTable(Table container) {
-		itemsTable = new Table();
-
-		scrollPane = new ScrollPane(itemsTable);
-		scrollPane.layout();
-		// scrollPane.setWidth(100);
-		scrollPane.setScrollingDisabled(false, true);
-		scrollPane.setSmoothScrolling(true);
-		scrollPane.setLayoutEnabled(true);
-		scrollPane.setTouchable(Touchable.enabled);
-		scrollPane.setOverscroll(true, false);
-
-		// stage.addActor(scrollPane);
-		container.add(scrollPane).width(600f);
-		// container.row();
+	protected boolean isCorrectTrackType(TrackType type) {
+		if (type == TrackType.FORREST || type == TrackType.ARTIC) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	protected ScreenType getScreenType() {
-		return ScreenType.FORREST_TRACK_SELECTOR;
+		return ScreenType.INFINITE_TRACK_SELECTOR;
 	}
 
 	@Override
 	protected void selectorRender(float delta) {
-		scrollingBackground.draw(BackgroundType.SCROLLING);
+		// scrollingBackground.draw(BackgroundType.SCROLLING);
 
 	}
 
 	@Override
 	protected void clearScreen() {
-		Gdx.gl.glClearColor(Globals.FORREST_GREEN_BG.r,
-				Globals.FORREST_GREEN_BG.g, Globals.FORREST_GREEN_BG.b, 1);
-	}
-
-	@Override
-	protected boolean isCorrectTrackType(TrackType type) {
-		if (type == TrackType.FORREST) {
-			return true;
-		}
-		return false;
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 	}
 
 }

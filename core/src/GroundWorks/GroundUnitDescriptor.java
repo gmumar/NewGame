@@ -88,6 +88,10 @@ public class GroundUnitDescriptor {
 		
 		return other.end.x == this.end.x;
 	}
+
+	public void match(Vector2 vector2) {
+		this.start = vector2;
+	}
 	
 	
 	

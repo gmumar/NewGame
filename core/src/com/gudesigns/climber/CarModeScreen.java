@@ -33,8 +33,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.gudesigns.climber.SelectorScreens.CarSelectorScreen;
-import com.gudesigns.climber.SelectorScreens.CommunityCarSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.CarSelectorScreen.CarSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.CarSelectorScreen.CommunityCarSelectorScreen;
 
 public class CarModeScreen implements Screen, TwoButtonDialogFlow {
 

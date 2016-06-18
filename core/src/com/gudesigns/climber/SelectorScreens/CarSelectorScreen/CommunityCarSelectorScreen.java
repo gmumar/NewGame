@@ -1,4 +1,4 @@
-package com.gudesigns.climber.SelectorScreens;
+package com.gudesigns.climber.SelectorScreens.CarSelectorScreen;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +34,12 @@ import com.badlogic.gdx.utils.async.AsyncTask;
 public class CommunityCarSelectorScreen extends CarSelectorScreen {
 
 	@Override
+	protected String getFileName() {
+		// TODO Auto-generated method stub
+		return FileManager.COMMUNITY_FILE_NAME;
+	}
+	
+	@Override
 	protected int getItemsPerPage() {
 		return 10;
 	}
@@ -47,7 +53,25 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 	}
 
 	@Override
-	protected void downloadItems() {
+	protected String getDownloadRequestString(int offset, Long lastCreatedTime) {
+		// TODO Auto-generated method stub
+		return RESTPaths.COMMUNITY_CARS
+				+ RESTProperties.URL_ARG_SPLITTER
+				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.OFFSET + offset
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.PROPS + RESTProperties.CREATED
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.CAR_JSON
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.OBJECT_ID 
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.WhereCreatedGreaterThan(lastCreatedTime);
+	}
+	
+	//@Override
+	protected void downloadItems_old() {
 		resultsRemaining = true;
 		currentOffset = 0;
 
@@ -241,7 +265,7 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 	}
 
 	@Override
-	protected void writeObjectsToFile() {
+	protected void writeObjectsToFile(Long lastCreationTime) {
 		ArrayList<JSONCar> list = new ArrayList<JSONCar>();
 		gameLoader.communityCars.clear();
 
@@ -257,7 +281,7 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setCars(list);
 
-		FileManager.writeCarsToFileGson(list, FileManager.COMMUNITY_FILE_NAME);
+		FileManager.writeCarsToFileGson(list, getFileName(), lastCreationTime);
 
 	}
 	
@@ -272,7 +296,7 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 	}
 
 	@Override
-	protected void addSpecificItemToList() {
+	protected void readFileForItems() {
 		for (JSONCar car : gameLoader.communityCars) {
 			addItemToList(car);
 			localLoadedCounter.release();

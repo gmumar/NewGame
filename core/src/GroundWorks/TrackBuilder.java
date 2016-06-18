@@ -188,7 +188,7 @@ public class TrackBuilder {
 					 * if (box != null) { world.destroyBody(box); box = null; }
 					 */
 				} else if (point.x < lastObj.getEnd().x - VALID_DRAWABLE_SQUARE
-						/ 4) {
+						/ 4f) {
 					
 					
 					if(mode !=2) return;
@@ -201,7 +201,6 @@ public class TrackBuilder {
 								- VALID_DRAWABLE_SQUARE) {
 
 							mapList.get((int) (point.x / 2)).deleteUnit(floor);
-
 							mapList.remove((int) (point.x / 2));
 
 							GroundUnitDescriptor newObj = new GroundUnitDescriptor(
@@ -216,6 +215,7 @@ public class TrackBuilder {
 									newObj.getEnd());
 							newObj.setFixture(fixture);
 							mapList.add((int) (point.x / 2), newObj);
+							
 						}
 
 					}

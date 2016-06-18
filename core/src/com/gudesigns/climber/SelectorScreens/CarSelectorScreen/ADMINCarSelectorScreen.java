@@ -1,4 +1,4 @@
-package com.gudesigns.climber.SelectorScreens;
+package com.gudesigns.climber.SelectorScreens.CarSelectorScreen;
 
 import java.util.Iterator;
 
@@ -195,12 +195,12 @@ public class ADMINCarSelectorScreen extends CarSelectorScreen {
 	}
 
 	@Override
-	protected void writeObjectsToFile() {
+	protected void writeObjectsToFile(Long lastCreationTime) {
 		
 	}
 
 	@Override
-	protected void addSpecificItemToList() {
+	protected void readFileForItems() {
 		//for (JSONCar car : gameLoader.communityCars) {
 		//	addItemToList(car);
 		//	localLoadedCounter.release();

@@ -24,12 +24,13 @@ public class User {
 	public static final Integer MAX_SPRING_LEVEL = 15;
 
 	public static final String TRACK_PREFIX = "track_";
+	public static final String FILE_NAME_PREFIX = "file_";
+	public static final String FILE_NAME_PREFIX_MD5 = "file_md5_";
 
 	public enum STARS implements Serializable {
 		NONE, ONE, TWO, THREE
 
 	}
-
 
 	private UserState userState = new UserState();
 
@@ -176,14 +177,15 @@ public class User {
 		return currentTrack;
 	}
 
-	public void setCurrentTrack(String currentTrack, TrackMode mode, boolean lockBypass) {
+	public void setCurrentTrack(String currentTrack, TrackMode mode,
+			boolean lockBypass) {
 
 		// prefs.clear();
 
 		JSONTrack track = JSONTrack.objectify(currentTrack);
 		TrackType type = track.getType();
 
-		if(!lockBypass){
+		if (!lockBypass) {
 			if (type == TrackType.FORREST) {
 				if (isLocked(ItemsLookupPrefix.getForrestPrefix(Integer
 						.toString(track.getIndex())))) {
@@ -367,6 +369,36 @@ public class User {
 
 	public boolean getSfxPlayState() {
 		return userState.playingSfx;
+	}
+	
+	public void saveFileMD5(String fileName, String md5) {
+		prefs.putString(FILE_NAME_PREFIX_MD5 + fileName, md5);
+		
+		prefs.flush();
+		
+		System.out.println("User: saving " + fileName + " md5: " + md5 );
+	}
+
+	public String getFileMD5(String fileName) {
+
+		String fileState = prefs.getString(FILE_NAME_PREFIX_MD5 + fileName, "");
+
+		return fileState;
+	}
+
+	public void saveFileTimeStamp(String fileName, String timeStamp) {
+		prefs.putString(FILE_NAME_PREFIX + fileName, timeStamp);
+		
+		prefs.flush();
+		
+		System.out.println("User: saving " + fileName + " timestamp: " + timeStamp );
+	}
+
+	public Long getFileTimeStamp(String fileName) {
+
+		String fileState = prefs.getString(FILE_NAME_PREFIX + fileName, "0");
+
+		return Long.parseLong(fileState);
 	}
 
 	public void setStars(String trackId, STARS stars) {

@@ -2,6 +2,7 @@ package com.gudesigns.climber;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import wrapper.CameraManager;
@@ -11,6 +12,7 @@ import JSONifier.JSONCar;
 import Menu.FontManager;
 import Shader.GameMesh;
 import Storage.FileManager;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -111,6 +113,7 @@ public class LoaderScreen implements Screen {
 	}
 
 	private void loadAssets() {
+		checkAllDataFiles();
 		loadLocalCars(FileManager.CAR_FILE_NAME);
 		loadLocalCars(FileManager.COMMUNITY_FILE_NAME);
 		GameMesh.create();
@@ -325,6 +328,38 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("skins/uiskin.json", Skin.class,
 				new SkinParameter("skins/uiskin.atlas", resources));
 
+	}
+
+	private void checkAllDataFiles() {
+		User user = User.getInstance();
+		
+		ArrayList<String> fileList = new ArrayList<String>();
+		fileList.add(FileManager.ARTIC_TRACK_FILE_NAME);
+		fileList.add(FileManager.CAR_FILE_NAME);
+		fileList.add(FileManager.COMMUNITY_FILE_NAME);
+		fileList.add(FileManager.FORREST_TRACK_FILE_NAME);
+		fileList.add(FileManager.INFINITE_TRACK_FILE_NAME);
+		
+		for (String file : fileList){
+			String md5 = FileManager.checkSum(file);
+			
+			if(md5.isEmpty()){
+				System.out.println("LoaderScreen: file not found");
+				// File missing
+				user.saveFileTimeStamp(file, "0");
+			} else {
+				System.out.println("LoaderScreen: " + md5);
+				
+				if(md5.compareTo(user.getFileMD5(file))!=0){
+					// File corrupted
+					System.out.println("LoaderScreen: file Corrupted");
+					user.saveFileTimeStamp(file, "0");
+				}
+				
+				
+			}
+		}
+		
 	}
 
 	public void loadLocalCars(final String fileName) {

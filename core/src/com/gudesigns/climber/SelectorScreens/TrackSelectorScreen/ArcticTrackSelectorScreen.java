@@ -1,4 +1,4 @@
-package com.gudesigns.climber.SelectorScreens;
+package com.gudesigns.climber.SelectorScreens.TrackSelectorScreen;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -43,10 +43,17 @@ import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.gudesigns.climber.CarModeScreen;
+import com.gudesigns.climber.SelectorScreens.SelectorScreen;
 
 public class ArcticTrackSelectorScreen extends SelectorScreen {
 
 	private final static int itemsPerRow = 15;
+	
+	@Override
+	protected String getFileName() {
+		// TODO Auto-generated method stub
+		return FileManager.ARTIC_TRACK_FILE_NAME;
+	}
 
 	@Override
 	protected int getItemsPerPage() {
@@ -61,9 +68,32 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 		scrollingBackground = new ScrollingBackground(this.gameLoader, null,
 				TrackType.ARTIC, BackgroundType.SELECTOR);
 	}
-
+	
 	@Override
-	protected void downloadItems() {
+	protected String getDownloadRequestString(int offset, Long lastCreatedTime) {
+		return RESTPaths.MAPS
+				+ RESTProperties.URL_ARG_SPLITTER
+				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.OFFSET + currentOffset
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.PROPS + RESTProperties.CREATED
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_POINTS_JSON
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.OBJECT_ID
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_BEST_TIME
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_DIFFICULTY
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.TRACK_INDEX
+				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.WhereCreatedGreaterThan(lastCreatedTime);
+	}
+
+	//@Override
+	protected void downloadItems_old() {
 		resultsRemaining = true;
 		currentOffset = 0;
 
@@ -267,7 +297,7 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 	}
 
 	@Override
-	protected void writeObjectsToFile() {
+	protected void writeObjectsToFile(Long lastCreationTime) {
 		ArrayList<JSONTrack> list = new ArrayList<JSONTrack>();
 
 		for (JSONParentClass track : items) {
@@ -281,13 +311,13 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);
 
-		FileManager.writeTracksToFileGson(list, FileManager.ARTIC_TRACK_FILE_NAME);
+		FileManager.writeTracksToFileGson(list, getFileName(), lastCreationTime);
 	}
 
 	@Override
-	protected void addSpecificItemToList() {
+	protected void readFileForItems() {
 		Gson gson = new Gson();
-		Reader stream = FileManager.getFileStream(FileManager.ARTIC_TRACK_FILE_NAME);
+		Reader stream = FileManager.getFileStream(getFileName());
 
 		if (stream == null) {
 			loaderSemaphore.release();

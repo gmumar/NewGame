@@ -46,7 +46,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.gudesigns.climber.SelectorScreens.InfiniteTrackSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.InfiniteTrackSelectorScreen;
 
 public class GamePlayScreen implements Screen, InputProcessor {
 

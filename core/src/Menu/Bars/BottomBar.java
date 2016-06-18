@@ -22,7 +22,7 @@ import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.CarModeScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
-import com.gudesigns.climber.SelectorScreens.ForrestTrackSelectorScreen;
+import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ForrestTrackSelectorScreen;
 
 public class BottomBar {
 
