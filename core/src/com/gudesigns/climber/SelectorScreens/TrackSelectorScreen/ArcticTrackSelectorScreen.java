@@ -75,7 +75,7 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 				+ RESTProperties.URL_ARG_SPLITTER
 				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
 				+ RESTProperties.PROP_ARG_SPLITTER
-				+ RESTProperties.OFFSET + currentOffset
+				+ RESTProperties.OFFSET + offset
 				+ RESTProperties.PROP_ARG_SPLITTER
 				+ RESTProperties.PROPS + RESTProperties.CREATED
 				+ RESTProperties.PROP_PROP_SPLITTER

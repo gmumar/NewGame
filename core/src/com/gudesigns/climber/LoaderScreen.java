@@ -12,7 +12,6 @@ import JSONifier.JSONCar;
 import Menu.FontManager;
 import Shader.GameMesh;
 import Storage.FileManager;
-import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -133,6 +132,7 @@ public class LoaderScreen implements Screen {
 		// gameLoader.Assets.load("temp_background2.png", Texture.class);
 		gameLoader.Assets.load("temp_post.png", Texture.class);
 		gameLoader.Assets.load("coin.png", Texture.class);
+		gameLoader.Assets.load("big_grid.png", Texture.class);
 
 		// // Worlds
 		gameLoader.Assets.load("worlds/forrest/mountains.png", Texture.class);
@@ -331,35 +331,17 @@ public class LoaderScreen implements Screen {
 	}
 
 	private void checkAllDataFiles() {
-		User user = User.getInstance();
-		
+	
 		ArrayList<String> fileList = new ArrayList<String>();
 		fileList.add(FileManager.ARTIC_TRACK_FILE_NAME);
 		fileList.add(FileManager.CAR_FILE_NAME);
 		fileList.add(FileManager.COMMUNITY_FILE_NAME);
 		fileList.add(FileManager.FORREST_TRACK_FILE_NAME);
 		fileList.add(FileManager.INFINITE_TRACK_FILE_NAME);
-		
-		for (String file : fileList){
-			String md5 = FileManager.checkSum(file);
-			
-			if(md5.isEmpty()){
-				System.out.println("LoaderScreen: file not found");
-				// File missing
-				user.saveFileTimeStamp(file, "0");
-			} else {
-				System.out.println("LoaderScreen: " + md5);
-				
-				if(md5.compareTo(user.getFileMD5(file))!=0){
-					// File corrupted
-					System.out.println("LoaderScreen: file Corrupted");
-					user.saveFileTimeStamp(file, "0");
-				}
-				
-				
-			}
+
+		for (String file : fileList) {
+			FileManager.validateFileState(file);
 		}
-		
 	}
 
 	public void loadLocalCars(final String fileName) {

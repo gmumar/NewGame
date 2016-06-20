@@ -28,6 +28,7 @@ import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_ParentContainer;
 import RESTWrapper.REST;
 import RESTWrapper.ServerDataUnit;
+import Storage.FileManager;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TwoButtonDialogFlow;
 import UserPackage.User;
@@ -201,6 +202,8 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected void downloadItems() {
 		resultsRemaining = true;
 		currentOffset = 0;
+		
+		FileManager.validateFileState(getFileName());
 
 		ae.submit(new AsyncTask<String>() {
 
@@ -226,8 +229,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 									@Override
 									public void handleHttpResponse(
 											HttpResponse httpResponse) {
-										System.out
-												.println("SelectorScreen: got a reply ");
+										
 
 										ScreenType screenType = getScreenType();
 										Backendless_ParentContainer obj = null;
@@ -246,15 +248,12 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 										}
 
 										System.out
-												.println("SelectorScreen: object count "
-														+ obj.getTotalObjects());
-
+										.println("SelectorScreen: got a reply, count: " + obj.getTotalObjects() );
+										
 										for (ServerDataUnit fromServer : obj
 												.getData()) {
 
-											System.out
-													.println("SelectorScreen: Object ");
-
+										
 											downloadedCounter.release();
 
 											if (screenType == ScreenType.ARCTIC_TRACK_SELECTOR
@@ -291,7 +290,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 												addItemToList(carJson);
 											} else {
-
+												System.out.println("SelectorScreen: ERROR: unknown screen");
 											}
 
 										}
@@ -312,8 +311,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 									@Override
 									public void failed(Throwable t) {
-										System.out
-												.println("SelectorScreen: download failed Stack printing");
 										t.printStackTrace();
 										loaderSemaphore.release();
 										// stallSemaphore.release();

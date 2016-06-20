@@ -30,6 +30,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 public class CarBuilderScreen implements Screen, InputProcessor,
 		GestureListener, TwoButtonDialogFlow {
@@ -39,6 +41,7 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 	private CameraManager camera, secondCamera;
 	private World world;
 	private Stage stage;
+	private Table grid;
 	private MenuBuilder menu;
 	private GameViewport vp;
 	private ShapeRenderer shapeRenderer;
@@ -46,8 +49,9 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 	private Box2DDebugRenderer debugRenderer;
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 	private PopQueManager popQueManager;
-	
+
 	private CarBuilderScreen instance;
+	private GameLoader gameLoader;
 
 	private float zoom = 0.015f;
 
@@ -56,9 +60,10 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 		Globals.updateScreenInfo();
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
+		gameLoader = gameState.getGameLoader();
 		initStage();
 		initWorld();
-		
+
 		instance = this;
 
 		popQueManager = new PopQueManager(gameState.getGameLoader(), stage);
@@ -112,7 +117,7 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 						.toString()) == 0) {
 			popQueManager.push(new PopQueObject(
 					PopQueObjectType.TUTORIAL_BUILDER_SCREEN_STEP5, this));
-		} 
+		}
 
 		return false;
 	}
@@ -140,6 +145,27 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 				secondCamera);
 
 		stage = new Stage(vp);
+
+		grid = new Table();
+
+		int startX = -300, startY = 820;
+		Image oneGrid = null;
+
+		for (int i = 0; i < 4; i++) {
+			startY -= 410;
+			startX = -300;
+			for (int j = 0; j < 5; j++) {
+				oneGrid = new Image(
+						gameLoader.Assets.getFilteredTexture("big_grid.png"));
+				oneGrid.setColor(1, 1, 1, 0.1f);
+				oneGrid.setScale(0.4f);
+				oneGrid.setPosition(startX, startY);
+				startX += 410;
+				grid.addActor(oneGrid);
+			}
+		}
+
+		stage.addActor(grid);
 
 	}
 
@@ -177,7 +203,7 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 
 	private void renderWorld() {
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(13 / 256f, 22 / 256f, 46 / 256f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
@@ -185,6 +211,8 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 
 		// debugRenderer.render(world, camera.combined);
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
+
+		grid.setPosition(-camera.position.x * 72, -camera.position.y * 72);
 
 	}
 

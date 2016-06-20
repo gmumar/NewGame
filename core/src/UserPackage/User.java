@@ -375,8 +375,6 @@ public class User {
 		prefs.putString(FILE_NAME_PREFIX_MD5 + fileName, md5);
 		
 		prefs.flush();
-		
-		System.out.println("User: saving " + fileName + " md5: " + md5 );
 	}
 
 	public String getFileMD5(String fileName) {
@@ -390,8 +388,6 @@ public class User {
 		prefs.putString(FILE_NAME_PREFIX + fileName, timeStamp);
 		
 		prefs.flush();
-		
-		System.out.println("User: saving " + fileName + " timestamp: " + timeStamp );
 	}
 
 	public Long getFileTimeStamp(String fileName) {

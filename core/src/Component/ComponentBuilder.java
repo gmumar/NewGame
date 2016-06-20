@@ -128,9 +128,9 @@ public class ComponentBuilder {
 		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 
 		properties.setFriction(0.04f * level);
-		properties.setDensity(160 - 10*level);
+		properties.setDensity(150 - 10*level);
 		properties.setTexture("tire/level" + level + ".png");
-		properties.setRestituition(0.15f * level);
+		properties.setRestituition(0.15f + level*0.01f);
 		componentName.setBaseName(ComponentNames.WHEEL);
 		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
 		CircleShape shape = new CircleShape();
@@ -201,8 +201,9 @@ public class ComponentBuilder {
 			properties.setTexture("spring_lower/level" + level + ".png");
 		}
 
-		float springHeight = 1.5f;
-		float springTravel = 0.5f;
+		float springHeight = 1.8f;
+		float springTravelUpper = 0.1f;
+		float springTravelLower = 0.8f;
 		float adjust = 2.3f;
 
 		float height = 0;
@@ -310,13 +311,14 @@ public class ComponentBuilder {
 		dJoint.length = springHeight;
 		dJoint.collideConnected = false;
 		if (!forBuilder) {
+			/*-------------------PHYSICS-------------------------*/
 			// smaller softer
 			
 			// Controls stiffness, larger means harder
-			dJoint.frequencyHz = 13.5f + (User.MAX_SPRING_LEVEL - level)*1.2f;// 10
+			dJoint.frequencyHz = 7.5f + (User.MAX_SPRING_LEVEL - level)*1.2f;// 10
 			
 			// controls recoil, smaller comes back faster
-			dJoint.dampingRatio = 0.1f + (User.MAX_SPRING_LEVEL - level)*0.1f;// 0.5f
+			dJoint.dampingRatio = 0.1f + (User.MAX_SPRING_LEVEL - level)*0.12f;// 0.5f
 		}
 		//
 		gameState.getWorld().createJoint(dJoint);
@@ -343,8 +345,8 @@ public class ComponentBuilder {
 			rJoint.localAnchorA.set(topFixture.getCenter());
 			rJoint.localAnchorB.set(botFixture.getCenter());
 			rJoint.referenceAngle = 0;
-			rJoint.lowerTranslation = springHeight - springTravel;
-			rJoint.upperTranslation = springHeight + springTravel;
+			rJoint.lowerTranslation = springHeight - springTravelLower;
+			rJoint.upperTranslation = springHeight + springTravelUpper;
 			rJoint.enableLimit = true;
 			rJoint.enableMotor = true;
 			rJoint.collideConnected = false;

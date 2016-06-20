@@ -7,11 +7,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
+import wrapper.Globals;
 import DataMutators.Gzip;
 import JSONifier.JSONCar;
 import JSONifier.JSONTrack;
@@ -23,11 +22,11 @@ import com.google.gson.Gson;
 
 public class FileManager {
 
-	public final static String CAR_FILE_NAME = "mycarfile.txt";
-	public final static String FORREST_TRACK_FILE_NAME = "mytrackfile2_1.txt";
-	public final static String ARTIC_TRACK_FILE_NAME = "mytrackfile3_1.txt";
-	public final static String INFINITE_TRACK_FILE_NAME = "mytrackfile1_1.txt";
-	public static final String COMMUNITY_FILE_NAME = "mycommcarfile_1.txt";
+	public final static String CAR_FILE_NAME = "mycarfile_v" + Globals.VERSION + ".dat";
+	public final static String FORREST_TRACK_FILE_NAME = "mytrackfile2_v" + Globals.VERSION + ".dat";
+	public final static String ARTIC_TRACK_FILE_NAME = "mytrackfile3_v" + Globals.VERSION + ".dat";
+	public final static String INFINITE_TRACK_FILE_NAME = "mytrackfile1_v" + Globals.VERSION + ".dat";
+	public static final String COMMUNITY_FILE_NAME = "mycommcarfile_v" + Globals.VERSION + ".dat";
 
 	/*
 	 * private static void writeToFile(FileObject objectIn) {
@@ -66,10 +65,9 @@ public class FileManager {
 		FileHandle handle = Gdx.files.external(fileName);
 
 		try {
-			handle.writeBytes(Gzip.compress(strToWrite), false);
+			handle.writeBytes(Gzip.compressToBytes(strToWrite), false);
 			User.getInstance().saveFileTimeStamp(fileName,
 					lastCreationTimeStamp.toString());
-			System.out.println(checkSum(fileName));
 			User.getInstance().saveFileMD5(fileName, checkSum(fileName));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -126,6 +124,29 @@ public class FileManager {
 		}
 
 		return reader;
+	}
+	
+	public static boolean validateFileState(String fileName){
+		User user = User.getInstance();
+		
+		String md5 = FileManager.checkSum(fileName);
+
+		if (md5.isEmpty()) {
+			// File missing
+			user.saveFileTimeStamp(fileName, "0");
+			System.out.println("FileManger: file missing");
+			return false;
+		} else {
+			if (md5.compareTo(user.getFileMD5(fileName)) != 0) {
+				// File corrupted
+				user.saveFileTimeStamp(fileName, "0");
+				System.out.println("FileManger: file corrupted");
+				return false;
+			}
+
+		}
+		System.out.println("FileManger: file Ok");
+		return true;
 	}
 
 	public static String checkSum(String path) {
