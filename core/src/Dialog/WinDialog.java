@@ -68,7 +68,8 @@ public class WinDialog extends Table {
 		Table performanceWrapper = new Table(skin);
 
 		// Header
-		Label text = new Label("Level Complete!", skin, "winTitle");
+		Label text = new Label("Level " + JSONTrack.objectify(User.getInstance()
+				.getCurrentTrack()).getItemIndex() + " Complete!", skin, "winTitle");
 		text.setAlignment(Align.center);
 		// text.setTextBoxString("Win!");
 		header.add(text).expandY().left().padBottom(4);
@@ -298,7 +299,7 @@ public class WinDialog extends Table {
 		Integer coinsWon = 0;
 		if(User.getInstance().getCurrentTrackMode() == TrackMode.ADVENTURE){
 			coinsWon = (Globals.POSITION_LOST - position)
-				* playedTrack.getIndex() * 10;
+				* playedTrack.getItemIndex() * 10;
 		} else if (User.getInstance().getCurrentTrackMode() == TrackMode.INFINTE){
 			coinsWon = (Globals.POSITION_LOST - position)
 					* playedTrack.getDifficulty() * 10;

@@ -6,15 +6,15 @@ public class ServerDataUnit {
 	private String objectId;
 	private float trackBestTime;
 	private int trackDifficulty;
-	private int trackIndex;
+	private int itemIndex;
 	private String createdAt;
 
-	public int getTrackIndex() {
-		return trackIndex;
+	public int getItemIndex() {
+		return itemIndex;
 	}
 
-	public void setTrackIndex(int trackIndex) {
-		this.trackIndex = trackIndex;
+	public void setItemIndex(int trackIndex) {
+		this.itemIndex = trackIndex;
 	}
 
 	public int getTrackDifficulty() {

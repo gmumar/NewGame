@@ -27,7 +27,6 @@ import UserPackage.User;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -56,7 +55,8 @@ public class TrackMenuBuilder {
 
 	private Button zoomIn, zoomOut, panLeft, panRight, build, exit, upload,
 			worldType, buildPost, buildBar, rotateLeft, rotateRight, delete,
-			panUp, panDown, switchMode, moveMultiple, buildCoin, loadMap;
+			panUp, panDown, switchMode, moveMultiple, buildCoin, loadMap,
+			buildTouchablePost;
 	private TextBox currentMode, currentTrackType, distance;
 
 	private CameraManager camera;
@@ -77,7 +77,7 @@ public class TrackMenuBuilder {
 	private TrackType trackType = TrackType.FORREST;
 	private TrackBuilder trackBuilder;
 
-	private volatile boolean panLeftDown = false,panRightDown = false;
+	private volatile boolean panLeftDown = false, panRightDown = false;
 	private int currentModeCount = 0;
 	// 0 = Track, 1 = Parts, 2 = edit
 
@@ -88,7 +88,7 @@ public class TrackMenuBuilder {
 		return currentModeCount == 0;
 		// return drawTrack;
 	}
-	
+
 	public boolean isInEditMode() {
 		return currentModeCount == 2;
 		// return drawTrack;
@@ -214,8 +214,8 @@ public class TrackMenuBuilder {
 			}
 
 		};
-		
-		panLeft.addListener(new ActorGestureListener(){
+
+		panLeft.addListener(new ActorGestureListener() {
 
 			@Override
 			public void touchDown(InputEvent event, float x, float y,
@@ -230,7 +230,7 @@ public class TrackMenuBuilder {
 				panLeftDown = false;
 				super.touchUp(event, x, y, pointer, button);
 			}
-			
+
 		});
 
 		panLeft.setPosition(125, 0);
@@ -247,7 +247,7 @@ public class TrackMenuBuilder {
 			}
 		};
 
-		panRight.addListener(new ActorGestureListener(){
+		panRight.addListener(new ActorGestureListener() {
 
 			@Override
 			public void touchDown(InputEvent event, float x, float y,
@@ -262,9 +262,9 @@ public class TrackMenuBuilder {
 				panRightDown = false;
 				super.touchUp(event, x, y, pointer, button);
 			}
-			
+
 		});
-		
+
 		panRight.setPosition(0, 0);
 		panRight.setHeight(100);
 		panRight.setWidth(75);
@@ -468,6 +468,19 @@ public class TrackMenuBuilder {
 		buildCoin.setHeight(50);
 		stage.addActor(buildCoin);
 
+		buildTouchablePost = new Button("buildTPost") {
+			@Override
+			public void Clicked() {
+				currentModeCount = 1;
+				buildTouchablePost();
+
+			}
+		};
+
+		buildTouchablePost.setPosition(500, 0);
+		buildTouchablePost.setHeight(50);
+		stage.addActor(buildTouchablePost);
+
 		/*
 		 * buildBall = new Button("buildBall") {
 		 * 
@@ -495,6 +508,8 @@ public class TrackMenuBuilder {
 	private void intializeParts(JSONTrack track) {
 
 		Component addedComponent = null;
+		
+		jointTypes = track.getComponentJointTypes();
 
 		for (JSONComponent part : track.getComponentList()) {
 			if (part.getBaseName().compareTo(ComponentNames.POST) == 0) {
@@ -503,13 +518,18 @@ public class TrackMenuBuilder {
 				addedComponent = buildBar();
 			} else if (part.getBaseName().compareTo(ComponentNames.TRACKCOIN) == 0) {
 				addedComponent = buildCoin();
+			} else if (part.getBaseName().compareTo(
+					ComponentNames.TOUCHABLE_POST) == 0) {
+				addedComponent = buildTouchablePost();
 			} else {
 				System.exit(1);
 			}
 
 			if (part.getProperties() != null) {
+
 				addedComponent.applyProperties(part.getProperties(),
 						PropertyTypes.BOTH);
+
 			}
 		}
 	}
@@ -518,7 +538,9 @@ public class TrackMenuBuilder {
 		int partLevel = 1;
 		incrementCount(ComponentNames.POST);
 		Component c = ComponentBuilder.buildTrackPost(new GamePhysicalState(
-				world, gameLoader), partLevel, true);
+				world, gameLoader), partLevel, false); // --- Hack: using for
+														// builder to control
+														// touchable ----
 		// c.setUpForBuilder(ComponentNames.BAR3
 		// + Assembler.NAME_ID_SPLIT
 		// + componentCounts.get(ComponentNames.BAR3));
@@ -526,6 +548,29 @@ public class TrackMenuBuilder {
 		name.setBaseName(ComponentNames.POST);
 		name.setComponentId(Integer.toString(componentCounts
 				.get(ComponentNames.POST)));
+		name.setMountId("*");
+		name.setLevel(partLevel);
+		c.setUpForBuilder(name, partLevel);
+		lastSelected = c.getObject().getPhysicsBody();
+		c.setPosition(camera.position.x, camera.position.y);
+		parts.add(c);
+
+		return c;
+
+	}
+
+	private Component buildTouchablePost() {
+		int partLevel = 1;
+		incrementCount(ComponentNames.TOUCHABLE_POST);
+		Component c = ComponentBuilder.buildTrackPost(new GamePhysicalState(
+				world, gameLoader), partLevel, true);
+		// c.setUpForBuilder(ComponentNames.BAR3
+		// + Assembler.NAME_ID_SPLIT
+		// + componentCounts.get(ComponentNames.BAR3));
+		JSONComponentName name = new JSONComponentName();
+		name.setBaseName(ComponentNames.TOUCHABLE_POST);
+		name.setComponentId(Integer.toString(componentCounts
+				.get(ComponentNames.TOUCHABLE_POST)));
 		name.setMountId("*");
 		name.setLevel(partLevel);
 		c.setUpForBuilder(name, partLevel);
@@ -724,17 +769,16 @@ public class TrackMenuBuilder {
 		} else if (currentModeCount == 2) {
 			currentMode.setTextBoxString("Edit " + panSpeedMultiplier);
 		}
-		
-		if(panLeftDown){
-			camera.position.x += PAN_SPEED * panSpeedMultiplier/5f;
-			camera.update();
-		}
-		
-		if(panRightDown){
-			camera.position.x -= PAN_SPEED * panSpeedMultiplier/5f;
+
+		if (panLeftDown) {
+			camera.position.x += PAN_SPEED * panSpeedMultiplier / 5f;
 			camera.update();
 		}
 
+		if (panRightDown) {
+			camera.position.x -= PAN_SPEED * panSpeedMultiplier / 5f;
+			camera.update();
+		}
 
 		distance.setTextBoxString(trackBuilder.getMapList().size());
 

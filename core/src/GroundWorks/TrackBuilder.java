@@ -51,8 +51,16 @@ public class TrackBuilder {
 	private JSONTrack importMap(String currentTrack) {
 		JSONTrack preMadeMap = JSONTrack.objectify(currentTrack);
 		GroundUnitDescriptor lastObj = mapList.get(mapList.size() - 1);
+		
+		int skipCount = 0;
 
 		for (Vector2 point : preMadeMap.getPoints()) {
+			
+			skipCount++;
+			if(skipCount<=3){
+				continue;
+			}
+			
 			GroundUnitDescriptor newObj = new GroundUnitDescriptor(
 					lastObj.getEnd(), new Vector2(lastObj.getEnd().x
 							+ GroundBuilder.UNIT_LENGTH, point.y), false);

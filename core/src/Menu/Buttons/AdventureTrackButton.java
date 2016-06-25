@@ -41,7 +41,7 @@ public class AdventureTrackButton {
 		Button base = null;
 
 		if (screenType == ScreenType.NONE) {
-			indexTxt = Integer.toString(track.getIndex());
+			indexTxt = Integer.toString(track.getItemIndex());
 			if (forInfinite) {
 				isNew = user.isNew(ItemsLookupPrefix
 						.getInfiniteTrackPrefix(indexTxt));

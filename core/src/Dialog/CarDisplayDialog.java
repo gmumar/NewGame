@@ -6,6 +6,7 @@ import Assembly.Assembler;
 import JSONifier.JSONTrack;
 import Menu.Button;
 import Menu.PopQueObject;
+import Menu.TextBox;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.BackendFunctions;
@@ -56,13 +57,16 @@ public class CarDisplayDialog {
 
 				Action completeAction = new Action() {
 					public boolean act(float delta) {
+
 						base.remove();
+
 						return true;
 					}
 				};
-
-				base.addAction(new SequenceAction(Actions.fadeOut(0.2f),
-						completeAction));
+				if (!popQueObject.isAdmin()) {
+					base.addAction(new SequenceAction(Actions.fadeOut(0.2f),
+							completeAction));
+				}
 				super.clicked(event, x, y);
 			}
 
@@ -163,6 +167,13 @@ public class CarDisplayDialog {
 
 		if (popQueObject.isAdmin()) {
 			buttonsWrapper.row();
+
+			final TextBox index = new TextBox("index");
+			index.setMaxLength(1000);
+			index.setTextBoxString("i");
+			index.setWidth(100);
+			buttonsWrapper.add(index).pad(10);
+
 			Button delete = new Button("delete");
 			buttonsWrapper.add(delete);
 
@@ -172,7 +183,7 @@ public class CarDisplayDialog {
 				public void clicked(InputEvent event, float x, float y) {
 
 					deleteCar(itemJson);
-
+					base.remove();
 					super.clicked(event, x, y);
 				}
 
@@ -187,9 +198,9 @@ public class CarDisplayDialog {
 				public void clicked(InputEvent event, float x, float y) {
 
 					BackendFunctions.uploadCar(itemJson,
-							RESTPaths.COMMUNITY_CARS);
+							RESTPaths.COMMUNITY_CARS, Integer.parseInt(index.getText()));
 					deleteCar(itemJson);
-
+					base.remove();
 					super.clicked(event, x, y);
 				}
 
@@ -202,9 +213,9 @@ public class CarDisplayDialog {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					BackendFunctions.uploadCar(itemJson, RESTPaths.CARS);
+					BackendFunctions.uploadCar(itemJson, RESTPaths.CARS, Integer.parseInt(index.getText()));
 					deleteCar(itemJson);
-
+					base.remove();
 					super.clicked(event, x, y);
 				}
 

@@ -178,8 +178,8 @@ public class InfiniteTrackSelectorScreen extends SelectorScreen {
 											.getTrackBestTime());
 									trackJson.setDifficulty(fromServer
 											.getTrackDifficulty());
-									trackJson.setIndex(fromServer
-											.getTrackIndex());
+									trackJson.setItemIndex(fromServer
+											.getItemIndex());
 									trackJson.setCreationTime(fromServer
 											.getCreationTime());
 
@@ -255,10 +255,10 @@ public class InfiniteTrackSelectorScreen extends SelectorScreen {
 
 					if (user.isNew(ItemsLookupPrefix
 							.getInfiniteTrackPrefix(Integer.toString(track
-									.getIndex())))) {
+									.getItemIndex())))) {
 						user.setNonNew(ItemsLookupPrefix
 								.getInfiniteTrackPrefix(Integer.toString(track
-										.getIndex())), false);
+										.getItemIndex())), false);
 					}
 
 					gameLoader.setScreen(new CarModeScreen(gameState));
@@ -268,9 +268,9 @@ public class InfiniteTrackSelectorScreen extends SelectorScreen {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.UNLOCK_TRACK, ItemsLookupPrefix
 									.getInfiniteTrackPrefix(Integer
-											.toString(track.getIndex())),
+											.toString(track.getItemIndex())),
 							"Unlock Track", "\t\tUnlock track "
-									+ Integer.toString(track.getIndex())
+									+ Integer.toString(track.getItemIndex())
 									+ "\t\t", Costs.INFINITY_TRACK, instance));
 
 				}

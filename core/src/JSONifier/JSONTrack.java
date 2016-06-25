@@ -24,15 +24,6 @@ public class JSONTrack extends JSONParentClass {
 	private ArrayList<Float> smallPoints = null;
 	private float bestTime = 0.0f;
 	private int difficulty = 0;
-	private int index = 0;
-
-	public int getIndex() {
-		return index;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
-	}
 
 	public int getDifficulty() {
 		return difficulty;
@@ -143,7 +134,7 @@ public class JSONTrack extends JSONParentClass {
 		
 		JSONTrack otherTrack = ((JSONTrack) obj);
 		
-		return ((this.getIndex() == otherTrack.getIndex()) && this.getType() == otherTrack.getType());
+		return ((this.getItemIndex() == otherTrack.getItemIndex()) && this.getType() == otherTrack.getType());
 		//return (this.getObjectId().compareTo(((JSONTrack) obj).getObjectId()) == 0);
 		//return (this.jsonify().compareTo(((JSONTrack) obj).jsonify()) == 0);
 	}

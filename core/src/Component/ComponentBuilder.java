@@ -37,7 +37,9 @@ public class ComponentBuilder {
 		} else if (name.compareTo(ComponentNames.LIFE) == 0) {
 			return buildLife(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.POST) == 0) {
-			return buildTrackPost(gameState, level, forBuilder);
+			return buildTrackPost(gameState, level, false);
+		} else if (name.compareTo(ComponentNames.TOUCHABLE_POST) == 0) {
+			return buildTrackPost(gameState, level, true);
 		} else if (name.compareTo(ComponentNames.TRACKBAR) == 0) {
 			return buildTrackBar(gameState, level, forBuilder);
 		} else if (name.compareTo(ComponentNames.TRACKBALL) == 0) {
@@ -128,9 +130,9 @@ public class ComponentBuilder {
 		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 
 		properties.setFriction(0.04f * level);
-		properties.setDensity(150 - 10*level);
+		properties.setDensity(150 - 10 * level);
 		properties.setTexture("tire/level" + level + ".png");
-		properties.setRestituition(0.15f + level*0.01f);
+		properties.setRestituition(0.15f + level * 0.01f);
 		componentName.setBaseName(ComponentNames.WHEEL);
 		BaseActor tmpActor = new BaseActor(componentName, properties, gameState);
 		CircleShape shape = new CircleShape();
@@ -313,12 +315,12 @@ public class ComponentBuilder {
 		if (!forBuilder) {
 			/*-------------------PHYSICS-------------------------*/
 			// smaller softer
-			
+
 			// Controls stiffness, larger means harder
-			dJoint.frequencyHz = 7.5f + (User.MAX_SPRING_LEVEL - level)*1.2f;// 10
-			
+			dJoint.frequencyHz = 7.5f + (User.MAX_SPRING_LEVEL - level) * 1.2f;// 10
+
 			// controls recoil, smaller comes back faster
-			dJoint.dampingRatio = 0.1f + (User.MAX_SPRING_LEVEL - level)*0.12f;// 0.5f
+			dJoint.dampingRatio = 0.1f + (User.MAX_SPRING_LEVEL - level) * 0.12f;// 0.5f
 		}
 		//
 		gameState.getWorld().createJoint(dJoint);
@@ -483,7 +485,11 @@ public class ComponentBuilder {
 
 		ComponentPhysicsProperties properties = new ComponentPhysicsProperties();
 		JSONComponentName componentName = new JSONComponentName();
-		componentName.setBaseName(ComponentNames.POST);
+		if (forBuilder) {
+			componentName.setBaseName(ComponentNames.TOUCHABLE_POST);
+		} else {
+			componentName.setBaseName(ComponentNames.POST);
+		}
 
 		properties.setDensity(partLevel);
 		properties.setTexture("temp_post.png");

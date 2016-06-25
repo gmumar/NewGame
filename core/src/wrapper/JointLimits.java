@@ -30,7 +30,7 @@ public class JointLimits {
 
 	private static String nameBodyA = "";
 	private static String nameBodyB = "";
-	
+
 	public JointLimits(World world) {
 		this.world = world;
 
@@ -39,32 +39,35 @@ public class JointLimits {
 	final public void enableJointLimits(final float step) {
 
 		world.getJoints(joints);
-		//iter = joints.iterator();
+		// iter = joints.iterator();
 
 		for (Joint joint : joints) {
-			//joint = iter.next();
-			
+			// joint = iter.next();
+
 			force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
 			torque = joint.getReactionTorque(step);
-			
-			if(torque < LIFE_BAR_BREAKING_TORQUE && force < LIFE_BAR_BREAKING_FORCE){
+
+			if (torque < LIFE_BAR_BREAKING_TORQUE
+					&& force < LIFE_BAR_BREAKING_FORCE) {
 				continue;
 			}
 
-			nameBodyA = ((JSONComponentName)joint.getBodyA().getUserData()).getBaseName();
-			nameBodyB = ((JSONComponentName)joint.getBodyB().getUserData()).getBaseName();
-			
-			if(nameBodyA.startsWith(ComponentNames.TRACK_NAME_PREFIX) || nameBodyB.startsWith(ComponentNames.TRACK_NAME_PREFIX) ){
+			nameBodyA = ((JSONComponentName) joint.getBodyA().getUserData())
+					.getBaseName();
+			nameBodyB = ((JSONComponentName) joint.getBodyB().getUserData())
+					.getBaseName();
+
+			if (nameBodyA.startsWith(ComponentNames.TRACK_NAME_PREFIX)
+					|| nameBodyB.startsWith(ComponentNames.TRACK_NAME_PREFIX)) {
 				continue;
 			}
-			 
-			if ( ( (joint.getType() == JointType.PrismaticJoint) ||
-					jointBetween(joint, ComponentNames.AXLE,
-							ComponentNames.TIRE))) {
+
+			if (((joint.getType() == JointType.PrismaticJoint) || jointBetween(
+					ComponentNames.AXLE, ComponentNames.TIRE))) {
 				continue;
 			}
-			
-			if (jointHas(joint, ComponentNames.LIFE)) {
+
+			if (jointHas(ComponentNames.LIFE)) {
 				if (torque > LIFE_BAR_BREAKING_TORQUE) {
 					world.destroyJoint(joint);
 					continue;
@@ -74,7 +77,7 @@ public class JointLimits {
 					world.destroyJoint(joint);
 					continue;
 				}
-			} else if (jointHas(joint, ComponentNames.BAR3)) {
+			} else if (jointHas(ComponentNames.BAR3)) {
 				if (torque > BAR_BAR_BREAKING_TORQUE) {
 					world.destroyJoint(joint);
 					continue;
@@ -100,60 +103,56 @@ public class JointLimits {
 			 * if (jointBetween(joint, ComponentNames.AXLE,
 			 * ComponentNames.TIRE)) { continue; } else if (jointBetween(joint,
 			 * ComponentNames.BAR3, ComponentNames.BAR3)) { if (torque >
-			 * BAR_BAR_BREAKING_TORQUE) { world.destroyJoint(joint);
-			 *  continue; }
+			 * BAR_BAR_BREAKING_TORQUE) { world.destroyJoint(joint); continue; }
 			 * 
 			 * if (force > BAR_BAR_BREAKING_FORCE) { world.destroyJoint(joint);
-			 * continue; } } else
-			 * if (jointBetween(joint, ComponentNames.LIFE,
+			 * continue; } } else if (jointBetween(joint, ComponentNames.LIFE,
 			 * ComponentNames.BAR3)) { if (torque > LIFE_BAR_BREAKING_TORQUE) {
 			 * 
 			 * world.destroyJoint(joint); continue; }
 			 * 
 			 * if (force > LIFE_BAR_BREAKING_FORCE) { world.destroyJoint(joint);
-			 * continue; } } else
-			 * { if (torque > DEFAULT_BREAKING_TORQUE) {
+			 * continue; } } else { if (torque > DEFAULT_BREAKING_TORQUE) {
 			 * world.destroyJoint(joint); continue; }
 			 * 
 			 * if (force > DEFAULT_BREAKING_FORCE) { world.destroyJoint(joint);
-			 *  continue; } }
+			 * continue; } }
 			 */
 		}
 	}
 
-	final private static boolean jointHas(Joint joint, String name1) {
-		/*if (((String) joint.getBodyA().getUserData()).contains(name1)
+	final private static boolean jointHas(String name1) {
+		/*
+		 * if (((String) joint.getBodyA().getUserData()).contains(name1)
+		 * 
+		 * ||
+		 * 
+		 * ((String) joint.getBodyB().getUserData()).contains(name1)) { return
+		 * true; }
+		 */
 
-		||
-
-		((String) joint.getBodyB().getUserData()).contains(name1)) {
-			return true;
-		}*/
-		
-		if(	nameBodyA.compareTo(name1)==0 ||
-			nameBodyB.compareTo(name1)==0) {
+		if (nameBodyA.compareTo(name1) == 0 || nameBodyB.compareTo(name1) == 0) {
 			return true;
 		}
 
 		return false;
 	}
 
-	final private static boolean jointBetween(Joint joint, String name1,
-			String name2) {
-		/*if (((String) joint.getBodyA().getUserData()).contains(name1)
-				&& ((String) joint.getBodyB().getUserData()).contains(name2)
+	final private static boolean jointBetween(String name1, String name2) {
+		/*
+		 * if (((String) joint.getBodyA().getUserData()).contains(name1) &&
+		 * ((String) joint.getBodyB().getUserData()).contains(name2)
+		 * 
+		 * ||
+		 * 
+		 * ((String) joint.getBodyA().getUserData()).contains(name1) &&
+		 * ((String) joint.getBodyB().getUserData()).contains(name2)) { return
+		 * true; }
+		 */
 
-				||
-
-				((String) joint.getBodyA().getUserData()).contains(name1)
-				&& ((String) joint.getBodyB().getUserData()).contains(name2)) {
-			return true;
-		}*/
-		
-		if (nameBodyA.compareTo(name1)==0 &&
-				nameBodyB.compareTo(name2)==0 ||
-				nameBodyA.compareTo(name2)==0 &&
-				nameBodyB.compareTo(name1)==0 ) {
+		if (nameBodyA.compareTo(name1) == 0 && nameBodyB.compareTo(name2) == 0
+				|| nameBodyA.compareTo(name2) == 0
+				&& nameBodyB.compareTo(name1) == 0) {
 			return true;
 		}
 

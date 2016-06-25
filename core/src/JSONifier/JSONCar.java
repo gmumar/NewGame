@@ -13,7 +13,6 @@ public class JSONCar extends JSONParentClass {
 	private Map<String, Integer> jointTypeList = null;
 	private ArrayList<JSONComponent> addComponents = null;
 
-
 	public String jsonify() {
 		Gson obj = new Gson();
 		//obj.setIgnoreUnknownFields(true);
@@ -64,11 +63,14 @@ public class JSONCar extends JSONParentClass {
 
 		//JsonElement o1 = parser.parse(this.jsonify());
 		//JsonElement o2 = parser.parse(((JSONCar) obj).jsonify());
-
-		String id1 = getObjectId();
-		String id2 = ((JSONCar) obj).getObjectId();
 		
-		return id1.equals(id2);
+		JSONCar otherCar = ((JSONCar) obj);
+		return ((this.getItemIndex() == otherCar.getItemIndex()));
+
+		//String id1 = getObjectId();
+		//String id2 = ((JSONCar) obj).getObjectId();
+		
+		//return id1.equals(id2);
 	}
 
 	public String getId() {

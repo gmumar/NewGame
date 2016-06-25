@@ -72,7 +72,15 @@ public class ScrollingBackground {
 
 		this.object = obj;
 	}
+	
+	public void drawStationary() {
+		rbg.render(new Vector2(0,0));
+	}
 
+	public void drawNormal() {
+		rbg.render(object.getSpeed());	
+	}
+	
 	public void draw(BackgroundType type) {
 		//batch.draw(background, camera.position.x-20, camera.position.y-5,100,20);
 		if(type == BackgroundType.STATIONARY){

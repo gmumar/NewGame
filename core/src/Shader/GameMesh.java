@@ -32,7 +32,7 @@ class MeshDescriptor {
 
 public class GameMesh {
 
-	private static final int LAYER_COUNT = 4;
+	private static final int LAYER_COUNT = 2;
 
 	private static Mesh mesh;
 	private static MeshDescriptor layer;

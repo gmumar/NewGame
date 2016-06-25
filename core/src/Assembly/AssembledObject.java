@@ -186,11 +186,11 @@ public class AssembledObject {
 
 	}
 
-	public void updateSound() {
+	public void updateSound(User user) {
 
 		if (idlePlaying) {
 
-			if (!User.getInstance().getSfxPlayState()) {
+			if (!user.getSfxPlayState()) {
 				idle.stop();
 				idlePlaying = false;
 			} else {
@@ -202,7 +202,7 @@ public class AssembledObject {
 			}
 
 		} else {
-			if (User.getInstance().getSfxPlayState()) {
+			if (user.getSfxPlayState()) {
 				startSound();
 			}
 		}

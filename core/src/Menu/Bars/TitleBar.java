@@ -164,7 +164,7 @@ public class TitleBar {
 				public void clicked(InputEvent event, float x, float y) {
 					if (barObjects.menuBuilder.buildCar()) {
 						BackendFunctions.uploadCar(user.getCurrentCar(),
-								RESTPaths.COMMUNITY_CARS_DUMP);
+								RESTPaths.COMMUNITY_CARS_DUMP, 0);
 					}
 
 					super.clicked(event, x, y);

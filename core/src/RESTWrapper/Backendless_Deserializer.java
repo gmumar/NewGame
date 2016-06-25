@@ -60,13 +60,14 @@ public class Backendless_Deserializer implements
 			unit.setData(actualDataStr);
 
 			if (typeOfT.equals(Backendless_Car.class)) {
-				;
+				unit.setItemIndex(fromServer.get(
+						RESTProperties.CAR_INDEX).getAsInt());
 			} else if (typeOfT.equals(Backendless_Track.class)) {
 				unit.setTrackBestTime(fromServer.get(
 						RESTProperties.TRACK_BEST_TIME).getAsFloat());
 				unit.setTrackDifficulty(fromServer.get(
 						RESTProperties.TRACK_DIFFICULTY).getAsInt());
-				unit.setTrackIndex(fromServer.get(
+				unit.setItemIndex(fromServer.get(
 						RESTProperties.TRACK_INDEX).getAsInt());
 			}
 

@@ -81,6 +81,8 @@ public class CarSelectorScreen extends SelectorScreen {
 				+ RESTProperties.CAR_JSON
 				+ RESTProperties.PROP_PROP_SPLITTER
 				+ RESTProperties.OBJECT_ID
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.CAR_INDEX
 				+ RESTProperties.PROP_ARG_SPLITTER
 				+ RESTProperties.WhereCreatedGreaterThan(lastCreatedTime);
 	}

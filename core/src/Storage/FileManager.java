@@ -22,11 +22,11 @@ import com.google.gson.Gson;
 
 public class FileManager {
 
-	public final static String CAR_FILE_NAME = "mycarfile_v" + Globals.VERSION + ".dat";
-	public final static String FORREST_TRACK_FILE_NAME = "mytrackfile2_v" + Globals.VERSION + ".dat";
-	public final static String ARTIC_TRACK_FILE_NAME = "mytrackfile3_v" + Globals.VERSION + ".dat";
-	public final static String INFINITE_TRACK_FILE_NAME = "mytrackfile1_v" + Globals.VERSION + ".dat";
-	public static final String COMMUNITY_FILE_NAME = "mycommcarfile_v" + Globals.VERSION + ".dat";
+	public final static String CAR_FILE_NAME = "mycarfile_v" + Globals.FILE_VERSION + ".dat";
+	public final static String FORREST_TRACK_FILE_NAME = "mytrackfile2_v" + Globals.FILE_VERSION + ".dat";
+	public final static String ARTIC_TRACK_FILE_NAME = "mytrackfile3_v" + Globals.FILE_VERSION + ".dat";
+	public final static String INFINITE_TRACK_FILE_NAME = "mytrackfile1_v" + Globals.FILE_VERSION + ".dat";
+	public static final String COMMUNITY_FILE_NAME = "mycommcarfile_v" + Globals.FILE_VERSION + ".dat";
 
 	/*
 	 * private static void writeToFile(FileObject objectIn) {

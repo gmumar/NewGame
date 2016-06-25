@@ -188,13 +188,13 @@ public class User {
 		if (!lockBypass) {
 			if (type == TrackType.FORREST) {
 				if (isLocked(ItemsLookupPrefix.getForrestPrefix(Integer
-						.toString(track.getIndex())))) {
+						.toString(track.getItemIndex())))) {
 
 					return;
 				}
 			} else if (type == TrackType.ARTIC) {
 				if (isLocked(ItemsLookupPrefix.getArticPrefix(Integer
-						.toString(track.getIndex())))) {
+						.toString(track.getItemIndex())))) {
 					return;
 				}
 			} else {

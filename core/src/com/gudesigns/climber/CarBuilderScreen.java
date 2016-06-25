@@ -213,7 +213,6 @@ public class CarBuilderScreen implements Screen, InputProcessor,
 		world.step(Gdx.graphics.getDeltaTime(), 100, 100);
 
 		grid.setPosition(-camera.position.x * 72, -camera.position.y * 72);
-
 	}
 
 	@Override

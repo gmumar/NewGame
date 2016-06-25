@@ -288,45 +288,48 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-		if (!paused && fixedStep >= Globals.STEP) {
+		if (paused) {
+			scrollingBackground.drawStationary();
+		} else {
 
-			// if (!ground.loading) {
-
-			if (gameWon) {
-				handleInput(fakeTouches);
-			} else if (gameLost) {
-				;
-			} else {
-				handleInput(touches);
-				mapTime += Globals.STEP;
-			}
-
-			if (slowMoFactor != 1) {
-				world.step(Globals.STEP / slowMoFactor, 60, 40);
-			} else {
-				world.step(Globals.STEP, 200, 200);
-			}
-			hud.update(Globals.STEP, progress, mapTime, camera);
-			// builtCar.step();
-			// }
-
-			if (timePassed > 2) {
-
-				jointLimits.enableJointLimits(Globals.STEP_INVERSE);
-
-			} else {
+			if ((fixedStep >= Globals.STEP)) {
 				// if (!ground.loading) {
-				timePassed += Globals.STEP;
+
+				if (gameWon) {
+					handleInput(fakeTouches);
+				} else if (gameLost) {
+					;
+				} else {
+					handleInput(touches);
+					mapTime += Globals.STEP;
+				}
+
+				if (slowMoFactor != 1) {
+					world.step(Globals.STEP / slowMoFactor, 60, 40);
+				} else {
+					world.step(Globals.STEP, 200, 200);
+				}
+				hud.update(Globals.STEP, progress, mapTime, camera);
+				// builtCar.step();
 				// }
+
+				if (timePassed > 2) {
+
+					jointLimits.enableJointLimits(Globals.STEP_INVERSE);
+
+				} else {
+					// if (!ground.loading) {
+					timePassed += Globals.STEP;
+					// }
+				}
+
+				fixedStep -= Globals.STEP;
 			}
 
-			fixedStep -= Globals.STEP;
+			scrollingBackground.drawNormal();
 		}
 
-		builtCar.updateSound();
-
-		scrollingBackground.draw(paused ? BackgroundType.STATIONARY
-				: BackgroundType.NORMAL);
+		builtCar.updateSound(user);
 
 		attachCameraTo(builtCar.getCameraFocusPart());
 		ground.drawShapes();
@@ -415,7 +418,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		// unlock the next track
 		if (position != Globals.POSITION_LOST) {
-			int nextIndex = track.getIndex() + 1;
+			int nextIndex = track.getItemIndex() + 1;
 			user.Unlock(ItemsLookupPrefix.getForrestPrefix(Integer
 					.toString(nextIndex)));
 		}
@@ -437,7 +440,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	public void nextLevel(JSONTrack playedTrack) {
 
-		int nextLevelindex = playedTrack.getIndex() + 1;
+		int nextLevelindex = playedTrack.getItemIndex() + 1;
 
 		ArrayList<JSONTrack> tracks = null;
 
@@ -450,8 +453,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		for (JSONTrack track : tracks) {
 
 			if (track.getType() == playedTrack.getType()
-					&& track.getIndex() == nextLevelindex) {
-				user.setCurrentTrack(track.jsonify(), TrackMode.ADVENTURE, false);
+					&& track.getItemIndex() == nextLevelindex) {
+				user.setCurrentTrack(track.jsonify(), TrackMode.ADVENTURE,
+						false);
 				break;
 			}
 		}
@@ -507,8 +511,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		stageVp = new GameViewport(Globals.ScreenWidth, Globals.ScreenHeight,
 				secondCamera);
-		
-		gameVp = new GameViewport(Globals.ScreenWidth/80, Globals.ScreenHeight/80, camera);
+
+		gameVp = new GameViewport(Globals.ScreenWidth / 80,
+				Globals.ScreenHeight / 80, camera);
 
 		stage = new Stage(stageVp);
 

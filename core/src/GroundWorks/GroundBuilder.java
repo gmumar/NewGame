@@ -382,7 +382,7 @@ public class GroundBuilder {
 		// GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
 		// 0.8f, Globals.TRANSPERENT_BLACK, 0.0f, 1, vertexCount);
 		GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
-				0.6f, LAYER_COLOR, 0.1f, 2, vertexCount);
+				0.6f, LAYER_COLOR, 0.1f, 1, vertexCount);
 		// GameMesh.drawLayer(camera, colorShader, shaderStart, shaderEnd, null,
 		// 0.1f, Globals.GREEN1, 0.6f, 3, vertexCount);
 		colorShader.end();

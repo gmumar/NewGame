@@ -10,7 +10,7 @@ import com.badlogic.gdx.Net.HttpResponseListener;
 
 public class BackendFunctions {
 
-	public static void uploadCar(String inputString, String fileName) {
+	public static void uploadCar(String inputString, String fileName, int index) {
 		//Preferences prefs = Gdx.app
 			//	.getPreferences(GamePreferences.CAR_PREF_STR);
 
@@ -18,6 +18,7 @@ public class BackendFunctions {
 		parameters.put(RESTProperties.CAR_JSON,// "hello"
 				//prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
 				Compress.Car(inputString));
+		parameters.put(RESTProperties.CAR_INDEX, Integer.toString(index));
 
 		REST.postData(fileName, parameters, new HttpResponseListener() {
 

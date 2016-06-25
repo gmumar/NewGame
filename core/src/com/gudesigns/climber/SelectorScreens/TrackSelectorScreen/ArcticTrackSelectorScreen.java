@@ -156,8 +156,8 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 											.getTrackBestTime());
 									trackJson.setDifficulty(fromServer
 											.getTrackDifficulty());
-									trackJson.setIndex(fromServer
-											.getTrackIndex());
+									trackJson.setItemIndex(fromServer
+											.getItemIndex());
 									trackJson.setCreationTime(fromServer
 											.getCreationTime());
 
@@ -264,16 +264,16 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 
 					if (track.getType() == TrackType.ARTIC) {
 						itemName = ItemsLookupPrefix.getArticPrefix(Integer
-								.toString(track.getIndex()));
+								.toString(track.getItemIndex()));
 					} else if (track.getType() == TrackType.FORREST) {
 						itemName = ItemsLookupPrefix.getForrestPrefix(Integer
-								.toString(track.getIndex()));
+								.toString(track.getItemIndex()));
 					}
 
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.UNLOCK_TRACK, itemName,
 							"Unlock Track", "\t\tUnlock track "
-									+ Integer.toString(track.getIndex())
+									+ Integer.toString(track.getItemIndex())
 									+ "\t\t", Costs.ADVENTURE_TRACK, instance));
 
 				}

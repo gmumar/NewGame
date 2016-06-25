@@ -8,12 +8,14 @@ public abstract class JSONParentClass {
 
 	private String objectId = null;
 	private String creationTime = null;
+	private int itemIndex;
 
 	public abstract ArrayList<JSONComponent> getComponentList() ;
 	public abstract void setJointList(ArrayList<JSONJoint> joints) ;
 	public abstract JSONParentType getParentType() ;
 	public abstract ArrayList<JSONJoint> getJointList() ;
 	public abstract String jsonify();
+	public abstract boolean equals(Object obj);
 
 	public String getCreationTime() {
 		return creationTime;
@@ -28,5 +30,13 @@ public abstract class JSONParentClass {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
+	
+	public int getItemIndex() {
+		return itemIndex;
+	}
+	public void setItemIndex(int itemIndex) {
+		this.itemIndex = itemIndex;
+	}
+	
 
 }

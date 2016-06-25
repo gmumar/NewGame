@@ -41,9 +41,11 @@ public class ADMINCarSelectorScreen extends CarSelectorScreen {
 	protected void downloadItems() {
 		resultsRemaining = true;
 		currentOffset = 0;
+		
+		
 
 		ae.submit(new AsyncTask<String>() {
-
+			int carIndexCount = 0;
 			@Override
 			public String call() {
 
@@ -68,6 +70,8 @@ public class ADMINCarSelectorScreen extends CarSelectorScreen {
 								+ RESTProperties.CAR_JSON
 								+ RESTProperties.PROP_PROP_SPLITTER
 								+ RESTProperties.OBJECT_ID
+								+ RESTProperties.PROP_PROP_SPLITTER
+								+ RESTProperties.CAR_INDEX
 
 						, new HttpResponseListener() {
 
@@ -88,6 +92,7 @@ public class ADMINCarSelectorScreen extends CarSelectorScreen {
 											.getObjectId());
 									carJson.setCreationTime(fromServer
 											.getCreationTime());
+									carJson.setItemIndex(fromServer.getItemIndex() + carIndexCount++);
 
 									addItemToList(carJson);
 

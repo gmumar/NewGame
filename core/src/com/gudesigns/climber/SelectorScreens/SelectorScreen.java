@@ -177,10 +177,10 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	}
 
 	protected void loadLocalItems() {
-		//TODO: If the file is messed with while the game is playing 
+		// TODO: If the file is messed with while the game is playing
 		// and the user does not restart the game then the file will remain
 		// corrupted and the time stamp will remain stale
-		
+
 		ae.submit(new AsyncTask<String>() {
 
 			@Override
@@ -202,7 +202,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected void downloadItems() {
 		resultsRemaining = true;
 		currentOffset = 0;
-		
+
 		FileManager.validateFileState(getFileName());
 
 		ae.submit(new AsyncTask<String>() {
@@ -229,7 +229,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 									@Override
 									public void handleHttpResponse(
 											HttpResponse httpResponse) {
-										
 
 										ScreenType screenType = getScreenType();
 										Backendless_ParentContainer obj = null;
@@ -248,12 +247,12 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 										}
 
 										System.out
-										.println("SelectorScreen: got a reply, count: " + obj.getTotalObjects() );
-										
+												.println("SelectorScreen: got a reply, count: "
+														+ obj.getTotalObjects());
+
 										for (ServerDataUnit fromServer : obj
 												.getData()) {
 
-										
 											downloadedCounter.release();
 
 											if (screenType == ScreenType.ARCTIC_TRACK_SELECTOR
@@ -271,8 +270,9 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 												trackJson
 														.setDifficulty(fromServer
 																.getTrackDifficulty());
-												trackJson.setIndex(fromServer
-														.getTrackIndex());
+												trackJson
+														.setItemIndex(fromServer
+																.getItemIndex());
 												trackJson
 														.setCreationTime(fromServer
 																.getCreationTime());
@@ -287,10 +287,13 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 														.getObjectId());
 												carJson.setCreationTime(fromServer
 														.getCreationTime());
+												carJson.setItemIndex(fromServer
+														.getItemIndex());
 
 												addItemToList(carJson);
 											} else {
-												System.out.println("SelectorScreen: ERROR: unknown screen");
+												System.out
+														.println("SelectorScreen: ERROR: unknown screen");
 											}
 
 										}
@@ -344,11 +347,11 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 	}
 
-	protected void addItemToList(final JSONParentClass item) {
+	protected void addItemToList(final JSONParentClass itemToBeAdded) {
 
 		uniqueListLock.lock();
 
-		Long creationTime = Long.parseLong(item.getCreationTime());
+		Long creationTime = Long.parseLong(itemToBeAdded.getCreationTime());
 
 		lastObjectCreationTimeLock.lock();
 		if (creationTime > lastObjectCreationTime) {
@@ -356,9 +359,47 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 		}
 		lastObjectCreationTimeLock.unlock();
 
-		if (item.getParentType() == JSONParentType.TRACK) {
+		if (itemToBeAdded.getParentType() == JSONParentType.TRACK) {
+			JSONTrack trackToBeAdded = (JSONTrack) itemToBeAdded;
+			if (!isCorrectTrackType(trackToBeAdded.getType())) {
+				return;
+			}
 
-			JSONTrack trackToBeAdded = (JSONTrack) item;
+		}
+
+		// JSONTrack trackToBeAdded = (JSONTrack) itemToBeAdded;
+
+		if (uniquenessButtonList.contains(itemToBeAdded)) {
+
+			// Override older tracks with newer tracks with same
+			// indexes
+			Integer indexInList = uniquenessButtonList.indexOf(itemToBeAdded);
+			JSONParentClass itemInList = uniquenessButtonList.get(indexInList);
+			// JSONTrack trackInList = (JSONTrack) otherItem;
+
+			Long time1 = Long.parseLong(itemToBeAdded.getCreationTime());
+			Long time2 = Long.parseLong(itemInList.getCreationTime());
+
+			if (time1 > time2) {
+				items.add(itemToBeAdded);
+				items.remove(itemInList);
+				totalLoadedCounter.release();
+				uniquenessButtonList.remove(itemInList);
+				uniquenessButtonList.add(itemToBeAdded);
+
+			} else {
+				;
+			}
+
+		} else {
+			items.add(itemToBeAdded);
+			totalLoadedCounter.release();
+			uniquenessButtonList.add(itemToBeAdded);
+		}
+
+		/*if (itemToBeAdded.getParentType() == JSONParentType.TRACK) {
+
+			JSONTrack trackToBeAdded = (JSONTrack) itemToBeAdded;
 
 			if (isCorrectTrackType(trackToBeAdded.getType())) {
 
@@ -377,7 +418,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 					Long time2 = Long.parseLong(trackInList.getCreationTime());
 
 					if (time1 > time2) {
-						items.add(item);
+						items.add(itemToBeAdded);
 						items.remove(otherItem);
 						totalLoadedCounter.release();
 						uniquenessButtonList.remove(trackInList);
@@ -388,22 +429,22 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 					}
 
 				} else {
-					items.add(item);
+					items.add(itemToBeAdded);
 					totalLoadedCounter.release();
 					uniquenessButtonList.add(trackToBeAdded);
 				}
 			}
 
-		} else if (item.getParentType() == JSONParentType.CAR) {
-			JSONCar car = (JSONCar) item;
+		} else if (itemToBeAdded.getParentType() == JSONParentType.CAR) {
+			JSONCar car = (JSONCar) itemToBeAdded;
 
 			if (uniquenessButtonList.contains(car)) {
 			} else {
-				items.add(item);
+				items.add(itemToBeAdded);
 				totalLoadedCounter.release();
 				uniquenessButtonList.add(car);
 			}
-		}
+		}*/
 
 		/*
 		 * JsonElement catElem = parser.parse(item.jsonify());
@@ -453,7 +494,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 					// loaderSemaphore.acquire(2);
 
 					// Iterator<String> iter = cars.iterator();
-					
+
 					if (downloadCancelled
 							|| downloadedCounter.availablePermits() <= 0) {
 						return null;
