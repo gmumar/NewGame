@@ -2,11 +2,6 @@ package wrapper;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.utils.async.AsyncExecutor;
-
 /*
  * black #000000 - menu backgrounds, reading text, button text
  50% opacity - menu icons, unplayed levels
@@ -30,6 +25,11 @@ import com.badlogic.gdx.utils.async.AsyncExecutor;
  */
 import AdsInterface.IActivityRequestHandler;
 import JSONifier.JSONJoint;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
 
 public class Globals {
 
@@ -71,7 +71,7 @@ public class Globals {
 
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
-	final public static int VERSION = 5;
+	final public static int VERSION = 6;
 	public static final int FILE_VERSION = 1;
 
 	final public static int ROTATABLE_JOINT = 1;
@@ -101,7 +101,7 @@ public class Globals {
 	public final static int CAR_DISPLAY_BUTTON_HEIGHT = baseSize * 8;
 	public final static int CAR_DISPLAY_BUTTON_CAMERA_HEIGHT = baseSize * 8;
 	public final static int CAR_DISPLAY_BUTTON_WIDTH = baseSize * 8;
-
+	
 	public static void toast(String text) {
 		if (nativeRequestHandler != null) {
 			nativeRequestHandler.Toast(text);

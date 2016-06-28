@@ -3,7 +3,7 @@ package Menu;
 import java.util.ArrayList;
 
 import wrapper.Globals;
-import Dialog.BuyDialog;
+import Dialog.UpgradeDialog;
 import Dialog.CarDisplayDialog;
 import Dialog.DialogBase;
 import Dialog.KilledDialog;
@@ -52,7 +52,7 @@ public class PopQueManager {
 	}
 
 	public void initPauseTable(PopQueObject popQueObject) {
-		pauseTable = new PauseDialog(gameLoader, popQueObject);
+		pauseTable = new PauseDialog(gameLoader, this, popQueObject);
 	}
 
 	public void initKilledTable(PopQueObject popQueObject) {
@@ -156,7 +156,7 @@ public class PopQueManager {
 	}
 
 	private void createPauseDialog(PopQueObject popQueObject) {
-		pauseTable.update(gameLoader, popQueObject);
+		pauseTable.update(gameLoader, this, popQueObject);
 		stage.addActor(pauseTable.getBase());
 	}
 
@@ -191,7 +191,7 @@ public class PopQueManager {
 		 * dialog.setTouchable(Touchable.enabled); dialog.show(stage);
 		 */
 
-		dialog = BuyDialog.CreateDialog(gameLoader, popQueObject);
+		dialog = UpgradeDialog.CreateDialog(gameLoader, popQueObject);
 		dialog.show(stage).top();
 
 	}

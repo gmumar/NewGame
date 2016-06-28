@@ -24,6 +24,7 @@ public class User {
 	public static final Integer MAX_SPRING_LEVEL = 15;
 
 	public static final String TRACK_PREFIX = "track_";
+	public static final String WORLD_PREFIX = "lastPlayWorld";
 	public static final String FILE_NAME_PREFIX = "file_";
 	public static final String FILE_NAME_PREFIX_MD5 = "file_md5_";
 
@@ -74,16 +75,28 @@ public class User {
 
 	}
 
+	private void saveOnlyUserState() {
+
+		Gson json = new Gson();
+		String encrypted = encryptor.encrypt(json.toJson(userState));
+
+		prefs.putString(GamePreferences.USR_STR, encrypted);
+		prefs.flush();
+
+	}
+
 	private void restoreUserState() {
 		Gson json = new Gson();
 
-		String inputString = prefs
-				.getString(
-						GamePreferences.USR_STR,
-						"cveSuvxEjX1GNBw7FDuABebTQF0Dz9fsJxrLH/Mwy7GrJkIonjtO0icayx/zMMuxSm9j+vdJQwq6typf+G0FHw==");
+		String inputString = prefs.getString(GamePreferences.USR_STR, null);// "cveSuvxEjX1GNBw7FDuABebTQF0Dz9fsJxrLH/Mwy7GrJkIonjtO0icayx/zMMuxSm9j+vdJQwq6typf+G0FHw=="
 
-		userState = json.fromJson(encryptor.decrypt(inputString),
-				UserState.class);
+		if (inputString == null) {
+			userState = new UserState();
+		} else {
+
+			userState = json.fromJson(encryptor.decrypt(inputString),
+					UserState.class);
+		}
 
 		String lockedItemsString = prefs.getString(GamePreferences.USR_LOCKED,
 				null);
@@ -109,6 +122,8 @@ public class User {
 		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("1"), false);
 		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("2"), false);
 		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("3"), false);
+
+		lockedItems.items.put(ItemsLookupPrefix.getArticPrefix("1"), false);
 
 		saveUserState();
 	}
@@ -249,6 +264,9 @@ public class User {
 				Unlock(ItemsLookupPrefix.INFINITY_TRACK_MODE);
 			} else if (itemName.compareTo(ItemsLookupPrefix.ARCTIC_WORLD) == 0) {
 				Unlock(ItemsLookupPrefix.ARCTIC_WORLD);
+			} else if (itemName.compareTo(ItemsLookupPrefix.NO_ADS) == 0) {
+				userState.ads_bought = true;
+				Globals.setAds(false);
 			} else {
 				System.out.println("ERROR: User: Trying to buy unknown Item");
 			}
@@ -289,8 +307,12 @@ public class User {
 		if (userState.money <= 0) {
 			userState.money = 0;
 		}
-		saveUserState();
+		saveOnlyUserState();
 		return userState.money;
+	}
+
+	public boolean isAdsBought() {
+		return userState.ads_bought;
 	}
 
 	public Integer getSmallBarLevel() {
@@ -370,10 +392,10 @@ public class User {
 	public boolean getSfxPlayState() {
 		return userState.playingSfx;
 	}
-	
+
 	public void saveFileMD5(String fileName, String md5) {
 		prefs.putString(FILE_NAME_PREFIX_MD5 + fileName, md5);
-		
+
 		prefs.flush();
 	}
 
@@ -386,7 +408,7 @@ public class User {
 
 	public void saveFileTimeStamp(String fileName, String timeStamp) {
 		prefs.putString(FILE_NAME_PREFIX + fileName, timeStamp);
-		
+
 		prefs.flush();
 	}
 
@@ -395,6 +417,40 @@ public class User {
 		String fileState = prefs.getString(FILE_NAME_PREFIX + fileName, "0");
 
 		return Long.parseLong(fileState);
+	}
+
+	public void setLastPlayedWorld(TrackType type) {
+
+		String world = null;
+
+		if (type == TrackType.ARTIC) {
+			world = TrackType.ARTIC.toString();
+		} else if (type == TrackType.FORREST) {
+			world = TrackType.FORREST.toString();
+		} else {
+			System.out.println("Error: trying to set incorrrect last world");
+		}
+
+		prefs.putString(WORLD_PREFIX, world);
+		prefs.flush();
+
+	}
+
+	public TrackType getLastPlayedWorld() {
+
+		String world = prefs.getString(WORLD_PREFIX,
+				TrackType.FORREST.toString());
+
+		if (world.compareTo(TrackType.ARTIC.toString()) == 0) {
+			return TrackType.ARTIC;
+		} else if (world.compareTo(TrackType.FORREST.toString()) == 0) {
+			return TrackType.FORREST;
+		} else {
+			System.out.println("Error: trying to get incorrrect last world");
+		}
+
+		return null;
+
 	}
 
 	public void setStars(String trackId, STARS stars) {

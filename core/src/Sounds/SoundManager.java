@@ -12,6 +12,7 @@ public class SoundManager {
 
 	public static long playFXSound(Sound clip) {
 		if (User.getInstance().getSfxPlayState()) {
+			clip.stop();
 			return clip.play(FX_VOLUME);
 		}
 		return 0;

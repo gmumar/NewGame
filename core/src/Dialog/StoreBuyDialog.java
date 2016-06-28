@@ -105,85 +105,61 @@ public class StoreBuyDialog {
 		content.row();
 
 		if (gameLoader.IAPItemInformation.size() != 0) {
-			// row1
-			Table row1 = new Table(skin);
-			Table row1Content = new Table();
-			row1.setTouchable(Touchable.enabled);
-			String row1Price = gameLoader.IAPItemInformation.get(
-					IAPManager.PACK_ONE).getPrice();
-			Image coinImage1 = new Image(
-					gameLoader.Assets
-							.getFilteredTexture("menu/icons/dull_coin.png"));
+			// row 1
+			createRow(gameLoader, skin, base, content, IAPManager.PACK_ONE,
+					"Buy 10,000 coins for ", new ClickListener() {
 
-			row1Content.add(coinImage1).width(Globals.baseSize * 2)
-					.height(Globals.baseSize * 2).pad(imagePadding);
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							gameLoader.getPlatformResolver().requestPurchase(
+									IAPManager.PACK_ONE);
+							removeTable(base);
+							super.clicked(event, x, y);
+						}
 
-			Label packageDetails1 = new Label("100 Coins for " + row1Price,
-					skin, "default");
-			row1Content.add(packageDetails1).pad(textPadding);
+					});
 
-			TextButton buy1 = new TextButton("BUY", skin, "yesButton");
-			row1Content.add(buy1).width(Globals.baseSize * 2)
-					.height(Globals.baseSize * 2).padLeft(50);
+			// row 2
+			createRow(gameLoader, skin, base, content, IAPManager.PACK_TWO,
+					"Buy 100,000 coins and No Ads for ", new ClickListener() {
 
-			row1.addListener(new ClickListener() {
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							gameLoader.getPlatformResolver().requestPurchase(
+									IAPManager.PACK_TWO);
+							removeTable(base);
+							super.clicked(event, x, y);
+						}
 
-				@Override
-				public void clicked(InputEvent event, float x, float y) {
-					gameLoader.getPlatformResolver().requestPurchase(
-							IAPManager.IAP_TEST);
-					removeTable(base);
-					super.clicked(event, x, y);
-				}
+					});
 
-			});
-			row1.add(row1Content);
-			Table line1 = new Table(skin);
-			line1.setBackground("dialogDim");
-			row1.row();
-			row1.add(line1).expand().fillX().height(2);
-			content.add(row1);
-			content.row();
+			// row 3
+			createRow(gameLoader, skin, base, content, IAPManager.PACK_THREE,
+					"Buy 100,000,0 coins and No Ads for ", new ClickListener() {
 
-			// row2
-			Table row2 = new Table(skin);
-			Table row2Content = new Table();
-			row2.setTouchable(Touchable.enabled);
-			String row2Price = gameLoader.IAPItemInformation.get(
-					IAPManager.PACK_ONE).getPrice();
-			Image coinImage2 = new Image(
-					gameLoader.Assets
-							.getFilteredTexture("menu/icons/dull_coin.png"));
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							gameLoader.getPlatformResolver().requestPurchase(
+									IAPManager.PACK_THREE);
+							removeTable(base);
+							super.clicked(event, x, y);
+						}
 
-			row2Content.add(coinImage2).width(Globals.baseSize * 2)
-					.height(Globals.baseSize * 2).pad(imagePadding);
+					});
 
-			Label packageDetails2 = new Label("100 Coins for " + row2Price,
-					skin, "default");
-			row2Content.add(packageDetails2).pad(textPadding);
+			// row 4
+			createRow(gameLoader, skin, base, content, IAPManager.PACK_FOUR,
+					"Buy 100,000,000 coins and No Ads for ", new ClickListener() {
 
-			TextButton buy2 = new TextButton("BUY", skin, "yesButton");
-			row2Content.add(buy2).width(Globals.baseSize * 2)
-					.height(Globals.baseSize * 2).padLeft(50);
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							gameLoader.getPlatformResolver().requestPurchase(
+									IAPManager.PACK_FOUR);
+							removeTable(base);
+							super.clicked(event, x, y);
+						}
 
-			row2.addListener(new ClickListener() {
-
-				@Override
-				public void clicked(InputEvent event, float x, float y) {
-					gameLoader.getPlatformResolver().requestPurchase(
-							IAPManager.IAP_TEST);
-					removeTable(base);
-					super.clicked(event, x, y);
-				}
-
-			});
-			row2.add(row2Content);
-			Table line2 = new Table(skin);
-			line2.setBackground("dialogDim");
-			row2.row();
-			row2.add(line2).expand().fillX().height(2);
-			content.add(row2);
-			content.row();
+					});
 
 		} else {
 			Label text = new Label("Could not connect to the internets",
@@ -210,6 +186,42 @@ public class StoreBuyDialog {
 		base.add(contentHolder).expandY().center();
 
 		return base;
+	}
+
+	private static void createRow(final GameLoader gameLoader, Skin skin,
+			final Table base, Table content, String itemName,
+			String description, ClickListener buyListener) {
+		final int imagePadding = 8;
+		final int textPadding = 8;
+
+		Table row1 = new Table(skin);
+		Table row1Content = new Table();
+		row1.setTouchable(Touchable.enabled);
+		String row1Price = gameLoader.IAPItemInformation.get(itemName)
+				.getPrice();
+		Image coinImage1 = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/dull_coin.png"));
+
+		row1Content.add(coinImage1).width(Globals.baseSize * 2)
+				.height(Globals.baseSize * 2).pad(imagePadding);
+
+		Label packageDetails1 = new Label(description + row1Price, skin,
+				"default");
+		row1Content.add(packageDetails1).pad(textPadding);
+
+		TextButton buy1 = new TextButton("BUY", skin, "yesButton");
+		row1Content.add(buy1).width(Globals.baseSize * 2)
+				.height(Globals.baseSize * 2).padLeft(50);
+
+		row1.addListener(buyListener);
+		row1.add(row1Content);
+		Table line1 = new Table(skin);
+		line1.setBackground("dialogDim");
+		row1.row();
+		row1.add(line1).expand().fillX().height(2);
+		content.add(row1);
+		content.row();
 	}
 
 	private static void removeTable(final Table localbase) {

@@ -104,12 +104,21 @@ public class GooglePurchaseManager extends IAPManager {
 					List<String> moreItemSkus = new ArrayList<String>();
 
 					moreItemSkus.add(IAPManager.PACK_ONE);
+					moreItemSkus.add(IAPManager.PACK_TWO);
+					moreItemSkus.add(IAPManager.PACK_THREE);
+					moreItemSkus.add(IAPManager.PACK_FOUR);
 
 					Inventory inv = mHelper.queryInventory(true, moreItemSkus,
 							null);
 
 					game.IAPItemInformation.put(PACK_ONE,
 							GameItemInformation(inv.getSkuDetails(PACK_ONE)));
+					game.IAPItemInformation.put(PACK_TWO,
+							GameItemInformation(inv.getSkuDetails(PACK_TWO)));
+					game.IAPItemInformation.put(PACK_THREE,
+							GameItemInformation(inv.getSkuDetails(PACK_THREE)));
+					game.IAPItemInformation.put(PACK_FOUR,
+							GameItemInformation(inv.getSkuDetails(PACK_FOUR)));
 
 					listener.handleRecievedInformation(GamePurchaseResult(null,
 							inv));

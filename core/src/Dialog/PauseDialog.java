@@ -2,9 +2,13 @@ package Dialog;
 
 import wrapper.Globals;
 import Menu.Animations;
+import Menu.PopQueManager;
 import Menu.PopQueObject;
+import Menu.ScreenType;
+import Menu.Bars.TitleBar;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
+import Menu.PopQueObject.PopQueObjectType;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -27,15 +31,15 @@ public class PauseDialog extends Table {
 	Table base;
 	Skin skin;
 
-	public PauseDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
+	public PauseDialog(GameLoader gameLoader,PopQueManager popQueManager, final PopQueObject popQueObject) {
 		super();
 		skin = Skins.loadDefault(gameLoader, 0);
-		buildTable(gameLoader, popQueObject);
+		buildTable(gameLoader,popQueManager,  popQueObject);
 
 		// return base;
 	}
 
-	private void buildTable(GameLoader gameLoader,
+	private void buildTable(GameLoader gameLoader,final PopQueManager popQueManager,
 			final PopQueObject popQueObject) {
 		// Skin skin = Skins.loadDefault(gameLoader, 0);
 
@@ -44,6 +48,22 @@ public class PauseDialog extends Table {
 		base.setBackground("dialogDim");
 		base.setFillParent(true);
 		Animations.fadeIn(base);
+		
+		// Sound
+		Button sound = SimpleImageButton.create(SimpleImageButtonTypes.SOUND,
+				gameLoader);
+		sound.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				popQueManager.push(new PopQueObject(PopQueObjectType.SOUND));
+				super.clicked(event, x, y);
+			}
+
+		});
+
+		base.add(sound).right();
+		base.row();
 
 		Button restart = new Button(skin, "carBuilder_play");
 		restart.addListener(new ClickListener() {
@@ -141,10 +161,10 @@ public class PauseDialog extends Table {
 		return base;
 	}
 
-	public void update(GameLoader gameLoader, PopQueObject popQueObject) {
+	public void update(GameLoader gameLoader,PopQueManager popQueManager, PopQueObject popQueObject) {
 		//JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
 			//	.getCurrentTrack());
-		buildTable(gameLoader, popQueObject);
+		buildTable(gameLoader,popQueManager,  popQueObject);
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
 		/*User.getInstance()
 				.addCoin(

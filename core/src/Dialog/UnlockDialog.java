@@ -2,6 +2,7 @@ package Dialog;
 
 import wrapper.Globals;
 import Menu.PopQueObject;
+import Menu.PopQueObject.PopQueObjectType;
 import UserPackage.User;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -41,7 +42,7 @@ public class UnlockDialog {
 				skin, "dialogTitle");
 		header.add(unlockText);
 
-		base.add(header).center();
+		base.add(header).center().padTop(15).padLeft(15).padRight(15);
 		base.row();
 
 		// text
@@ -74,7 +75,7 @@ public class UnlockDialog {
 		 * popQueObject.getComponentName() + " for " + itemCost.toString());
 		 */
 
-		TextButton noButton = new TextButton("cancel", Skins.loadDefault(
+		TextButton noButton = new TextButton("\t\tcancel\t\t", Skins.loadDefault(
 				gameLoader, 1), "noButton");
 		noButton.addListener(new ClickListener() {
 
@@ -97,7 +98,16 @@ public class UnlockDialog {
 		});
 		buttons.add(noButton).height(Globals.baseSize * 2).fillX().expandX();
 
-		TextButton yesButton = new TextButton("upgrade", Skins.loadDefault(
+		String yesButtonText = "\t\tupgrade\t\t";
+		
+		if(popQueObject.getType() == PopQueObjectType.UNLOCK_ARCTIC_WORLD ||
+				popQueObject.getType() == PopQueObjectType.UNLOCK_CAR_MODE ||
+				popQueObject.getType() == PopQueObjectType.UNLOCK_MODE ||
+				popQueObject.getType() == PopQueObjectType.UNLOCK_TRACK ){
+			yesButtonText = "\t\tunlock\t\t";
+		}
+		
+		TextButton yesButton = new TextButton(yesButtonText, Skins.loadDefault(
 				gameLoader, 1), "yesButton");
 		yesButton.addListener(new ClickListener() {
 

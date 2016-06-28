@@ -9,6 +9,7 @@ public class ItemsLookupPrefix {
 	public final static String CAR_BUILDER = "car_build";
 	public final static String CAR_MY_PICKS = "car_pick";
 	public final static String COMMUNITY_CARS_MODE = "car_comm";
+	public final static String NO_ADS = "no_ads";
 	
 	public final static String SPLITTER = "_";
 

@@ -3,6 +3,7 @@ package com.gudesigns.climber;
 import wrapper.CameraManager;
 import wrapper.GameViewport;
 import wrapper.Globals;
+import Dialog.Skins;
 import Menu.Animations;
 import Sounds.SoundManager;
 
@@ -14,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.async.AsyncTask;
 
 public class SplashScreen implements Screen {
@@ -72,6 +74,12 @@ public class SplashScreen implements Screen {
 		});
 
 		stage.addActor(splashActor);
+		
+		Label version = new Label("v:786_" + Globals.VERSION,
+				Skins.loadDefault(gameLoader, 1), "default");
+		version.setScale(0.1f);
+		
+		stage.addActor(version);
 
 	}
 

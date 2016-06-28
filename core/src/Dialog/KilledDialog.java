@@ -1,6 +1,7 @@
 package Dialog;
 
 import wrapper.Globals;
+import JSONifier.JSONTrack;
 import Menu.Animations;
 import Menu.PopQueObject;
 import Menu.Buttons.SimpleImageButton;
@@ -25,6 +26,7 @@ public class KilledDialog extends Table {
 
 	Table base;
 	Skin skin;
+	Label coinsEarned;
 
 	public KilledDialog(GameLoader gameLoader, final PopQueObject popQueObject) {
 		super();
@@ -43,7 +45,7 @@ public class KilledDialog extends Table {
 		base.setBackground("dialogDim");
 		base.setFillParent(true);
 		Animations.fadeIn(base);
-		
+
 		Table contextWrapper = new Table();
 
 		Button restart = new Button(skin, "carBuilder_play");
@@ -104,7 +106,7 @@ public class KilledDialog extends Table {
 		contextWrapper.add(textWrapper).fill().expand().center();
 
 		contextWrapper.row();
-		
+
 		// Coins Earned
 		Table coinsWrapper = new Table();
 		Label coinsEarnedText = new Label("Coins Lost", skin, "defaultWhite");
@@ -116,14 +118,20 @@ public class KilledDialog extends Table {
 		coinsWrapper.add(coinImage).width(Globals.baseSize)
 				.height(Globals.baseSize).left().expand();
 
-		Label coinsEarned = new Label("100", skin, "defaultWhite");
+		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
+				.getCurrentTrack());
+		coinsEarned = new Label(
+				Integer.toString(-250 * (playedTrack.getItemIndex())
+						/ (playedTrack.getDifficulty() == 0 ? 1 : playedTrack
+						.getDifficulty()) ), skin, "defaultWhite");
 		coinsWrapper.add(coinsEarned).right().expand();
-		contextWrapper.add(coinsWrapper).width(Globals.baseSize * 10).expand().pad(5);
+		contextWrapper.add(coinsWrapper).width(Globals.baseSize * 10).expand()
+				.pad(5);
 		contextWrapper.row();
-		
+
 		base.add(contextWrapper).expandY().center();
 		base.row();
-		
+
 		Table bottomBar = new Table(skin);
 
 		bottomBar.setBackground("blackOut");
@@ -148,11 +156,13 @@ public class KilledDialog extends Table {
 	}
 
 	public void update(GameLoader gameLoader, PopQueObject popQueObject) {
-		// JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
-		// .getCurrentTrack());
+		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
+				.getCurrentTrack());
 		buildTable(gameLoader, popQueObject);
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
-		User.getInstance().addCoin(-100);
+		User.getInstance().addCoin(
+				-250 * (playedTrack.getItemIndex())
+						/ playedTrack.getDifficulty());
 
 	}
 }

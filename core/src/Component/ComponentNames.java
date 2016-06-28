@@ -1,5 +1,7 @@
 package Component;
 
+import java.util.HashMap;
+
 public class ComponentNames {
 
 	public final static String BAR3 = "B3";
@@ -19,4 +21,13 @@ public class ComponentNames {
 	public static final String TRACKBAR = TRACK_NAME_PREFIX + "B";
 	public static final String TRACKBALL = "BA";
 	public static final String TRACKCOIN = "CN";
+	
+	public final static HashMap<String, String> PART_NAME_MAPPING = new HashMap<String, String>();
+
+	static {
+		PART_NAME_MAPPING.put(BAR3, "bar");
+		PART_NAME_MAPPING.put(TIRE, "tire");
+		PART_NAME_MAPPING.put(AXLE, "tire");
+		PART_NAME_MAPPING.put(SPRINGJOINT, "spring");
+	}
 }

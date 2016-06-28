@@ -127,12 +127,22 @@ public class TrackMenuBuilder {
 		stage.addActor(worldType);
 
 		upload = new Button("upload");
+
 		upload.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				BackendFunctions.uploadTrack(User.getInstance()
-						.getCurrentTrack(), RESTPaths.MAPS, 0.0f, 0, 0);
+
+				if (trackType == TrackType.ARTIC) {
+					BackendFunctions.uploadTrack(User.getInstance()
+							.getCurrentTrack(), RESTPaths.ARCTIC_MAPS, 0.0f, 0,
+							0);
+				} else if (trackType == TrackType.FORREST) {
+					BackendFunctions.uploadTrack(User.getInstance()
+							.getCurrentTrack(), RESTPaths.FORREST_MAPS, 0.0f,
+							0, 0);
+				}
+
 				super.clicked(event, x, y);
 			}
 
@@ -318,10 +328,13 @@ public class TrackMenuBuilder {
 			@Override
 			public void Clicked() {
 
-				if (panSpeedMultiplier == 5)
-					panSpeedMultiplier = 1;
-				else
+				if (panSpeedMultiplier == 1)
 					panSpeedMultiplier = 5;
+				else if (panSpeedMultiplier == 5) {
+					panSpeedMultiplier = 10;
+				} else if (panSpeedMultiplier == 10) {
+					panSpeedMultiplier = 1;
+				}
 			}
 
 		};
@@ -508,7 +521,7 @@ public class TrackMenuBuilder {
 	private void intializeParts(JSONTrack track) {
 
 		Component addedComponent = null;
-		
+
 		jointTypes = track.getComponentJointTypes();
 
 		for (JSONComponent part : track.getComponentList()) {

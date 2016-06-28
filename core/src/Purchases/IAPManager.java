@@ -7,6 +7,9 @@ public abstract class IAPManager {
 	public static final String IAP_TEST = "android.test.purchased";
 
 	public static final String PACK_ONE = "pack_one";
+	public static final String PACK_TWO = "pack_two";
+	public static final String PACK_THREE = "pack_three";
+	public static final String PACK_FOUR = "pack_four";
 
 	public GameLoader game;
 	protected PurchaseManager mgr;

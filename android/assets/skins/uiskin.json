@@ -12,6 +12,11 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		color: { a: 0.5, b: 0, g: 0, r: 0 }
 	}
 	
+	partUpgradeBG: {
+		name: white,
+		color: { a: 0.2, b: 0, g: 0, r: 0 }
+	}
+	
 	dialogDimer: {
 		name: white,
 		color: { a: 0.85, b: 0, g: 0, r: 0 }

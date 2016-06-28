@@ -62,7 +62,6 @@ public class TrackBuilderScreen implements Screen, InputProcessor,
 				gameState.getUser(), fixtureRenderer);
 		debugRenderer = new Box2DDebugRenderer();
 
-		Globals.setAds(false);
 	}
 
 	private void initStage() {

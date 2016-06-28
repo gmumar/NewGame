@@ -2,6 +2,7 @@ package Dialog;
 
 import wrapper.Globals;
 import JSONifier.JSONTrack;
+import JSONifier.JSONTrack.TrackType;
 import Menu.Animations;
 import Menu.PopQueObject;
 import Menu.TextBox;
@@ -68,8 +69,9 @@ public class WinDialog extends Table {
 		Table performanceWrapper = new Table(skin);
 
 		// Header
-		Label text = new Label("Level " + JSONTrack.objectify(User.getInstance()
-				.getCurrentTrack()).getItemIndex() + " Complete!", skin, "winTitle");
+		Label text = new Label("Level "
+				+ JSONTrack.objectify(User.getInstance().getCurrentTrack())
+						.getItemIndex() + " Complete!", skin, "winTitle");
 		text.setAlignment(Align.center);
 		// text.setTextBoxString("Win!");
 		header.add(text).expandY().left().padBottom(4);
@@ -133,17 +135,26 @@ public class WinDialog extends Table {
 			index.setWidth(100);
 
 			contentWrapper.row();
-			contentWrapper.add(index).pad(5);
-			contentWrapper.row();
-			contentWrapper.add(difficulty).pad(5);
+			contentWrapper.add(index).pad(45);
+			contentWrapper.add(difficulty).pad(45);
 
 			Menu.Button upload = new Menu.Button("adventure");
 			upload.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
+
+					String restPath = null;
+					if (playedTrack.getType() == TrackType.ARTIC) {
+						restPath = RESTPaths.ARCTIC_MAPS;
+					} else if (playedTrack.getType() == TrackType.FORREST) {
+						restPath = RESTPaths.FORREST_MAPS;
+					} else {
+						System.out.println("Problem");
+					}
+
 					BackendFunctions.uploadTrack(User.getInstance()
-							.getCurrentTrack(), RESTPaths.MAPS, popQueObject
+							.getCurrentTrack(), restPath, popQueObject
 							.getGamePlayInstance().getMapTime(), Integer
 							.parseInt(difficulty.getText()), Integer
 							.parseInt(index.getText()));
@@ -216,7 +227,8 @@ public class WinDialog extends Table {
 		nextLevel.add(nextLevelText).pad(20);
 
 		Image nextLevelImage = new Image(
-				gameLoader.Assets.getFilteredTexture("menu/icons/play_black.png"));
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/play_black.png"));
 		nextLevel.add(nextLevelImage).width(Globals.baseSize)
 				.height(Globals.baseSize * 1.2f).pad(10);
 
@@ -297,12 +309,12 @@ public class WinDialog extends Table {
 		}
 		stars.act(1 / 60f);
 		Integer coinsWon = 0;
-		if(User.getInstance().getCurrentTrackMode() == TrackMode.ADVENTURE){
+		if (User.getInstance().getCurrentTrackMode() == TrackMode.ADVENTURE) {
 			coinsWon = (Globals.POSITION_LOST - position)
-				* playedTrack.getItemIndex() * 10;
-		} else if (User.getInstance().getCurrentTrackMode() == TrackMode.INFINTE){
+					* playedTrack.getItemIndex() * 250;
+		} else if (User.getInstance().getCurrentTrackMode() == TrackMode.INFINTE) {
 			coinsWon = (Globals.POSITION_LOST - position)
-					* playedTrack.getDifficulty() * 10;
+					* playedTrack.getDifficulty() * 250;
 		}
 
 		coinsEarned.setText(coinsWon.toString());

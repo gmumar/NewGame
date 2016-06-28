@@ -180,7 +180,7 @@ public class HUDBuilder {
 				Actions.moveBy(110, 0, 0.6f));
 		ParallelAction fadeAndSide1 = new ParallelAction(Actions.fadeOut(0.8f),
 				Actions.moveBy(110, 0, 0.8f));
-		ParallelAction fadeAndSide2 = new ParallelAction(Actions.fadeOut(0.8f),
+		ParallelAction fadeAndSide2 = new ParallelAction(Actions.fadeOut(0.4f),
 				Actions.moveBy(110, 0, 0.8f));
 
 		exit.addAction(fadeAndSide);
@@ -188,6 +188,22 @@ public class HUDBuilder {
 		pause.addAction(fadeAndSide2);
 
 		mapProgress.addAction(Actions.fadeOut(0.8f));
+	}
+	
+	
+	public void showMenu() {
+		ParallelAction fadeAndSide = new ParallelAction(Actions.alpha(Globals.BUTTON_OPACITY,0.8f),
+				Actions.moveBy(-110, 0, 0.6f));
+		ParallelAction fadeAndSide1 = new ParallelAction(Actions.alpha(Globals.BUTTON_OPACITY,0.8f),
+				Actions.moveBy(-110, 0, 0.8f));
+		ParallelAction fadeAndSide2 = new ParallelAction(Actions.alpha(Globals.BUTTON_OPACITY,0.4f),
+				Actions.moveBy(-110, 0, 0.8f));
+
+		exit.addAction(fadeAndSide);
+		restart.addAction(fadeAndSide1);
+		pause.addAction(fadeAndSide2);
+
+		mapProgress.addAction(Actions.fadeIn(0.8f));
 	}
 
 	public void dispose() {

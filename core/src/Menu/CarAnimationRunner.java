@@ -69,8 +69,14 @@ public class CarAnimationRunner {
 
 		// ground.reset();
 
-		scrollingBackground = new ScrollingBackground(this.gameLoader,
-				builtCar, TrackType.FORREST, BackgroundType.NORMAL);
+		if (gameState.getUser().getLastPlayedWorld() == TrackType.FORREST) {
+			scrollingBackground = new ScrollingBackground(this.gameLoader,
+					builtCar, TrackType.FORREST, BackgroundType.NORMAL);
+		} else if (gameState.getUser().getLastPlayedWorld() == TrackType.ARTIC) {
+			scrollingBackground = new ScrollingBackground(this.gameLoader,
+					builtCar, TrackType.ARTIC, BackgroundType.NORMAL);
+		}
+		
 	}
 
 	final private void initWorld() {

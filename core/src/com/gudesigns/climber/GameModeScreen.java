@@ -6,6 +6,7 @@ import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
 import Dialog.StoreBuyDialog;
+import JSONifier.JSONTrack.TrackType;
 import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -33,6 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ArcticTrackSelectorScreen;
 import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ForrestTrackSelectorScreen;
 import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.InfiniteTrackSelectorScreen;
 
@@ -91,8 +93,6 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 		// Animations.fadeInAndSlideSide(base);
 
 		stage.addActor(base);
-		
-		Globals.setAds(false);
 
 	}
 
@@ -106,7 +106,13 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!adventrueMode.locked) {
-					gameLoader.setScreen(new ForrestTrackSelectorScreen(gameState));
+					if(user.getLastPlayedWorld()==TrackType.FORREST){
+						gameLoader.setScreen(new ForrestTrackSelectorScreen(gameState));
+					} else if (user.getLastPlayedWorld()==TrackType.ARTIC){
+						gameLoader.setScreen(new ArcticTrackSelectorScreen(gameState));
+					} else {
+						gameLoader.setScreen(new ForrestTrackSelectorScreen(gameState));
+					}
 				}
 			}
 		});

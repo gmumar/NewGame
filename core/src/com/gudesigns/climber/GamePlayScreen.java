@@ -256,7 +256,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	public void coinCollected(Body body) {
-		user.addCoin(10);
+		user.addCoin(100);
 		destroyBody(body);
 		SoundManager.playFXSound(coinCollected);
 	}
@@ -419,8 +419,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		// unlock the next track
 		if (position != Globals.POSITION_LOST) {
 			int nextIndex = track.getItemIndex() + 1;
-			user.Unlock(ItemsLookupPrefix.getForrestPrefix(Integer
-					.toString(nextIndex)));
+
+			if (track.getType() == TrackType.FORREST) {
+				user.Unlock(ItemsLookupPrefix.getForrestPrefix(Integer
+						.toString(nextIndex)));
+			} else if (track.getType() == TrackType.ARTIC) {
+				user.Unlock(ItemsLookupPrefix.getArticPrefix(Integer
+						.toString(nextIndex)));
+			}
 		}
 		return position;
 
@@ -633,12 +639,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
+		hud.hideMenu();
 		paused = true;
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
+		hud.showMenu();
 		paused = false;
 	}
 

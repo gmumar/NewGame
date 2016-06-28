@@ -30,6 +30,7 @@ import Storage.FileObject;
 import UserPackage.Costs;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TrackMode;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -48,7 +49,7 @@ import com.gudesigns.climber.SelectorScreens.SelectorScreen;
 public class ArcticTrackSelectorScreen extends SelectorScreen {
 
 	private final static int itemsPerRow = 15;
-	
+
 	@Override
 	protected String getFileName() {
 		// TODO Auto-generated method stub
@@ -68,31 +69,27 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 		scrollingBackground = new ScrollingBackground(this.gameLoader, null,
 				TrackType.ARTIC, BackgroundType.SELECTOR);
 	}
-	
+
 	@Override
 	protected String getDownloadRequestString(int offset, Long lastCreatedTime) {
-		return RESTPaths.MAPS
-				+ RESTProperties.URL_ARG_SPLITTER
+		return RESTPaths.ARCTIC_MAPS + RESTProperties.URL_ARG_SPLITTER
 				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
-				+ RESTProperties.PROP_ARG_SPLITTER
-				+ RESTProperties.OFFSET + offset
-				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.PROP_ARG_SPLITTER + RESTProperties.OFFSET
+				+ offset + RESTProperties.PROP_ARG_SPLITTER
 				+ RESTProperties.PROPS + RESTProperties.CREATED
 				+ RESTProperties.PROP_PROP_SPLITTER
 				+ RESTProperties.TRACK_POINTS_JSON
-				+ RESTProperties.PROP_PROP_SPLITTER
-				+ RESTProperties.OBJECT_ID
+				+ RESTProperties.PROP_PROP_SPLITTER + RESTProperties.OBJECT_ID
 				+ RESTProperties.PROP_PROP_SPLITTER
 				+ RESTProperties.TRACK_BEST_TIME
 				+ RESTProperties.PROP_PROP_SPLITTER
 				+ RESTProperties.TRACK_DIFFICULTY
 				+ RESTProperties.PROP_PROP_SPLITTER
-				+ RESTProperties.TRACK_INDEX
-				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.TRACK_INDEX + RESTProperties.PROP_ARG_SPLITTER
 				+ RESTProperties.WhereCreatedGreaterThan(lastCreatedTime);
 	}
 
-	//@Override
+	// @Override
 	protected void downloadItems_old() {
 		resultsRemaining = true;
 		currentOffset = 0;
@@ -113,7 +110,7 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 					}
 
 					while (stallSemaphore.tryAcquire()) {
-						downloadRequest = REST.getData(RESTPaths.MAPS
+						downloadRequest = REST.getData(RESTPaths.ARCTIC_MAPS
 								+ RESTProperties.URL_ARG_SPLITTER
 								+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
 								+ RESTProperties.PROP_ARG_SPLITTER
@@ -147,7 +144,6 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 
 								for (ServerDataUnit fromServer : obj.getData()) {
 
-									
 									final JSONTrack trackJson = JSONTrack
 											.objectify(fromServer.getData());
 									trackJson.setObjectId(fromServer
@@ -274,7 +270,7 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 							PopQueObjectType.UNLOCK_TRACK, itemName,
 							"Unlock Track", "\t\tUnlock track "
 									+ Integer.toString(track.getItemIndex())
-									+ "\t\t", Costs.ADVENTURE_TRACK, instance));
+									+ "\t\t", Costs.ADVENTURE_TRACK*track.getItemIndex()*2, instance));
 
 				}
 			}
@@ -285,7 +281,7 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 
 		refreshAllButtons();
 	}
-	
+
 	@Override
 	protected void updateGameLoaderObjects() {
 		gameLoader.arcticTracks.clear();
@@ -311,7 +307,8 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 		FileObject fileObject = new FileObject();
 		fileObject.setTracks(list);
 
-		FileManager.writeTracksToFileGson(list, getFileName(), lastCreationTime);
+		FileManager
+				.writeTracksToFileGson(list, getFileName(), lastCreationTime);
 	}
 
 	@Override
@@ -356,6 +353,25 @@ public class ArcticTrackSelectorScreen extends SelectorScreen {
 
 		Table b;
 		int count = 0;
+
+		// Build and add button to prev world
+		final ButtonLockWrapper forrestWorldButton = AdventureTrackButton
+				.create(gameLoader, null, false, getScreenType());
+
+		itemsTable.add(forrestWorldButton.button).pad(5)
+				.height(Globals.baseSize * 4).width(Globals.baseSize * 7);
+
+		forrestWorldButton.button.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				User.getInstance().setLastPlayedWorld(TrackType.FORREST);
+				gameLoader.setScreen(new ForrestTrackSelectorScreen(gameState));
+				super.clicked(event, x, y);
+
+			}
+
+		});
 
 		// Add previously built tracks
 		Collections.sort(buttons, new Comparator<Table>() {

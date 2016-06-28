@@ -5,6 +5,7 @@ import wrapper.GameState;
 import wrapper.GameViewport;
 import wrapper.Globals;
 import Dialog.Skins;
+import JSONifier.JSONTrack.TrackType;
 import Menu.Animations;
 import Menu.Button;
 import Menu.CarAnimationRunner;
@@ -19,6 +20,7 @@ import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -39,6 +41,7 @@ public class MainMenuScreen implements Screen {
 	private GameViewport vp;
 	private PopQueManager popQueManager;
 	private User user;
+	private Color bgColor;
 
 	private Button builder, playGame, buildTrack, selectTrack, selectCar,
 			quickNext, buyCoins, soundControl, tapToPlay, communityCars;
@@ -55,9 +58,13 @@ public class MainMenuScreen implements Screen {
 
 		carAnimation = new CarAnimationRunner(gameState);
 		initButtons();
-		
-		
-		Globals.setAds(true);
+
+		if (user.getLastPlayedWorld() == TrackType.ARTIC) {
+			bgColor = Globals.ARTIC_BLUE_BG;
+		} else if (user.getLastPlayedWorld() == TrackType.FORREST) {
+			bgColor = Globals.FORREST_GREEN_BG;
+		}
+
 	}
 
 	private void initUser() {
@@ -244,6 +251,8 @@ public class MainMenuScreen implements Screen {
 			tapPlay.add(tapToPlayText).bottom().pad(100).expandY();
 			base.add(tapPlay).expand().fill();
 
+
+
 			Animations.fadeInAndOut(tapToPlayText);
 
 			// BottomBar.create(base, ScreenType.MAIN_MENU_SCREEN, gameState,
@@ -297,9 +306,7 @@ public class MainMenuScreen implements Screen {
 	public void render(float delta) {
 		camera.update();
 
-		Gdx.gl.glClearColor(Globals.FORREST_GREEN_BG.r,
-				Globals.FORREST_GREEN_BG.g, Globals.FORREST_GREEN_BG.b,
-				Globals.FORREST_GREEN_BG.a);
+		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		carAnimation.draw(delta);

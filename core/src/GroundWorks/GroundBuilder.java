@@ -112,6 +112,8 @@ public class GroundBuilder {
 		if (!forMainMenu) {
 			mapString = user.getCurrentTrack();
 			trackType = JSONTrack.objectify(mapString).getType();
+		} else {
+			trackType = user.getLastPlayedWorld();
 		}
 
 		createFloor();

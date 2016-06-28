@@ -1,5 +1,6 @@
 package Purchases;
 
+import UserPackage.ItemsLookupPrefix;
 import UserPackage.User;
 
 public class GamePurchaseObserver {
@@ -18,17 +19,32 @@ public class GamePurchaseObserver {
 		if (gamePurchaseResult == null) {
 			return;
 		}
-		
-		if(gamePurchaseResult.getSku()==null || gamePurchaseResult.getMessage()==null){
+
+		if (gamePurchaseResult.getSku() == null
+				|| gamePurchaseResult.getMessage() == null) {
 			return;
 		}
 
 		if (gamePurchaseResult.getResponse() == GamePurchaseResult.ANDROID_BILLING_RESPONSE_RESULT_OK) {
-			if (gamePurchaseResult.getSku().compareTo(IAPManager.PACK_ONE) == 0)
-				User.getInstance().addCoin(1000);
+			if (gamePurchaseResult.getSku().compareTo(IAPManager.PACK_ONE) == 0) {
+				User.getInstance().addCoin(10000);
+			}
+			if (gamePurchaseResult.getSku().compareTo(IAPManager.PACK_TWO) == 0) {
+				User.getInstance().addCoin(100000);
+				User.getInstance().buyItem(ItemsLookupPrefix.NO_ADS, 0);
+			}
+			if (gamePurchaseResult.getSku().compareTo(IAPManager.PACK_THREE) == 0) {
+				User.getInstance().addCoin(1000000);
+				User.getInstance().buyItem(ItemsLookupPrefix.NO_ADS, 0);
+			}
+			if (gamePurchaseResult.getSku().compareTo(IAPManager.PACK_FOUR) == 0) {
+				User.getInstance().addCoin(100000000);
+				User.getInstance().buyItem(ItemsLookupPrefix.NO_ADS, 0);
+			}
 
-			if (gamePurchaseResult.getSku().compareTo(IAPManager.IAP_TEST) == 0)
+			if (gamePurchaseResult.getSku().compareTo(IAPManager.IAP_TEST) == 0) {
 				User.getInstance().addCoin(314);
+			}
 		}
 	}
 

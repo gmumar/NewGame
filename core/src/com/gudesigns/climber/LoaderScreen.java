@@ -12,6 +12,7 @@ import JSONifier.JSONCar;
 import Menu.FontManager;
 import Shader.GameMesh;
 import Storage.FileManager;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -108,7 +109,9 @@ public class LoaderScreen implements Screen {
 		initStage();
 
 		loadAssets();
-
+		
+		//Globals.setAds(!(User.getInstance().isAdsBought()));// || Globals.ADMIN_MODE));
+		Globals.setAds(false);
 	}
 
 	private void loadAssets() {
@@ -274,6 +277,23 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("spring_lower/level14.png", Texture.class);
 		gameLoader.Assets.load("spring_lower/level15.png", Texture.class);
 
+		
+		gameLoader.Assets.load("spring/level1.png", Texture.class);
+		gameLoader.Assets.load("spring/level2.png", Texture.class);
+		gameLoader.Assets.load("spring/level3.png", Texture.class);
+		gameLoader.Assets.load("spring/level4.png", Texture.class);
+		gameLoader.Assets.load("spring/level5.png", Texture.class);
+		gameLoader.Assets.load("spring/level6.png", Texture.class);
+		gameLoader.Assets.load("spring/level7.png", Texture.class);
+		gameLoader.Assets.load("spring/level8.png", Texture.class);
+		gameLoader.Assets.load("spring/level9.png", Texture.class);
+		gameLoader.Assets.load("spring/level10.png", Texture.class);
+		gameLoader.Assets.load("spring/level11.png", Texture.class);
+		gameLoader.Assets.load("spring/level12.png", Texture.class);
+		gameLoader.Assets.load("spring/level13.png", Texture.class);
+		gameLoader.Assets.load("spring/level14.png", Texture.class);
+		gameLoader.Assets.load("spring/level15.png", Texture.class);
+		
 		// // Life
 		gameLoader.Assets.load("life/builder.png", Texture.class);
 		gameLoader.Assets.load("life/builder_selected.png", Texture.class);

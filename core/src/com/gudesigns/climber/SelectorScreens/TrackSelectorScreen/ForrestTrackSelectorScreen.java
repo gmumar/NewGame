@@ -31,6 +31,7 @@ import Storage.FileObject;
 import UserPackage.Costs;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TrackMode;
+import UserPackage.User;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -72,7 +73,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 	
 	@Override
 	protected String getDownloadRequestString(int offset, Long lastCreatedTime) {
-		return RESTPaths.MAPS
+		return RESTPaths.FORREST_MAPS
 				+ RESTProperties.URL_ARG_SPLITTER
 				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
 				+ RESTProperties.PROP_ARG_SPLITTER
@@ -115,7 +116,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 					}
 
 					while (stallSemaphore.tryAcquire()) {
-						downloadRequest = REST.getData(RESTPaths.MAPS
+						downloadRequest = REST.getData(RESTPaths.FORREST_MAPS
 								+ RESTProperties.URL_ARG_SPLITTER
 								+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
 								+ RESTProperties.PROP_ARG_SPLITTER
@@ -275,7 +276,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 							PopQueObjectType.UNLOCK_TRACK, itemName,
 							"Unlock Track", "\t\tUnlock track "
 									+ Integer.toString(track.getItemIndex())
-									+ "\t\t", Costs.ADVENTURE_TRACK, instance));
+									+ "\t\t", Costs.ADVENTURE_TRACK*track.getItemIndex(), instance));
 
 				}
 			}
@@ -402,6 +403,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (!acticWorldButton.locked) {
+					User.getInstance().setLastPlayedWorld(TrackType.ARTIC);
 					gameLoader.setScreen(new ArcticTrackSelectorScreen(
 							gameState));
 					super.clicked(event, x, y);
@@ -409,8 +411,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.UNLOCK_ARCTIC_WORLD,
 							ItemsLookupPrefix.ARCTIC_WORLD, "Unlock World",
-							"\t\tUnlock Arctic World "
-									+ Costs.ARCTIC_WORLD.toString() + "\t\t",
+							"\t\tUnlock Arctic World " + "\t\t",
 							Costs.ARCTIC_WORLD, instance));
 
 				}

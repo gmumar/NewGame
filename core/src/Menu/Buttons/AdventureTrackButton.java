@@ -72,6 +72,9 @@ public class AdventureTrackButton {
 		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
 			base = new Button(skin, "adventureTrack_artic");
 			isLocked = user.isLocked(ItemsLookupPrefix.ARCTIC_WORLD);
+		} else if (screenType == ScreenType.ARCTIC_TRACK_SELECTOR) {
+			base = new Button(skin, "adventureTrack_forrest");
+			isLocked = false;
 		}
 
 		Stack stack = new Stack();
@@ -86,7 +89,8 @@ public class AdventureTrackButton {
 
 		if (screenType == ScreenType.NONE) {
 			userStars = user.getStars(track.getObjectId());
-		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR 
+				||screenType == ScreenType.ARCTIC_TRACK_SELECTOR) {
 
 			userStars = STARS.NONE;
 		}
@@ -126,6 +130,8 @@ public class AdventureTrackButton {
 			index.setText(indexTxt);
 		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
 			index.setText("Arctic");
+		}else if (screenType == ScreenType.ARCTIC_TRACK_SELECTOR) {
+			index.setText("Country");
 		}
 
 		content.add(index);
@@ -134,7 +140,7 @@ public class AdventureTrackButton {
 		if (screenType == ScreenType.NONE) {
 			stackInlay.add(content).width(Globals.baseSize * 3)
 					.height(Globals.baseSize * 3);
-		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
+		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR || screenType == ScreenType.ARCTIC_TRACK_SELECTOR) {
 			stackInlay.add(content).width(Globals.baseSize * 6)
 					.height(Globals.baseSize * 3);
 		}
