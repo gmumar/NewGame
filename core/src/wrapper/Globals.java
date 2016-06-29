@@ -33,7 +33,8 @@ import com.badlogic.gdx.utils.async.AsyncExecutor;
 
 public class Globals {
 
-	public final static boolean ADMIN_MODE = true;
+	public final static boolean ADMIN_MODE = false;
+	final public static int VERSION = 7;
 
 	volatile static public int ScreenHeight;
 	volatile static public int ScreenWidth;
@@ -71,7 +72,6 @@ public class Globals {
 
 	final public static float PIXEL_TO_METERS = 125;
 	final public static int MAX_FINGERS = 2;
-	final public static int VERSION = 6;
 	public static final int FILE_VERSION = 1;
 
 	final public static int ROTATABLE_JOINT = 1;

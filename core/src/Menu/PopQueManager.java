@@ -3,7 +3,6 @@ package Menu;
 import java.util.ArrayList;
 
 import wrapper.Globals;
-import Dialog.UpgradeDialog;
 import Dialog.CarDisplayDialog;
 import Dialog.DialogBase;
 import Dialog.KilledDialog;
@@ -14,13 +13,17 @@ import Dialog.StoreBuyDialog;
 import Dialog.TextDialog;
 import Dialog.TutorialDialog;
 import Dialog.UnlockDialog;
+import Dialog.UpgradeDialog;
 import Dialog.UserErrorDialog;
 import Dialog.WinDialog;
 import Menu.PopQueObject.PopQueObjectType;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.gudesigns.climber.GameLoader;
 
@@ -217,12 +220,30 @@ public class PopQueManager {
 	}
 
 	private void createLoadingDialog(PopQueObject popQueObject) {
-		dialog = new TextDialog("Loading", skin, "default");
+		//dialog = new TextDialog("Loading", skin, "default");
+		dialog = new DialogBase("", skin, "default");
+		dialog.background("transparent");
+		
+		dialog.row();
+		
+		Table content = new Table();
+		
+		//Label text = new Label("loading ", skin);
+		//content.add(text);
+		
+		Image loading = new Image(gameLoader.Assets.getFilteredTexture("loading.png"));
+		loading.setOrigin(Globals.baseSize, Globals.baseSize);
+		content.add(loading).width(Globals.baseSize*2).height(Globals.baseSize*2).pad(4);
+		
+		Animations.rotate(loading);
+		
+		dialog.add(content).padBottom(10).padLeft(10).padRight(10).padTop(2);
+		
 		dialog.setTouchable(Touchable.disabled);
 		dialog.setZIndex(1);
 		dialog.show(stage).align(Align.top);
 		// dialog.setPosition(300,450);
-		dialog.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight - 100);
+		dialog.setPosition((stage.getWidth() / 2) - Globals.baseSize*2, stage.getHeight()  - 120);
 		Animations.fadeIn(dialog);
 	}
 

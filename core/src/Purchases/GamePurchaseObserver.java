@@ -44,6 +44,7 @@ public class GamePurchaseObserver {
 
 			if (gamePurchaseResult.getSku().compareTo(IAPManager.IAP_TEST) == 0) {
 				User.getInstance().addCoin(314);
+				User.getInstance().buyItem(ItemsLookupPrefix.NO_ADS, 0);
 			}
 		}
 	}

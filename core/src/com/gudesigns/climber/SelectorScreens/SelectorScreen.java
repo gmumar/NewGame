@@ -246,9 +246,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 										}
 
-										System.out
-												.println("SelectorScreen: got a reply, count: "
-														+ obj.getTotalObjects());
 
 										for (ServerDataUnit fromServer : obj
 												.getData()) {
@@ -508,9 +505,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 					writeObjectsToFile(lastObjectCreationTime);
 
 					updateGameLoaderObjects();
-
-					System.out.println("last "
-							+ lastObjectCreationTime.toString());
 
 				} catch (Exception e) {
 					e.printStackTrace();

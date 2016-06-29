@@ -311,10 +311,10 @@ public class WinDialog extends Table {
 		Integer coinsWon = 0;
 		if (User.getInstance().getCurrentTrackMode() == TrackMode.ADVENTURE) {
 			coinsWon = (Globals.POSITION_LOST - position)
-					* playedTrack.getItemIndex() * 250;
+					* playedTrack.getItemIndex() * 100;
 		} else if (User.getInstance().getCurrentTrackMode() == TrackMode.INFINTE) {
 			coinsWon = (Globals.POSITION_LOST - position)
-					* playedTrack.getDifficulty() * 250;
+					* playedTrack.getDifficulty() * 100;
 		}
 
 		coinsEarned.setText(coinsWon.toString());

@@ -134,18 +134,16 @@ public class FileManager {
 		if (md5.isEmpty()) {
 			// File missing
 			user.saveFileTimeStamp(fileName, "0");
-			System.out.println("FileManger: file missing");
 			return false;
 		} else {
 			if (md5.compareTo(user.getFileMD5(fileName)) != 0) {
 				// File corrupted
 				user.saveFileTimeStamp(fileName, "0");
-				System.out.println("FileManger: file corrupted");
 				return false;
 			}
 
 		}
-		System.out.println("FileManger: file Ok");
+		
 		return true;
 	}
 

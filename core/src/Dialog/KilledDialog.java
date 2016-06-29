@@ -120,10 +120,10 @@ public class KilledDialog extends Table {
 
 		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
 				.getCurrentTrack());
-		coinsEarned = new Label(
-				Integer.toString(-250 * (playedTrack.getItemIndex())
-						/ (playedTrack.getDifficulty() == 0 ? 1 : playedTrack
-						.getDifficulty()) ), skin, "defaultWhite");
+		coinsEarned = new Label(Integer.toString(-250
+				* (playedTrack.getItemIndex())
+				/ (playedTrack.getDifficulty() == 0 ? 1 : playedTrack
+						.getDifficulty())), skin, "defaultWhite");
 		coinsWrapper.add(coinsEarned).right().expand();
 		contextWrapper.add(coinsWrapper).width(Globals.baseSize * 10).expand()
 				.pad(5);
@@ -161,8 +161,10 @@ public class KilledDialog extends Table {
 		buildTable(gameLoader, popQueObject);
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
 		User.getInstance().addCoin(
-				-250 * (playedTrack.getItemIndex())
-						/ playedTrack.getDifficulty());
+				-250
+						* (playedTrack.getItemIndex())
+						/ (playedTrack.getDifficulty() == 0 ? 1 : playedTrack
+								.getDifficulty()));
 
 	}
 }

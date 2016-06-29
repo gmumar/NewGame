@@ -110,8 +110,8 @@ public class LoaderScreen implements Screen {
 
 		loadAssets();
 		
-		//Globals.setAds(!(User.getInstance().isAdsBought()));// || Globals.ADMIN_MODE));
-		Globals.setAds(false);
+		Globals.setAds(!(User.getInstance().isAdsBought()));// || Globals.ADMIN_MODE));
+		//Globals.setAds(false);
 	}
 
 	private void loadAssets() {
@@ -136,6 +136,7 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("temp_post.png", Texture.class);
 		gameLoader.Assets.load("coin.png", Texture.class);
 		gameLoader.Assets.load("big_grid.png", Texture.class);
+		gameLoader.Assets.load("loading.png", Texture.class);
 
 		// // Worlds
 		gameLoader.Assets.load("worlds/forrest/mountains.png", Texture.class);

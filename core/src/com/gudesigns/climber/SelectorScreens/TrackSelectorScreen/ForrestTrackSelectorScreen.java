@@ -139,8 +139,6 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 							@Override
 							public void handleHttpResponse(
 									HttpResponse httpResponse) {
-								System.out
-										.println("TrackSelectorScreen: got a reply ");
 								Backendless_Track obj = Backendless_JSONParser
 										.processDownloadedTrack(httpResponse
 												.getResultAsString());

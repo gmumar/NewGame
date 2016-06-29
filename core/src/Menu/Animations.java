@@ -202,8 +202,15 @@ public class Animations {
 		table.addAction(Actions.repeat(1000,
 				new SequenceAction(Actions.fadeOut(0.5f), Actions.delay(0.5f),
 						Actions.fadeIn(0.5f), Actions.delay(0.5f)
-						
-						)));
+
+				)));
+	}
+
+	public static void rotate(Image loading) {
+		loading.addAction(Actions.repeat(1000,
+				new SequenceAction(Actions.rotateBy(360, 2.5f)
+
+				)));
 	}
 
 }

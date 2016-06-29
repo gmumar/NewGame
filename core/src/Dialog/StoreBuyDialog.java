@@ -105,6 +105,21 @@ public class StoreBuyDialog {
 		content.row();
 
 		if (gameLoader.IAPItemInformation.size() != 0) {
+			if(Globals.ADMIN_MODE){
+			createRow(gameLoader, skin, base, content, IAPManager.PACK_ONE,
+					"Buy 10,000 coins for ", new ClickListener() {
+
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							gameLoader.getPlatformResolver().requestPurchase(
+									IAPManager.IAP_TEST);
+							removeTable(base);
+							super.clicked(event, x, y);
+						}
+
+					});
+			}
+			
 			// row 1
 			createRow(gameLoader, skin, base, content, IAPManager.PACK_ONE,
 					"Buy 10,000 coins for ", new ClickListener() {
