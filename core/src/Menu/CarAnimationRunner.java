@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import wrapper.CameraManager;
 import wrapper.GamePhysicalState;
 import wrapper.GameState;
+import wrapper.GameViewport;
 import wrapper.Globals;
 import wrapper.TouchUnit;
 import Assembly.AssembledObject;
@@ -30,6 +31,7 @@ public class CarAnimationRunner {
 	private ScrollingBackground scrollingBackground;
 	private GameLoader gameLoader;
 	private CameraManager camera;
+	private GameViewport gameVp;
 
 	// State
 	private World world = null;
@@ -118,6 +120,10 @@ public class CarAnimationRunner {
 	private void initCarStage() {
 		camera = new CameraManager(Globals.ScreenWidth, Globals.ScreenHeight);
 		camera.update();
+		
+		gameVp = new GameViewport(Globals.ScreenWidth / 80,
+				Globals.ScreenHeight / 80, camera);
+
 	}
 
 	private float timeCounter = 0;
@@ -159,6 +165,7 @@ public class CarAnimationRunner {
 
 		camera.position.set(camera.viewportWidth / 2,
 				camera.viewportHeight / 2, 0);
+		gameVp.update(width, height);
 	}
 
 	public void dispose() {

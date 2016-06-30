@@ -43,8 +43,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.gudesigns.climber.CarBuilderScreen;
@@ -70,6 +72,7 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 	protected PopQueManager popQueManager;
 	protected SelectorScreen instance;
 	public GameLoader gameLoader;
+	private Label connectToInternet;
 
 	protected ImageButton prevPage, nextPage;
 
@@ -246,7 +249,6 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 
 										}
 
-
 										for (ServerDataUnit fromServer : obj
 												.getData()) {
 
@@ -394,54 +396,40 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			uniquenessButtonList.add(itemToBeAdded);
 		}
 
-		/*if (itemToBeAdded.getParentType() == JSONParentType.TRACK) {
-
-			JSONTrack trackToBeAdded = (JSONTrack) itemToBeAdded;
-
-			if (isCorrectTrackType(trackToBeAdded.getType())) {
-
-				if (uniquenessButtonList.contains(trackToBeAdded)) {
-
-					// Override older tracks with newer tracks with same
-					// indexes
-					Integer indexInList = uniquenessButtonList
-							.indexOf(trackToBeAdded);
-					JSONParentClass otherItem = uniquenessButtonList
-							.get(indexInList);
-					JSONTrack trackInList = (JSONTrack) otherItem;
-
-					Long time1 = Long.parseLong(trackToBeAdded
-							.getCreationTime());
-					Long time2 = Long.parseLong(trackInList.getCreationTime());
-
-					if (time1 > time2) {
-						items.add(itemToBeAdded);
-						items.remove(otherItem);
-						totalLoadedCounter.release();
-						uniquenessButtonList.remove(trackInList);
-						uniquenessButtonList.add(trackToBeAdded);
-
-					} else {
-						;
-					}
-
-				} else {
-					items.add(itemToBeAdded);
-					totalLoadedCounter.release();
-					uniquenessButtonList.add(trackToBeAdded);
-				}
-			}
-
-		} else if (itemToBeAdded.getParentType() == JSONParentType.CAR) {
-			JSONCar car = (JSONCar) itemToBeAdded;
-
-			if (uniquenessButtonList.contains(car)) {
-			} else {
-				items.add(itemToBeAdded);
-				totalLoadedCounter.release();
-				uniquenessButtonList.add(car);
-			}
-		}*/
+		/*
+		 * if (itemToBeAdded.getParentType() == JSONParentType.TRACK) {
+		 * 
+		 * JSONTrack trackToBeAdded = (JSONTrack) itemToBeAdded;
+		 * 
+		 * if (isCorrectTrackType(trackToBeAdded.getType())) {
+		 * 
+		 * if (uniquenessButtonList.contains(trackToBeAdded)) {
+		 * 
+		 * // Override older tracks with newer tracks with same // indexes
+		 * Integer indexInList = uniquenessButtonList .indexOf(trackToBeAdded);
+		 * JSONParentClass otherItem = uniquenessButtonList .get(indexInList);
+		 * JSONTrack trackInList = (JSONTrack) otherItem;
+		 * 
+		 * Long time1 = Long.parseLong(trackToBeAdded .getCreationTime()); Long
+		 * time2 = Long.parseLong(trackInList.getCreationTime());
+		 * 
+		 * if (time1 > time2) { items.add(itemToBeAdded);
+		 * items.remove(otherItem); totalLoadedCounter.release();
+		 * uniquenessButtonList.remove(trackInList);
+		 * uniquenessButtonList.add(trackToBeAdded);
+		 * 
+		 * } else { ; }
+		 * 
+		 * } else { items.add(itemToBeAdded); totalLoadedCounter.release();
+		 * uniquenessButtonList.add(trackToBeAdded); } }
+		 * 
+		 * } else if (itemToBeAdded.getParentType() == JSONParentType.CAR) {
+		 * JSONCar car = (JSONCar) itemToBeAdded;
+		 * 
+		 * if (uniquenessButtonList.contains(car)) { } else {
+		 * items.add(itemToBeAdded); totalLoadedCounter.release();
+		 * uniquenessButtonList.add(car); } }
+		 */
 
 		/*
 		 * JsonElement catElem = parser.parse(item.jsonify());
@@ -564,6 +552,27 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 			}
 		}
 
+		if (uniquenessButtonList.size() == 0) {
+			String text = "connect to the internet to download the latest content";
+			String style = "default";
+			if (getScreenType() == ScreenType.ARCTIC_TRACK_SELECTOR
+					|| getScreenType() == ScreenType.INFINITE_TRACK_SELECTOR
+					|| getScreenType() == ScreenType.FORREST_TRACK_SELECTOR) {
+				text = "connect to the internet to download the latest tracks";
+			} else if (getScreenType() == ScreenType.CAR_SELECTOR) {
+				text = "connect to the internet to download the latest cars";
+				style = "defaultWhite";
+			}
+
+			connectToInternet = new Label(text,
+					Skins.loadDefault(gameLoader, 1), style);
+			connectToInternet.setAlignment(Align.center);
+			connectToInternet.setPosition(stage.getWidth() / 2
+					- (text.length() * 6.5f) / 2f, stage.getHeight() / 2);
+			stage.addActor(connectToInternet);
+		} else {
+			connectToInternet.setText("");
+		}
 		/*
 		 * Table contentTable = new Table(); contentTable.clear();
 		 * contentTable.setTouchable(Touchable.childrenOnly);

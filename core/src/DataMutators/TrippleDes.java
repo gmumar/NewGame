@@ -22,7 +22,7 @@ public class TrippleDes {
 	SecretKey key;
 
 	public TrippleDes() {
-		myEncryptionKey = "ThisIsSpartaThisIsSparta";
+		myEncryptionKey = "idjgsogjso#^*&(*eiofjTG&FAF)(&%0j8hacas78g&6&FChaewh9f8jw#&";
 		myEncryptionScheme = DESEDE_ENCRYPTION_SCHEME;
 		try {
 			arrayBytes = myEncryptionKey.getBytes(UNICODE_FORMAT);

@@ -33,7 +33,7 @@ public class FileManager {
 	 * 
 	 * FileObject objectCur = null; Gson json = new Gson(); String strToWrite;
 	 * 
-	 * FileHandle handle = Gdx.files.external("");
+	 * FileHandle handle = Gdx.files.local("");
 	 * 
 	 * if (handle != null && handle.exists()) { objectCur =
 	 * json.fromJson(handle.readString(), FileObject.class);
@@ -62,7 +62,7 @@ public class FileManager {
 	private static void writeToFileGson(String fileName, String strToWrite,
 			Long lastCreationTimeStamp) {
 
-		FileHandle handle = Gdx.files.external(fileName);
+		FileHandle handle = Gdx.files.local(fileName);
 
 		try {
 			handle.writeBytes(Gzip.compressToBytes(strToWrite), false);
@@ -82,7 +82,7 @@ public class FileManager {
 	 * 
 	 * FileObject objectCur = null; Gson json = new Gson(); String strToWrite;
 	 * 
-	 * FileHandle handle = Gdx.files.external(FILE_NAME);
+	 * FileHandle handle = Gdx.files.local(FILE_NAME);
 	 * 
 	 * if (handle != null && handle.exists()) { objectCur =
 	 * json.fromJson(getFileStream(FILE_NAME), FileObject.class);
@@ -95,7 +95,7 @@ public class FileManager {
 	 * 
 	 * FileObject objectCur = new FileObject(); Gson json = new Gson();
 	 * 
-	 * FileHandle handle = Gdx.files.external(FILE_NAME);
+	 * FileHandle handle = Gdx.files.local(FILE_NAME);
 	 * 
 	 * if (handle != null && handle.exists()) { objectCur =
 	 * json.fromJson(handle.readString(), FileObject.class); return objectCur;
@@ -107,7 +107,7 @@ public class FileManager {
 
 	public static Reader getFileStream(String fileName) {
 
-		FileHandle handle = Gdx.files.external(fileName);
+		FileHandle handle = Gdx.files.local(fileName);
 
 		if (!handle.exists()){
 			return null;
@@ -134,15 +134,18 @@ public class FileManager {
 		if (md5.isEmpty()) {
 			// File missing
 			user.saveFileTimeStamp(fileName, "0");
+			System.out.println("FileManager: file missing");
 			return false;
 		} else {
 			if (md5.compareTo(user.getFileMD5(fileName)) != 0) {
 				// File corrupted
 				user.saveFileTimeStamp(fileName, "0");
+				System.out.println("FileManager: file corrupted");
 				return false;
 			}
 
 		}
+		System.out.println("FileManager: file ok");
 		
 		return true;
 	}
@@ -150,7 +153,7 @@ public class FileManager {
 	public static String checkSum(String path) {
 		String checksum = "";
 		try {
-			FileHandle handle = Gdx.files.external(path);
+			FileHandle handle = Gdx.files.local(path);
 			FileInputStream fis = new FileInputStream(handle.file());
 			MessageDigest md = MessageDigest.getInstance("MD5");
 

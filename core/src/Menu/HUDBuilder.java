@@ -154,6 +154,23 @@ public class HUDBuilder {
 		stage.addActor(money);
 
 		stage.addActor(base);
+		
+		// Arrows 
+		
+		Image rightArrow = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/left.png"));
+		rightArrow.setPosition(stage.getWidth()-100, 60);
+		rightArrow.addAction(Actions.alpha(0.5f));
+		float ratio = rightArrow.getHeight()/rightArrow.getWidth();
+		rightArrow.setSize(Globals.baseSize*1.2f, Globals.baseSize*1.2f*ratio);
+		stage.addActor(rightArrow);
+		
+		Image LeftArrow = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/right.png"));
+		LeftArrow.setPosition(100, 60);
+		LeftArrow.addAction(Actions.alpha(0.5f));
+		LeftArrow.setSize(Globals.baseSize*1.2f, Globals.baseSize*1.2f*ratio);
+		stage.addActor(LeftArrow);
+		
+		
 	}
 
 	public void update(float delta, float progress, float timeIn,

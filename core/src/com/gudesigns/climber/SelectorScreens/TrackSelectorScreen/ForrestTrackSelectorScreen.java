@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 import wrapper.GameState;
 import wrapper.Globals;
-import JSONifier.JSONCar;
+import Dialog.Skins;
 import JSONifier.JSONParentClass;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
@@ -38,6 +38,7 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -416,7 +417,7 @@ public class ForrestTrackSelectorScreen extends SelectorScreen {
 			}
 
 		});
-
+		
 		itemsTable.invalidate();
 		scrollPane.invalidate();
 	}

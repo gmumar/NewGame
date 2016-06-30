@@ -1,5 +1,6 @@
 package Dialog;
 
+import wrapper.GameState;
 import wrapper.Globals;
 import JSONifier.JSONTrack;
 import Menu.Animations;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.GameLoader;
 
 public class KilledDialog extends Table {
@@ -36,7 +38,7 @@ public class KilledDialog extends Table {
 		// return base;
 	}
 
-	private void buildTable(GameLoader gameLoader,
+	private void buildTable(final GameLoader gameLoader,
 			final PopQueObject popQueObject) {
 		// Skin skin = Skins.loadDefault(gameLoader, 0);
 
@@ -128,7 +130,39 @@ public class KilledDialog extends Table {
 		contextWrapper.add(coinsWrapper).width(Globals.baseSize * 10).expand()
 				.pad(5);
 		contextWrapper.row();
+		
+		// Promotion
+		Table promotionWrapper = new Table();
+		Label promotionText = new Label("Having trouble winning this level?\n Try leveling up your car ", skin, "defaultWhite");
+		promotionText.setAlignment(Align.center);
+		promotionWrapper.add(promotionText);
+		
+		promotionWrapper.row();
+		
+		Button carBuilder = new Button(skin, "carBuilder_play");
+		carBuilder.addListener(new ClickListener() {
 
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameLoader.setScreen(new CarBuilderScreen(new GameState(gameLoader, User.getInstance())));
+				// base.hide();
+				super.clicked(event, x, y);
+			}
+
+		});
+
+		Label carBuilderText = new Label("car builder", skin);
+		carBuilder.add(carBuilderText).pad(20);
+
+		Image carBuilderImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/car.png"));
+		carBuilder.add(carBuilderImage).width(Globals.baseSize*1.5f)
+				.height(Globals.baseSize).pad(10);
+		
+		promotionWrapper.add(carBuilder).pad(10);
+		
+		contextWrapper.add(promotionWrapper).padTop(30);
 		base.add(contextWrapper).expandY().center();
 		base.row();
 
