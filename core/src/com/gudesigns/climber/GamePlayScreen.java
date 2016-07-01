@@ -297,9 +297,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 				if (gameWon) {
 					handleInput(fakeTouches);
-				} else if (gameLost) {
-					;
-				} else {
+				}/*
+				 * else if (gameLost) { ; }
+				 */else {
 					handleInput(touches);
 					mapTime += Globals.STEP;
 				}
@@ -307,9 +307,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				if (slowMoFactor != 1) {
 					world.step(Globals.STEP / slowMoFactor, 60, 40);
 				} else {
-					world.step(Globals.STEP, 200, 200);
+					world.step(Globals.STEP, 200, 150);
 				}
-				hud.update(Globals.STEP, progress, mapTime, camera);
+				hud.update(progress, mapTime);
 				// builtCar.step();
 				// }
 
@@ -327,9 +327,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			}
 
 			scrollingBackground.drawNormal();
+			builtCar.updateSound(user);
 		}
-
-		builtCar.updateSound(user);
 
 		attachCameraTo(builtCar.getCameraFocusPart());
 		ground.drawShapes();

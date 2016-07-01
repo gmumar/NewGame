@@ -35,10 +35,12 @@ public class GroundDecor {
 		decorations.add(flag);
 	}
 
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, float xStart, float xEnd) {
 		
 		for (BaseActor decoration : decorations){
-			decoration.draw(batch);
+			if(decoration.getPosition().x > xStart && decoration.getPosition().x < xEnd){
+				decoration.draw(batch);
+			}
 		}
 		
 	}

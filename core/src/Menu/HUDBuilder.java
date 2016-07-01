@@ -1,6 +1,5 @@
 package Menu;
 
-import wrapper.CameraManager;
 import wrapper.GameState;
 import wrapper.Globals;
 import Dialog.Skins;
@@ -173,8 +172,7 @@ public class HUDBuilder {
 		
 	}
 
-	public void update(float delta, float progress, float timeIn,
-			CameraManager camera) {
+	public void update(float progress, float timeIn) {
 
 		if (Globals.ADMIN_MODE) {
 

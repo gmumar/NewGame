@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import wrapper.BaseActor;
 import Component.Component;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONComponentName;
@@ -27,33 +28,27 @@ public class AssembledTrack {
 		GroundUnitDescriptor lastPos = points.get(points.size() - 1);
 		return lastPos.getEnd().dst(0, lastPos.getEnd().y);
 	}
-	
+
 	public boolean destroyComponent(JSONComponentName name) {
-		
-		if(name == null ) {
+
+		if (name == null) {
 			return false;
 		}
-		
+
 		Iterator<Component> iter = parts.iterator();
 		Component part;
-		
-		
-		while(iter.hasNext()){
+
+		while (iter.hasNext()) {
 			part = iter.next();
-			
-			if(part
-					.getjComponentName()
-					.getId()
-					.compareTo(
-							name
-							.getId())==0){
+
+			if (part.getjComponentName().getId().compareTo(name.getId()) == 0) {
 				part.destroyObject();
 				iter.remove();
-				
+
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -73,19 +68,22 @@ public class AssembledTrack {
 		this.points = points;
 	}
 
-	public Collection<Component>  getParts() {
+	public Collection<Component> getParts() {
 		return parts;
 	}
 
-	public void setParts(Collection<Component>  parts) {
+	public void setParts(Collection<Component> parts) {
 		this.parts = parts;
 	}
-	
-	public void draw(SpriteBatch batch){
-		for(Component part : parts){
-			part.draw(batch);
-		}
-	}
 
+	public void draw(SpriteBatch batch, float xStart, float xEnd) {
+
+		for (Component part : parts) {
+			if (part.getPosition().x > xStart && part.getPosition().x < xEnd) {
+				part.draw(batch);
+			}
+		}
+
+	}
 
 }

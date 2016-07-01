@@ -33,7 +33,7 @@ import com.badlogic.gdx.utils.async.AsyncExecutor;
 
 public class Globals {
 
-	public final static boolean ADMIN_MODE = false;
+	public final static boolean ADMIN_MODE = true;
 	final public static int VERSION = 12;
 
 	volatile static public int ScreenHeight;

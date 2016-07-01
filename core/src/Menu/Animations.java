@@ -112,7 +112,20 @@ public class Animations {
 		Vector2 orignalPos = new Vector2(baseLabel.getX(), baseLabel.getY());
 
 		if (previousMoney > currentMoney) {
-			currentMoney++;
+			
+			if (previousMoney - currentMoney> 1000) {
+				currentMoney += 1000;
+			} else if (previousMoney- currentMoney > 500) {
+				currentMoney += 500;
+			} else if ( previousMoney - currentMoney> 100) {
+				currentMoney += 100;
+			} else if ( previousMoney - currentMoney> 10) {
+				currentMoney += 10;
+			} else if (previousMoney - currentMoney> 5) {
+				currentMoney += 5;
+			} else {
+				currentMoney++;
+			}
 
 			Action completeAction = new ParallelAction(Actions.moveTo(
 					orignalPos.x, orignalPos.y), Actions.fadeIn(0.0F));

@@ -454,4 +454,9 @@ public class Component {
 		this.getObject().addSprite(name ,texture);
 	}
 
+	public Vector2 getPosition() {
+		
+		return getObject().getPosition();
+	}
+
 }

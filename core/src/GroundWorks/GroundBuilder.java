@@ -48,7 +48,7 @@ public class GroundBuilder {
 
 	private World world;
 	private GameLoader gameLoader;
-	private Body floor;
+	private Body floor, backWall;
 	private CameraManager camera;
 	private EdgeShape edgeShape = new EdgeShape();
 	private FixtureDef fixtureDef = new FixtureDef();
@@ -78,7 +78,7 @@ public class GroundBuilder {
 	private Integer lastRemovedPointer = 1;
 
 	private GroundUnitDescriptor lastObj;
-	private GroundUnitDescriptor gud;
+	private GroundUnitDescriptor lastDrawnUnit, firstDrawnUnit;
 
 	private static Texture groundFiller;
 	private TrackType trackType = TrackType.FORREST;
@@ -135,7 +135,6 @@ public class GroundBuilder {
 			// Vector2(-10,-50)));
 			// shaderEnd = 8*15;//= mapList.get(mapList.size()-1).vertexId;
 
-		
 		}
 
 		if (trackType == TrackType.FORREST) {
@@ -187,35 +186,45 @@ public class GroundBuilder {
 		mapList.add(gud);
 		// gud.fixture = drawEdge(gud.start, gud.end);
 		gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
+
+		backWall = world.createBody(bodyDef2);
+
+		edgeShape.set(new Vector2(0, 0), new Vector2(0, 35));
+		fixtureDef.shape = edgeShape;
+
+		fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		// groundFixture =
+		backWall.createFixture(fixtureDef);
+		backWall.setTransform(new Vector2(gud.getEnd().x, gud.getEnd().y), 0);
+		
+		lastDrawnUnit = firstDrawnUnit = new GroundUnitDescriptor(new Vector2(), new Vector2(), false);
+
 	}
 
 	public void addFloorUnitToMap() {
 
-		gud = mapList.get(lastDrawnPointer);
+		lastDrawnUnit = mapList.get(lastDrawnPointer);
 
-		if (getEdge() > gud.getEnd().x) {
+		if (getEdge() > lastDrawnUnit.getEnd().x) {
 
 			lastDrawnPointer++;
-			gud = mapList.get(lastDrawnPointer);
-			gud.setFixture(drawEdge(gud.getStart(), gud.getEnd()));
+			lastDrawnUnit = mapList.get(lastDrawnPointer);
+			lastDrawnUnit.setFixture(drawEdge(lastDrawnUnit.getStart(), lastDrawnUnit.getEnd()));
 
 			if (mapList.size() <= lastRemovedPointer)
 				return;
 
-			gud = mapList.get(lastRemovedPointer);
+			firstDrawnUnit = mapList.get(lastRemovedPointer);
 
-			verticalEdge = drawEdge(gud.getStart(), new Vector2(
-					gud.getStart().x, gud.getStart().y + 150));
-
-			if (getBackEdge() > gud.getStart().x) {
+			if (getBackEdge() > firstDrawnUnit.getStart().x) {
 				ADD_FLOOR_COUNT = ADD_FLOOR_COUNT_FINAL;
-				floor.destroyFixture(verticalEdge);
-				verticalEdge = drawEdge(gud.getEnd(), new Vector2(
-						gud.getEnd().x, gud.getEnd().y + 50));
 
-				gud = mapList.get(lastRemovedPointer);
-				shaderStart = gud.getVertexId();
-				gud.deleteUnit(floor);// drawList
+				backWall.setTransform(new Vector2(firstDrawnUnit.getEnd().x,
+						firstDrawnUnit.getEnd().y), 0);
+
+				firstDrawnUnit = mapList.get(lastRemovedPointer);
+				shaderStart = firstDrawnUnit.getVertexId();
+				firstDrawnUnit.deleteUnit(floor);// drawList
 				// mapList.remove(lastRemovedPointer);
 				lastRemovedPointer++;
 
@@ -240,15 +249,15 @@ public class GroundBuilder {
 
 	public void getNextFloorUnit(boolean forMainMenu) {
 
-		float randf = (float) (r.nextFloat());
 		lastObj = mapList.get(mapList.size() - 1);
-
-		generateBias(r, forMainMenu);
-
-		randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
 
 		if (getEdge() > lastObj.getEnd().x) {
 			if (infinate || forMainMenu) {
+				float randf = (float) (r.nextFloat());
+				generateBias(r, forMainMenu);
+
+				randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
+				
 				addGroundUnitDescriptor(lastObj, randf);
 			} else {
 				addGroundUnitDescriptor(lastObj,
@@ -259,11 +268,6 @@ public class GroundBuilder {
 					infinate = true;
 				}
 			}
-			/*
-			 * if (camera.position.x - GamePlayScreen.CAMERA_OFFSET >
-			 * preMadeMapList .get(0).getEnd().x) { ++progressCounter; }
-			 */
-
 		}
 
 		if (flatFloorCount >= FLAT_FLOOR_COUNT) {
@@ -329,8 +333,8 @@ public class GroundBuilder {
 
 		++addFloorCount;
 
-		decor.draw(batch);
-		track.draw(batch);
+		decor.draw(batch,firstDrawnUnit.getEnd().x, lastDrawnUnit.getEnd().x);
+		track.draw(batch,firstDrawnUnit.getEnd().x, lastDrawnUnit.getEnd().x);
 
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
