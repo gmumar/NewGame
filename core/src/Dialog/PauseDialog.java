@@ -4,11 +4,9 @@ import wrapper.Globals;
 import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
-import Menu.ScreenType;
-import Menu.Bars.TitleBar;
+import Menu.PopQueObject.PopQueObjectType;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
-import Menu.PopQueObject.PopQueObjectType;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;

@@ -559,6 +559,10 @@ public abstract class SelectorScreen implements Screen, TwoButtonDialogFlow {
 					|| getScreenType() == ScreenType.INFINITE_TRACK_SELECTOR
 					|| getScreenType() == ScreenType.FORREST_TRACK_SELECTOR) {
 				text = "connect to the internet to download the latest tracks";
+				
+				if( getScreenType() == ScreenType.INFINITE_TRACK_SELECTOR){
+					style = "defaultWhite";
+				}
 			} else if (getScreenType() == ScreenType.CAR_SELECTOR) {
 				text = "connect to the internet to download the latest cars";
 				style = "defaultWhite";

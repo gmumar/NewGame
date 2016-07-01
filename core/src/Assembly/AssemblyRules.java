@@ -3,7 +3,6 @@ package Assembly;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -66,9 +65,6 @@ public class AssemblyRules {
 				counts.put(name.getBaseName(), 1);
 			}
 
-		}
-
-		for (Entry<String, Integer> bla : counts.entrySet()) {
 		}
 
 		if (!counts.containsKey(ComponentNames.BAR3)) {

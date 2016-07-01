@@ -223,7 +223,7 @@ public class GroundBuilder {
 		} else {
 			// initial = 0;
 			loading = false;
-			ADD_FLOOR_COUNT_FINAL = 3;
+			ADD_FLOOR_COUNT_FINAL = 2;
 		}
 
 		/*

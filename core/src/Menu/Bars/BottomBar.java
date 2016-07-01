@@ -3,15 +3,9 @@ package Menu.Bars;
 import wrapper.GameState;
 import wrapper.Globals;
 import Dialog.Skins;
-import Menu.Animations;
 import Menu.ScreenType;
 import Menu.TableW;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;

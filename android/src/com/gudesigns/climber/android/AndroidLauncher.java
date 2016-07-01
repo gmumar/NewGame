@@ -12,13 +12,18 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.graphics.Mesh;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.gudesigns.climber.GameLoader;
 
 public class AndroidLauncher extends AndroidApplication implements
 		IActivityRequestHandler {
+	protected AdView adView;
 	private final int SHOW_ADS = 1;
 	private final int HIDE_ADS = 0;
 	private GooglePurchaseManager IAPManager;
@@ -49,10 +54,14 @@ public class AndroidLauncher extends AndroidApplication implements
 		// Build gameView
 		View gameView = initializeForView(game, config);
 
-	
+		// Build AdView
+		AdViewUnit adViewUnit = initAdView();
+		adView = adViewUnit.view;
+		RelativeLayout.LayoutParams adParams = adViewUnit.params;
 
 		// Add views to layout
 		layout.addView(gameView);
+		layout.addView(adView, adParams);
 
 		// Hide buttons
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -80,10 +89,11 @@ public class AndroidLauncher extends AndroidApplication implements
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case SHOW_ADS: {
-				
+				adView.setVisibility(View.VISIBLE);
 				break;
 			}
 			case HIDE_ADS: {
+				adView.setVisibility(View.GONE);
 				break;
 			}
 			}
@@ -91,13 +101,30 @@ public class AndroidLauncher extends AndroidApplication implements
 	};
 
 	private class AdViewUnit {
-
+		AdView view;
+		RelativeLayout.LayoutParams params;
 	}
 
 	private AdViewUnit initAdView() {
+		AdView adView = new AdView(this);
+		adView.setAdSize(AdSize.BANNER);
+		adView.setAdUnitId("ca-app-pub-6076836148998107/3630881938");
+		AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+		adRequestBuilder.addTestDevice("0A6DBE6B4413A32CB5926FB3EF4CC30C");
+		adView.loadAd(adRequestBuilder.build());
+
+		RelativeLayout.LayoutParams adParams = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.WRAP_CONTENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
+		adParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
 
-		return null;
+		AdViewUnit ret = new AdViewUnit();
+		ret.view = adView;
+		ret.params = adParams;
+
+		return ret;
 	}
 
 	@TargetApi(19)
