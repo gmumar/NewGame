@@ -8,6 +8,8 @@ import wrapper.GamePhysicalState;
 import wrapper.Globals;
 import Assembly.AssembledTrack;
 import Assembly.Assembler;
+import Assembly.ColliderCategories;
+import Assembly.ColliderCategories.ColliderGroups;
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 import JSONifier.JSONTrack;
@@ -100,7 +102,7 @@ public class GroundBuilder {
 	// drawEdge looks up type everytime, try to optimize.
 	public GroundBuilder(GamePhysicalState gameState,
 			final CameraManager camera, ShaderProgram shader,
-			ShaderProgram colorShader, boolean forMainMenu, User user) {
+			ShaderProgram colorShader, boolean forMainMenu, User user, boolean forReplay) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
@@ -126,7 +128,7 @@ public class GroundBuilder {
 			mapListCounter = 0;
 
 			track = assembler.assembleTrack(mapString, gameState, new Vector2(
-					TRACK_X_OFFSET, TRACK_Y_OFFSET), forMainMenu);
+					TRACK_X_OFFSET, TRACK_Y_OFFSET), forMainMenu, forReplay);
 
 			preMadeMapList = track.getPoints();
 
@@ -192,7 +194,8 @@ public class GroundBuilder {
 		edgeShape.set(new Vector2(0, 0), new Vector2(0, 35));
 		fixtureDef.shape = edgeShape;
 
-		fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		//fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		fixtureDef.filter.categoryBits = ColliderCategories.GROUND;
 		// groundFixture =
 		backWall.createFixture(fixtureDef);
 		backWall.setTransform(new Vector2(gud.getEnd().x, gud.getEnd().y), 0);
@@ -409,7 +412,8 @@ public class GroundBuilder {
 			fixtureDef.restitution = 0.2f;
 		}
 
-		fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		//fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		fixtureDef.filter.categoryBits = ColliderCategories.GROUND;
 		groundFixture = floor.createFixture(fixtureDef);
 		groundFixture.setUserData(groundFixtureName);
 

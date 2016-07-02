@@ -82,7 +82,7 @@ public class CarDisplayDialog {
 		// ----- car display ----------
 		final String itemJson = popQueObject.getCarJson();
 
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, itemJson,
+		TextureRegion tr = Assembler.assembleCarImage(gameLoader, itemJson,
 				false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH);

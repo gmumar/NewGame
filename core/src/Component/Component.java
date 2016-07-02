@@ -56,28 +56,26 @@ public class Component {
 
 	public void applyProperties(ComponentProperties propertiesIn,
 			PropertyTypes type) {
-		
+
 		if (propertiesIn == null)
 			return;
-		
-		
-		
+
 		if (type == PropertyTypes.ABSOLUTE || type == PropertyTypes.BOTH) {
 
-			this.object.setRotation(Float.parseFloat(propertiesIn.getRotation()));
+			this.object
+					.setRotation(Float.parseFloat(propertiesIn.getRotation()));
 			this.Motor = propertiesIn.isMotor();
 		}
 
 		if (type == PropertyTypes.RELATIVE || type == PropertyTypes.BOTH) {
 
-				this.setPosition(Float.parseFloat(propertiesIn.getPositionX()),
-						Float.parseFloat(propertiesIn.getPositionY()));
-			
+			this.setPosition(Float.parseFloat(propertiesIn.getPositionX()),
+					Float.parseFloat(propertiesIn.getPositionY()));
+
 		}
-		
 
 	}
-	
+
 	public void OLD_applyProperties(Map<String, String> propertiesIn,
 			PropertyTypes type) {
 		if (propertiesIn.isEmpty())
@@ -151,35 +149,35 @@ public class Component {
 
 				fixture.setUserData(fixtureName);
 			}
-		} else if (this.componentTypes == ComponentTypes.JOINT) {			
-			
+		} else if (this.componentTypes == ComponentTypes.JOINT) {
+
 			ArrayList<BaseActor> bodies = this.getJointBodies();
-			
+
 			for (BaseActor body : bodies) {
 				int mountId = 0;
-				
 
 				this.setComponentId(name.getComponentId());
 				this.setPartLevel(partLevel);
 				// TODO: finalize this
 				body.setSensor();
-				
-				for(Vector2 mount : body.getMounts()) {
+
+				for (Vector2 mount : body.getMounts()) {
 					JSONComponentName subBodyName = new JSONComponentName();
 					FixtureDef fixtureDef = ComponentBuilder.buildMount(
-							new Vector2(), 1, true);// <------------ This should be using the mount here
+							new Vector2(), 1, true);// <------------ This should
+													// be using the mount here
 					Fixture fixture = body.getPhysicsBody().createFixture(
 							fixtureDef);
-	
+
 					subBodyName.setComponentId(name.getComponentId());
 					subBodyName.setBaseName(name.getBaseName());
 					subBodyName.setSubName(body.getjName().getSubName());
 					subBodyName.setMountId(Integer.toString(mountId));
 					subBodyName.setLevel(partLevel);
-	
+
 					fixture.setUserData(subBodyName);
 					body.getPhysicsBody().setUserData(subBodyName);
-					
+
 					mountId++;
 				}
 
@@ -194,36 +192,32 @@ public class Component {
 		// jComponent.setComponentName(name);
 		jComponent.setjComponentName(name);
 
-		
 		boolean isMotor = false;
 		ComponentTypes type = ComponentTypes.PART;
 		ComponentProperties props = new ComponentProperties();
-		
+
 		if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
 			isMotor = true;
 		}
-		
-		props.setProperties(
-				Float.toString(this.getObject().getRotation()* MathUtils.radiansToDegrees),
-				Float.toString(this.getObject().getPosition().x), 
-				Float.toString(this.getObject().getPosition().y),
-				isMotor, type);
-		
-		
-		
-		/*Map<String, String> prop = new HashMap<String, String>();
-		prop.put(
-				Properties.ROTATION,
-				Float.toString(this.getObject().getRotation()
-						* MathUtils.radiansToDegrees));// In radians
-		prop.put(Properties.POSITION, Properties.makePostionString(this
-				.getObject().getPosition().x, this.getObject().getPosition().y));
 
-		if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
-			prop.put(Properties.MOTOR, "1");
-		} else if (name.getBaseName().compareTo(ComponentNames.SPRINGJOINT) == 0) {
-			prop.put(Properties.TYPE, ComponentNames.SPRINGJOINT);
-		}*/
+		props.setProperties(
+				Float.toString(this.getObject().getRotation()
+						* MathUtils.radiansToDegrees),
+				Float.toString(this.getObject().getPosition().x),
+				Float.toString(this.getObject().getPosition().y), isMotor, type);
+
+		/*
+		 * Map<String, String> prop = new HashMap<String, String>(); prop.put(
+		 * Properties.ROTATION, Float.toString(this.getObject().getRotation()
+		 * MathUtils.radiansToDegrees));// In radians
+		 * prop.put(Properties.POSITION, Properties.makePostionString(this
+		 * .getObject().getPosition().x, this.getObject().getPosition().y));
+		 * 
+		 * if (name.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+		 * prop.put(Properties.MOTOR, "1"); } else if
+		 * (name.getBaseName().compareTo(ComponentNames.SPRINGJOINT) == 0) {
+		 * prop.put(Properties.TYPE, ComponentNames.SPRINGJOINT); }
+		 */
 		jComponent.setProperties(props);
 
 		return jComponent;
@@ -234,20 +228,22 @@ public class Component {
 		JSONComponent jComponent = new JSONComponent();
 		jComponent.setjComponentName(name);
 
-		/*HashMap<String, String> prop = new HashMap<String, String>();
-		prop.put(Properties.ROTATION,
-				Float.toString(body.getRotation() * MathUtils.radiansToDegrees));// In
-																					// radians
-		prop.put(Properties.POSITION,
-				body.getPosition().x + "," + body.getPosition().y); // "-10,5"*/
-		
+		/*
+		 * HashMap<String, String> prop = new HashMap<String, String>();
+		 * prop.put(Properties.ROTATION, Float.toString(body.getRotation() *
+		 * MathUtils.radiansToDegrees));// In // radians
+		 * prop.put(Properties.POSITION, body.getPosition().x + "," +
+		 * body.getPosition().y); // "-10,5"
+		 */
+
 		ComponentProperties props = new ComponentProperties();
 
 		props.setProperties(
-				Float.toString(this.getObject().getRotation()* MathUtils.radiansToDegrees),
-				Float.toString(this.getObject().getPosition().x), 
-				Float.toString(this.getObject().getPosition().y),
-				false, ComponentTypes.PART);
+				Float.toString(this.getObject().getRotation()
+						* MathUtils.radiansToDegrees),
+				Float.toString(this.getObject().getPosition().x),
+				Float.toString(this.getObject().getPosition().y), false,
+				ComponentTypes.PART);
 
 		jComponent.setProperties(props);
 
@@ -308,10 +304,11 @@ public class Component {
 	public void setLevel(Integer level) {
 		jComponentName.setLevel(level);
 	}
+
 	public Integer getLevel() {
 		return jComponentName.getLevel();
 	}
-	
+
 	public void setSubName(String subName) {
 		jComponentName.setSubName(subName);
 	}
@@ -327,14 +324,14 @@ public class Component {
 	public void setPartLevel(Integer level) {
 		jComponentName.setLevel(level);
 		object.getjName().setLevel(level);
-		
-		if(jointBodies!=null){
-			for (BaseActor body : jointBodies){
+
+		if (jointBodies != null) {
+			for (BaseActor body : jointBodies) {
 				body.getjName().setLevel(level);
 			}
 		}
 	}
-	
+
 	public void setOnlyPartLevel(Integer level) {
 		jComponentName.setLevel(level);
 		object.getjName().setLevel(level);
@@ -388,7 +385,7 @@ public class Component {
 		this.getObject().setPosition(f, g);
 	}
 
-	public void setGroup(short group) {
+	/*public void setGroup(short group) {
 		if (getJointBodies() == null) {
 			this.getObject().setGroup(group);
 		} else {
@@ -399,8 +396,20 @@ public class Component {
 			}
 		}
 
-	}
+	}*/
 	
+	public void setFilter(short car, short ground){
+		if (getJointBodies() == null) {
+			this.getObject().setFilter(car, ground);
+		} else {
+			Iterator<BaseActor> iter = getJointBodies().iterator();
+			while (iter.hasNext()) {
+				BaseActor body = iter.next();
+				body.setFilter(car, ground);
+			}
+		}
+	}
+
 	public void step() {
 		if (getJointBodies() == null) {
 			this.getObject().step();
@@ -417,7 +426,6 @@ public class Component {
 		}
 	}
 
-	
 	public void draw(SpriteBatch batch) {
 		if (getJointBodies() == null) {
 			object.draw(batch);
@@ -433,7 +441,17 @@ public class Component {
 			}
 		}
 	}
-	
+
+	public void setAlpha(float alpha) {
+		if (getJointBodies() == null) {
+			object.setAlpha(alpha);
+		} else {
+			for (BaseActor body : getJointBodies()) {
+				body.setAlpha(alpha);
+			}
+		}
+	}
+
 	public void draw(SpriteBatch batch, String texture) {
 		if (getJointBodies() == null) {
 			object.draw(batch, texture);
@@ -449,13 +467,13 @@ public class Component {
 			}
 		}
 	}
-	
-	public void addTexture(String name, String texture){
-		this.getObject().addSprite(name ,texture);
+
+	public void addTexture(String name, String texture) {
+		this.getObject().addSprite(name, texture);
 	}
 
 	public Vector2 getPosition() {
-		
+
 		return getObject().getPosition();
 	}
 

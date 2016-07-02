@@ -34,7 +34,7 @@ import com.badlogic.gdx.utils.async.AsyncExecutor;
 public class Globals {
 
 	public final static boolean ADMIN_MODE = true;
-	final public static int VERSION = 12;
+	final public static int VERSION = 13;
 
 	volatile static public int ScreenHeight;
 	volatile static public int ScreenWidth;
@@ -77,7 +77,7 @@ public class Globals {
 	final public static int ROTATABLE_JOINT = 1;
 	final public static int LOCKED_JOINT = 0;
 
-	final public static short GROUND_GROUP = -3;
+	//final public static short GROUND_GROUP = -3;
 
 	final public static float STEP = 1 / 60f;
 	final public static float STEP_INVERSE = 60f;

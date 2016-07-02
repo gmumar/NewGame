@@ -12,5 +12,7 @@ public class GamePreferences {
 	public final static String TRACK_MAP_STR = "track";
 	public final static String TRACK_MODE_STR = "track_mode";
 	//public final static String ADS_STATE = "ads_state";
+	
+	public final static String RECORDING = "recording";
 
 }

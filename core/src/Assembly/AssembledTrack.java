@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import wrapper.BaseActor;
 import Component.Component;
 import GroundWorks.GroundUnitDescriptor;
 import JSONifier.JSONComponentName;
@@ -68,9 +67,6 @@ public class AssembledTrack {
 		this.points = points;
 	}
 
-	public Collection<Component> getParts() {
-		return parts;
-	}
 
 	public void setParts(Collection<Component> parts) {
 		this.parts = parts;

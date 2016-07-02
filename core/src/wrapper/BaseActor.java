@@ -165,10 +165,17 @@ public class BaseActor {
 			Sprite s = sprites.get(textureName);
 			if (s != null) {
 				pos = body.getPosition();
-				s.setPosition(pos.x - s.getWidth()/2, pos.y - s.getHeight()/2);
+				s.setPosition(pos.x - s.getWidth() / 2, pos.y - s.getHeight()
+						/ 2);
 				s.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 				s.draw(batch);
 			}
+		}
+	}
+
+	public void setAlpha(float alpha) {
+		if (!onlyPhysicBody) {
+			sprite.setAlpha(alpha);
 		}
 	}
 
@@ -341,14 +348,13 @@ public class BaseActor {
 		}
 		initBody();
 	}
-	
+
 	public void setScale(String name, float xy) {
 		scaleX = scaleY = xy;
 		if (!onlyPhysicBody) {
-			
+
 			Sprite s = sprites.get(name);
-			s.setSize(s.getWidth() * scaleX, s.getHeight()
-					* scaleY);
+			s.setSize(s.getWidth() * scaleX, s.getHeight() * scaleY);
 			s.setOrigin(s.getWidth() / 2, s.getHeight() / 2);
 
 		}
@@ -366,16 +372,15 @@ public class BaseActor {
 		}
 		initBody();
 	}
-	
+
 	public void setScaleY(String name, float y) {
 		scaleY = y;
 		if (!onlyPhysicBody) {
 			Sprite s = sprites.get(name);
-			s.setSize(s.getWidth() * scaleX, s.getHeight()
-					* scaleY);
+			s.setSize(s.getWidth() * scaleX, s.getHeight() * scaleY);
 			s.setOrigin(s.getWidth() / 2, s.getHeight() / 2);
-			//spriteHalfHeight = sprite.getHeight() / 2;
-			//spriteHalfWidth = sprite.getWidth() / 2;
+			// spriteHalfHeight = sprite.getHeight() / 2;
+			// spriteHalfWidth = sprite.getWidth() / 2;
 		}
 		initBody();
 	}
@@ -502,6 +507,13 @@ public class BaseActor {
 		// fixtureDef.filter.groupIndex = i;
 		Filter filter = new Filter();
 		filter.groupIndex = i;
+		fixture.setFilterData(filter);
+	}
+
+	public void setFilter(short iAm, short collideWith) {
+		Filter filter = new Filter();
+		filter.categoryBits = iAm;
+		filter.maskBits = collideWith;
 		fixture.setFilterData(filter);
 	}
 

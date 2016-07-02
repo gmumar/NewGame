@@ -10,6 +10,7 @@ import wrapper.BaseActor;
 import wrapper.CameraManager;
 import wrapper.GamePhysicalState;
 import wrapper.Globals;
+import Assembly.ColliderCategories.ColliderGroups;
 import Component.Component;
 import Component.Component.PropertyTypes;
 import Component.ComponentBuilder;
@@ -42,10 +43,10 @@ public class Assembler {
 	// final public static String NAME_ID_SPLIT = "-";
 	// final public static String NAME_SUBNAME_SPLIT = "=";
 
-	final private static short CAR = -2;
+	// final private static short CAR = -2;
 
-	public static AssembledObject assembleObject(GamePhysicalState gameState,
-			String inputString, boolean forBuilder) {
+	public static AssembledObject assembleCar(GamePhysicalState gameState,
+			String inputString, ColliderGroups group, boolean forBuilder) {
 		Integer jointType = 0;
 
 		AssembledObject obj = new AssembledObject();
@@ -63,14 +64,14 @@ public class Assembler {
 		// HashMap<String, Component> parts = extractComponents(source,
 		// gameState);
 		HashMap<String, Component> parts = extractComponents(source, gameState,
-				forBuilder);
+				group, forBuilder);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
 		Iterator<JSONJoint> JointIter = jcomponents.iterator();
 		JSONJoint join;
 
 		Map<String, Integer> jointTypeList = source.getJointTypeList();
-		
+
 		while (JointIter.hasNext()) {
 			join = JointIter.next();
 
@@ -80,9 +81,8 @@ public class Assembler {
 
 			/*
 			 * String componentAName = Globals.parseName(join.m1)[0]; //
-			 * BaseActor bodyA =
-			 * parts.get(componentAName).getObject(); int componentAMountId =
-			 * Globals.getMountId(join.m1);
+			 * BaseActor bodyA = parts.get(componentAName).getObject(); int
+			 * componentAMountId = Globals.getMountId(join.m1);
 			 */
 
 			String componentAName = join.getMount1().getId();
@@ -100,9 +100,8 @@ public class Assembler {
 
 			/*
 			 * String componentBName = Globals.parseName(join.m2)[0]; //
-			 * BaseActor bodyB =
-			 * parts.get(componentBName).getObject(); int componentBMountId =
-			 * Globals.getMountId(join.m2);
+			 * BaseActor bodyB = parts.get(componentBName).getObject(); int
+			 * componentBMountId = Globals.getMountId(join.m2);
 			 */
 			if (join.getMount2().getMountId().contains("*"))
 				continue;
@@ -148,7 +147,7 @@ public class Assembler {
 		return obj;
 	}
 
-	public static TextureRegion assembleObjectImage(GameLoader gameLoader,
+	public static TextureRegion assembleCarImage(GameLoader gameLoader,
 			String inputString, boolean forBuilder) {
 
 		World tempWorld = new World(new Vector2(0, 0f), false);
@@ -164,9 +163,9 @@ public class Assembler {
 		camera.position.set(Globals.ScreenWidth / 2,
 				Globals.ScreenHeight / 2 - 1, 1);
 		camera.update();
-		
-		AssembledObject object = assembleObject(gameState, inputString,
-				forBuilder);
+
+		AssembledObject object = assembleCar(gameState, inputString,
+				ColliderGroups.USER_CAR, forBuilder);
 
 		object.setPosition(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2);
 
@@ -206,7 +205,7 @@ public class Assembler {
 
 	static public HashMap<String, Component> extractComponents(
 			JSONParentClass source, GamePhysicalState gameState,
-			boolean forBuilder) {
+			ColliderGroups group, boolean forBuilder) {
 		// HashMap<String, Component> ret = new HashMap<String, Component>();
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
@@ -255,13 +254,8 @@ public class Assembler {
 				Iterator<Component> it = componentList.iterator();
 				while (it.hasNext()) {
 					Component localComponent = it.next();
-					if (source.getParentType() == JSONParentType.CAR) {
-						localComponent.setGroup(CAR);
-					} else {
-						if(localComponent.getBaseName().compareTo(ComponentNames.TOUCHABLE_POST)!=0){
-							localComponent.setGroup(Globals.GROUND_GROUP);
-						}
-					}
+					// if (source.getParentType() == JSONParentType.CAR) {
+					setUpColliders(localComponent, group);
 					// localComponent.applyProperties(sourceComponent.getProperties());
 
 				}
@@ -296,7 +290,6 @@ public class Assembler {
 				componentList.get(1).setMountId(Integer.toString(0));
 				componentList.get(1).setPartLevel(partLevel);
 
-				
 				/*
 				 * ret.put(componentList.get(0).getComponentName(),
 				 * componentList.get(0)); ret.put(jointComponentName +
@@ -319,7 +312,6 @@ public class Assembler {
 				}
 				// -----------------------------------------------
 
-
 				component = ComponentBuilder.buildComponent(
 						componentName.getBaseName(), partLevel, gameState,
 						forBuilder);
@@ -328,13 +320,9 @@ public class Assembler {
 					component.applyProperties(sourceComponent.getProperties(),
 							PropertyTypes.BOTH);
 				}
-				if (source.getParentType() == JSONParentType.CAR) {
-					component.setGroup(CAR);
-				} else {
-					if(component.getBaseName().compareTo(ComponentNames.TOUCHABLE_POST)!=0){
-						component.setGroup(Globals.GROUND_GROUP);
-					}
-				}
+
+				setUpColliders(component, group);
+
 				// component.setComponentName(sourceComponent.getComponentName());
 				// String[] nameList = component.getComponentName().split(
 				// NAME_ID_SPLIT);
@@ -353,92 +341,150 @@ public class Assembler {
 		return ret;
 	}
 
+	private static void setUpColliders(Component component, ColliderGroups group) {
+		if (group == ColliderGroups.USER_CAR) {
+			// component.setGroup(CAR);
+			component
+					.setFilter(
+							ColliderCategories.CAR,
+							(short) (ColliderCategories.GROUND_PART | ColliderCategories.GROUND));
+		} else if (group == ColliderGroups.OPPONENT_CAR) {
+			if (component.getBaseName().compareTo(ComponentNames.LIFE) == 0) {
+				component.setFilter(ColliderCategories.OPPONENT_CAR,
+						(short) (ColliderCategories.OPPONENT_GROUND_PART));
+			} else {
+				component
+						.setFilter(
+								ColliderCategories.OPPONENT_CAR,
+								(short) (ColliderCategories.OPPONENT_GROUND_PART | ColliderCategories.GROUND));
+			}
+		} else if (group == ColliderGroups.OPPONENT_GROUND) {
+			if (component.getBaseName()
+					.compareTo(ComponentNames.TOUCHABLE_POST) == 0) {
+				component.setFilter(
+						ColliderCategories.OPPONENT_TOUCHABLE_GROUND_PART,
+						ColliderCategories.OPPONENT_GROUND_PART);
+			} else {
+				component
+						.setFilter(
+								ColliderCategories.OPPONENT_GROUND_PART,
+								(short) (ColliderCategories.OPPONENT_CAR | ColliderCategories.OPPONENT_TOUCHABLE_GROUND_PART));
+			}
+		} else {
+			if (component.getBaseName()
+					.compareTo(ComponentNames.TOUCHABLE_POST) == 0) {
+				component.setFilter(ColliderCategories.TOUCHABLE_GROUND_PART,
+						ColliderCategories.GROUND_PART);
+			} else {
+				component
+						.setFilter(
+								ColliderCategories.GROUND_PART,
+								(short) (ColliderCategories.CAR | ColliderCategories.TOUCHABLE_GROUND_PART));
+			}
+		}
+	}
+
 	public AssembledTrack assembleTrack(String mapString,
 			GamePhysicalState gameState, Vector2 offset,
-			boolean buildForMainMenu) {
+			boolean buildForMainMenu, boolean forReplay) {
 		Integer jointType = 0;
 
 		JSONTrack jsonTrack = JSONTrack.objectify(mapString);
 		jsonTrack.applyOffset(offset);
 
 		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
+		Collection<Component> partsCollection = new ArrayList<Component>();
+		ArrayList<ColliderGroups> partSets = new ArrayList<ColliderGroups>();
+		partSets.add(ColliderGroups.USER_GROUND);
 
-		HashMap<String, Component> parts = extractComponents(jsonTrack,
-				gameState, buildForMainMenu);
-		Collection<Component> partsCollection = parts.values();
-
-		if (buildForMainMenu) {
-			for (Component part : partsCollection) {
-				part.getObject().setSensor();
-			}
+		if (forReplay) {
+			partSets.add(ColliderGroups.OPPONENT_GROUND);
 		}
 
-		ArrayList<JSONJoint> jcomponents = jsonTrack.getJointList();
+		for (ColliderGroups group : partSets) {
+			HashMap<String, Component> parts = extractComponents(jsonTrack,
+					gameState, group, buildForMainMenu);
 
-		HashMap<String, Integer> jointTypeList = jsonTrack
-				.getComponentJointTypes();
-	
-		for (JSONJoint join : jcomponents) {
-
-			/*
-			 * String componentAName = Globals.parseName(join.m1)[0]; //
-			 *  BaseActor bodyA =
-			 * parts.get(componentAName).getObject(); int componentAMountId =
-			 * Globals.getMountId(join.m1);
-			 */
-
-			String componentAName = join.getMount1().getId();
-			// if(parts.get(componentAName) == null) continue;
-
-			BaseActor bodyA = parts.get(componentAName).getObject();
-
-			// if(join.getMount1().getMountId().contains("*")) continue;
-
-			int componentAMountId = Integer.parseInt(join.getMount1()
-					.getMountId());
-
-			/*
-			 * String componentBName = Globals.parseName(join.m2)[0]; //
-			 *  BaseActor bodyB =
-			 * parts.get(componentBName).getObject(); int componentBMountId =
-			 * Globals.getMountId(join.m2);
-			 */
-			// if(join.getMount2().getMountId().contains("*")) continue;
-
-			String componentBName = join.getMount2().getId();
-			// if(parts.get(componentBName) == null) continue;
-
-			BaseActor bodyB = parts.get(componentBName).getObject();
-			int componentBMountId = Integer.parseInt(join.getMount2()
-					.getMountId());
-
-			jointType = jointTypeList.get(join.getMount1().getMountedId());
-
-			if (jointType == Globals.ROTATABLE_JOINT) {
-
-				RevoluteJointDef rJoint = new RevoluteJointDef();
-
-				rJoint.initialize(bodyA.getPhysicsBody(),
-						bodyB.getPhysicsBody(),
-						bodyB.getMount(componentBMountId));
-				rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
-				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
-				rJoint.collideConnected = false;
-				rJoint.enableLimit = false;
-				gameState.getWorld().createJoint(rJoint);
-
+			if(group == ColliderGroups.OPPONENT_GROUND){
+				for (Component part : parts.values()){
+					part.setAlpha(0.5f);
+					partsCollection.add(part);
+				}
 			} else {
-				WeldJointDef wJoint = new WeldJointDef();
-
-				wJoint.initialize(bodyA.getPhysicsBody(),
-						bodyB.getPhysicsBody(),
-						bodyB.getMount(componentBMountId));
-				wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
-				wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
-				wJoint.collideConnected = false;
-				gameState.getWorld().createJoint(wJoint);
+				partsCollection.addAll(parts.values());
 			}
 
+			if (buildForMainMenu) {
+				for (Component part : partsCollection) {
+					part.getObject().setSensor();
+				}
+			}
+
+			ArrayList<JSONJoint> jcomponents = jsonTrack.getJointList();
+
+			HashMap<String, Integer> jointTypeList = jsonTrack
+					.getComponentJointTypes();
+
+			for (JSONJoint join : jcomponents) {
+
+				/*
+				 * String componentAName = Globals.parseName(join.m1)[0]; //
+				 * BaseActor bodyA = parts.get(componentAName).getObject(); int
+				 * componentAMountId = Globals.getMountId(join.m1);
+				 */
+
+				String componentAName = join.getMount1().getId();
+				// if(parts.get(componentAName) == null) continue;
+
+				BaseActor bodyA = parts.get(componentAName).getObject();
+
+				// if(join.getMount1().getMountId().contains("*")) continue;
+
+				int componentAMountId = Integer.parseInt(join.getMount1()
+						.getMountId());
+
+				/*
+				 * String componentBName = Globals.parseName(join.m2)[0]; //
+				 * BaseActor bodyB = parts.get(componentBName).getObject(); int
+				 * componentBMountId = Globals.getMountId(join.m2);
+				 */
+				// if(join.getMount2().getMountId().contains("*")) continue;
+
+				String componentBName = join.getMount2().getId();
+				// if(parts.get(componentBName) == null) continue;
+
+				BaseActor bodyB = parts.get(componentBName).getObject();
+				int componentBMountId = Integer.parseInt(join.getMount2()
+						.getMountId());
+
+				jointType = jointTypeList.get(join.getMount1().getMountedId());
+
+				if (jointType == Globals.ROTATABLE_JOINT) {
+
+					RevoluteJointDef rJoint = new RevoluteJointDef();
+
+					rJoint.initialize(bodyA.getPhysicsBody(),
+							bodyB.getPhysicsBody(),
+							bodyB.getMount(componentBMountId));
+					rJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+					rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+					rJoint.collideConnected = false;
+					rJoint.enableLimit = false;
+					gameState.getWorld().createJoint(rJoint);
+
+				} else {
+					WeldJointDef wJoint = new WeldJointDef();
+
+					wJoint.initialize(bodyA.getPhysicsBody(),
+							bodyB.getPhysicsBody(),
+							bodyB.getMount(componentBMountId));
+					wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
+					wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
+					wJoint.collideConnected = false;
+					gameState.getWorld().createJoint(wJoint);
+				}
+
+			}
 		}
 
 		ArrayList<GroundUnitDescriptor> retList = new ArrayList<GroundUnitDescriptor>();

@@ -14,6 +14,7 @@ import wrapper.RollingAverage;
 import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
+import Assembly.ColliderCategories.ColliderGroups;
 import GroundWorks.GroundBuilder;
 import JSONifier.JSONComponentName;
 import JSONifier.JSONTrack;
@@ -22,6 +23,8 @@ import Menu.HUDBuilder;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
 import Menu.PopQueObject.PopQueObjectType;
+import Multiplayer.Recorder;
+import Multiplayer.Replayer;
 import ParallexBackground.ScrollingBackground;
 import ParallexBackground.ScrollingBackground.BackgroundType;
 import Shader.GameMesh;
@@ -110,9 +113,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	// ------------------
 
+	private boolean recordPlayer = true;
+	private Recorder recorder;
+
+	private boolean replay = true;
+	private AssembledObject opponentCar;
+	private Replayer opponentUser;
+
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
 		this.gameLoader = gameState.getGameLoader();
+		this.recorder = new Recorder();
 
 		trackType = JSONTrack.objectify(gameState.getUser().getCurrentTrack())
 				.getType();
@@ -140,15 +151,26 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 
 		// debugRenderer = new Box2DDebugRenderer();
-		builtCar = Assembler.assembleObject(new GamePhysicalState(this.world,
-				this.gameLoader), gameState.getUser().getCurrentCar(), false);
+		builtCar = Assembler.assembleCar(new GamePhysicalState(this.world,
+				this.gameLoader), gameState.getUser().getCurrentCar(), ColliderGroups.USER_CAR, false);
 		builtCar.initSound(this.gameLoader);
 		builtCar.setPosition(10, 50);
+
+		if (replay) {
+			opponentCar = Assembler.assembleCar(new GamePhysicalState(
+					this.world, this.gameLoader), gameState.getUser()
+					.getCurrentCar(), ColliderGroups.OPPONENT_CAR, false);
+			// opponentCar.initSound(this.gameLoader);
+			opponentCar.setPosition(10, 50);
+			opponentCar.setAlpha(0.5f);
+
+			opponentUser = new Replayer(user.getRecording());
+		}
 
 		initShader();
 		ground = new GroundBuilder(new GamePhysicalState(this.world,
 				this.gameLoader), camera, shader, colorShader, false,
-				gameState.getUser());
+				gameState.getUser(), replay);
 
 		currentTrackLen = ground.getTotalTrackLength();
 
@@ -297,17 +319,24 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 				if (gameWon) {
 					handleInput(fakeTouches);
-				}/*
-				 * else if (gameLost) { ; }
-				 */else {
-					handleInput(touches);
+				} else if (timePassed <= 1) {
+					;
+				} else {
 					mapTime += Globals.STEP;
+					handleInput(touches);
+					if (replay) {
+						opponentCar.handleInput(opponentUser.getInput(mapTime));
+					}
+					
 				}
 
 				if (slowMoFactor != 1) {
 					world.step(Globals.STEP / slowMoFactor, 60, 40);
 				} else {
 					world.step(Globals.STEP, 200, 150);
+					if (recordPlayer) {
+						recorder.addUnit(mapTime, touches);
+					}
 				}
 				hud.update(progress, mapTime);
 				// builtCar.step();
@@ -319,15 +348,18 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 				} else {
 					// if (!ground.loading) {
-					timePassed += Globals.STEP;
+
 					// }
 				}
+				timePassed += Globals.STEP;
 
 				fixedStep -= Globals.STEP;
 			}
 
 			scrollingBackground.drawNormal();
 			builtCar.updateSound(user);
+
+			
 		}
 
 		attachCameraTo(builtCar.getCameraFocusPart());
@@ -337,6 +369,10 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		ground.draw(batch);
 		builtCar.draw(batch);
+
+		if (replay) {
+			opponentCar.draw(batch);
+			}
 
 		batch.end();
 
@@ -366,6 +402,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				popQueManager.push(new PopQueObject(PopQueObjectType.KILLED,
 						this));
 				gameLost = true;
+				gameEnded();
 			}
 		}
 
@@ -386,10 +423,19 @@ public class GamePlayScreen implements Screen, InputProcessor {
 						.push(new PopQueObject(PopQueObjectType.WIN, this));
 				hud.hideMenu();
 				gameWon = true;
+				gameEnded();
 
 			}
 		}
 
+	}
+
+	private void gameEnded() {
+		System.out.println("Game ended");
+		if (recordPlayer) {
+			recorder.addEndUnit(mapTime);
+			user.saveRecording(recorder.jsonify());
+		}
 	}
 
 	public int calculateWinings() {

@@ -56,6 +56,10 @@ public class AssembledObject {
 	public Vector2 getPosition() {
 		return getBasePart().getPosition();
 	}
+	
+	public float getRotation() {
+		return getBasePart().getAngle();
+	}
 
 	public Vector2 getSpeed() {
 		return getCameraFocusPart().getLinearVelocity();
@@ -221,6 +225,14 @@ public class AssembledObject {
 
 	}
 
+	public void setAlpha(float alpha) {
+
+		for (Component part : partList) {
+			part.setAlpha(alpha);
+		}
+
+	}
+	
 	public void draw(SpriteBatch batch) {
 
 		for (Component part : partList) {

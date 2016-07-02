@@ -217,7 +217,7 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 
 		final String itemJson = item.jsonify();
 
-		TextureRegion tr = Assembler.assembleObjectImage(gameLoader, itemJson,
+		TextureRegion tr = Assembler.assembleCarImage(gameLoader, itemJson,
 				false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH * 3 / 5);

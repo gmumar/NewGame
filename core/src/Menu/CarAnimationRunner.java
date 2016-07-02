@@ -10,6 +10,7 @@ import wrapper.Globals;
 import wrapper.TouchUnit;
 import Assembly.AssembledObject;
 import Assembly.Assembler;
+import Assembly.ColliderCategories.ColliderGroups;
 import GroundWorks.GroundBuilder;
 import JSONifier.JSONTrack.TrackType;
 import ParallexBackground.ScrollingBackground;
@@ -50,9 +51,9 @@ public class CarAnimationRunner {
 		initShader();
 
 		if (builtCar == null) {
-			builtCar = Assembler.assembleObject(new GamePhysicalState(
+			builtCar = Assembler.assembleCar(new GamePhysicalState(
 					this.world, gameLoader), gameState.getUser()
-					.getCurrentCar(), false);
+					.getCurrentCar(), ColliderGroups.USER_CAR, false);
 			builtCar.setPosition(6, 45);
 			builtCar.setMaxVelocity(20);
 		}
@@ -66,7 +67,7 @@ public class CarAnimationRunner {
 		if (ground == null) {
 			ground = new GroundBuilder(new GamePhysicalState(this.world,
 					this.gameLoader), this.camera, shader, colorShader, true,
-					gameState.getUser());
+					gameState.getUser(), false);
 		}
 
 		// ground.reset();

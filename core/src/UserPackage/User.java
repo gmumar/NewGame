@@ -127,6 +127,22 @@ public class User {
 
 		saveUserState();
 	}
+	
+	public void saveRecording(String recording){
+
+		prefs.putString(GamePreferences.RECORDING, recording);
+		prefs.flush();
+		
+		System.out.println("Saved: " + recording);
+
+	}
+	
+	public String getRecording(){
+		String inputString = prefs.getString(GamePreferences.RECORDING,
+				null);
+
+		return inputString;
+	}
 
 	public String getCurrentCar() {
 		String inputString = prefs.getString(GamePreferences.CAR_MAP_STR,
