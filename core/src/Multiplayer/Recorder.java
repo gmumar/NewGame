@@ -2,9 +2,6 @@ package Multiplayer;
 
 import java.util.ArrayList;
 
-import wrapper.Globals;
-import wrapper.TouchUnit;
-
 import com.google.gson.Gson;
 
 public class Recorder {
@@ -16,21 +13,24 @@ public class Recorder {
 	private ArrayList<RecorderUnit> recording = new ArrayList<RecorderUnit>();
 	private RecorderUnit lastUnit;
 	private boolean firstUnit = true;
-
-	public void addUnit(float time, RecoderTouchType type) {
-		recording.add(new RecorderUnit(time, type));
-	}
-
 	public ArrayList<RecorderUnit> getRecording() {
 		return recording;
 	}
 	
-
-	public void addEndUnit(float time) {
-		recording.add(new RecorderUnit(time, RecoderTouchType.END));
+	public void addPositionUnit(int time, float diff, float x, float y, float rot) {
+		recording.add(new RecorderUnit(time, diff, x, y, rot));
+	}
+	
+	public void addEndPositionUnit(int time, float diff, float x, float y, float rot) {
+		recording.add(new RecorderUnit(time, diff, x, y, rot));
 	}
 
-	public void addUnit(float time, ArrayList<TouchUnit> touches) {
+	/*public void addEndTypeUnit(int time, float difference) {
+		recording.add(new RecorderUnit(time, difference, RecoderTouchType.END));
+	}
+
+	RecoderTouchType currentType;
+	public void addTypeUnit(int time, float difference, ArrayList<TouchUnit> touches) {
 
 		boolean leftDown = false, rightDown = false;
 		for (TouchUnit touch : touches) {
@@ -43,8 +43,6 @@ public class Recorder {
 			}
 		}
 
-		RecoderTouchType currentType;
-
 		if (leftDown && rightDown) {
 			currentType = RecoderTouchType.BOTH;
 		} else if (leftDown) {
@@ -56,21 +54,23 @@ public class Recorder {
 		}
 
 		if (firstUnit) {
-			lastUnit = new RecorderUnit(time, currentType);
+			lastUnit = new RecorderUnit(time, difference, currentType);
 			recording.add(lastUnit);
-			System.out.println("Recorder: added " + currentType.toString());
+			System.out.println("Recorder: added " + currentType.toString() + " at " + time + " diff: " + difference);
 			firstUnit = false;
 		} else {
 			if (lastUnit.getTouchType() != currentType) {
-				lastUnit = new RecorderUnit(time, currentType);
+				lastUnit = new RecorderUnit(time, difference, currentType);
 				recording.add(lastUnit);
-				System.out.println("Recorder: added " + currentType.toString());
+				System.out.println("Recorder: added " + currentType.toString() + " at " + time + " diff: " + difference);
 			}
 		}
 
 		return;
 
-	}
+	}*/
+	
+	
 
 	public String jsonify() {
 		if (recording.isEmpty()) {

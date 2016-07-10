@@ -160,7 +160,7 @@ public class ADMINCarSelectorScreen extends CarSelectorScreen {
 		final String itemJson = item.jsonify();
 
 		TextureRegion tr = Assembler.assembleCarImage(gameLoader, itemJson,
-				false);
+				false, false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH*3/5);
 		trd.setMinHeight(Globals.CAR_DISPLAY_BUTTON_HEIGHT*3/5);

@@ -29,7 +29,7 @@ import com.gudesigns.climber.MainMenuScreen;
 public class HUDBuilder {
 
 	private Button exit, restart;
-	private TextBox fps;
+	private TextBox fps, opponentTime;
 	private Label clockTime, money, moneyAnimation;
 	private ProgressBarW mapProgress;
 	private User user;
@@ -75,6 +75,10 @@ public class HUDBuilder {
 		fps = new TextBox("fps");
 		// fps.setPosition(0, Globals.ScreenHeight - 50);
 		stage.addActor(fps);
+		
+		opponentTime = new TextBox("opo time");
+		opponentTime.setPosition(0, 30);
+		stage.addActor(opponentTime);
 
 		// Progress Bars
 		mapProgress = new ProgressBarW(0, 100, 0.01f, false, "mapProgress");
@@ -171,6 +175,18 @@ public class HUDBuilder {
 		
 		
 	}
+	
+	public void update(float progress, float opponentProgress, float mapTime) {
+		update(progress,mapTime);
+		if (Globals.ADMIN_MODE) {
+
+			if(opponentProgress<100){
+				opponentTime.setTextBoxString(Globals.makeTimeStr(mapTime));
+			}
+
+		}
+		
+	}
 
 	public void update(float progress, float timeIn) {
 
@@ -224,5 +240,7 @@ public class HUDBuilder {
 	public void dispose() {
 
 	}
+
+
 
 }

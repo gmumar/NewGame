@@ -8,34 +8,41 @@ import wrapper.Globals;
 import wrapper.TouchUnit;
 import Multiplayer.Recorder.RecoderTouchType;
 
+import com.badlogic.gdx.math.Vector3;
+import com.gudesigns.climber.GamePlayScreen;
+
 public class Replayer {
 
-	private Recorder recording;
+	private ArrayList<RecorderUnit> recording;
 	private Integer segmentReplayPointer = 0;
 
-	private float[] recordedTimes;
+	private int[] recordedTimes;
+	private float[] differenceTimes;
 	private RecoderTouchType[] recordedTypes;
+	private float[] recordedX, recordedY, recordedRotation;
 
 	private ArrayList<TouchUnit> leftTouches = new ArrayList<TouchUnit>();
 	private ArrayList<TouchUnit> rightTouches = new ArrayList<TouchUnit>();
 	private ArrayList<TouchUnit> noneBothTouches = new ArrayList<TouchUnit>();
 
-	public Replayer(String recordingInput) {
-		recording = Recorder.objectify(recordingInput);
+	// private int timeSync = 0;
+
+	public Replayer(ArrayList<RecorderUnit> recordingInput) {
+		recording = recordingInput;
 
 		if (recording == null) {
 			return;
 		}
 
-		ArrayList<RecorderUnit> recordedSegments = recording.getRecording();
+		ArrayList<RecorderUnit> recordedSegments = recording;
 
 		Collections.sort(recordedSegments, new Comparator<RecorderUnit>() {
 
 			@Override
 			public int compare(RecorderUnit o1, RecorderUnit o2) {
 
-				Float table1 = o1.getTime();
-				Float table2 = o2.getTime();
+				Integer table1 = o1.getTime();
+				Integer table2 = o2.getTime();
 
 				return table1.compareTo(table2);
 			}
@@ -44,13 +51,21 @@ public class Replayer {
 
 		int segmentPointer = 0;
 
-		recordedTimes = new float[recordedSegments.size()];
-		recordedTypes = new RecoderTouchType[recordedSegments.size()];
+		recordedTimes = new int[recordedSegments.size()];
+		differenceTimes = new float[recordedSegments.size()];
+		// recordedTypes = new RecoderTouchType[recordedSegments.size()];
+		recordedX = new float[recordedSegments.size()];
+		recordedY = new float[recordedSegments.size()];
+		recordedRotation = new float[recordedSegments.size()];
 
 		for (RecorderUnit segment : recordedSegments) {
 
 			recordedTimes[segmentPointer] = segment.getTime();
-			recordedTypes[segmentPointer] = segment.getTouchType();
+			// recordedTypes[segmentPointer] = segment.getTouchType();
+			differenceTimes[segmentPointer] = segment.getDifference();
+			recordedX[segmentPointer] = segment.getX();
+			recordedY[segmentPointer] = segment.getY();
+			recordedRotation[segmentPointer] = segment.getRotation();
 			segmentPointer++;
 		}
 
@@ -64,14 +79,72 @@ public class Replayer {
 		rightTouches.add(fakeTouch);
 	}
 
-	public ArrayList<TouchUnit> getInput(float time) {
+	public Vector3 getInputPositional(int time) {
+		Vector3 ret = null;
+
 		if (segmentReplayPointer + 1 >= recordedTimes.length) {
-			return touchTypeToArray(recordedTypes[segmentReplayPointer]);
+			ret = new Vector3(recordedX[segmentReplayPointer],
+					recordedY[segmentReplayPointer],
+					recordedRotation[segmentReplayPointer]);
 		} else if (time >= recordedTimes[segmentReplayPointer + 1]) {
+
 			segmentReplayPointer++;
-			return touchTypeToArray(recordedTypes[segmentReplayPointer]);
+			ret = new Vector3(recordedX[segmentReplayPointer],
+					recordedY[segmentReplayPointer],
+					recordedRotation[segmentReplayPointer]);
+
+		} else if (time >= recordedTimes[segmentReplayPointer]) {
+
+			int segment = time - recordedTimes[segmentReplayPointer];
+			float ratioInverse = (float) segment
+					/ GamePlayScreen.OPPONENT_RECORDER_SKIP;
+			float ratio = 1 - ratioInverse;
+			ret = new Vector3(
+					(recordedX[segmentReplayPointer] * ratio + recordedX[segmentReplayPointer + 1]
+							* ratioInverse),
+					(recordedY[segmentReplayPointer] * ratio + recordedY[segmentReplayPointer + 1]
+							* ratioInverse),
+					(recordedRotation[segmentReplayPointer] * ratio + recordedRotation[segmentReplayPointer + 1]
+							* ratioInverse));
+
 		} else {
+			ret = new Vector3(recordedX[segmentReplayPointer],
+					recordedY[segmentReplayPointer],
+					recordedRotation[segmentReplayPointer]);
+		}
+
+		return ret;
+	}
+
+	public ArrayList<TouchUnit> getInputTypeWise(int time, float difference) {
+		// timeSync = (int)((difference -
+		// differenceTimes[segmentReplayPointer])*Globals.STEP/2);
+		// time -= timeSync;
+
+		if (segmentReplayPointer + 1 >= recordedTimes.length) {
+
 			return touchTypeToArray(recordedTypes[segmentReplayPointer]);
+
+		} else if (time >= recordedTimes[segmentReplayPointer + 1]) {
+			// if (difference - differenceTimes[segmentReplayPointer])
+			// is positive than the simulation is running slower than the
+			// recorder
+			// if the simulation is running slower than push out switch
+			// to push out switch subtract from time.
+
+			segmentReplayPointer++;
+
+			return touchTypeToArray(recordedTypes[segmentReplayPointer]);
+
+		} else if (time >= recordedTimes[segmentReplayPointer]) {
+
+			return touchTypeToArray(recordedTypes[segmentReplayPointer]);
+
+		} else {
+			System.out.println("NONE at " + time + " actual: "
+					+ recordedTimes[segmentReplayPointer]);
+			return touchTypeToArray(recordedTypes[segmentReplayPointer]);
+			// return touchTypeToArray(RecoderTouchType.NONE);
 		}
 	}
 

@@ -148,7 +148,7 @@ public class Assembler {
 	}
 
 	public static TextureRegion assembleCarImage(GameLoader gameLoader,
-			String inputString, boolean forBuilder) {
+			String inputString, boolean forBuilder, boolean forOpponent) {
 
 		World tempWorld = new World(new Vector2(0, 0f), false);
 		tempWorld.setWarmStarting(true);
@@ -179,8 +179,14 @@ public class Assembler {
 		batch.setProjectionMatrix(camera.combined);
 
 		frameBufferObject.begin();
-		Gdx.gl20.glClearColor(Globals.GREY.r, Globals.GREY.g, Globals.GREY.b, 1); // transparent
-																					// black
+
+		if(forOpponent){
+			Gdx.gl20.glClearColor(Globals.GREY.r, Globals.GREY.g, Globals.GREY.b, 0); // transparent
+			// black
+		} else {
+			Gdx.gl20.glClearColor(Globals.GREY.r, Globals.GREY.g, Globals.GREY.b, 1); // transparent
+			// black
+		}
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear the color buffer
 
 		batch.begin();

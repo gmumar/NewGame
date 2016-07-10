@@ -71,4 +71,32 @@ public class BackendFunctions {
 
 	}
 
+	
+	public static void uploadChallenge(String restPath, String challenge, String targetUser, String sourceUser, float mapTime) {
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		parameters.put(RESTProperties.CHALLENGE, Compress.Challenge(challenge));
+		parameters.put(RESTProperties.TARGET_USER, targetUser);
+		parameters.put(RESTProperties.SOURCE_USER, sourceUser);
+		parameters.put(RESTProperties.TRACK_BEST_TIME, Float.toString(mapTime));
+
+		REST.postData(restPath, parameters, new HttpResponseListener() {
+
+			@Override
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				httpResponse.getResultAsString();
+			}
+
+			@Override
+			public void failed(Throwable t) {
+				t.printStackTrace();
+			}
+
+			@Override
+			public void cancelled() {
+				Globals.toast("Car uploaded cancelled");
+
+			}
+		});
+
+	}
 }

@@ -3,6 +3,7 @@ package UserPackage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 
 import wrapper.GamePreferences;
 import wrapper.Globals;
@@ -12,10 +13,24 @@ import JSONifier.JSONCar;
 import JSONifier.JSONComponent;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
+import Menu.ScreenType;
+import Multiplayer.Challenge;
+import RESTWrapper.Backendless_JSONParser;
+import RESTWrapper.Backendless_ParentContainer;
+import RESTWrapper.REST;
+import RESTWrapper.RESTPaths;
+import RESTWrapper.RESTProperties;
+import RESTWrapper.ServerDataUnit;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
+import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
+import com.gudesigns.climber.ChallengeLobbyScreen;
 
 public class User {
 
@@ -33,6 +48,11 @@ public class User {
 
 	}
 
+	public enum GameMode {
+		NORMAL, SET_CHALLENGE, PLAY_CHALLENGE
+
+	}
+
 	private UserState userState = new UserState();
 
 	class LookupItemsType {
@@ -44,9 +64,12 @@ public class User {
 
 	private String currentCar = null;
 	private String currentTrack = null;
+	private Challenge currentChallenge = null;
 
 	private static User instance;
 	private TrippleDes encryptor = new TrippleDes();
+
+	private volatile GameMode currentGameMode = GameMode.NORMAL;
 
 	private Preferences prefs = null;
 
@@ -127,19 +150,27 @@ public class User {
 
 		saveUserState();
 	}
-	
-	public void saveRecording(String recording){
+
+	public GameMode getCurrentGameMode() {
+		return currentGameMode;
+	}
+
+	public void setCurrentGameMode(GameMode currentGameMode) {
+		System.out.println("User: " + currentGameMode.toString());
+		this.currentGameMode = currentGameMode;
+	}
+
+	public void saveRecording(String recording) {
 
 		prefs.putString(GamePreferences.RECORDING, recording);
 		prefs.flush();
-		
+
 		System.out.println("Saved: " + recording);
 
 	}
-	
-	public String getRecording(){
-		String inputString = prefs.getString(GamePreferences.RECORDING,
-				null);
+
+	public String getRecording() {
+		String inputString = prefs.getString(GamePreferences.RECORDING, null);
 
 		return inputString;
 	}
@@ -293,6 +324,124 @@ public class User {
 		} else {
 			return moneyRequired;
 		}
+
+	}
+
+	public Challenge getCurrentChallenge() {
+		return currentChallenge;
+	}
+
+	boolean resultsRemaining = true;
+	int currentOffset = 0;
+
+	public void setCurrentChallenge(final Challenge currentChallenge,
+			final ChallengeLobbyScreen context) {
+		this.currentChallenge = currentChallenge;
+
+		if (currentChallenge == null)
+			return;
+
+		final AsyncExecutor ae = new AsyncExecutor(2);
+
+		final Semaphore stallSemaphore = new Semaphore(1);
+
+		ae.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() {
+
+				String database = "";
+				if (currentChallenge.getTrackMode() == TrackMode.INFINTE) {
+					database = RESTPaths.INFINITE_MAPS;
+				} else {
+					if (currentChallenge.getTrackType() == TrackType.ARTIC) {
+						database = RESTPaths.ARCTIC_MAPS;
+					} else if (currentChallenge.getTrackType() == TrackType.FORREST) {
+						database = RESTPaths.FORREST_MAPS;
+					}
+				}
+
+				REST.getData(
+						database
+								+ RESTProperties.URL_ARG_SPLITTER
+								+ RESTProperties
+										.WhereObjectIdIs(currentChallenge
+												.getTrackObjectId()),
+						new HttpResponseListener() {
+
+							@Override
+							public void handleHttpResponse(
+									HttpResponse httpResponse) {
+
+								Backendless_ParentContainer obj = null;
+
+								obj = Backendless_JSONParser
+										.processDownloadedTrack(httpResponse
+												.getResultAsString());
+
+								for (ServerDataUnit fromServer : obj.getData()) {
+
+									final JSONTrack trackJson = JSONTrack
+											.objectify(fromServer.getData());
+									trackJson.setObjectId(fromServer
+											.getObjectId());
+									trackJson.setBestTime(fromServer
+											.getTrackBestTime());
+									trackJson.setDifficulty(fromServer
+											.getTrackDifficulty());
+									trackJson.setItemIndex(fromServer
+											.getItemIndex());
+									trackJson.setCreationTime(fromServer
+											.getCreationTime());
+
+									context.challengeMapLoaded(trackJson, currentChallenge.getTrackMode());
+									return;
+
+								}
+
+								if (obj.getTotalObjects() - obj.getOffset() > 0) {
+									resultsRemaining = true;
+								} else {
+									resultsRemaining = false;
+								}
+								stallSemaphore.release();
+								// stall = false;
+
+							}
+
+							@Override
+							public void failed(Throwable t) {
+								t.printStackTrace();
+								// stallSemaphore.release();
+								// stall = false;
+								resultsRemaining = false;
+								// return;
+							}
+
+							@Override
+							public void cancelled() {
+								// stallSemaphore.release();
+								// stall = false;
+								resultsRemaining = false;
+								// return;
+							}
+
+						});
+
+				// while (stall);
+				return "";
+			}
+		});
+
+		Globals.globalRunner.submit(new AsyncTask<String>() {
+
+			@Override
+			public String call() throws Exception {
+				ae.dispose();
+				return null;
+			}
+
+		});
 
 	}
 

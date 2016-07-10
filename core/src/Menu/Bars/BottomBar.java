@@ -5,6 +5,8 @@ import wrapper.Globals;
 import Dialog.Skins;
 import Menu.ScreenType;
 import Menu.TableW;
+import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.CarBuilderScreen;
 import com.gudesigns.climber.CarModeScreen;
+import com.gudesigns.climber.ChallengeCreationScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ForrestTrackSelectorScreen;
@@ -49,7 +52,11 @@ public class BottomBar {
 						|| type == ScreenType.INFINITE_TRACK_SELECTOR) {
 					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_SELECTOR) {
-					gameLoader.setScreen(new GamePlayScreen(gameState));
+					if(User.getInstance().getCurrentGameMode()==GameMode.SET_CHALLENGE){
+						gameLoader.setScreen(new ChallengeCreationScreen(gameState));
+					} else {
+						gameLoader.setScreen(new GamePlayScreen(gameState));
+					}
 				} else if (type == ScreenType.CAR_MODE_SCREEN) {
 					gameLoader.setScreen(new CarBuilderScreen(gameState));
 				} else if (type == ScreenType.MAIN_MENU_SCREEN) {

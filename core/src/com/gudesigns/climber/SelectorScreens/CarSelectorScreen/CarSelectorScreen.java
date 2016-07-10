@@ -25,6 +25,8 @@ import Storage.FileManager;
 import Storage.FileObject;
 import UserPackage.GameErrors;
 import UserPackage.ItemsLookupPrefix;
+import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -42,6 +44,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.gudesigns.climber.CarBuilderScreen;
+import com.gudesigns.climber.ChallengeCreationScreen;
 import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.SelectorScreens.SelectorScreen;
 
@@ -233,7 +236,7 @@ public class CarSelectorScreen extends SelectorScreen {
 		final String itemJson = item.jsonify();
 
 		TextureRegion tr = Assembler.assembleCarImage(gameLoader, itemJson,
-				false);
+				false, false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH);
 		trd.setMinHeight(Globals.CAR_DISPLAY_BUTTON_HEIGHT);
@@ -248,7 +251,11 @@ public class CarSelectorScreen extends SelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (gameState.getUser().setCurrentCar(itemJson, false)) {
-					gameLoader.setScreen(new GamePlayScreen(gameState));
+					if(User.getInstance().getCurrentGameMode()==GameMode.SET_CHALLENGE){
+						gameLoader.setScreen(new ChallengeCreationScreen(gameState));
+					} else {
+						gameLoader.setScreen(new GamePlayScreen(gameState));
+					}
 				} else {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
@@ -292,7 +299,11 @@ public class CarSelectorScreen extends SelectorScreen {
 
 				playButton.setBackground("grey");
 				if (gameState.getUser().setCurrentCar(itemJson, false)) {
-					gameLoader.setScreen(new GamePlayScreen(gameState));
+					if(User.getInstance().getCurrentGameMode()==GameMode.SET_CHALLENGE){
+						gameLoader.setScreen(new ChallengeCreationScreen(gameState));
+					} else {
+						gameLoader.setScreen(new GamePlayScreen(gameState));
+					}
 				} else {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",

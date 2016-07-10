@@ -321,5 +321,9 @@ public class WinDialog extends Table {
 		// popQueObject.getGamePlayInstance().calculateWinings() * ()
 		User.getInstance().addCoin((coinsWon));
 
+		popQueObject.getGamePlayInstance().createChallenge();
+		
+		popQueObject.getGamePlayInstance().challengeCompleted();
+
 	}
 }

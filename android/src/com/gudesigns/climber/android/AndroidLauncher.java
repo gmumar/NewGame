@@ -34,7 +34,7 @@ public class AndroidLauncher extends AndroidApplication implements
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.numSamples = 2;
 		config.hideStatusBar = true;
-		config.touchSleepTime = 16;
+		//config.touchSleepTime = 16;
 		Mesh.clearAllMeshes(this);
 
 		GameLoader game = new GameLoader(this);

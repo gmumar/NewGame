@@ -17,6 +17,7 @@ import Menu.Bars.TitleBar;
 import Purchases.GamePurchaseObserver;
 import Shader.GameMesh;
 import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -44,7 +45,7 @@ public class MainMenuScreen implements Screen {
 	private Color bgColor;
 
 	private Button builder, playGame, buildTrack, selectTrack, selectCar,
-			quickNext, buyCoins, soundControl, tapToPlay, communityCars;
+			quickNext, buyCoins, soundControl, tapToPlay, communityCars, headToHead, challengeCreation;
 
 	private static CarAnimationRunner carAnimation;
 
@@ -69,7 +70,7 @@ public class MainMenuScreen implements Screen {
 
 	private void initUser() {
 		user = User.getInstance();
-
+		user.setCurrentGameMode(GameMode.NORMAL);
 	}
 
 	private void initButtons() {
@@ -102,6 +103,24 @@ public class MainMenuScreen implements Screen {
 			tapToPlay.setWidth(100);
 			tapToPlay.setHeight(50);
 			stage.addActor(tapToPlay);
+			
+			challengeCreation = new Button("challenge") {
+				@Override
+				public void Clicked() {
+					gameLoader.setScreen(new ChallengeCreationScreen(gameState) );
+				}
+			};
+			challengeCreation.setPosition(100, 200);
+			stage.addActor(challengeCreation);
+			
+			headToHead = new Button("head to head") {
+				@Override
+				public void Clicked() {
+					gameLoader.setScreen(new ChallengeLobbyScreen(gameState) );
+				}
+			};
+			headToHead.setPosition(0, 200);
+			stage.addActor(headToHead);
 
 			soundControl = new Button("Sound Control") {
 				@Override

@@ -13,6 +13,7 @@ import RESTWrapper.BackendFunctions;
 import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
 import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
@@ -31,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.gudesigns.climber.CarBuilderScreen;
+import com.gudesigns.climber.ChallengeCreationScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 
@@ -83,7 +85,7 @@ public class CarDisplayDialog {
 		final String itemJson = popQueObject.getCarJson();
 
 		TextureRegion tr = Assembler.assembleCarImage(gameLoader, itemJson,
-				false);
+				false, false);
 		TextureRegionDrawable trd = new TextureRegionDrawable(tr);
 		trd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH);
 		trd.setMinHeight(Globals.CAR_DISPLAY_BUTTON_HEIGHT);
@@ -99,7 +101,12 @@ public class CarDisplayDialog {
 			public void clicked(InputEvent event, float x, float y) {
 
 				user.setCurrentCar(itemJson, false);
-				gameLoader.setScreen(new GamePlayScreen(gameState));
+				if(user.getCurrentGameMode()==GameMode.SET_CHALLENGE){
+					gameLoader.setScreen(new ChallengeCreationScreen(gameState));
+				} else {
+					gameLoader.setScreen(new GamePlayScreen(gameState));
+				}
+				
 				super.clicked(event, x, y);
 			}
 
@@ -133,8 +140,12 @@ public class CarDisplayDialog {
 
 				playButton.setBackground("grey");
 				gameState.getUser().setCurrentCar(itemJson, false);
-				gameLoader.setScreen(new GamePlayScreen(new GameState(
-						gameLoader, user)));
+				if(user.getCurrentGameMode()==GameMode.SET_CHALLENGE){
+					gameLoader.setScreen(new ChallengeCreationScreen(gameState));
+				} else {
+					gameLoader.setScreen(new GamePlayScreen(new GameState(
+							gameLoader, user)));
+				}
 				super.touchDown(event, x, y, pointer, button);
 			}
 

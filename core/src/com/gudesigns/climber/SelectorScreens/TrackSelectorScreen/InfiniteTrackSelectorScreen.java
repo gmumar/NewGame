@@ -82,7 +82,7 @@ public class InfiniteTrackSelectorScreen extends SelectorScreen {
 
 	public InfiniteTrackSelectorScreen(GameState gameState) {
 		super(gameState);
-
+		
 		if (gameState.getUser().isNew(ItemsLookupPrefix.INFINITY_TRACK_MODE)) {
 			gameState.getUser().setNonNew(
 					ItemsLookupPrefix.INFINITY_TRACK_MODE, false);

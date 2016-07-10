@@ -8,6 +8,26 @@ public class ServerDataUnit {
 	private int trackDifficulty;
 	private int itemIndex;
 	private String createdAt;
+	private String sourceUser;
+	private String targetUser;
+	
+	
+
+	public String getSourceUser() {
+		return sourceUser;
+	}
+
+	public void setSourceUser(String sourceUser) {
+		this.sourceUser = sourceUser;
+	}
+
+	public String getTargetUser() {
+		return targetUser;
+	}
+
+	public void setTargetUser(String targetUser) {
+		this.targetUser = targetUser;
+	}
 
 	public int getItemIndex() {
 		return itemIndex;

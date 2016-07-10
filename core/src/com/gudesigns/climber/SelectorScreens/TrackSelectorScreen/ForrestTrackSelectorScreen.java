@@ -31,6 +31,7 @@ import UserPackage.Costs;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TrackMode;
 import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;

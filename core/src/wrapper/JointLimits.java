@@ -12,7 +12,7 @@ public class JointLimits {
 
 	private final static double TORQUE_FACTOR = 8e4;
 	private final static double FORCE_FACTOR = 1e4;
-	private final static double FORCE_DEVIDER = 5e5;
+	//private final static double FORCE_DEVIDER = 1;//5e5;
 
 	private final static int DEFAULT_BREAKING_TORQUE = (int) (3 * TORQUE_FACTOR);
 	private final static int DEFAULT_BREAKING_FORCE = (int) (25 * FORCE_FACTOR);
@@ -24,8 +24,8 @@ public class JointLimits {
 	private final static int LIFE_BAR_BREAKING_FORCE = (int) (1 * FORCE_FACTOR);
 
 	private static final Array<Joint> joints = new Array<Joint>();
-	private static double force;
-	private static double torque;
+	private static float force;
+	private static float torque;
 	private World world;
 
 	private static String nameBodyA = "";
@@ -44,7 +44,8 @@ public class JointLimits {
 		for (Joint joint : joints) {
 			// joint = iter.next();
 
-			force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
+			//force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
+			force = joint.getReactionForce(step).len();
 			torque = joint.getReactionTorque(step);
 
 			if (torque < LIFE_BAR_BREAKING_TORQUE

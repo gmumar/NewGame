@@ -58,4 +58,18 @@ public class Compress {
 		return compressed;
 	}
 
+	public static String Challenge(String challenge) {
+
+		String compressed = null;
+
+		try {
+			compressed = Gzip.compressToString(challenge);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return compressed;
+	}
+
 }

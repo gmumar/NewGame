@@ -27,4 +27,14 @@ public class Backendless_JSONParser {
 		
 	}
 
+	public static Backendless_Challenge processDownloadedChallenge(String input) {
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Backendless_Challenge.class , new Backendless_Deserializer());
+		Gson json = builder.create();
+		
+		Backendless_Challenge obj = json.fromJson(input,Backendless_Challenge.class);
+		
+		return obj;
+	}
+
 }

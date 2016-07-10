@@ -35,6 +35,7 @@ import UserPackage.GameErrors;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TwoButtonDialogFlow;
 import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -66,6 +67,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.CarBuilderScreen;
+import com.gudesigns.climber.ChallengeCreationScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GamePlayScreen;
 
@@ -295,8 +297,13 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (buildCar()) {
-					gameLoader.setScreen(new GamePlayScreen(new GameState(
-							gameLoader, user)));
+					if(user.getCurrentGameMode()==GameMode.SET_CHALLENGE){
+						gameLoader.setScreen(new ChallengeCreationScreen(new GameState(
+								gameLoader, user)));
+					} else {
+						gameLoader.setScreen(new GamePlayScreen(new GameState(
+								gameLoader, user)));
+					}
 					Destroy();
 				}
 			}

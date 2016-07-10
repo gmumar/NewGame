@@ -28,10 +28,12 @@ public class Backendless_Deserializer implements
 			dataSet = new Backendless_Car();
 		} else if (typeOfT.equals(Backendless_Track.class)) {
 			dataSet = new Backendless_Track();
+		} else if (typeOfT.equals(Backendless_Challenge.class)) {
+			dataSet = new Backendless_Challenge();
 		}
 
 		JsonObject obj = json.getAsJsonObject();
-		
+
 		dataSet.setTotalObjects(obj.get("totalObjects").getAsInt());
 		dataSet.setOffset(obj.get("offset").getAsInt());
 
@@ -44,32 +46,37 @@ public class Backendless_Deserializer implements
 			JsonObject fromServer = iter.getAsJsonObject();
 			ServerDataUnit unit = new ServerDataUnit();
 			String actualDataStr = null;
-			
+
 			unit.setCreationTime(fromServer.get(RESTProperties.CREATED)
+					.getAsString());
+			unit.setObjectId(fromServer.get(RESTProperties.OBJECT_ID)
 					.getAsString());
 
 			if (typeOfT.equals(Backendless_Car.class)) {
 				actualDataStr = Decompress.Car(fromServer.get(
 						RESTProperties.CAR_JSON).getAsString());
+				unit.setItemIndex(fromServer.get(RESTProperties.CAR_INDEX)
+						.getAsInt());
 			} else if (typeOfT.equals(Backendless_Track.class)) {
 				actualDataStr = Decompress.Track(fromServer.get(
 						RESTProperties.TRACK_POINTS_JSON).getAsString());
-			}
-			unit.setObjectId(fromServer.get(RESTProperties.OBJECT_ID)
-					.getAsString());
-			unit.setData(actualDataStr);
-
-			if (typeOfT.equals(Backendless_Car.class)) {
-				unit.setItemIndex(fromServer.get(
-						RESTProperties.CAR_INDEX).getAsInt());
-			} else if (typeOfT.equals(Backendless_Track.class)) {
 				unit.setTrackBestTime(fromServer.get(
 						RESTProperties.TRACK_BEST_TIME).getAsFloat());
 				unit.setTrackDifficulty(fromServer.get(
 						RESTProperties.TRACK_DIFFICULTY).getAsInt());
-				unit.setItemIndex(fromServer.get(
-						RESTProperties.TRACK_INDEX).getAsInt());
+				unit.setItemIndex(fromServer.get(RESTProperties.TRACK_INDEX)
+						.getAsInt());
+			} else if (typeOfT.equals(Backendless_Challenge.class)) {
+				actualDataStr = Decompress.Challenge(fromServer.get(
+						RESTProperties.CHALLENGE).getAsString());
+				unit.setTrackBestTime(fromServer.get(
+						RESTProperties.TRACK_BEST_TIME).getAsFloat());
+				unit.setSourceUser(fromServer.get(RESTProperties.SOURCE_USER)
+						.getAsString());
+				unit.setTargetUser(fromServer.get(RESTProperties.TARGET_USER)
+						.getAsString());
 			}
+			unit.setData(actualDataStr);
 
 			tmp.add(unit);
 		}

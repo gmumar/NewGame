@@ -4,6 +4,7 @@ import wrapper.GameState;
 import wrapper.Globals;
 import Dialog.Skins;
 import Dialog.StoreBuyDialog;
+import JSONifier.JSONTrack.TrackType;
 import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -15,6 +16,7 @@ import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
 import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
 import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -25,9 +27,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.CarModeScreen;
+import com.gudesigns.climber.ChallengeCreationScreen;
+import com.gudesigns.climber.ChallengeLobbyScreen;
 import com.gudesigns.climber.GameLoader;
 import com.gudesigns.climber.GameModeScreen;
 import com.gudesigns.climber.MainMenuScreen;
+import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ArcticTrackSelectorScreen;
 import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.ForrestTrackSelectorScreen;
 
 public class TitleBar {
@@ -62,18 +67,45 @@ public class TitleBar {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (type == ScreenType.MODE_SCREEN) {
-					gameLoader.setScreen(new MainMenuScreen(gameLoader));
+					if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+						gameLoader.setScreen(new ChallengeCreationScreen(
+								gameState));
+					} else {
+						gameLoader.setScreen(new MainMenuScreen(gameLoader));
+					}
 				} else if (type == ScreenType.FORREST_TRACK_SELECTOR
 						|| type == ScreenType.ARCTIC_TRACK_SELECTOR
 						|| type == ScreenType.INFINITE_TRACK_SELECTOR) {
-					gameLoader.setScreen(new GameModeScreen(gameState));
+					if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+						gameLoader.setScreen(new ChallengeCreationScreen(
+								gameState));
+					} else {
+						gameLoader.setScreen(new GameModeScreen(gameState));
+					}
 				} else if (type == ScreenType.CAR_SELECTOR) {
 					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_BUILDER) {
 					gameLoader.setScreen(new CarModeScreen(gameState));
 				} else if (type == ScreenType.CAR_MODE_SCREEN) {
-					gameLoader.setScreen(new ForrestTrackSelectorScreen(
-							gameState));
+					if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+						gameLoader.setScreen(new ChallengeCreationScreen(
+								gameState));
+					} else {
+						if (user.getLastPlayedWorld() == TrackType.FORREST) {
+							gameLoader
+									.setScreen(new ForrestTrackSelectorScreen(
+											gameState));
+						} else if (user.getLastPlayedWorld() == TrackType.ARTIC) {
+							gameLoader.setScreen(new ArcticTrackSelectorScreen(
+									gameState));
+						}
+					}
+
+				} else if (type == ScreenType.CHALLENGE_LOBBY) {
+					gameLoader.setScreen(new MainMenuScreen(gameLoader));
+					user.setCurrentGameMode(GameMode.NORMAL);
+				} else if (type == ScreenType.CHALLENGE_CREATION) {
+					gameLoader.setScreen(new ChallengeLobbyScreen(gameState));
 				}
 				super.clicked(event, x, y);
 			}
@@ -152,6 +184,10 @@ public class TitleBar {
 			titleLabel.setText("Select Car");
 		} else if (type == ScreenType.CAR_MODE_SCREEN) {
 			titleLabel.setText("Select Car");
+		} else if (type == ScreenType.CHALLENGE_LOBBY) {
+			titleLabel.setText("Head to Head");
+		} else if (type == ScreenType.CHALLENGE_CREATION) {
+			titleLabel.setText("Make a challenge");
 		} else if (type == ScreenType.CAR_BUILDER) {
 			titleLabel.setText("Build Car");
 
@@ -192,17 +228,17 @@ public class TitleBar {
 		});
 
 		titleBar.add(sound).right();
-		
+
 		Table container = new Table(skin);
-		
-		container.add(titleBar).fillX().height(Globals.baseSize * 2.5f).expandX()
-		.center().pad(12);
+
+		container.add(titleBar).fillX().height(Globals.baseSize * 2.5f)
+				.expandX().center().pad(12);
 		if (type == ScreenType.CAR_BUILDER) {
 			container.setBackground("darkGrey");
 		}
 
 		base.add(container).fillX().height(Globals.baseSize * 3f).expandX()
-		.center();
+				.center();
 
 		base.row();
 

@@ -8,5 +8,6 @@ public class RESTPaths {
 	public static final String FORREST_MAPS = "forrest_maps";
 	public static final String ARCTIC_MAPS = "arctic_maps";
 	public static final String INFINITE_MAPS = "infinite_maps";
+	public static final String CHALLENGES = "challenges";
 
 }

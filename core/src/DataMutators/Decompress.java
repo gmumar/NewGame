@@ -51,4 +51,18 @@ public class Decompress {
 		return decompressed;
 	}
 
+	public static String Challenge(String asString) {
+
+		String decompressed = null;
+
+		try {
+			decompressed = Gzip.decompress(asString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return decompressed;
+	}
+
 }
