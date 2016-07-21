@@ -380,8 +380,30 @@ public class Component {
 		}
 
 	}
+	
 
-	public void setAbsolutePosition(float f, float g) {
+	public void setRotation(float rot) {
+		ArrayList<Body> positionSetBodies = new ArrayList<Body>();
+
+		this.getObject().setRotation((this.getObject().getRotation()+rot)*MathUtils.radiansToDegrees);
+		positionSetBodies.add(this.getObject().getPhysicsBody());
+		if (getJointBodies() == null) {
+			;
+		} else {
+			Iterator<BaseActor> iter = getJointBodies().iterator();
+
+			while (iter.hasNext()) {
+				BaseActor body = iter.next();
+				if (positionSetBodies.contains(body.getPhysicsBody())) {
+					continue;
+				}
+				body.setRotation((body.getRotation()+rot)*MathUtils.radiansToDegrees);
+			}
+		}
+	}
+
+
+	public void setAbsolutePosition(float f, float g, float rot) {
 		this.getObject().setPosition(f, g);
 	}
 

@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -31,7 +32,7 @@ public class HUDBuilder {
 	private Button exit, restart;
 	private TextBox fps, opponentTime;
 	private Label clockTime, money, moneyAnimation;
-	private ProgressBarW mapProgress;
+	private ProgressBarW mapProgress, opponentProgressBar;
 	private User user;
 	private ImageButton pause;
 
@@ -40,7 +41,7 @@ public class HUDBuilder {
 
 	public HUDBuilder(Stage stage, final GameState gameState,
 			final PopQueManager popQueManager,
-			final GamePlayScreen gamePlayScreen) {
+			final GamePlayScreen gamePlayScreen, boolean replay) {
 
 		this.gameLoader = gameState.getGameLoader();
 		this.user = gameState.getUser();
@@ -81,13 +82,25 @@ public class HUDBuilder {
 		stage.addActor(opponentTime);
 
 		// Progress Bars
-		mapProgress = new ProgressBarW(0, 100, 0.01f, false, "mapProgress");
+		Stack progressBarStack = new Stack();
+		progressBarStack.setSize(Globals.ScreenWidth, 0.2f);
+		
+		mapProgress = new ProgressBarW(0, 100, 0.01f, false, "mapProgress", false);
 		mapProgress.setPosition(0, Globals.ScreenHeight - 5);
 		mapProgress.setSize(Globals.ScreenWidth, 0.2f);
 		mapProgress.setAnimateDuration(0.5f);
+		progressBarStack.add(mapProgress);
+		
+		if(replay){
+			opponentProgressBar  = new ProgressBarW(0, 100, 0.01f, false, "opponentProgress", true);
+			opponentProgressBar.setPosition(0, Globals.ScreenHeight - 5);
+			opponentProgressBar.setSize(Globals.ScreenWidth, 0.2f);
+			opponentProgressBar.setAnimateDuration(0.5f);
+			progressBarStack.add(opponentProgressBar);
+		}
 
 		// stage.addActor(mapProgress);
-		base.add(mapProgress).expandX().fillX();
+		base.add(progressBarStack).expandX().fillX();
 
 		base.row();
 
@@ -178,6 +191,9 @@ public class HUDBuilder {
 	
 	public void update(float progress, float opponentProgress, float mapTime) {
 		update(progress,mapTime);
+		
+		opponentProgressBar.setValue(opponentProgress > 100 ? 100 : opponentProgress);
+		
 		if (Globals.ADMIN_MODE) {
 
 			if(opponentProgress<100){

@@ -72,12 +72,13 @@ public class BackendFunctions {
 	}
 
 	
-	public static void uploadChallenge(String restPath, String challenge, String targetUser, String sourceUser, float mapTime) {
+	public static void uploadChallenge(String restPath, String challenge, String targetUser, String sourceUser, float mapTime, String reward) {
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.CHALLENGE, Compress.Challenge(challenge));
 		parameters.put(RESTProperties.TARGET_USER, targetUser);
 		parameters.put(RESTProperties.SOURCE_USER, sourceUser);
 		parameters.put(RESTProperties.TRACK_BEST_TIME, Float.toString(mapTime));
+		parameters.put(RESTProperties.CHALLENGE_REWARD, reward);
 
 		REST.postData(restPath, parameters, new HttpResponseListener() {
 

@@ -189,6 +189,41 @@ public class AssembledObject {
 		}
 
 	}
+	
+	public void setAbsPosition(float x, float y, float rot) {
+		
+		Vector2 originalPos = basePart.getPosition();
+		float originalRot = basePart.getAngle();
+		
+		float deltaX = x - originalPos.x;
+		float deltaY = y - originalPos.y;
+		float deltaRot = rot - originalRot;
+		
+		setPosition(deltaX, deltaY);
+		setRotation(deltaRot);
+	}
+
+	private void setRotation(float rot) {
+		// String componentName = "";
+		// JSONComponentName componentName = new JSONComponentName();
+		ArrayList<String> componentsSet = new ArrayList<String>();
+
+		Iterator<Component> iter = partList.iterator();
+		while (iter.hasNext()) {
+			Component component = iter.next();
+			JSONComponentName componentName = component.getjComponentName();
+			/*
+			 * componentName = Globals.getComponentName(
+			 * component.getComponentName()).split(
+			 * Assembler.NAME_SUBNAME_SPLIT)[0] +
+			 * Globals.getId(component.getComponentName());
+			 */
+			if (componentsSet.contains(componentName.getBaseId()))
+				continue;
+			component.setRotation(rot);
+			componentsSet.add(componentName.getBaseId());
+		}
+	}
 
 	public void updateSound(User user) {
 
@@ -290,7 +325,7 @@ public class AssembledObject {
 
 			if (touch.isTouched()) {
 
-				if (touch.screenX > Globals.ScreenWidth / 2) {
+				if (touch.screenX > Globals.ScreenWidth / 2f) {
 					direction = 1;
 					/*
 					 * float rotation = rightMost.getObject().getRotation();
@@ -325,9 +360,10 @@ public class AssembledObject {
 		for (BaseActor comp : driveList) {
 
 			driveBody = comp.getPhysicsBody();
-			float anguleVelocity = driveBody.getAngularVelocity();
-
+			
 			driveBody.applyAngularImpulse(resultantForce, true);
+			
+			float anguleVelocity = driveBody.getAngularVelocity();
 
 			if (rotationSpeed != null)
 				rotationSpeed.add(anguleVelocity);

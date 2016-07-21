@@ -1,6 +1,9 @@
 package wrapper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+
+
 
 /*
  * black #000000 - menu backgrounds, reading text, button text
@@ -65,6 +68,7 @@ public class Globals {
 	final static public Color LOCKED_COLOR = new Color(1, 1, 1, 0.9f);
 
 	final static public Color PROGRESS_BG = new Color(0, 0, 0, 0.2f);
+	final static public Color OPPONENT_PROGRESS = new Color(1, 0, 0, 0.4f);
 
 	public final static Color DARK_GREEN = new Color(0, 1, 0, 1);
 	public final static Color RED = new Color(0xFC6838FF);
@@ -79,7 +83,8 @@ public class Globals {
 
 	//final public static short GROUND_GROUP = -3;
 
-	final public static float STEP = 1 / 60f;
+	final public static float STEP = 0.0168f;//1 / 60f;
+	final public static BigDecimal STEP_BIG = new BigDecimal("0.0168");//1 / 60f;
 	final public static float STEP_INVERSE = 60f;
 
 	public static final Integer DISABLE_LEVEL = -1;
@@ -101,7 +106,8 @@ public class Globals {
 	public final static int CAR_DISPLAY_BUTTON_HEIGHT = baseSize * 8;
 	public final static int CAR_DISPLAY_BUTTON_CAMERA_HEIGHT = baseSize * 8;
 	public final static int CAR_DISPLAY_BUTTON_WIDTH = baseSize * 8;
-	
+
+
 	public static void toast(String text) {
 		if (nativeRequestHandler != null) {
 			nativeRequestHandler.Toast(text);

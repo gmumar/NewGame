@@ -2,6 +2,8 @@ package Assembly;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,7 +24,6 @@ import JSONifier.JSONComponent;
 import JSONifier.JSONComponentName;
 import JSONifier.JSONJoint;
 import JSONifier.JSONParentClass;
-import JSONifier.JSONParentClass.JSONParentType;
 import JSONifier.JSONTrack;
 
 import com.badlogic.gdx.Gdx;
@@ -32,9 +33,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
+import com.badlogic.gdx.utils.Array;
 import com.gudesigns.climber.GameLoader;
 
 public class Assembler {
@@ -67,13 +70,33 @@ public class Assembler {
 				group, forBuilder);
 		// Read the JSONJoint array and build the obj
 		ArrayList<JSONJoint> jcomponents = source.getJointList();
-		Iterator<JSONJoint> JointIter = jcomponents.iterator();
-		JSONJoint join;
+		
+		Collections.sort(jcomponents, new Comparator<JSONJoint>() {
+
+			@Override
+			public int compare(JSONJoint o1, JSONJoint o2) {
+				
+				String part1a, part2a;
+				part1a = o1.m1.getBaseName();
+				part2a = o2.m1.getBaseName();
+
+				int result = JSONComponent.getBaseNameIndex(part1a).compareTo(JSONComponent.getBaseNameIndex(part2a));
+
+				if (result == 0) {
+					return o1.m1.getComponentId().compareTo(o2.m1.getComponentId());
+				} else {
+
+					return result;
+				}
+			}
+
+		});
 
 		Map<String, Integer> jointTypeList = source.getJointTypeList();
 
-		while (JointIter.hasNext()) {
-			join = JointIter.next();
+		Integer jointIndex = 0, jointIndexOpponent = 0, currentIndex;
+		for (JSONJoint join : jcomponents) {
+			
 
 			if (join == null || join.getMount1() == null
 					|| join.getMount2() == null)
@@ -114,6 +137,14 @@ public class Assembler {
 					.getMountId());
 
 			jointType = jointTypeList.get(join.getMount1().getMountedId());
+			
+			if(group == ColliderGroups.OPPONENT_CAR){
+				jointIndexOpponent--;
+				currentIndex = jointIndexOpponent;
+			} else {
+				jointIndex++;
+				currentIndex = jointIndex;
+			}
 
 			if (jointType != null && jointType == Globals.ROTATABLE_JOINT) {
 
@@ -126,7 +157,7 @@ public class Assembler {
 				rJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				rJoint.collideConnected = false;
 				rJoint.enableLimit = false;
-				gameState.getWorld().createJoint(rJoint);
+				gameState.getWorld().createJoint(rJoint).setUserData(currentIndex);
 
 			} else {
 				WeldJointDef wJoint = new WeldJointDef();
@@ -137,8 +168,9 @@ public class Assembler {
 				wJoint.localAnchorA.set(bodyA.getMount(componentAMountId));
 				wJoint.localAnchorB.set(bodyB.getMount(componentBMountId));
 				wJoint.collideConnected = false;
-				gameState.getWorld().createJoint(wJoint);
+				gameState.getWorld().createJoint(wJoint).setUserData(currentIndex);
 			}
+			
 
 		}
 
@@ -150,7 +182,7 @@ public class Assembler {
 	public static TextureRegion assembleCarImage(GameLoader gameLoader,
 			String inputString, boolean forBuilder, boolean forOpponent) {
 
-		World tempWorld = new World(new Vector2(0, 0f), false);
+		World tempWorld = new World(new Vector2(0, 0), false);
 		tempWorld.setWarmStarting(true);
 
 		GamePhysicalState gameState = new GamePhysicalState(tempWorld,
@@ -180,11 +212,13 @@ public class Assembler {
 
 		frameBufferObject.begin();
 
-		if(forOpponent){
-			Gdx.gl20.glClearColor(Globals.GREY.r, Globals.GREY.g, Globals.GREY.b, 0); // transparent
+		if (forOpponent) {
+			Gdx.gl20.glClearColor(Globals.GREY.r, Globals.GREY.g,
+					Globals.GREY.b, 0); // transparent
 			// black
 		} else {
-			Gdx.gl20.glClearColor(Globals.GREY.r, Globals.GREY.g, Globals.GREY.b, 1); // transparent
+			Gdx.gl20.glClearColor(Globals.GREY.r, Globals.GREY.g,
+					Globals.GREY.b, 1); // transparent
 			// black
 		}
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear the color buffer
@@ -216,17 +250,32 @@ public class Assembler {
 		HashMap<String, Component> ret = new HashMap<String, Component>();
 		ArrayList<JSONComponent> jcomponents = source.getComponentList();
 
-		Iterator<JSONComponent> iter = jcomponents.iterator();
-		JSONComponent sourceComponent;
+		Collections.sort(jcomponents, new Comparator<JSONComponent>() {
+
+			@Override
+			public int compare(JSONComponent o1, JSONComponent o2) {
+
+				int result = JSONComponent.getBaseNameIndex(o1.getBaseName()).compareTo(
+						JSONComponent.getBaseNameIndex(o1.getBaseName()));
+
+				if (result == 0) {
+					return o1.getComponentId().compareTo(o2.getComponentId());
+				} else {
+
+					return result;
+				}
+			}
+
+		});
+
 		Component component = null;
 		ArrayList<Component> componentList = null;
 		// String componentName;
 		JSONComponentName componentName;
 
-		while (iter.hasNext()) {
+		for (JSONComponent sourceComponent : jcomponents) {
 			componentList = null;
 			component = null;
-			sourceComponent = iter.next();
 			// componentName = Globals.getComponentName(sourceComponent
 			// .getComponentName());
 			componentName = sourceComponent.getjComponentName();
@@ -401,7 +450,7 @@ public class Assembler {
 		ArrayList<Vector2> mapPoints = jsonTrack.getPoints();
 		Collection<Component> partsCollection = new ArrayList<Component>();
 		ArrayList<ColliderGroups> partSets = new ArrayList<ColliderGroups>();
-		partSets.add(ColliderGroups.USER_GROUND);
+		partSets.add(ColliderGroups.USER_GROUND); 
 
 		if (forReplay) {
 			partSets.add(ColliderGroups.OPPONENT_GROUND);
@@ -411,8 +460,8 @@ public class Assembler {
 			HashMap<String, Component> parts = extractComponents(jsonTrack,
 					gameState, group, buildForMainMenu);
 
-			if(group == ColliderGroups.OPPONENT_GROUND){
-				for (Component part : parts.values()){
+			if (group == ColliderGroups.OPPONENT_GROUND) {
+				for (Component part : parts.values()) {
 					part.setAlpha(0.5f);
 					partsCollection.add(part);
 				}
@@ -427,6 +476,27 @@ public class Assembler {
 			}
 
 			ArrayList<JSONJoint> jcomponents = jsonTrack.getJointList();
+			
+			Collections.sort(jcomponents, new Comparator<JSONJoint>() {
+
+				@Override
+				public int compare(JSONJoint o1, JSONJoint o2) {
+					
+					String part1a, part2a;
+					part1a = o1.m1.getBaseName();
+					part2a = o2.m1.getBaseName();
+
+					int result = JSONComponent.getBaseNameIndex(part1a).compareTo(JSONComponent.getBaseNameIndex(part2a));
+
+					if (result == 0) {
+						return o1.m1.getComponentId().compareTo(o2.m1.getComponentId());
+					} else {
+
+						return result;
+					}
+				}
+
+			});
 
 			HashMap<String, Integer> jointTypeList = jsonTrack
 					.getComponentJointTypes();

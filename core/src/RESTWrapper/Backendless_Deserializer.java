@@ -75,6 +75,8 @@ public class Backendless_Deserializer implements
 						.getAsString());
 				unit.setTargetUser(fromServer.get(RESTProperties.TARGET_USER)
 						.getAsString());
+				unit.setChallengeReward(fromServer.get(
+						RESTProperties.CHALLENGE_REWARD).getAsInt());
 			}
 			unit.setData(actualDataStr);
 

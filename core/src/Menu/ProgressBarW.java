@@ -14,11 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class ProgressBarW extends ProgressBar {
 
 	public ProgressBarW(float min, float max, float stepSize, boolean vertical,
-			String name) {
-		super(min, max, stepSize, vertical, buildDefaultButtonStyle(name));
+			String name, boolean forOpponent) {
+		super(min, max, stepSize, vertical, buildDefaultButtonStyle(name, forOpponent));
 	}
 
-	private static ProgressBarStyle buildDefaultButtonStyle(String butName) {
+	private static ProgressBarStyle buildDefaultButtonStyle(String butName, boolean forOpponent) {
 		TextureRegionDrawable textureBar = new TextureRegionDrawable(
 				new TextureRegion(new Texture("life_small.png")));
 
@@ -30,7 +30,12 @@ public class ProgressBarW extends ProgressBar {
 
 		skin.add("white", new Texture(pixmap));
 
-		pixmap.setColor(Color.DARK_GRAY);
+		if(forOpponent){
+			pixmap.setColor(Globals.OPPONENT_PROGRESS);
+		} else {
+			pixmap.setColor(Color.DARK_GRAY);
+		}
+		
 		pixmap.fill();
 
 		skin.add("black", new Texture(pixmap));

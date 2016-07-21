@@ -10,8 +10,16 @@ public class ServerDataUnit {
 	private String createdAt;
 	private String sourceUser;
 	private String targetUser;
+	private Integer challengeReward;
 	
-	
+
+	public Integer getChallengeReward() {
+		return challengeReward;
+	}
+
+	public void setChallengeReward(Integer challengeReward) {
+		this.challengeReward = challengeReward;
+	}
 
 	public String getSourceUser() {
 		return sourceUser;

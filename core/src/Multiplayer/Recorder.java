@@ -2,12 +2,15 @@ package Multiplayer;
 
 import java.util.ArrayList;
 
+import wrapper.Globals;
+import wrapper.TouchUnit;
+
 import com.google.gson.Gson;
 
 public class Recorder {
 
 	public enum RecoderTouchType {
-		NONE, LEFT, RIGHT, BOTH, END
+		NONE, LEFT, RIGHT, BOTH, END, JOINT_BREAK, POSITION
 	};
 
 	private ArrayList<RecorderUnit> recording = new ArrayList<RecorderUnit>();
@@ -17,20 +20,31 @@ public class Recorder {
 		return recording;
 	}
 	
-	public void addPositionUnit(int time, float diff, float x, float y, float rot) {
+	/*public void addPositionUnit(int time, float diff, float x, float y, float rot) {
 		recording.add(new RecorderUnit(time, diff, x, y, rot));
 	}
 	
 	public void addEndPositionUnit(int time, float diff, float x, float y, float rot) {
 		recording.add(new RecorderUnit(time, diff, x, y, rot));
-	}
+	}*/
 
-	/*public void addEndTypeUnit(int time, float difference) {
-		recording.add(new RecorderUnit(time, difference, RecoderTouchType.END));
+	public void addEndTypeUnit(int time, float difference, float x, float y, float rot) {
+		System.out.println("Recorder: added " + RecoderTouchType.END.toString() + " at " + time + " x: " + x);
+		recording.add(new RecorderUnit(time, difference, x, y, rot, RecoderTouchType.END));
+	}
+	
+	public void addJointBreakUnit(int time, float difference, float x, float y, float rot, ArrayList<Integer> jointNumber) {
+		System.out.println("Recorder: added " + RecoderTouchType.JOINT_BREAK.toString() + " at " + time + " x: " + x);
+		recording.add(new RecorderUnit(time, difference, x, y, rot, jointNumber, RecoderTouchType.JOINT_BREAK));
+	}
+	
+	public void addPositionUnit(int time, float difference, float x, float y, float rot) {
+		System.out.println("Recorder: added " + RecoderTouchType.POSITION.toString() + " at " + time + " x: " + x);
+		recording.add(new RecorderUnit(time, difference, x, y, rot, RecoderTouchType.POSITION));
 	}
 
 	RecoderTouchType currentType;
-	public void addTypeUnit(int time, float difference, ArrayList<TouchUnit> touches) {
+	public void addTypeUnit(long time, float difference, float x, float y, float rot, ArrayList<TouchUnit> touches) {
 
 		boolean leftDown = false, rightDown = false;
 		for (TouchUnit touch : touches) {
@@ -54,21 +68,21 @@ public class Recorder {
 		}
 
 		if (firstUnit) {
-			lastUnit = new RecorderUnit(time, difference, currentType);
+			lastUnit = new RecorderUnit(time, difference, x, y, rot, currentType);
 			recording.add(lastUnit);
-			System.out.println("Recorder: added " + currentType.toString() + " at " + time + " diff: " + difference);
+			System.out.println("Recorder: added " + currentType.toString() + " at " + time + " x: " + x);
 			firstUnit = false;
 		} else {
 			if (lastUnit.getTouchType() != currentType) {
-				lastUnit = new RecorderUnit(time, difference, currentType);
+				lastUnit = new RecorderUnit(time, difference, x, y, rot, currentType);
 				recording.add(lastUnit);
-				System.out.println("Recorder: added " + currentType.toString() + " at " + time + " diff: " + difference);
+				System.out.println("Recorder: added " + currentType.toString() + " at " + time + " x: " + x);
 			}
 		}
 
 		return;
 
-	}*/
+	}
 	
 	
 

@@ -2,6 +2,8 @@ package UserPackage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
@@ -15,6 +17,7 @@ import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
 import Menu.ScreenType;
 import Multiplayer.Challenge;
+import Multiplayer.RecorderUnit;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_ParentContainer;
 import RESTWrapper.REST;
@@ -65,6 +68,8 @@ public class User {
 	private String currentCar = null;
 	private String currentTrack = null;
 	private Challenge currentChallenge = null;
+	private ArrayList<RecorderUnit> currentChallengeSortedRecording = null;
+	private String currentChallengeCar  = null;
 
 	private static User instance;
 	private TrippleDes encryptor = new TrippleDes();
@@ -333,13 +338,45 @@ public class User {
 
 	boolean resultsRemaining = true;
 	int currentOffset = 0;
+	
+	public String getCurrentChallengeCar(){
+		String inputString = prefs.getString(GamePreferences.CH_CAR_MAP_STR,
+				Globals.defualt_car);
+		currentChallengeCar = inputString;
+
+		return currentChallengeCar;
+	}
+	
+	public ArrayList<RecorderUnit> getCurrentChallengeRecording (){
+		return this.currentChallengeSortedRecording;
+	}
 
 	public void setCurrentChallenge(final Challenge currentChallenge,
 			final ChallengeLobbyScreen context) {
+		if(currentChallenge==null) return;
+		
 		this.currentChallenge = currentChallenge;
+		
+		this.currentChallengeSortedRecording = currentChallenge.getRecording();
+		
+		Collections.sort(this.currentChallengeSortedRecording, new Comparator<RecorderUnit>() {
 
-		if (currentChallenge == null)
-			return;
+			@Override
+			public int compare(RecorderUnit o1, RecorderUnit o2) {
+
+				Long table1 = o1.getTime();
+				Long table2 = o2.getTime();
+
+				return table1.compareTo(table2);
+			}
+
+		});
+		
+		
+		prefs.putString(GamePreferences.CH_CAR_MAP_STR, currentChallenge.getCarJson().jsonify());
+		prefs.flush();
+
+		this.currentChallengeCar = currentChallenge.getCarJson().jsonify();
 
 		final AsyncExecutor ae = new AsyncExecutor(2);
 

@@ -154,7 +154,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		challengeScroll.setLayoutEnabled(true);
 		challengeScroll.setTouchable(Touchable.enabled);
 		challengeScroll.setOverscroll(false, true);
-		
+
 		challengesTable.add(challengeScroll).expand().fill();
 
 		resultsRemaining = true;
@@ -202,6 +202,8 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 													.getTargetUser());
 											challenge.setBestTime(fromServer
 													.getTrackBestTime());
+											challenge.setReward(fromServer
+													.getChallengeReward());
 
 											addItemToList(challenge);
 
@@ -267,7 +269,6 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		uniqueListLock.unlock();
 
 	}
-	
 
 	private String getDownloadRequestString(int offset, String targetUser) {
 		return RESTPaths.CHALLENGES + RESTProperties.URL_ARG_SPLITTER
@@ -277,6 +278,8 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 				+ RESTProperties.PROPS + RESTProperties.CREATED
 				+ RESTProperties.PROP_PROP_SPLITTER + RESTProperties.OBJECT_ID
 				+ RESTProperties.PROP_PROP_SPLITTER + RESTProperties.CHALLENGE
+				+ RESTProperties.PROP_PROP_SPLITTER
+				+ RESTProperties.CHALLENGE_REWARD
 				+ RESTProperties.PROP_PROP_SPLITTER
 				+ RESTProperties.SOURCE_USER
 				+ RESTProperties.PROP_PROP_SPLITTER
@@ -352,15 +355,19 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		for (final JSONChallenge challenge : uniquenessButtonList) {
 
 			TextButton createChallenge = new TextButton("challenge from "
-					+ challenge.getSourceUser() + " on " + challenge.getBestTime(), skin, "yesButton");
+					+ challenge.getSourceUser() + " on "
+					+ challenge.getBestTime() + " Reward " + challenge.getReward(), skin, "yesButton");
 
 			createChallenge.addListener(new ClickListener() {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.LOADING));
 					user.setCurrentGameMode(GameMode.PLAY_CHALLENGE);
-					user.setCurrentChallenge(Challenge.objectify(challenge.getChallenge()), context);
+					user.setCurrentChallenge(
+							Challenge.objectify(challenge.getChallenge()),
+							context);
 					//
 					super.clicked(event, x, y);
 				}
@@ -374,23 +381,21 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		}
 
 	}
-	
+
 	public void challengeMapLoaded(JSONTrack trackJson, TrackMode trackMode) {
 		popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
 		user.setCurrentTrack(trackJson.jsonify(), trackMode, true);
 		System.out.println("maploaded");
 		Globals.runOnUIThread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				//gameLoader.setScreen(new GamePlayScreen(gameState));
+				// gameLoader.setScreen(new GamePlayScreen(gameState));
 				gameLoader.setScreen(new CarModeScreen(gameState));
 			}
 		});
-		
 
 	}
-
 
 	private void renderWorld() {
 
@@ -453,7 +458,5 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 				"You need " + moneyRequired.toString() + " more coins", this));
 		return false;
 	}
-
-
 
 }

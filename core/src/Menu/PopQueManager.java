@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import wrapper.Globals;
 import Dialog.CarDisplayDialog;
 import Dialog.DialogBase;
+import Dialog.FinalizeChallengeDialog;
 import Dialog.KilledDialog;
 import Dialog.PauseDialog;
 import Dialog.Skins;
@@ -105,6 +106,8 @@ public class PopQueManager {
 			createBuyStoreDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.SOUND) {
 			createSoundDialog(popQueObject);
+		} else if (popQueObject.getType() == PopQueObjectType.CHALLENGE_FINALIZATION) {
+			createFinalizeChallengeDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.PAUSE) {
 			createPauseDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE
@@ -130,6 +133,11 @@ public class PopQueManager {
 			System.out.println("ERROR: Unknown PopQueObjectType: "
 					+ popQueObject.getType().toString());
 		}
+	}
+
+	private void createFinalizeChallengeDialog(PopQueObject popQueObject) {
+		dialog = FinalizeChallengeDialog.CreateDialog(gameLoader, popQueObject);
+		dialog.show(stage).top();
 	}
 
 	private void createTutorialDialog(PopQueObject popQueObject) {
@@ -214,7 +222,7 @@ public class PopQueManager {
 		 */
 
 		// Table t = WinDialog.CreateDialog(popQueObject);
-		winTable.updateMoney(gameLoader, popQueObject);
+		winTable.updateWinScreen(gameLoader, popQueObject);
 		stage.addActor(winTable.getBase());
 	}
 

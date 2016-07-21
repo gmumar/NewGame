@@ -6,6 +6,7 @@ public class GamePreferences {
 
 	public final static String CAR_PREF_STR = "com.gudesigns.climber.carPrefernces";
 	public final static String CAR_MAP_STR = "car";
+	public final static String CH_CAR_MAP_STR = "ch_car";
 	public final static String USR_STR = "dontLoOoooOoOOooOokHerev1";
 	public final static String USR_LOCKED = "dontLoOooOooOoOoOokHerev1";
 	public final static String USR_NON_NEW = "dontLooooOooOoOoOokHerev1";

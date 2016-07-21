@@ -2,6 +2,7 @@ package com.gudesigns.climber;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 import wrapper.CameraManager;
 import wrapper.GameContactListener;
@@ -44,12 +45,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -80,6 +78,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private GroundBuilder ground;
 	private TrackType trackType;
 
+	private Semaphore touchLock = new Semaphore(1);
 	private ArrayList<TouchUnit> touches = new ArrayList<TouchUnit>();
 	private ArrayList<TouchUnit> fakeTouches = new ArrayList<TouchUnit>();
 
@@ -89,7 +88,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private JointLimits jointLimits;
 
-	private final AsyncExecutor runner = new AsyncExecutor(2);
+	private final AsyncExecutor runner = new AsyncExecutor(3);
 
 	boolean running = true;
 	boolean paused = true;
@@ -112,7 +111,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private int slowMoFactor = 1;
 	private ArrayBlockingQueue<Body> destoryQue = new ArrayBlockingQueue<Body>(
 			10);
-	volatile private float mapTime = 0;
+	volatile private float mapTime = 0.0f;// new BigDecimal(0);
 	volatile private int frameCounter = 0;
 	// -------------------
 
@@ -125,9 +124,9 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private Recorder recorder;
 
 	private boolean replay = true;
-	// private AssembledObject opponentCar;
-	private Sprite opponentCar;
-	private Replayer opponentUser;
+	private AssembledObject opponentCar;
+	// private Sprite opponentCar;
+	private Replayer multiplayerUser;
 
 	public GamePlayScreen(GameState gameState) {
 		this.gameState = gameState;
@@ -145,6 +144,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		Globals.updateScreenInfo();
 
+		System.gc();
 		this.user = gameState.getUser();
 		recordPlayer = user.getCurrentGameMode() == GameMode.SET_CHALLENGE;
 		replay = user.getCurrentGameMode() == GameMode.PLAY_CHALLENGE;
@@ -152,7 +152,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		batch = new SpriteBatch();
 		initStage();
-		initWorld();
+		world = initWorld();
 
 		contactListener = new GameContactListener(this);
 
@@ -160,46 +160,53 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			touches.add(new TouchUnit());
 		}
 
+		initShader();
+		ground = new GroundBuilder(new GamePhysicalState(this.world,
+				this.gameLoader), camera, shader, colorShader, false,
+				gameState.getUser(), replay);
+
 		// debugRenderer = new Box2DDebugRenderer();
+
+		if (replay) {
+
+			String car = null;
+
+			// car = gameState.getUser().getCurrentCar();
+			car = gameState.getUser().getCurrentChallengeCar();
+			multiplayerUser = new Replayer(gameState.getUser()
+					.getCurrentChallengeRecording());
+
+			opponentCar = Assembler.assembleCar(new GamePhysicalState(
+					this.world, this.gameLoader), car,
+					ColliderGroups.OPPONENT_CAR, false);
+
+			/*
+			 * opponentCar = new Sprite(Assembler.assembleCarImage(gameLoader,
+			 * user.getCurrentChallenge().getCarJson().jsonify(), false, true));
+			 * opponentCar.setSize(11, 11); opponentCar.setOrigin(5.5f, 5.5f);
+			 */
+			// opponentCar.initSound(this.gameLoader);
+			opponentCar.setPosition(10, 50);
+			opponentCar.setAlpha(0.5f);
+
+		}
+
 		builtCar = Assembler.assembleCar(new GamePhysicalState(this.world,
 				this.gameLoader), gameState.getUser().getCurrentCar(),
 				ColliderGroups.USER_CAR, false);
 		builtCar.initSound(this.gameLoader);
 		builtCar.setPosition(10, 50);
 
-		if (replay) {
-			/*
-			 * opponentCar = Assembler .assembleCar(new
-			 * GamePhysicalState(this.world, this.gameLoader),
-			 * user.getCurrentChallenge() .getCarJson().jsonify(),
-			 * ColliderGroups.OPPONENT_CAR, false);
-			 */
-
-			opponentCar = new Sprite(Assembler.assembleCarImage(gameLoader,
-					user.getCurrentChallenge().getCarJson().jsonify(), false,
-					true));
-			// opponentCar.initSound(this.gameLoader);
-			opponentCar.setPosition(10, 50);
-			opponentCar.setAlpha(0.5f);
-			opponentCar.setSize(11, 11);
-			opponentCar.setOrigin(5.5f, 5.5f);
-
-			opponentUser = new Replayer(user.getCurrentChallenge()
-					.getRecording());
-		}
-
-		initShader();
-		ground = new GroundBuilder(new GamePhysicalState(this.world,
-				this.gameLoader), camera, shader, colorShader, false,
-				gameState.getUser(), false);
+		System.gc();
 
 		currentTrackLen = ground.getTotalTrackLength();
 
 		rollingAvg = new RollingAverage(60);
 
-		world.step(10, 100, 100);
+		world.step(Globals.STEP, 160, 60);
+		frameCounter += 10;
 
-		jointLimits = new JointLimits(world);
+		jointLimits = new JointLimits(world, this);
 
 		scrollingBackground = new ScrollingBackground(this.gameLoader,
 				builtCar, trackType, BackgroundType.NORMAL);
@@ -295,7 +302,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	final private void initHud() {
 
-		hud = new HUDBuilder(stage, gameState, popQueManager, this);
+		hud = new HUDBuilder(stage, gameState, popQueManager, this, replay);
 	}
 
 	public void coinCollected(Body body) {
@@ -315,10 +322,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	private float fixedStep = 0;
 	private float difference = 0;
-
-	private float STEP = Globals.STEP;
-
-	private int skipRecord = OPPONENT_RECORDER_SKIP + 1;
 
 	@Override
 	public void render(float delta) {
@@ -340,43 +343,58 @@ public class GamePlayScreen implements Screen, InputProcessor {
 			scrollingBackground.drawStationary();
 		} else {
 
-			while ((fixedStep >= STEP)) {
+			if ((fixedStep >= Globals.STEP)) {
+				fixedStep -= Globals.STEP;
 				// if (!ground.loading) {
-				frameCounter++;
 
-				if (gameWon) {
-					handleInput(fakeTouches);
+				if (isGameOver()) {
+					worldStep(world, fixedStep);
+				} else if (timePassed < 1f) {
+
 				} else {
-					mapTime += STEP;
 
-					builtCar.handleInput(touches);
+					if (!world.isLocked()) {
+						mapTime += Globals.STEP;
+						frameCounter++;
 
-					if (replay) {
-						Vector3 opponentMove = opponentUser
-								.getInputPositional(frameCounter);
+						if (replay) {
 
-						opponentCar.setPosition(opponentMove.x - 5.5f,
-								opponentMove.y - 6.7f);
-						opponentCar.setRotation(opponentMove.z
-								* MathUtils.radiansToDegrees);
+							// opponentCar.setAbsPosition(builtCar.getPosition().x,
+							// builtCar.getPosition().y);
 
+							builtCar.handleInput(touches);
+
+							opponentCar.handleInput(multiplayerUser
+									.getInputTypeWise(frameCounter, difference,
+											opponentCar.getPosition().x,
+											opponentCar.getPosition().y,
+											ground, opponentCar, world));
+
+							worldStep(world, fixedStep);
+
+						} else if (recordPlayer) {
+
+							if (touchLock.tryAcquire()) {
+
+								builtCar.handleInput(touches);
+
+								recorder.addTypeUnit(frameCounter, difference,
+										builtCar.getPosition().x,
+										builtCar.getPosition().y,
+										builtCar.getRotation(), touches);
+
+								touchLock.release();
+							}
+
+							worldStep(world, fixedStep);
+
+						} else {
+
+							builtCar.handleInput(touches);
+							worldStep(world, fixedStep);
+
+						}
 					}
-
-					if (recordPlayer && skipRecord > OPPONENT_RECORDER_SKIP) {
-						recorder.addPositionUnit(frameCounter, difference,
-								builtCar.getPosition().x,
-								builtCar.getPosition().y,
-								builtCar.getRotation());
-						skipRecord = 0;
-					}
-					skipRecord++;
-
-				}
-
-				if (slowMoFactor != 1) {
-					world.step(STEP / slowMoFactor, 60, 40);
-				} else {
-					world.step(STEP, 200, 150);
 
 				}
 
@@ -388,23 +406,21 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				// builtCar.step();
 				// }
 
-				if (timePassed > 2) {
+				if (timePassed > 3) {
 
-					jointLimits.enableJointLimits(1 / STEP);
+					jointLimits.enableJointLimits(Globals.STEP_INVERSE);
 
 				} else {
 					// if (!ground.loading) {
-					timePassed += STEP;
+					timePassed += Globals.STEP;
 					// }
 				}
 
-				fixedStep -= STEP;
 				difference += fixedStep;
 				// System.out.println("diff: " + fixedStep);
-			}
-			
-			if(fixedStep>0){
-				System.out.println(fixedStep);
+				// } else {
+				// frameCounter++;
+				// System.out.println("Delta tooo small");
 			}
 
 			scrollingBackground.drawNormal();
@@ -446,6 +462,27 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	}
 
+	private void worldStep(World inWorld, float fixedStep2) {
+
+		if (slowMoFactor != 1) {
+			inWorld.step(Globals.STEP / slowMoFactor, 60, 40);
+		} else {
+
+			inWorld.step(Globals.STEP, 160, 60);
+
+		}
+	}
+
+	public void jointsBroken(ArrayList<Integer> jointsBroken) {
+		if (recordPlayer) {
+			recorder.addJointBreakUnit(frameCounter, difference,
+					builtCar.getPosition().x, builtCar.getPosition().y,
+					builtCar.getRotation(), jointsBroken);
+		}
+	}
+
+	private int lastPositionUnit = 50;
+
 	private void monitorProgress() {
 		if (!gameWon && contactListener.isKilled()) {
 			if (!gameLost) {
@@ -463,9 +500,17 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 		progress = (builtCar.getPosition().x / currentTrackLen) * 100;
 
+		if (recordPlayer && progress > 80 && !isGameOver()) {
+			if (Math.abs((int) progress - lastPositionUnit) > 4) {
+				recorder.addPositionUnit(frameCounter, difference,
+						builtCar.getPosition().x, builtCar.getPosition().y,
+						builtCar.getRotation());
+				lastPositionUnit = (int) progress;
+			}
+		}
+
 		if (replay) {
-			// opponentProgress = (opponentCar.getPosition().x /
-			// currentTrackLen) * 100;
+			opponentProgress = (opponentCar.getPosition().x / currentTrackLen) * 100;
 		}
 
 		if (progress >= 100) {
@@ -490,12 +535,20 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	private void gameEnded() {
 		System.out.println("Game ended");
 		System.out.println("Difference: " + difference);
+
 		if (recordPlayer) {
-			recorder.addEndPositionUnit(frameCounter, difference,
+			/*
+			 * recorder.addEndPositionUnit(frameCounter, difference,
+			 * builtCar.getPosition().x, builtCar.getPosition().y,
+			 * builtCar.getRotation());
+			 */
+
+			recorder.addEndTypeUnit(frameCounter, difference,
 					builtCar.getPosition().x, builtCar.getPosition().y,
 					builtCar.getRotation());
 			// user.saveRecording(recorder.jsonify());
 		}
+
 	}
 
 	public int calculateWinings() {
@@ -577,28 +630,25 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		gameLoader.setScreen(new MainMenuScreen(gameLoader));
 	}
 
-	private boolean gameOver() {
+	private boolean isGameOver() {
 		return gameWon || gameLost;
-	}
-
-	final private void handleInput(ArrayList<TouchUnit> touchesIn) {
-
 	}
 
 	public void createChallenge() {
 		if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+			System.out.println("GamePlayScreen: challege created ");
+			popQueManager.push(new PopQueObject(PopQueObjectType.CHALLENGE_FINALIZATION,this));
+		}
+	}
+	
+	public void submitChallenge(String reward){
+		if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+			System.out.println("GamePlayScreen: challege SUBMITTED ");
 			JSONTrack playedTrack = JSONTrack.objectify(user.getCurrentTrack());
-
-			System.out.println("GamePlayScreen: challege created -> "
-					+ Challenge.createChallegeJSON(recorder.getRecording(),
-							JSONCar.objectify(user.getCurrentCar()),
-							playedTrack.getObjectId(),
-							user.getCurrentTrackMode(), playedTrack.getType()));
-
 			Challenge.submitChallenge(recorder.getRecording(),
 					JSONCar.objectify(user.getCurrentCar()),
 					playedTrack.getObjectId(), user.getCurrentTrackMode(),
-					playedTrack.getType(), "gmumar", "gmumar", mapTime);
+					playedTrack.getType(), "gmumar", "gmumar", mapTime, reward);
 		}
 	}
 
@@ -625,11 +675,14 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		camera.update();
 	}
 
-	final private void initWorld() {
-		world = (new World(new Vector2(0, -38f), true));
-		// world.setAutoClearForces(true);
+	final private World initWorld() {
+		World inWorld = (new World(new Vector2(0, -38f), true));
 
-		world.setWarmStarting(true);
+		inWorld.setAutoClearForces(true);
+		inWorld.setContinuousPhysics(true);
+		inWorld.setWarmStarting(true);
+
+		return inWorld;
 	}
 
 	final private void initStage() {
@@ -675,14 +728,18 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
-		if (gameOver())
+		if (isGameOver())
 			return false;
+		if (touchLock.tryAcquire()) {
 
-		if (pointer < Globals.MAX_FINGERS) {
-			touches.get(pointer).screenX = screenX;
-			touches.get(pointer).screenY = screenY;
-			touches.get(pointer).touched = true;
+			if (pointer < Globals.MAX_FINGERS) {
 
+				touches.get(pointer).screenX = screenX;
+				touches.get(pointer).screenY = screenY;
+				touches.get(pointer).touched = true;
+
+			}
+			touchLock.release();
 			return false;
 		}
 		return false;
@@ -690,12 +747,15 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (gameOver())
+		if (isGameOver())
 			return false;
+		if (touchLock.tryAcquire()) {
+			if (pointer < Globals.MAX_FINGERS) {
 
-		if (pointer < Globals.MAX_FINGERS) {
-			touches.get(pointer).touched = false;
+				touches.get(pointer).touched = false;
 
+			}
+			touchLock.release();
 			return false;
 		}
 		return false;

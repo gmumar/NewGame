@@ -98,17 +98,22 @@ public class GroundBuilder {
 	private Fixture groundFixture;
 
 	private Color LAYER_COLOR;
+	
+	private short colliderCats;
 
 	// drawEdge looks up type everytime, try to optimize.
 	public GroundBuilder(GamePhysicalState gameState,
 			final CameraManager camera, ShaderProgram shader,
-			ShaderProgram colorShader, boolean forMainMenu, User user, boolean forReplay) {
+			ShaderProgram colorShader, boolean forMainMenu, User user,
+			boolean forReplay) {
 		this.world = gameState.getWorld();
 		this.gameLoader = gameState.getGameLoader();
 		this.camera = camera;
 		this.shader = shader;
 		this.colorShader = colorShader;
-
+		
+		colliderCats = ColliderCategories.GROUND;
+		
 		String mapString = null;
 
 		if (!forMainMenu) {
@@ -194,13 +199,14 @@ public class GroundBuilder {
 		edgeShape.set(new Vector2(0, 0), new Vector2(0, 35));
 		fixtureDef.shape = edgeShape;
 
-		//fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
-		fixtureDef.filter.categoryBits = ColliderCategories.GROUND;
+		// fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		fixtureDef.filter.categoryBits = colliderCats;
 		// groundFixture =
 		backWall.createFixture(fixtureDef);
 		backWall.setTransform(new Vector2(gud.getEnd().x, gud.getEnd().y), 0);
-		
-		lastDrawnUnit = firstDrawnUnit = new GroundUnitDescriptor(new Vector2(), new Vector2(), false);
+
+		lastDrawnUnit = firstDrawnUnit = new GroundUnitDescriptor(
+				new Vector2(), new Vector2(), false);
 
 	}
 
@@ -212,7 +218,8 @@ public class GroundBuilder {
 
 			lastDrawnPointer++;
 			lastDrawnUnit = mapList.get(lastDrawnPointer);
-			lastDrawnUnit.setFixture(drawEdge(lastDrawnUnit.getStart(), lastDrawnUnit.getEnd()));
+			lastDrawnUnit.setFixture(drawEdge(lastDrawnUnit.getStart(),
+					lastDrawnUnit.getEnd()));
 
 			if (mapList.size() <= lastRemovedPointer)
 				return;
@@ -250,6 +257,30 @@ public class GroundBuilder {
 
 	}
 
+	private float vertiualSegments = 2048;
+
+	public int xToIndex(float x) {
+
+		int count = 0;
+		for (GroundUnitDescriptor unit : mapList) {
+
+			if (x > unit.getStart().x && x <= unit.getEnd().x) {
+
+				float ratio = (x - unit.getStart().x)
+						/ (unit.getEnd().x - unit.getStart().x);
+
+				count += ratio * vertiualSegments;
+
+				return count;
+			}
+
+			count += vertiualSegments;
+
+		}
+
+		return 0;
+	}
+
 	public void getNextFloorUnit(boolean forMainMenu) {
 
 		lastObj = mapList.get(mapList.size() - 1);
@@ -260,7 +291,7 @@ public class GroundBuilder {
 				generateBias(r, forMainMenu);
 
 				randf = (float) (r.nextFloat() * variation - variation / 2 + bias);
-				
+
 				addGroundUnitDescriptor(lastObj, randf);
 			} else {
 				addGroundUnitDescriptor(lastObj,
@@ -336,8 +367,8 @@ public class GroundBuilder {
 
 		++addFloorCount;
 
-		decor.draw(batch,firstDrawnUnit.getEnd().x, lastDrawnUnit.getEnd().x);
-		track.draw(batch,firstDrawnUnit.getEnd().x, lastDrawnUnit.getEnd().x);
+		decor.draw(batch, firstDrawnUnit.getEnd().x, lastDrawnUnit.getEnd().x);
+		track.draw(batch, firstDrawnUnit.getEnd().x, lastDrawnUnit.getEnd().x);
 
 		/*
 		 * Iterator<GroundUnitDescriptor> iter = mapList.iterator();
@@ -412,8 +443,8 @@ public class GroundBuilder {
 			fixtureDef.restitution = 0.2f;
 		}
 
-		//fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
-		fixtureDef.filter.categoryBits = ColliderCategories.GROUND;
+		// fixtureDef.filter.groupIndex = Globals.GROUND_GROUP;
+		fixtureDef.filter.categoryBits = colliderCats;
 		groundFixture = floor.createFixture(fixtureDef);
 		groundFixture.setUserData(groundFixtureName);
 

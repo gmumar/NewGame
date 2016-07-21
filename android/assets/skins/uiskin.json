@@ -179,6 +179,13 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		cursor: cursor,
 		selection: selection
 	}
+	userInput: {
+		font: black-5,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 },
+		background: dialogDim,
+		cursor: cursor,
+		selection: selection
+	}
 	tutorial: {
 		font: white-5,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },

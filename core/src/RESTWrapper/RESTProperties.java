@@ -12,6 +12,7 @@ public class RESTProperties {
 	public static final String CHALLENGE = "challenge";
 	public static final String TARGET_USER = "targetUser";
 	public static final String SOURCE_USER = "sourceUser";
+	public static final String CHALLENGE_REWARD = "challengeReward";
 	
 	public static final String CREATED = "created";
 	public static final String PROPS = "props=";
@@ -24,6 +25,7 @@ public class RESTProperties {
 	public static final String GREATER_THAN = "%3E";
 	public static final String EQUALS = "%3D";
 	public static final String SINGLE_QOUTE = "%27";
+
 
 	public static String WhereCreatedGreaterThan(Long lastCreatedTime) {
 		return RESTProperties.WHERE + RESTProperties.CREATED

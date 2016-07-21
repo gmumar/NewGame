@@ -6,7 +6,14 @@ public class RollingAverage {
     private float total = 0f;
     private int index = 0;
     private float samples[];
+    
+    private float max = -1000;
+    private int maxIndex;
 
+    
+    private float min = 1000;
+    private int minIndex;
+    
     public RollingAverage(int size) {
         this.size = size;
         samples = new float[size];
@@ -17,8 +24,36 @@ public class RollingAverage {
         total -= samples[index];
         samples[index] = x;
         total += x;
+        
+       /* --maxIndex;
+
+        if(maxIndex<=0){
+        	max = -1000;
+        }
+        
+        if(x > max){
+        	max = x;
+        	maxIndex = index;
+        }
+        
+        --minIndex;
+        
+        if(minIndex<=0){
+        	min = 1000;
+        }
+        
+        if(x < min){
+        	min = x;
+        	minIndex = index;
+        }*/
+        
         if (++index == size) index = 0; // cheaper than modulus
     }
+    
+    public float getDeltaAverage() {
+        return (total-max-min) / (size-2);
+    }
+    
 
     public float getAverage() {
         return total / size;

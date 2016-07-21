@@ -8,7 +8,16 @@ public class JSONChallenge {
 	private String sourceUser;
 	private String targetUser;
 	private float bestTime;
+	private Integer reward;
 	
+	public Integer getReward() {
+		return reward;
+	}
+
+	public void setReward(Integer reward) {
+		this.reward = reward;
+	}
+
 	public String jsonify() {
 		Gson obj = new Gson();
 		//obj.setIgnoreUnknownFields(true);

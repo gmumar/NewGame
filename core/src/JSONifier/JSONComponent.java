@@ -1,5 +1,6 @@
 package JSONifier;
 
+import Component.ComponentNames;
 import Component.ComponentProperties;
 
 import com.google.gson.Gson;
@@ -71,5 +72,18 @@ public class JSONComponent {
 	/*public void setProperties(Map<String, String> properties) {
 		this.props = properties;
 	}*/
+	
+	static public Integer getBaseNameIndex(String componentName){
+		if(componentName.compareTo(ComponentNames.BAR3)==0){
+			return 0;
+		} else if (componentName.compareTo(ComponentNames.SPRINGJOINT)==0){
+			return 1;
+		} else if (componentName.compareTo(ComponentNames.TIRE)==0 || 
+				componentName.compareTo(ComponentNames.AXLE)==0){
+			return 2;
+		}
+		
+		return -1;
+	}
 
 }

@@ -1,5 +1,7 @@
 package wrapper;
 
+import java.util.ArrayList;
+
 import Component.ComponentNames;
 import JSONifier.JSONComponentName;
 
@@ -7,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointDef.JointType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.gudesigns.climber.GamePlayScreen;
 
 public class JointLimits {
 
@@ -30,20 +33,33 @@ public class JointLimits {
 
 	private static String nameBodyA = "";
 	private static String nameBodyB = "";
+	
+	private GamePlayScreen gamePlayScreen;
+	private ArrayList<Integer> jointsBroken = new ArrayList<Integer>();
 
-	public JointLimits(World world) {
+	public JointLimits(World world, GamePlayScreen gamePlayScreen) {
 		this.world = world;
+		this.gamePlayScreen = gamePlayScreen;
 
 	}
 
 	final public void enableJointLimits(final float step) {
 
 		world.getJoints(joints);
+		jointsBroken.clear();
 		// iter = joints.iterator();
 
 		for (Joint joint : joints) {
 			// joint = iter.next();
-
+			
+			if(joint.getUserData()==null){
+				continue;
+			}
+			
+			if((Integer)joint.getUserData() < 0){
+				continue;
+			}
+			
 			//force = ((joint.getReactionForce(step).len2()) / FORCE_DEVIDER);
 			force = joint.getReactionForce(step).len();
 			torque = joint.getReactionTorque(step);
@@ -70,31 +86,37 @@ public class JointLimits {
 
 			if (jointHas(ComponentNames.LIFE)) {
 				if (torque > LIFE_BAR_BREAKING_TORQUE) {
+					printJoint(joint);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > LIFE_BAR_BREAKING_FORCE) {
+					printJoint(joint);
 					world.destroyJoint(joint);
 					continue;
 				}
 			} else if (jointHas(ComponentNames.BAR3)) {
 				if (torque > BAR_BAR_BREAKING_TORQUE) {
+					printJoint(joint);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > BAR_BAR_BREAKING_FORCE) {
+					printJoint(joint);
 					world.destroyJoint(joint);
 					continue;
 				}
 			} else {
 				if (torque > DEFAULT_BREAKING_TORQUE) {
+					printJoint(joint);
 					world.destroyJoint(joint);
 					continue;
 				}
 
 				if (force > DEFAULT_BREAKING_FORCE) {
+					printJoint(joint);
 					world.destroyJoint(joint);
 					continue;
 				}
@@ -120,6 +142,15 @@ public class JointLimits {
 			 * continue; } }
 			 */
 		}
+		
+		if(!jointsBroken.isEmpty()) {
+			gamePlayScreen.jointsBroken(jointsBroken);
+		}
+	}
+
+	private void printJoint(Joint joint) {
+		jointsBroken.add((Integer)joint.getUserData());
+		//System.out.println("Adding " + (Integer)joint.getUserData());
 	}
 
 	final private static boolean jointHas(String name1) {

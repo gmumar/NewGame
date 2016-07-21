@@ -48,11 +48,11 @@ public class Challenge {
 
 	public static void submitChallenge(ArrayList<RecorderUnit> recording2,
 			JSONCar car, String trackId, TrackMode currentTrackMode,
-			TrackType type, String sourceUser, String targetUser, float mapTime) {
+			TrackType type, String sourceUser, String targetUser, float mapTime, String reward) {
 		
 		BackendFunctions.uploadChallenge(RESTPaths.CHALLENGES, 
 				createChallegeJSON(recording2, car, trackId, currentTrackMode, type), 
-				sourceUser ,targetUser, mapTime);
+				sourceUser ,targetUser, mapTime, reward);
 
 		;
 

@@ -280,7 +280,7 @@ public class WinDialog extends Table {
 		return base;
 	}
 
-	public void updateMoney(GameLoader gameLoader, PopQueObject popQueObject) {
+	public void updateWinScreen(GameLoader gameLoader, PopQueObject popQueObject) {
 		JSONTrack playedTrack = JSONTrack.objectify(User.getInstance()
 				.getCurrentTrack());
 		Integer position = popQueObject.getGamePlayInstance()
