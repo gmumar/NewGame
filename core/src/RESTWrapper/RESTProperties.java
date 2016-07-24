@@ -13,6 +13,8 @@ public class RESTProperties {
 	public static final String TARGET_USER = "targetUser";
 	public static final String SOURCE_USER = "sourceUser";
 	public static final String CHALLENGE_REWARD = "challengeReward";
+	public static final String USER_NAME = "userName";
+	public static final String MONEY_DELTA = "moneyDelta";
 	
 	public static final String CREATED = "created";
 	public static final String PROPS = "props=";

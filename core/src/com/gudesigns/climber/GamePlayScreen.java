@@ -47,6 +47,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -196,6 +197,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				ColliderGroups.USER_CAR, false);
 		builtCar.initSound(this.gameLoader);
 		builtCar.setPosition(10, 50);
+		// builtCar.setRotation(-100f*MathUtils.degreesToRadians);
 
 		System.gc();
 
@@ -637,18 +639,22 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	public void createChallenge() {
 		if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
 			System.out.println("GamePlayScreen: challege created ");
-			popQueManager.push(new PopQueObject(PopQueObjectType.CHALLENGE_FINALIZATION,this));
+			popQueManager.push(new PopQueObject(
+					PopQueObjectType.CHALLENGE_FINALIZATION, this));
 		}
 	}
-	
-	public void submitChallenge(String reward){
+
+	public void submitChallenge(String reward, String targetUser) {
 		if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
 			System.out.println("GamePlayScreen: challege SUBMITTED ");
 			JSONTrack playedTrack = JSONTrack.objectify(user.getCurrentTrack());
 			Challenge.submitChallenge(recorder.getRecording(),
 					JSONCar.objectify(user.getCurrentCar()),
-					playedTrack.getObjectId(), user.getCurrentTrackMode(),
-					playedTrack.getType(), "gmumar", "gmumar", mapTime, reward);
+					playedTrack.getObjectId(),
+					Integer.toString(playedTrack.getItemIndex()),
+					Integer.toString(playedTrack.getDifficulty()),
+					user.getCurrentTrackMode(), playedTrack.getType(),
+					targetUser, user.getLocalUserName(), mapTime, reward);
 		}
 	}
 

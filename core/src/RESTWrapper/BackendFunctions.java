@@ -7,8 +7,36 @@ import DataMutators.Compress;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
+import com.gudesigns.climber.ChallengeLobbyScreen;
 
 public class BackendFunctions {
+	
+	public static void registerUser(final ChallengeLobbyScreen context, final String userName) {
+		//Preferences prefs = Gdx.app
+			//	.getPreferences(GamePreferences.CAR_PREF_STR);
+
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		parameters.put(RESTProperties.USER_NAME,userName);
+
+		REST.postData(RESTPaths.GAME_USERS, parameters, new HttpResponseListener() {
+
+			@Override
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				context.userRegistrationComplete(userName,httpResponse);
+			}
+
+			@Override
+			public void failed(Throwable t) {
+				context.userRegistrationFailed(userName);
+			}
+
+			@Override
+			public void cancelled() {
+				
+			}
+		});
+
+	}
 
 	public static void uploadCar(String inputString, String fileName, int index) {
 		//Preferences prefs = Gdx.app
@@ -100,4 +128,6 @@ public class BackendFunctions {
 		});
 
 	}
+	
+	
 }

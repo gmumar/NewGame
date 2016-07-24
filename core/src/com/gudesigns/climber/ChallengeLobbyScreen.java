@@ -19,7 +19,9 @@ import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
 import Menu.Bars.TitleBar;
 import Menu.Bars.TitleBarObject;
+import Menu.Buttons.ChallengeButton;
 import Multiplayer.Challenge;
+import RESTWrapper.BackendFunctions;
 import RESTWrapper.Backendless_JSONParser;
 import RESTWrapper.Backendless_ParentContainer;
 import RESTWrapper.REST;
@@ -41,6 +43,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -50,6 +53,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
@@ -72,6 +77,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 	private Integer currentMoney;
 
 	private User user;
+	
 
 	protected AsyncExecutor ae = new AsyncExecutor(2);
 	protected HttpRequest downloadRequest;
@@ -79,11 +85,15 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 	protected volatile boolean killThreads = false;
 	protected Semaphore downloadedCounter = new Semaphore(0);
 	public Semaphore loaderSemaphore = new Semaphore(2);
+	private Semaphore loadingShowing = new Semaphore(1);
 	public Lock uniqueListLock = new ReentrantLock();
 	public volatile boolean downloadCancelled = false;
 	private ArrayList<JSONChallenge> uniquenessButtonList = new ArrayList<JSONChallenge>();
 
 	Gson json = new Gson();
+	
+	volatile int resetDisplayCounter = 0;
+	volatile boolean resetDisplay = false;
 
 	public ChallengeLobbyScreen(final GameState gameState) {
 		context = this;
@@ -94,10 +104,37 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 		user = gameState.getUser();
 		initStage();
-
+		
 		popQueManager = new PopQueManager(gameLoader, stage);
+		
+		
+		// Sign In user
+		String userName  = user.getLocalUserName();
+		
+		if(userName==null){
+			// please sign in/register
+			popQueManager.iniSignInTable(new PopQueObject(PopQueObjectType.USER_SIGN_IN, this));
+			popQueManager.push(new PopQueObject(PopQueObjectType.USER_SIGN_IN, this));
+		} else {
+			// update last activity on server
+			if(loadingShowing.tryAcquire()){
+				popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
+			}
+		}
+
+
+		initDisplay();
+
+		
+	}
+	
+	private void initDisplay(){
+		if(challengesTable!=null) challengesTable.remove();
+		if(base!=null) base.remove();
+		if(challengeItems!=null) challengeItems.remove();
 
 		base = new Table(skin);
+		
 		base.setFillParent(true);
 		// base.pad(25);
 
@@ -116,8 +153,51 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		// Animations.fadeInAndSlideSide(base);
 
 		stage.addActor(base);
-
 	}
+	
+	public void userRegistrationComplete(String userName, HttpResponse httpResponse){
+		JsonParser parser = new JsonParser();
+		
+		JsonObject obj = parser.parse( httpResponse.getResultAsString()).getAsJsonObject();
+		
+		if(obj.get("code")!=null){
+			if(obj.get("code").getAsInt() == 1155){
+				System.out.println("Failed: User name already exists" );
+				popQueManager.push(new PopQueObject(PopQueObjectType.ERROR_USER_NAME_TAKEN, "Sign Up Error", "User name already taken", null));
+			}
+		} else {
+			user.userRegisterLocally(userName, obj.get(RESTProperties.OBJECT_ID).getAsString());
+			popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+			resetDisplayCounter=100;
+			resetDisplay = true;
+			
+			if(loadingShowing.tryAcquire()){
+				popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
+			}
+		}		
+	}
+	
+	public void userRegistrationFailed(String userName){
+		System.out.println("System Failed " + userName);
+	}
+
+	@Override
+	public boolean successfulTwoButtonFlow(String userName) {
+		// Start Sign in / register with given userName
+		BackendFunctions.registerUser(context, userName);
+		
+		return false;
+	}
+	
+	@Override
+	public boolean failedTwoButtonFlow(Integer moneyRequired) {
+		popQueManager.push(new PopQueObject(
+				PopQueObjectType.ERROR_NOT_ENOUGH_MONEY, "Not Enough Coins",
+				"You need " + moneyRequired.toString() + " more coins", this));
+		return false;
+	}
+
+
 
 	private void initCreateChallengeButton() {
 		TextButton createChallenge = new TextButton("create challenge", skin,
@@ -134,7 +214,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		});
 
 		base.add(createChallenge).expandX().fillX()
-				.height(Globals.baseSize * 4).pad(20);
+				.height(Globals.baseSize * 2).pad(10);
 	}
 
 	boolean resultsRemaining;
@@ -178,7 +258,8 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 					while (stallSemaphore.tryAcquire()) {
 						downloadRequest = REST.getData(
 								getDownloadRequestString(currentOffset,
-										"gmumar"), new HttpResponseListener() {
+										user.getLocalUserName() == null ? "" : user.getLocalUserName()
+										), new HttpResponseListener() {
 
 									@Override
 									public void handleHttpResponse(
@@ -251,6 +332,10 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 				}
 				loaderSemaphore.release();
+				if(loadingShowing.availablePermits()==0){
+					popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+					loadingShowing.release();
+				}
 
 				return null;
 			}
@@ -338,6 +423,19 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 			uniqueListLock.unlock();
 		}
+		
+		if(resetDisplayCounter<0) {
+			if (resetDisplay){
+				initDisplay();
+				resetDisplay = false;
+				if(loadingShowing.availablePermits()==0){
+					popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+					loadingShowing.release();
+				}
+			}
+		} else {
+			resetDisplayCounter--;
+		}
 
 	}
 
@@ -352,11 +450,17 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 			return;
 		}
 
+		int count = 0;
+
 		for (final JSONChallenge challenge : uniquenessButtonList) {
 
-			TextButton createChallenge = new TextButton("challenge from "
-					+ challenge.getSourceUser() + " on "
-					+ challenge.getBestTime() + " Reward " + challenge.getReward(), skin, "yesButton");
+			// TextButton createChallenge = new TextButton("challenge from "
+			// + challenge.getSourceUser() + " on "
+			// + challenge.getBestTime() + " Reward " + challenge.getReward(),
+			// skin, "yesButton");
+
+			Button createChallenge = ChallengeButton.create(gameLoader,
+					challenge);
 
 			createChallenge.addListener(new ClickListener() {
 
@@ -374,9 +478,14 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 			});
 
-			challengeItems.add(createChallenge).expandX().fillX()
-					.height(Globals.baseSize * 2).pad(5);
-			challengeItems.row();
+			challengeItems.add(createChallenge).width(Globals.baseSize * 10)
+					.height(Globals.baseSize * 12).pad(5);
+
+			if (count > 1) {
+				challengeItems.row();
+				count = 0;
+			}
+			count++;
 
 		}
 
@@ -445,18 +554,5 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		});
 	}
 
-	@Override
-	public boolean successfulTwoButtonFlow(String itemName) {
-
-		return false;
-	}
-
-	@Override
-	public boolean failedTwoButtonFlow(Integer moneyRequired) {
-		popQueManager.push(new PopQueObject(
-				PopQueObjectType.ERROR_NOT_ENOUGH_MONEY, "Not Enough Coins",
-				"You need " + moneyRequired.toString() + " more coins", this));
-		return false;
-	}
 
 }

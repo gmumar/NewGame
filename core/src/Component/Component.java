@@ -374,6 +374,7 @@ public class Component {
 				if (positionSetBodies.contains(body.getPhysicsBody())) {
 					continue;
 				}
+				positionSetBodies.add(body.getPhysicsBody()); // Added this without thinkin
 				body.setPosition(body.getPosition().x + f, body.getPosition().y
 						+ g); // This line is the TODO
 			}
@@ -402,9 +403,47 @@ public class Component {
 		}
 	}
 
+	public void setAbsoluteRotation(float rotRadians) {
+		ArrayList<Body> positionSetBodies = new ArrayList<Body>();
 
-	public void setAbsolutePosition(float f, float g, float rot) {
-		this.getObject().setPosition(f, g);
+		this.getObject().setRotation((rotRadians)*MathUtils.radiansToDegrees);
+		positionSetBodies.add(this.getObject().getPhysicsBody());
+		if (getJointBodies() == null) {
+			;
+		} else {
+			Iterator<BaseActor> iter = getJointBodies().iterator();
+
+			while (iter.hasNext()) {
+				BaseActor body = iter.next();
+				if (positionSetBodies.contains(body.getPhysicsBody())) {
+					continue;
+				}
+				body.setRotation((rotRadians)*MathUtils.radiansToDegrees);
+			}
+		}
+	}
+
+	public void setAbsolutePosition(float f, float g) {
+		//this.getObject().setPosition(f, g);
+		
+		ArrayList<Body> positionSetBodies = new ArrayList<Body>();
+
+		this.getObject().setPosition(f,g);
+		positionSetBodies.add(this.getObject().getPhysicsBody());
+		if (getJointBodies() == null) {
+			;
+		} else {
+			Iterator<BaseActor> iter = getJointBodies().iterator();
+
+			while (iter.hasNext()) {
+				BaseActor body = iter.next();
+				if (positionSetBodies.contains(body.getPhysicsBody())) {
+					continue;
+				}
+				positionSetBodies.add(body.getPhysicsBody());
+				body.setPosition( f,  g); // This line is the TODO
+			}
+		}
 	}
 
 	/*public void setGroup(short group) {
@@ -497,6 +536,11 @@ public class Component {
 	public Vector2 getPosition() {
 
 		return getObject().getPosition();
+	}
+
+	public Vector2 getOrigin() {
+		// TODO Auto-generated method stub
+		return new Vector2(getObject().getOriginX(),getObject().getOriginY());
 	}
 
 }

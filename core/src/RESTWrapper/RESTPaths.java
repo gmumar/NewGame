@@ -9,5 +9,6 @@ public class RESTPaths {
 	public static final String ARCTIC_MAPS = "arctic_maps";
 	public static final String INFINITE_MAPS = "infinite_maps";
 	public static final String CHALLENGES = "challenges";
+	public static final String GAME_USERS = "game_users";
 
 }

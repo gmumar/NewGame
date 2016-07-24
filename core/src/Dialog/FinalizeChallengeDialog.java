@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gudesigns.climber.GameLoader;
@@ -43,16 +42,23 @@ public class FinalizeChallengeDialog {
 		Label upgradeText = new Label("Send Challenge", skin, "dialogTitle");
 		header.add(upgradeText);
 
-		base.add(header).center().pad(20);
+		base.add(header).center().pad(5);
 		base.row();
 		
 		// Text Feilds
 		Label rewardMoneyLable = new Label("Reward: ", skin, "default");
-		textFeilds.add(rewardMoneyLable).padLeft(10);
+		textFeilds.add(rewardMoneyLable).padLeft(10).padBottom(5);
 		final TextBox rewardMoney = new TextBox("1000", skin, "userInput");//("MONEY", skin, "dialogTitle");
 		rewardMoney.setTextFieldFilter(new DigitsOnlyFilter());
-		textFeilds.add(rewardMoney).padRight(10);
+		textFeilds.add(rewardMoney).padRight(10).padBottom(5);
+		textFeilds.row();
+
+		Label targetUserLable = new Label("Challenger: ", skin, "default");
+		textFeilds.add(targetUserLable).padLeft(10).padBottom(5);
+		final TextBox targetUser = new TextBox("" , skin, "userInput");//("MONEY", skin, "dialogTitle");
+		textFeilds.add(targetUser).padRight(10).padBottom(5);
 		base.add(textFeilds);
+		
 		base.row();
 
 
@@ -82,7 +88,7 @@ public class FinalizeChallengeDialog {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				popQueObject.getGamePlayInstance().submitChallenge(rewardMoney.getText());
+				popQueObject.getGamePlayInstance().submitChallenge(rewardMoney.getText(), targetUser.getText());
 				base.hide();
 
 				super.clicked(event, x, y);

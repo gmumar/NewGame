@@ -36,6 +36,8 @@ public class AndroidLauncher extends AndroidApplication implements
 		config.hideStatusBar = true;
 		//config.touchSleepTime = 16;
 		Mesh.clearAllMeshes(this);
+		
+		
 
 		GameLoader game = new GameLoader(this);
 
@@ -154,5 +156,7 @@ public class AndroidLauncher extends AndroidApplication implements
 		IAPManager.handleActivityResult(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+
+
 
 }

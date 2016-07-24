@@ -197,31 +197,42 @@ public class AssembledObject {
 		
 		float deltaX = x - originalPos.x;
 		float deltaY = y - originalPos.y;
-		float deltaRot = rot - originalRot;
 		
 		setPosition(deltaX, deltaY);
-		setRotation(deltaRot);
+		setRotation(rot);
 	}
 
-	private void setRotation(float rot) {
+	public void setRotation(float rot) {
+		
+		Vector2 rotationPoint = getBasePart().getPosition();
 		// String componentName = "";
 		// JSONComponentName componentName = new JSONComponentName();
 		ArrayList<String> componentsSet = new ArrayList<String>();
+		
+		componentsSet.clear();
 
-		Iterator<Component> iter = partList.iterator();
-		while (iter.hasNext()) {
-			Component component = iter.next();
+		for (Component component:partList) {
 			JSONComponentName componentName = component.getjComponentName();
-			/*
-			 * componentName = Globals.getComponentName(
-			 * component.getComponentName()).split(
-			 * Assembler.NAME_SUBNAME_SPLIT)[0] +
-			 * Globals.getId(component.getComponentName());
-			 */
-			if (componentsSet.contains(componentName.getBaseId()))
+			
+			if (componentsSet.contains(componentName.getBaseId())){
 				continue;
-			component.setRotation(rot);
+			}
 			componentsSet.add(componentName.getBaseId());
+			
+			 Vector2 componentPoint = new Vector2(component.getPosition().x - rotationPoint.x , 
+					component.getPosition().y - rotationPoint.y);
+
+			float deltaX = (float)(componentPoint.x*Math.cos(rot) - componentPoint.y*Math.sin(rot));
+			float deltaY = (float)(componentPoint.x*Math.sin(rot) + componentPoint.y*Math.cos(rot));
+			
+			component.setAbsolutePosition(deltaX+ rotationPoint.x  , deltaY + rotationPoint.y);
+			
+			if(componentName.getBaseName().compareTo(ComponentNames.TIRE)==0 ||
+					componentName.getBaseName().compareTo(ComponentNames.AXLE)==0  ){
+				continue;
+			}
+			
+			component.setAbsoluteRotation(rot);
 		}
 	}
 

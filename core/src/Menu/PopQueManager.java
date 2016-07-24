@@ -8,6 +8,7 @@ import Dialog.DialogBase;
 import Dialog.FinalizeChallengeDialog;
 import Dialog.KilledDialog;
 import Dialog.PauseDialog;
+import Dialog.SignInDialog;
 import Dialog.Skins;
 import Dialog.SoundDialog;
 import Dialog.StoreBuyDialog;
@@ -39,6 +40,7 @@ public class PopQueManager {
 	private PauseDialog pauseTable;
 	private KilledDialog killedTable;
 	private TutorialDialog tutotialTable;
+	private SignInDialog signInDialog;
 
 	Skin skin;
 
@@ -64,6 +66,10 @@ public class PopQueManager {
 	
 	public void initTutorialTable(PopQueObject popQueObject) {
 		tutotialTable = new TutorialDialog(gameLoader, popQueObject, stage);
+	}
+	
+	public void iniSignInTable(PopQueObject popQueObject) {
+		signInDialog = new SignInDialog(gameLoader, this, popQueObject);
 	}
 
 	public void update() {
@@ -95,7 +101,8 @@ public class PopQueManager {
 		} else if (popQueObject.getType() == PopQueObjectType.LOADING) {
 			createLoadingDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.DELETE) {
-			Animations.fadeAndHide(dialog);
+			if(dialog!=null) Animations.fadeAndHide(dialog);
+			if(signInDialog!=null) signInDialog.getBase().remove();
 		} else if (popQueObject.getType() == PopQueObjectType.BUY) {
 			createBuyDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.WIN) {
@@ -108,6 +115,8 @@ public class PopQueManager {
 			createSoundDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.CHALLENGE_FINALIZATION) {
 			createFinalizeChallengeDialog(popQueObject);
+		} else if (popQueObject.getType() == PopQueObjectType.USER_SIGN_IN) {
+			createSignInDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.PAUSE) {
 			createPauseDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.UNLOCK_MODE
@@ -117,7 +126,8 @@ public class PopQueManager {
 			createUnlockModeDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
 				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_BUILD
-				|| popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY) {
+				|| popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY
+				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_TAKEN) {
 			createUserErrorDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.CAR_DISPLAY) {
 			createCarDisplayDialog(popQueObject);
@@ -133,6 +143,11 @@ public class PopQueManager {
 			System.out.println("ERROR: Unknown PopQueObjectType: "
 					+ popQueObject.getType().toString());
 		}
+	}
+
+	private void createSignInDialog(PopQueObject popQueObject) {
+		signInDialog.update(gameLoader, this, popQueObject);
+		stage.addActor(signInDialog.getBase());
 	}
 
 	private void createFinalizeChallengeDialog(PopQueObject popQueObject) {

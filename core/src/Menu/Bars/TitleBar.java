@@ -162,17 +162,17 @@ public class TitleBar {
 		if (type != ScreenType.MAIN_MENU_SCREEN) {
 			titleBar.add(buyCoins).left().colspan(1).pad(4);
 		}
+		
+		int userNamePadding = 0;
+		Label userNameLabel = null;
+		Button upload = null;
 
 		// Title
 		Label titleLabel = new Label("", skin, "title");
 
 		// titleLabel.setPosition(Globals.ScreenWidth / 2,
 		// Globals.ScreenHeight / 12);
-		if (type == ScreenType.CAR_BUILDER) {
-			titleBar.add(titleLabel).expand().right().padRight(200);
-		} else {
-			titleBar.add(titleLabel).expand().right().padRight(260);
-		}
+
 
 		if (type == ScreenType.MODE_SCREEN) {
 			titleLabel.setText("Game Mode");
@@ -186,13 +186,25 @@ public class TitleBar {
 			titleLabel.setText("Select Car");
 		} else if (type == ScreenType.CHALLENGE_LOBBY) {
 			titleLabel.setText("Head to Head");
+			String userName = user.getLocalUserName();
+			if(userName!=null){
+				userNameLabel = new Label(userName,skin,"title");
+				userNamePadding = (int) (userName.length()*17f);
+				titleBar.add(userNameLabel).right();
+			} 
 		} else if (type == ScreenType.CHALLENGE_CREATION) {
 			titleLabel.setText("Make a challenge");
+			String userName = user.getLocalUserName();
+			if(userName!=null){
+				userNameLabel = new Label(userName,skin,"title");
+				userNamePadding = (int) (userName.length()*17.5f);
+				
+			}
 		} else if (type == ScreenType.CAR_BUILDER) {
 			titleLabel.setText("Build Car");
 
 			// Upload
-			Button upload = SimpleImageButton.create(
+			upload = SimpleImageButton.create(
 					SimpleImageButtonTypes.UPLOAD, gameLoader);
 			upload.addListener(new ClickListener() {
 
@@ -208,11 +220,22 @@ public class TitleBar {
 
 			});
 
-			titleBar.add(upload).right();
-
+			
+		
 		} else if (type == ScreenType.MAIN_MENU_SCREEN) {
 			titleLabel.setText(" ");
 		}
+		
+		if (type == ScreenType.CAR_BUILDER) {
+			titleBar.add(titleLabel).expand().right().padRight(200);
+			titleBar.add(upload).right();
+		} else if (type == ScreenType.CHALLENGE_CREATION || type == ScreenType.CHALLENGE_LOBBY) {
+			titleBar.add(titleLabel).expand().right().padRight(260 - userNamePadding);
+			titleBar.add(userNameLabel).right();
+		} else {
+			titleBar.add(titleLabel).expand().right().padRight(260);
+		}
+		
 
 		// Sound
 		Button sound = SimpleImageButton.create(SimpleImageButtonTypes.SOUND,

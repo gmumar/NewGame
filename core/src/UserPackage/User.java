@@ -69,13 +69,15 @@ public class User {
 	private String currentTrack = null;
 	private Challenge currentChallenge = null;
 	private ArrayList<RecorderUnit> currentChallengeSortedRecording = null;
-	private String currentChallengeCar  = null;
+	private String currentChallengeCar = null;
 
 	private static User instance;
 	private TrippleDes encryptor = new TrippleDes();
 
 	private volatile GameMode currentGameMode = GameMode.NORMAL;
 
+	private String userName = null;
+	
 	private Preferences prefs = null;
 
 	private User() {
@@ -154,6 +156,45 @@ public class User {
 		lockedItems.items.put(ItemsLookupPrefix.getArticPrefix("1"), false);
 
 		saveUserState();
+	}
+
+	public String getLocalUserName() {
+		// return userName if registered else return null
+		String userName = prefs.getString(ItemsLookupPrefix.USER_NAME, null);
+		
+		if(userName == null) {
+			return this.userName;
+		}
+
+		return userName;
+
+	}
+
+	public String getLocalUserObjectId() {
+		// return userName if registered else return null
+
+		String userObjectId = null;
+
+		String userName = prefs.getString(ItemsLookupPrefix.USER_NAME, null);
+		if (userName != null) {
+			userObjectId = prefs.getString(
+					ItemsLookupPrefix.getUserObjectIDPrefix(userName), null);
+		}
+
+		return userObjectId;
+
+	}
+
+	public String userRegisterLocally(String userName, String objectId) {
+		System.out.println("User: registed user " + userName + " " + objectId);
+		this.userName = userName;
+		
+		prefs.putString(ItemsLookupPrefix.USER_NAME, userName);
+		prefs.putString(ItemsLookupPrefix.getUserObjectIDPrefix(userName),
+				objectId);
+		prefs.flush();
+
+		return null;
 	}
 
 	public GameMode getCurrentGameMode() {
@@ -338,42 +379,44 @@ public class User {
 
 	boolean resultsRemaining = true;
 	int currentOffset = 0;
-	
-	public String getCurrentChallengeCar(){
+
+	public String getCurrentChallengeCar() {
 		String inputString = prefs.getString(GamePreferences.CH_CAR_MAP_STR,
 				Globals.defualt_car);
 		currentChallengeCar = inputString;
 
 		return currentChallengeCar;
 	}
-	
-	public ArrayList<RecorderUnit> getCurrentChallengeRecording (){
+
+	public ArrayList<RecorderUnit> getCurrentChallengeRecording() {
 		return this.currentChallengeSortedRecording;
 	}
 
 	public void setCurrentChallenge(final Challenge currentChallenge,
 			final ChallengeLobbyScreen context) {
-		if(currentChallenge==null) return;
-		
+		if (currentChallenge == null)
+			return;
+
 		this.currentChallenge = currentChallenge;
-		
+
 		this.currentChallengeSortedRecording = currentChallenge.getRecording();
-		
-		Collections.sort(this.currentChallengeSortedRecording, new Comparator<RecorderUnit>() {
 
-			@Override
-			public int compare(RecorderUnit o1, RecorderUnit o2) {
+		Collections.sort(this.currentChallengeSortedRecording,
+				new Comparator<RecorderUnit>() {
 
-				Long table1 = o1.getTime();
-				Long table2 = o2.getTime();
+					@Override
+					public int compare(RecorderUnit o1, RecorderUnit o2) {
 
-				return table1.compareTo(table2);
-			}
+						Long table1 = o1.getTime();
+						Long table2 = o2.getTime();
 
-		});
-		
-		
-		prefs.putString(GamePreferences.CH_CAR_MAP_STR, currentChallenge.getCarJson().jsonify());
+						return table1.compareTo(table2);
+					}
+
+				});
+
+		prefs.putString(GamePreferences.CH_CAR_MAP_STR, currentChallenge
+				.getCarJson().jsonify());
 		prefs.flush();
 
 		this.currentChallengeCar = currentChallenge.getCarJson().jsonify();
@@ -431,7 +474,8 @@ public class User {
 									trackJson.setCreationTime(fromServer
 											.getCreationTime());
 
-									context.challengeMapLoaded(trackJson, currentChallenge.getTrackMode());
+									context.challengeMapLoaded(trackJson,
+											currentChallenge.getTrackMode());
 									return;
 
 								}

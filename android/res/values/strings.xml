@@ -3,5 +3,6 @@
 
     <string name="app_name">Hill Climb: UnLimited</string>
      <integer name="google_play_services_version">8487000</integer>
+     <string name="app_id">601589154146</string>
 
 </resources>

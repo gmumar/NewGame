@@ -10,6 +10,8 @@ public class ItemsLookupPrefix {
 	public final static String CAR_MY_PICKS = "car_pick";
 	public final static String COMMUNITY_CARS_MODE = "car_comm";
 	public final static String NO_ADS = "no_ads";
+	public final static String USER_NAME = "usr_name";
+	private final static String USER_OBJ_ID = "usr_obj_id";
 	
 	public final static String SPLITTER = "_";
 
@@ -28,4 +30,7 @@ public class ItemsLookupPrefix {
 		return "_infin" + SPLITTER + mapIndex;
 	}
 	
+	public final static String getUserObjectIDPrefix(String userName){
+		return USER_OBJ_ID + SPLITTER + userName;
+	}	
 }

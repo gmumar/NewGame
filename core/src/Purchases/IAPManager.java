@@ -74,5 +74,8 @@ public abstract class IAPManager {
 			mgr = null;
 		}
 	}
+	
+	public void getUserId() {
+	}
 
 }
