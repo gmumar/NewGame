@@ -10,41 +10,78 @@ import com.badlogic.gdx.Net.HttpResponseListener;
 import com.gudesigns.climber.ChallengeLobbyScreen;
 
 public class BackendFunctions {
-	
-	public static void registerUser(final ChallengeLobbyScreen context, final String userName) {
-		//Preferences prefs = Gdx.app
-			//	.getPreferences(GamePreferences.CAR_PREF_STR);
+
+	public static void getUserMoneyDelta(String objectId,
+			HttpResponseListener listener) {
+
+		// parameters.put(RESTProperties.OBJECT_ID,"571D352B-71BF-1C95-FF07-C2368B0B0100");
+
+		REST.customFunctionCall("MoneyDelta", "objectId", objectId, listener);
+	}
+
+	public static void updateChallengeWinner(String objectID, String winner) {
 
 		HashMap<String, String> parameters = new HashMap<String, String>();
-		parameters.put(RESTProperties.USER_NAME,userName);
+		parameters.put(RESTProperties.WINNER, winner);
 
-		REST.postData(RESTPaths.GAME_USERS, parameters, new HttpResponseListener() {
+		REST.updateEntry(RESTPaths.CHALLENGES, objectID, parameters,
+				new HttpResponseListener() {
 
-			@Override
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				context.userRegistrationComplete(userName,httpResponse);
-			}
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						System.out.println(httpResponse.getResultAsString());
+					}
 
-			@Override
-			public void failed(Throwable t) {
-				context.userRegistrationFailed(userName);
-			}
+					@Override
+					public void failed(Throwable t) {
+						System.out
+								.println("BackendFunctions: Challenge update failed");
+					}
 
-			@Override
-			public void cancelled() {
-				
-			}
-		});
+					@Override
+					public void cancelled() {
+
+					}
+				});
+
+	}
+
+	public static void registerUser(final ChallengeLobbyScreen context,
+			final String userName) {
+		// Preferences prefs = Gdx.app
+		// .getPreferences(GamePreferences.CAR_PREF_STR);
+
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		parameters.put(RESTProperties.USER_NAME, userName);
+
+		REST.postData(RESTPaths.GAME_USERS, parameters,
+				new HttpResponseListener() {
+
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						context.userRegistrationComplete(userName, httpResponse);
+					}
+
+					@Override
+					public void failed(Throwable t) {
+						context.userRegistrationFailed(userName);
+					}
+
+					@Override
+					public void cancelled() {
+
+					}
+				});
 
 	}
 
 	public static void uploadCar(String inputString, String fileName, int index) {
-		//Preferences prefs = Gdx.app
-			//	.getPreferences(GamePreferences.CAR_PREF_STR);
+		// Preferences prefs = Gdx.app
+		// .getPreferences(GamePreferences.CAR_PREF_STR);
 
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.CAR_JSON,// "hello"
-				//prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
+				// prefs.getString(GamePreferences.CAR_MAP_STR, "Error"));
 				Compress.Car(inputString));
 		parameters.put(RESTProperties.CAR_INDEX, Integer.toString(index));
 
@@ -69,13 +106,15 @@ public class BackendFunctions {
 
 	}
 
-	public static void uploadTrack(String mapString, String restPath, float mapTime, int difficulty, int index) {
-		
+	public static void uploadTrack(String mapString, String restPath,
+			float mapTime, int difficulty, int index) {
 
 		HashMap<String, String> parameters = new HashMap<String, String>();
-		parameters.put(RESTProperties.TRACK_POINTS_JSON, Compress.Track(mapString));
+		parameters.put(RESTProperties.TRACK_POINTS_JSON,
+				Compress.Track(mapString));
 		parameters.put(RESTProperties.TRACK_BEST_TIME, Float.toString(mapTime));
-		parameters.put(RESTProperties.TRACK_DIFFICULTY, Integer.toString(difficulty));
+		parameters.put(RESTProperties.TRACK_DIFFICULTY,
+				Integer.toString(difficulty));
 		parameters.put(RESTProperties.TRACK_INDEX, Integer.toString(index));
 
 		REST.postData(restPath, parameters, new HttpResponseListener() {
@@ -99,8 +138,8 @@ public class BackendFunctions {
 
 	}
 
-	
-	public static void uploadChallenge(String restPath, String challenge, String targetUser, String sourceUser, float mapTime, String reward) {
+	public static void uploadChallenge(String restPath, String challenge,
+			String targetUser, String sourceUser, float mapTime, String reward) {
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.CHALLENGE, Compress.Challenge(challenge));
 		parameters.put(RESTProperties.TARGET_USER, targetUser);
@@ -128,6 +167,5 @@ public class BackendFunctions {
 		});
 
 	}
-	
-	
+
 }

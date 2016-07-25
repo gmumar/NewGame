@@ -127,7 +127,7 @@ public class PopQueManager {
 		} else if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
 				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_BUILD
 				|| popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY
-				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_TAKEN) {
+				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_ENTRY) {
 			createUserErrorDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.CAR_DISPLAY) {
 			createCarDisplayDialog(popQueObject);

@@ -18,6 +18,7 @@ import Assembly.Assembler;
 import Assembly.ColliderCategories.ColliderGroups;
 import GroundWorks.GroundBuilder;
 import JSONifier.JSONCar;
+import JSONifier.JSONChallenge;
 import JSONifier.JSONComponentName;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
@@ -30,6 +31,7 @@ import Multiplayer.Recorder;
 import Multiplayer.Replayer;
 import ParallexBackground.ScrollingBackground;
 import ParallexBackground.ScrollingBackground.BackgroundType;
+import RESTWrapper.BackendFunctions;
 import Shader.GameMesh;
 import Sounds.SoundManager;
 import UserPackage.ItemsLookupPrefix;
@@ -659,8 +661,33 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	public void challengeCompleted() {
+		// This only runs on the target user
+		// target user = player -> mapTime
+		// source user = who created -> challenge.getbesttime
 		if (user.getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
 			user.setCurrentGameMode(GameMode.NORMAL);
+
+			JSONChallenge JChallenge = user.getCurrentJSONChallenge();
+
+			String winner = null;
+			// reward user here
+			if (mapTime < JChallenge.getBestTime()) {
+				// player won
+				winner = "TARGET";
+				user.addCoin(JChallenge.getReward());
+			} else if (mapTime > JChallenge.getBestTime()) {
+				// player lost
+				winner = "SOURCE";
+				user.addCoin(-JChallenge.getReward());
+			} else {
+				// draw
+				user.addCoin(JChallenge.getReward() / 2);
+				winner = "NONE";
+			}
+
+			BackendFunctions.updateChallengeWinner(JChallenge.getObjectId(),
+					winner);
+
 			user.setCurrentChallenge(null, null);
 		}
 	}

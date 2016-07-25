@@ -6,6 +6,7 @@ import Menu.PopQueObject;
 import Menu.TextBox;
 import Menu.Buttons.SimpleImageButton;
 import Menu.Buttons.SimpleImageButton.SimpleImageButtonTypes;
+import Menu.PopQueObject.PopQueObjectType;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -24,8 +25,8 @@ public class SignInDialog extends Table {
 	Table base;
 	Skin skin;
 
-	public SignInDialog(final GameLoader gameLoader, PopQueManager popQueManager,
-			final PopQueObject popQueObject) {
+	public SignInDialog(final GameLoader gameLoader,
+			PopQueManager popQueManager, final PopQueObject popQueObject) {
 		super();
 		skin = Skins.loadDefault(gameLoader, 0);
 		buildTable(gameLoader, popQueManager, popQueObject);
@@ -84,8 +85,23 @@ public class SignInDialog extends Table {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				popQueObject.getTwoButtonFlowContext().successfulTwoButtonFlow(userName.getText());
-				super.clicked(event, x, y);
+
+				if (userName.getText().length() < 3) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.ERROR_USER_NAME_ENTRY,
+							"Username too short",
+							"Username must be between 3-12 characters", null));
+				} else if (userName.getText().length() > 12) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.ERROR_USER_NAME_ENTRY,
+							"Username too long",
+							"Username must be between 3-12 characters", null));
+				} else {
+
+					popQueObject.getTwoButtonFlowContext()
+							.successfulTwoButtonFlow(userName.getText());
+					super.clicked(event, x, y);
+				}
 			}
 
 		});

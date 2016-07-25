@@ -1,5 +1,7 @@
 package RESTWrapper;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -24,6 +26,7 @@ public class REST {
 	private final static String CONTENT_TYPE_VALUE = "application/json";
 
 	private final static String URL = "https://api.backendless.com/v1/data";
+	private final static String SERVICE_URL = "http://api.backendless.com/v1/services/climberService/1.0.0/";
 
 	public static final int PAGE_SIZE = 5;
 
@@ -33,7 +36,7 @@ public class REST {
 		request.setHeader(SECRET_KEY, SECRET_KEY_VALUE);
 		request.setHeader(APP_ID, APP_ID_VALUE);
 		request.setHeader(APP_TYPE, APP_TYPE_VALUE);
-		if(method != HttpMethods.DELETE){
+		if (method != HttpMethods.DELETE) {
 			request.setHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 		}
 		request.setTimeOut(10000);
@@ -72,25 +75,65 @@ public class REST {
 	public static HttpRequest getData(String path,
 			final HttpResponseListener listener) {
 		final HttpRequest request = getRequest(path, HttpMethods.GET);
-		//request.setContent("");
+		// request.setContent("");
 
 		Gdx.net.sendHttpRequest(request, listener);
 
 		return request;
 
 	}
-	
-	public static HttpRequest deleteEntry(String path,String objectId,
-			final HttpResponseListener listener) {
-		final HttpRequest request = getRequest(path + "/" + objectId, HttpMethods.DELETE);
-		request.setContent("");
 
+	public static HttpRequest deleteEntry(String path, String objectId,
+			final HttpResponseListener listener) {
+		final HttpRequest request = getRequest(path + "/" + objectId,
+				HttpMethods.DELETE);
+		request.setContent("");
 
 		Gdx.net.sendHttpRequest(request, listener);
 
 		return request;
 
-	}	
+	}
+
+	public static HttpRequest updateEntry(String path, String objectId,
+			HashMap<String, String> parameters,
+			final HttpResponseListener listener) {
+		final HttpRequest request = getRequest(path + "/" + objectId,
+				HttpMethods.PUT);
+		Gson json = new Gson();
+		request.setContent(json.toJson(parameters));
+		Gdx.net.sendHttpRequest(request, listener);
+
+		return request;
+
+	}
+
+	public static HttpRequest customFunctionCall(String function,
+			String argumentName, String argument, HttpResponseListener listener) {
+
+		HttpRequest request = new HttpRequest(HttpMethods.GET);
+
+		try {
+			request.setUrl(SERVICE_URL + function + "?" + argumentName + "="
+					+ URLEncoder.encode("\"" + argument + "\"", "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		request.setHeader(SECRET_KEY, SECRET_KEY_VALUE);
+		request.setHeader(APP_ID, APP_ID_VALUE);
+		request.setHeader(APP_TYPE, APP_TYPE_VALUE);
+		request.setHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+		request.setHeader("Accept", CONTENT_TYPE_VALUE);
+		request.setTimeOut(10000);
+
+		// Gson json = new Gson();
+		// request.setContent(json.toJson(parameters));
+
+		Gdx.net.sendHttpRequest(request, listener);
+
+		return request;
+	}
 
 	/*
 	 * private static String Backendless_JsonifyParameters(HashMap<String,

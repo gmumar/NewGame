@@ -9,7 +9,18 @@ public class JSONChallenge {
 	private String targetUser;
 	private float bestTime;
 	private Integer reward;
+	private String objectId;
 	
+	
+	
+	public String getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+
 	public Integer getReward() {
 		return reward;
 	}

@@ -1,0 +1,24 @@
+[DEBUG]2016-07-25 02:00:33,222::TimersLogger::Message processor - 0::MessageDispatcher::On message received. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 ThreadID::16 Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:00:33,300::TimersLogger::Message processor - 0::MessageDispatcher::On message received. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 ThreadID::16 Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,153::TimersLogger::Message processor - 0::MessageDispatcher::On message received. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 ThreadID::16 Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,153::TimersLogger::Message processor - 0::CodeExecutor::InvokeEvent. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'} ThreadID::16
+
+[DEBUG]2016-07-25 02:59:00,179::TimersLogger::Message processor - 0::CodeExecutor::InvokeEvent. Execute Task. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 ThreadID::16 Task::InvocationTask[ appId:85B126A8-223C-6F79-FF4B-4C6C4CAACB00 versionId:07EBEF90-81A8-E41D-FF74-B98AC53F6800 ] Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,180::TimersLogger::Worker Child::EventInvocationTask::CodeRunner starts timer execution, should be log about success::85B126A8-223C-6F79-FF4B-4C6C4CAACB00::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,380::TimersLogger::Message processor - 0::MessageDispatcher::On message received. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 ThreadID::16 Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,381::TimersLogger::Message processor - 0::CodeExecutor::InvokeEvent. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'} ThreadID::16
+
+[DEBUG]2016-07-25 02:59:00,381::TimersLogger::Message processor - 0::CodeExecutor::InvokeEvent. Execute Task. APP_ID::85B126A8-223C-6F79-FF4B-4C6C4CAACB00 ThreadID::16 Task::InvocationTask[ appId:85B126A8-223C-6F79-FF4B-4C6C4CAACB00 versionId:07EBEF90-81A8-E41D-FF74-B98AC53F6800 ] Timer::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,382::TimersLogger::Worker Child::EventInvocationTask::CodeRunner starts timer execution, should be log about success::85B126A8-223C-6F79-FF4B-4C6C4CAACB00::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,438::TimersLogger::Worker Child::EventInvocationTask::CodeRunner successfully finished timer execution::85B126A8-223C-6F79-FF4B-4C6C4CAACB00::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+
+[DEBUG]2016-07-25 02:59:00,735::TimersLogger::Worker Child::EventInvocationTask::CodeRunner successfully finished timer execution::85B126A8-223C-6F79-FF4B-4C6C4CAACB00::{'startDate':1469329140000,'frequency':{'schedule':'custom','repeat':{'every':3600}},'timername':'delete_users'}
+

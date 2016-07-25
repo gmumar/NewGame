@@ -7,7 +7,7 @@ import com.backendless.BackendlessCollection;
 import com.backendless.persistence.BackendlessDataQuery;
 import com.backendless.servercode.annotation.BackendlessTimer;
 import com.climber.models.Challenges;
-import com.climber.models.Game_users;
+import com.climber.models.game_users;
 
 /**
  * Delete_usersTimer is a timer. It is executed according to the schedule
@@ -28,13 +28,13 @@ public class Delete_usersTimer extends
 		String whereClause = "lastActivity < " + Long.toString(threeDaysAgo);
 		BackendlessDataQuery dataQuery = new BackendlessDataQuery();
 		dataQuery.setWhereClause(whereClause);
-		BackendlessCollection<Game_users> result = Backendless.Persistence.of(
-				Game_users.class).find(dataQuery);
+		BackendlessCollection<game_users> result = Backendless.Persistence.of(
+				game_users.class).find(dataQuery);
 
-		List<Game_users> listToRemove = result.getData();
+		List<game_users> listToRemove = result.getData();
 
-		for (Game_users user : listToRemove) {
-			Backendless.Persistence.of(Game_users.class).remove(user);
+		for (game_users user : listToRemove) {
+			Backendless.Persistence.of(game_users.class).remove(user);
 		}
 		
 		

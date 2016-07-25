@@ -77,6 +77,7 @@ public class Backendless_Deserializer implements
 						.getAsString());
 				unit.setChallengeReward(fromServer.get(
 						RESTProperties.CHALLENGE_REWARD).getAsInt());
+				unit.setObjectId(fromServer.get(RESTProperties.OBJECT_ID).getAsString());
 			}
 			unit.setData(actualDataStr);
 

@@ -54,7 +54,7 @@ public class UserErrorDialog {
 		base.add(text).center().padLeft(15).padRight(15);
 		base.row();
 
-		if (popQueObject.getType() != PopQueObjectType.ERROR_USER_NAME_TAKEN) {
+		if (popQueObject.getType() != PopQueObjectType.ERROR_USER_NAME_ENTRY) {
 			String noButtonText;
 
 			if (popQueObject.getType() == PopQueObjectType.ERROR_USER_BUILD) {
@@ -97,13 +97,13 @@ public class UserErrorDialog {
 			yesButtonText = "Unlock Parts";
 		} else if (popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY) {
 			yesButtonText = "Buy Coins";
-		} else if (popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_TAKEN) {
+		} else if (popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_ENTRY) {
 			yesButtonText = "Ok";
 		}
 
 		if (popQueObject.getType() == PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED
 				|| popQueObject.getType() == PopQueObjectType.ERROR_NOT_ENOUGH_MONEY
-				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_TAKEN) {
+				|| popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_ENTRY) {
 			TextButton yesButton = new TextButton(yesButtonText,
 					Skins.loadDefault(gameLoader, 1), "yesButton");
 			yesButton.addListener(new ClickListener() {

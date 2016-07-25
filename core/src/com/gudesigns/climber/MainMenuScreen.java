@@ -15,6 +15,7 @@ import Menu.PopQueObject.PopQueObjectType;
 import Menu.ScreenType;
 import Menu.Bars.TitleBar;
 import Purchases.GamePurchaseObserver;
+import RESTWrapper.BackendFunctions;
 import Shader.GameMesh;
 import UserPackage.User;
 import UserPackage.User.GameMode;
@@ -45,7 +46,7 @@ public class MainMenuScreen implements Screen {
 	private Color bgColor;
 
 	private Button builder, playGame, buildTrack, selectTrack, selectCar,
-			quickNext, buyCoins, soundControl, tapToPlay, communityCars, headToHead, challengeCreation;
+			quickNext, buyCoins, soundControl, tapToPlay, communityCars, headToHead, challengeCreation, restTest;
 
 	private static CarAnimationRunner carAnimation;
 
@@ -103,6 +104,15 @@ public class MainMenuScreen implements Screen {
 			tapToPlay.setWidth(100);
 			tapToPlay.setHeight(50);
 			stage.addActor(tapToPlay);
+			
+			restTest = new Button("rest Test") {
+				@Override
+				public void Clicked() {
+					//BackendFunctions.getUserMoneyDelta();
+				}
+			};
+			restTest.setPosition(200, 200);
+			//stage.addActor(restTest);
 			
 			challengeCreation = new Button("challenge") {
 				@Override

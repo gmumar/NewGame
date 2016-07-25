@@ -2,7 +2,7 @@ package com.climber.models;
 
 import com.backendless.Backendless;
 
-public class Game_users
+public class game_users
 {
   private Integer moneyDelta;
   private String userName;
@@ -83,28 +83,28 @@ public class Game_users
     this.objectId = objectId;
   }
 
-  public Game_users save()
+  public game_users save()
   {
-    return Backendless.Data.of( Game_users.class ).save( this );
+    return Backendless.Data.of( game_users.class ).save( this );
   }
 
   public Long remove()
   {
-    return Backendless.Data.of( Game_users.class ).remove( this );
+    return Backendless.Data.of( game_users.class ).remove( this );
   }
 
-  public static Game_users findById( String id )
+  public static game_users findById( String id )
   {
-    return Backendless.Data.of( Game_users.class ).findById( id );
+    return Backendless.Data.of( game_users.class ).findById( id );
   }
 
-  public static Game_users findFirst()
+  public static game_users findFirst()
   {
-    return Backendless.Data.of( Game_users.class ).findFirst();
+    return Backendless.Data.of( game_users.class ).findFirst();
   }
 
-  public static Game_users findLast()
+  public static game_users findLast()
   {
-    return Backendless.Data.of( Game_users.class ).findLast();
+    return Backendless.Data.of( game_users.class ).findLast();
   }
 }

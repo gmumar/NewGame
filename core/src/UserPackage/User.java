@@ -12,6 +12,7 @@ import wrapper.Globals;
 import Component.ComponentNames;
 import DataMutators.TrippleDes;
 import JSONifier.JSONCar;
+import JSONifier.JSONChallenge;
 import JSONifier.JSONComponent;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
@@ -68,6 +69,7 @@ public class User {
 	private String currentCar = null;
 	private String currentTrack = null;
 	private Challenge currentChallenge = null;
+	private JSONChallenge currentJSONChallenge = null; 
 	private ArrayList<RecorderUnit> currentChallengeSortedRecording = null;
 	private String currentChallengeCar = null;
 
@@ -376,9 +378,14 @@ public class User {
 	public Challenge getCurrentChallenge() {
 		return currentChallenge;
 	}
+	
+	public JSONChallenge getCurrentJSONChallenge() {
+		return currentJSONChallenge;
+	}
 
 	boolean resultsRemaining = true;
 	int currentOffset = 0;
+
 
 	public String getCurrentChallengeCar() {
 		String inputString = prefs.getString(GamePreferences.CH_CAR_MAP_STR,
@@ -392,14 +399,21 @@ public class User {
 		return this.currentChallengeSortedRecording;
 	}
 
-	public void setCurrentChallenge(final Challenge currentChallenge,
+	public void setCurrentChallenge(final JSONChallenge JSONchallenge,
 			final ChallengeLobbyScreen context) {
-		if (currentChallenge == null)
+		
+		this.currentChallenge = null;
+		this.currentJSONChallenge = null;
+		
+		if (JSONchallenge == null)
 			return;
+		
+		final Challenge challenge = Challenge.objectify(JSONchallenge.getChallenge());
 
-		this.currentChallenge = currentChallenge;
+		this.currentChallenge = challenge;
+		this.currentJSONChallenge = JSONchallenge;
 
-		this.currentChallengeSortedRecording = currentChallenge.getRecording();
+		this.currentChallengeSortedRecording = challenge.getRecording();
 
 		Collections.sort(this.currentChallengeSortedRecording,
 				new Comparator<RecorderUnit>() {
@@ -415,11 +429,11 @@ public class User {
 
 				});
 
-		prefs.putString(GamePreferences.CH_CAR_MAP_STR, currentChallenge
+		prefs.putString(GamePreferences.CH_CAR_MAP_STR, challenge
 				.getCarJson().jsonify());
 		prefs.flush();
 
-		this.currentChallengeCar = currentChallenge.getCarJson().jsonify();
+		this.currentChallengeCar = challenge.getCarJson().jsonify();
 
 		final AsyncExecutor ae = new AsyncExecutor(2);
 
@@ -431,12 +445,12 @@ public class User {
 			public String call() {
 
 				String database = "";
-				if (currentChallenge.getTrackMode() == TrackMode.INFINTE) {
+				if (challenge.getTrackMode() == TrackMode.INFINTE) {
 					database = RESTPaths.INFINITE_MAPS;
 				} else {
-					if (currentChallenge.getTrackType() == TrackType.ARTIC) {
+					if (challenge.getTrackType() == TrackType.ARTIC) {
 						database = RESTPaths.ARCTIC_MAPS;
-					} else if (currentChallenge.getTrackType() == TrackType.FORREST) {
+					} else if (challenge.getTrackType() == TrackType.FORREST) {
 						database = RESTPaths.FORREST_MAPS;
 					}
 				}
@@ -445,7 +459,7 @@ public class User {
 						database
 								+ RESTProperties.URL_ARG_SPLITTER
 								+ RESTProperties
-										.WhereObjectIdIs(currentChallenge
+										.WhereObjectIdIs(challenge
 												.getTrackObjectId()),
 						new HttpResponseListener() {
 
@@ -475,7 +489,7 @@ public class User {
 											.getCreationTime());
 
 									context.challengeMapLoaded(trackJson,
-											currentChallenge.getTrackMode());
+											challenge.getTrackMode());
 									return;
 
 								}
