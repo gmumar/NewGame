@@ -108,7 +108,7 @@ public class REST {
 
 	}
 
-	public static HttpRequest customFunctionCall(String function,
+	public static HttpRequest customFunctionCallGET(String function,
 			String argumentName, String argument, HttpResponseListener listener) {
 
 		HttpRequest request = new HttpRequest(HttpMethods.GET);
@@ -129,6 +129,28 @@ public class REST {
 
 		// Gson json = new Gson();
 		// request.setContent(json.toJson(parameters));
+
+		Gdx.net.sendHttpRequest(request, listener);
+
+		return request;
+	}
+	
+	public static HttpRequest customFunctionCallPOST(String function,
+			HashMap<String, String> parameters , HttpResponseListener listener) {
+
+		HttpRequest request = new HttpRequest(HttpMethods.POST);
+		
+		Gson json = new Gson();
+		request.setUrl(SERVICE_URL + function);
+		
+		request.setContent(json.toJson(parameters));
+
+		request.setHeader(SECRET_KEY, SECRET_KEY_VALUE);
+		request.setHeader(APP_ID, APP_ID_VALUE);
+		request.setHeader(APP_TYPE, APP_TYPE_VALUE);
+		request.setHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+		request.setHeader("Accept", CONTENT_TYPE_VALUE);
+		request.setTimeOut(10000);
 
 		Gdx.net.sendHttpRequest(request, listener);
 

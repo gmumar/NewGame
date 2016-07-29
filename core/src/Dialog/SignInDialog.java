@@ -121,7 +121,7 @@ public class SignInDialog extends Table {
 
 		contentWrapper.add(contentPadding);
 
-		base.add(contentWrapper).expandY();
+		base.add(contentWrapper).expandY().top();
 
 	}
 

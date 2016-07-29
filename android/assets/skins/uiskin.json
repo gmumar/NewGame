@@ -170,6 +170,12 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
 		stageBackground: dialogDim
 	}
+	transparent: {
+		background: transparent,
+		titleFont: default-font,
+		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
+		stageBackground: dialogDim
+	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
@@ -180,7 +186,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		selection: selection
 	}
 	userInput: {
-		font: default-font,
+		font: black-5,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		background: dialogDim,
 		cursor: cursor,

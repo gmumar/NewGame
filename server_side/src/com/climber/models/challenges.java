@@ -2,7 +2,7 @@ package com.climber.models;
 
 import com.backendless.Backendless;
 
-public class Challenges
+public class challenges
 {
   private Integer challengeReward;
   private String objectId;
@@ -105,28 +105,28 @@ public class Challenges
     this.challenge = challenge;
   }
 
-  public Challenges save()
+  public challenges save()
   {
-    return Backendless.Data.of( Challenges.class ).save( this );
+    return Backendless.Data.of( challenges.class ).save( this );
   }
 
   public Long remove()
   {
-    return Backendless.Data.of( Challenges.class ).remove( this );
+    return Backendless.Data.of( challenges.class ).remove( this );
   }
 
-  public static Challenges findById( String id )
+  public static challenges findById( String id )
   {
-    return Backendless.Data.of( Challenges.class ).findById( id );
+    return Backendless.Data.of( challenges.class ).findById( id );
   }
 
-  public static Challenges findFirst()
+  public static challenges findFirst()
   {
-    return Backendless.Data.of( Challenges.class ).findFirst();
+    return Backendless.Data.of( challenges.class ).findFirst();
   }
 
-  public static Challenges findLast()
+  public static challenges findLast()
   {
-    return Backendless.Data.of( Challenges.class ).findLast();
+    return Backendless.Data.of( challenges.class ).findLast();
   }
 }

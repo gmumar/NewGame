@@ -52,6 +52,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -105,13 +106,19 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		initStage();
 
 		popQueManager = new PopQueManager(gameLoader, stage);
-		
-		
+
 		base = new Table(skin);
 		base.setFillParent(true);
 		titleBar = TitleBar.create(base, ScreenType.CHALLENGE_LOBBY,
 				popQueManager, gameState, null, false);
 		base.top();
+		base.row();
+
+		Label connectToInternet = new Label(
+				"You must be connected to the internet to play head to head",
+				skin, "title");
+		base.add(connectToInternet).center().expandY();
+
 		stage.addActor(base);
 
 		// Sign In user
@@ -119,10 +126,9 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 		if (userName == null) {
 			// please sign in/register
-			popQueManager.iniSignInTable(new PopQueObject(
-					PopQueObjectType.USER_SIGN_IN, this));
-			popQueManager.push(new PopQueObject(PopQueObjectType.USER_SIGN_IN,
-					this));
+			signInDialog();
+
+			initDisplay();
 		} else {
 			// update last activity on server
 			if (loadingShowing.tryAcquire()) {
@@ -136,22 +142,66 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 						@Override
 						public void handleHttpResponse(HttpResponse httpResponse) {
-							//
-							//user.addCoin(moneyDelta);
-							//System.out.println("httpresponse -> " + httpResponse
-								//	.getResultAsString());
-							
-							final String input = httpResponse.getResultAsString();
+
+							String input = httpResponse.getResultAsString();
+
+							final JsonObject fromServer = Globals
+									.JSONifyResponses(input);
 
 							Globals.runOnUIThread(new Runnable() {
 
 								@Override
 								public void run() {
-									int moneyDelta = (int)Float.parseFloat(input);
-									
-									user.addCoin(moneyDelta);
-									initDisplay();
-									connectedToServer.release();
+
+									if (fromServer.get("status").getAsInt() == 0) {
+
+										int moneyDelta = fromServer
+												.get("money").getAsInt();
+
+										user.addCoin(moneyDelta);
+
+										connectedToServer.release();
+
+										initDisplay();
+
+										if (moneyDelta == 0) {
+											;
+										} else if (moneyDelta < 0) {
+											popQueManager
+													.push(new PopQueObject(
+															PopQueObjectType.DELETE));
+											popQueManager
+													.push(new PopQueObject(
+															PopQueObjectType.ERROR_USER_NAME_ENTRY,
+															"Challenge Results",
+															"Unfortunately, you lost "
+																	+ Math.abs(moneyDelta)
+																	+ " coins",
+															null));
+											popQueManager
+													.push(new PopQueObject(
+															PopQueObjectType.LOADING));
+										} else if (moneyDelta > 0) {
+											popQueManager
+													.push(new PopQueObject(
+															PopQueObjectType.DELETE));
+											popQueManager
+													.push(new PopQueObject(
+															PopQueObjectType.ERROR_USER_NAME_ENTRY,
+															"Challenge Results",
+															"Congratulations, you won "
+																	+ moneyDelta
+																	+ " coins",
+															null));
+											popQueManager
+													.push(new PopQueObject(
+															PopQueObjectType.LOADING));
+										}
+
+									} else {
+										signInDialog();
+									}
+
 								}
 							});
 
@@ -172,10 +222,19 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 	}
 
+	private void signInDialog() {
+
+		popQueManager.iniSignInTable(new PopQueObject(
+				PopQueObjectType.USER_SIGN_IN, this));
+		popQueManager
+				.push(new PopQueObject(PopQueObjectType.USER_SIGN_IN, this));
+
+	}
+
 	private void initDisplay() {
 		if (challengesTable != null)
 			challengesTable.remove();
-		if (base != null){
+		if (base != null) {
 			base.clear();
 			base.remove();
 		}
@@ -427,7 +486,9 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 				+ RESTProperties.PROP_PROP_SPLITTER
 				+ RESTProperties.TRACK_BEST_TIME
 				+ RESTProperties.PROP_ARG_SPLITTER
-				+ RESTProperties.WhereTargetUserIs(targetUser);
+				+ RESTProperties.WhereTargetUserIs(targetUser)
+				+ RESTProperties.OR
+				+ RESTProperties.WhereTargetUserIs(Globals.OPEN_USER_NAME);
 	}
 
 	private void initStage() {

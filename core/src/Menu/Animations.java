@@ -106,6 +106,10 @@ public class Animations {
 
 	public static final Integer money(Label animationLabel, Label baseLabel,
 			Integer previousMoney, Integer currentMoney) {
+		
+		if(previousMoney==null || currentMoney==null){
+			return 0;
+		}
 
 		// timePassed += Gdx.graphics.getDeltaTime();
 

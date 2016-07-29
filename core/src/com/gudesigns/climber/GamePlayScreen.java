@@ -36,6 +36,7 @@ import Shader.GameMesh;
 import Sounds.SoundManager;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TrackMode;
+import UserPackage.TwoButtonDialogFlow;
 import UserPackage.User;
 import UserPackage.User.GameMode;
 import UserPackage.User.STARS;
@@ -56,6 +57,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
+import com.google.gson.JsonObject;
 import com.gudesigns.climber.SelectorScreens.TrackSelectorScreen.InfiniteTrackSelectorScreen;
 
 public class GamePlayScreen implements Screen, InputProcessor {
@@ -646,18 +648,144 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		}
 	}
 
-	public void submitChallenge(String reward, String targetUser) {
-		if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
-			System.out.println("GamePlayScreen: challege SUBMITTED ");
-			JSONTrack playedTrack = JSONTrack.objectify(user.getCurrentTrack());
-			Challenge.submitChallenge(recorder.getRecording(),
-					JSONCar.objectify(user.getCurrentCar()),
-					playedTrack.getObjectId(),
-					Integer.toString(playedTrack.getItemIndex()),
-					Integer.toString(playedTrack.getDifficulty()),
-					user.getCurrentTrackMode(), playedTrack.getType(),
-					targetUser, user.getLocalUserName(), mapTime, reward);
+	private Semaphore challengeSubmitButtonEnabled = new Semaphore(1);
+	public boolean submitChallenge(String reward, String targetUser) {
+		// !challengeSubmitButtonEnabled
+		if(challengeSubmitButtonEnabled.availablePermits()==0){
+			return false;
 		}
+		
+		if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+			
+			if(reward.isEmpty()){
+				popQueManager
+				.push(new PopQueObject(
+						PopQueObjectType.ERROR_USER_NAME_ENTRY,
+						"Please enter a reward",
+						"Reward must be between 100 and 1,000,000", null));
+				
+				return false;
+			}
+			
+
+
+			if (Integer.parseInt(reward) > 1000000) {
+				popQueManager
+						.push(new PopQueObject(
+								PopQueObjectType.ERROR_USER_NAME_ENTRY,
+								"Reward too large",
+								"Max reward can be 1,000,000", null));
+			} else if (Integer.parseInt(reward) < 100) {
+				popQueManager.push(new PopQueObject(
+						PopQueObjectType.ERROR_USER_NAME_ENTRY,
+						"Reward too small",
+						"Reward must be greater than 100", null));
+			} else if (Integer.parseInt(reward) > user.getMoney()) {
+				popQueManager.push(new PopQueObject(
+						PopQueObjectType.ERROR_USER_NAME_ENTRY,
+						"Reward too large",
+						"Reward cannot be greater than your coins", null));
+			} else if (targetUser.compareTo(user.getLocalUserName()) == 0) {
+				popQueManager
+						.push(new PopQueObject(
+								PopQueObjectType.ERROR_USER_NAME_ENTRY,
+								"Cannot challenge yourself",
+								"You must create a challenge for a friend, or leave empty for open",
+								null));
+			} else if (!targetUser.isEmpty() && targetUser.length() < 3 ) {
+				popQueManager
+						.push(new PopQueObject(
+								PopQueObjectType.ERROR_USER_NAME_ENTRY,
+								"Target user name too short",
+								"Enter valid username or leave blank for open challenge",
+								null));
+			} else if (!targetUser.isEmpty() && targetUser.length() > 12 ) {
+				popQueManager
+						.push(new PopQueObject(
+								PopQueObjectType.ERROR_USER_NAME_ENTRY,
+								"Target user name too long",
+								"Enter valid username or leave blank for open challenge",
+								null));
+			} else if(!targetUser.isEmpty()){
+				System.out.println("GamePlayScreen: challege SUBMITTED ");
+				challengeSubmitButtonEnabled.tryAcquire();
+				JSONTrack playedTrack = JSONTrack.objectify(user
+						.getCurrentTrack());
+				Challenge.submitChallenge(this, recorder.getRecording(),
+						JSONCar.objectify(user.getCurrentCar()),
+						playedTrack.getObjectId(),
+						Integer.toString(playedTrack.getItemIndex()),
+						Integer.toString(playedTrack.getDifficulty()),
+						user.getCurrentTrackMode(), playedTrack.getType(),
+						targetUser, user.getLocalUserName(), mapTime, reward);
+				
+				return true;
+			} else {
+				if(targetUser.isEmpty()){
+					System.out.println("GamePlayScreen: OPEN challege SUBMITTED ");
+					challengeSubmitButtonEnabled.tryAcquire();
+					JSONTrack playedTrack = JSONTrack.objectify(user
+							.getCurrentTrack());
+					Challenge.submitChallenge(this, recorder.getRecording(),
+							JSONCar.objectify(user.getCurrentCar()),
+							playedTrack.getObjectId(),
+							Integer.toString(playedTrack.getItemIndex()),
+							Integer.toString(playedTrack.getDifficulty()),
+							user.getCurrentTrackMode(), playedTrack.getType(),
+							Globals.OPEN_USER_NAME, user.getLocalUserName(), mapTime, reward);
+				}
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	public void challengeSubmitted(String response) {
+		
+		final JsonObject fromServer = Globals.JSONifyResponses(response);
+		
+		Globals.runOnUIThread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				if (fromServer.get("status").getAsInt() == 0) {
+					//Submit successful
+					popQueManager
+					.push(new PopQueObject(
+							PopQueObjectType.ERROR_USER_NAME_ENTRY,
+							"Challenge created!",
+							"Your challenge has been created, check back to see if you won",
+							new TwoButtonDialogFlow() {
+								
+								@Override
+								public boolean successfulTwoButtonFlow(String string) {
+									gameLoader.setScreen(new ChallengeLobbyScreen(gameState));
+									return false;
+								}
+								
+								@Override
+								public boolean failedTwoButtonFlow(Integer moneyRequired) {
+									// TODO Auto-generated method stub
+									return false;
+								}
+							}));
+				} else {
+					//submit failed
+					//challengeSubmitButtonEnabled = true;
+					challengeSubmitButtonEnabled.release();
+					popQueManager
+					.push(new PopQueObject(
+							PopQueObjectType.ERROR_USER_NAME_ENTRY,
+							"Target user does not exist",
+							"Enter valid username or leave blank for open challenge",
+							null));
+				}
+
+			}
+		});
+		
+		
 	}
 
 	public void challengeCompleted() {

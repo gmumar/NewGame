@@ -22,10 +22,16 @@ public class FinalizeChallengeDialog {
 
 		Skin skin = Skins.loadDefault(gameLoader, 0);
 
-		final DialogBase base = new DialogBase("", skin, "buyDialog");
+		final DialogBase base = new DialogBase("", skin, "transparent");
+		//final Table base = new Table();
 		base.clear();
-		base.setMovable(false);
-		base.setModal(true);
+		base.setFillParent(true);
+		//base.setMovable(false);
+		//base.setModal(true);
+		
+		Table whiteBg = new Table(skin);
+		whiteBg.setBackground("white");
+		
 
 		Table header = new Table();
 		Table textFeilds = new Table();
@@ -42,8 +48,8 @@ public class FinalizeChallengeDialog {
 		Label upgradeText = new Label("Send Challenge", skin, "dialogTitle");
 		header.add(upgradeText);
 
-		base.add(header).center().pad(5);
-		base.row();
+		whiteBg.add(header).center().pad(5);
+		whiteBg.row();
 		
 		// Text Feilds
 		Label rewardMoneyLable = new Label("Reward: ", skin, "default");
@@ -57,9 +63,9 @@ public class FinalizeChallengeDialog {
 		textFeilds.add(targetUserLable).padLeft(10).padBottom(5);
 		final TextBox targetUser = new TextBox("" , skin, "userInput");//("MONEY", skin, "dialogTitle");
 		textFeilds.add(targetUser).padRight(10).padBottom(5);
-		base.add(textFeilds);
+		whiteBg.add(textFeilds);
 		
-		base.row();
+		whiteBg.row();
 
 
 		/*
@@ -88,8 +94,9 @@ public class FinalizeChallengeDialog {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				popQueObject.getGamePlayInstance().submitChallenge(rewardMoney.getText(), targetUser.getText());
-				base.hide();
+				if(popQueObject.getGamePlayInstance().submitChallenge(rewardMoney.getText(), targetUser.getText())){
+					//base.hide();
+				}
 
 				super.clicked(event, x, y);
 			}
@@ -97,7 +104,9 @@ public class FinalizeChallengeDialog {
 		});
 		buttons.add(yesButton).height(Globals.baseSize * 2).fillX().expandX();
 
-		base.add(buttons).expandX().fillX().pad(-2);
+		whiteBg.add(buttons).expandX().fillX();
+		
+		base.add(whiteBg).top().expandY().pad(10);
 
 		return base;
 	}

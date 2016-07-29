@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 
-
 /*
  * black #000000 - menu backgrounds, reading text, button text
  50% opacity - menu icons, unplayed levels
@@ -19,7 +18,7 @@ import java.util.ArrayList;
  dark grey #424242 - pop-up window headers + icon text, level numbers, builder mode header background
  country green #646600 - for borders around played levels in country mode
  arctic blue #627689 - for borders around played levels in arctic mode
- 
+
  Wood: http://www.colourlovers.com/palette/42911/Tree_of_Life
  Steel: http://www.colourlovers.com/palette/1415282/%E2%98%A3_biohazard_%E2%98%A3
  diamond: http://www.colourlovers.com/palette/919419/An_Old_Friend
@@ -33,6 +32,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Globals {
 
@@ -81,10 +82,11 @@ public class Globals {
 	final public static int ROTATABLE_JOINT = 1;
 	final public static int LOCKED_JOINT = 0;
 
-	//final public static short GROUND_GROUP = -3;
+	// final public static short GROUND_GROUP = -3;
 
-	final public static float STEP = 0.0168f;//1 / 60f;
-	final public static BigDecimal STEP_BIG = new BigDecimal("0.0168");//1 / 60f;
+	final public static float STEP = 0.0168f;// 1 / 60f;
+	final public static BigDecimal STEP_BIG = new BigDecimal("0.0168");// 1 /
+																		// 60f;
 	final public static float STEP_INVERSE = 60f;
 
 	public static final Integer DISABLE_LEVEL = -1;
@@ -107,19 +109,17 @@ public class Globals {
 	public final static int CAR_DISPLAY_BUTTON_CAMERA_HEIGHT = baseSize * 8;
 	public final static int CAR_DISPLAY_BUTTON_WIDTH = baseSize * 8;
 
-
 	public static void toast(String text) {
 		if (nativeRequestHandler != null) {
 			nativeRequestHandler.Toast(text);
 		}
 	}
-	
+
 	public static void setAds(boolean state) {
 		if (nativeRequestHandler != null) {
 			nativeRequestHandler.showAds(state);
 		}
 	}
-	
 
 	public static void setNativeHandler(IActivityRequestHandler handler) {
 		nativeRequestHandler = handler;
@@ -187,7 +187,7 @@ public class Globals {
 		int count = str.length();
 
 		String ret = new String();
-		char c ;
+		char c;
 		for (int i = 0; i < str.length(); i++) {
 			c = str.charAt(i);
 
@@ -216,7 +216,16 @@ public class Globals {
 
 	public static final String defualt_car = "{\"jointList\":[{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"1\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"2\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"1\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"1\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"0\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"0\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"0\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"1\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"1\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"2\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"1\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"2\"},\"m2\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"0\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"2\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"1\"}},{\"m1\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"1\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"0\"}},{\"m1\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"1\",\"M\":\"0\",\"L\":1},\"m2\":{\"B\":\"TR\",\"C\":\"1\",\"M\":\"0\"}},{\"m1\":{\"B\":\"TR\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"0\",\"M\":\"0\",\"L\":1}},{\"m1\":{\"B\":\"LF\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"2\"}},{\"m1\":{\"B\":\"LF\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"0\"}},{\"m1\":{\"B\":\"LF\",\"C\":\"0\",\"M\":\"0\"},\"m2\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"1\"}}],\"componentList\":[{\"cN\":{\"B\":\"LF\",\"S\":\"CMF\",\"C\":\"0\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"0.0\",\"Y\":\"0.0\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"AX\",\"C\":\"0\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"-2.1595528\",\"Y\":\"-2.0799813\",\"t\":\"PART\",\"m\":true}},{\"cN\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"0\",\"L\":1},\"props\":{\"r\":\"-37.595768\",\"X\":\"-2.1680284\",\"Y\":\"-2.1792185\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"SPJ\",\"S\":\"_LO_\",\"C\":\"1\",\"L\":1},\"props\":{\"r\":\"34.72171\",\"X\":\"2.015686\",\"Y\":\"-2.224338\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"B3\",\"C\":\"0\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"-1.2200001\",\"Y\":\"-0.98999995\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"B3\",\"C\":\"1\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"1.2099998\",\"Y\":\"-0.98\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"AX\",\"C\":\"1\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"2.0704477\",\"Y\":\"-2.189068\",\"t\":\"PART\",\"m\":true}},{\"cN\":{\"B\":\"B3\",\"C\":\"2\",\"M\":\"*\",\"L\":1},\"props\":{\"r\":\"0.0\",\"X\":\"-0.010000348\",\"Y\":\"-0.96\",\"t\":\"PART\",\"m\":false}}],\"jointTypeList\":{},\"addComponents\":[{\"cN\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"0\",\"L\":-1},\"props\":{\"r\":\"-37.595768\",\"X\":\"-1.2528986\",\"Y\":\"-0.9907166\",\"t\":\"PART\",\"m\":false}},{\"cN\":{\"B\":\"SPJ\",\"S\":\"_UP_\",\"C\":\"1\",\"L\":-1},\"props\":{\"r\":\"34.72171\",\"X\":\"1.1612995\",\"Y\":\"-0.9914457\",\"t\":\"PART\",\"m\":false}}]}";
 	final public static String default_track = "{\"points\":[{\"x\":2.0,\"y\":0.0},{\"x\":2.0,\"y\":0.0},{\"x\":2.0,\"y\":0.0},{\"x\":4.0,\"y\":-0.666667},{\"x\":6.0,\"y\":-0.80000067},{\"x\":8.0,\"y\":-0.80000067},{\"x\":10.0,\"y\":-0.80000067},{\"x\":12.0,\"y\":-0.8666668},{\"x\":14.0,\"y\":-1.0666666},{\"x\":16.0,\"y\":-1.1333327},{\"x\":18.0,\"y\":-1.2666664},{\"x\":20.0,\"y\":-1.333334},{\"x\":22.0,\"y\":-1.2000003},{\"x\":24.0,\"y\":-0.8666668}],\"componentList\":[],\"componentJointList\":[],\"componentJointTypes\":{},\"type\":\"FORREST\"}";
+	public static final String OPEN_USER_NAME = "--OPEN--";
 
+	public static JsonObject JSONifyResponses(String input) {
 
+		System.out.println(input);
+		
+		input = input.substring(1, input.length() - 1).replace("\\", "");
+		JsonParser parser = new JsonParser();
+		JsonObject fromServer = parser.parse(input).getAsJsonObject();
+		return fromServer;
+	}
 
 }

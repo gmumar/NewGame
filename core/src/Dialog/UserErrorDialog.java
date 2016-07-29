@@ -120,6 +120,13 @@ public class UserErrorDialog {
 								.getTwoButtonFlowContext()
 								.successfulTwoButtonFlow(
 										ItemsLookupPrefix.ERROR_NOT_ENOUGH_MONEY);
+					} else if (popQueObject.getType() == PopQueObjectType.ERROR_USER_NAME_ENTRY) {
+						if(popQueObject.getTwoButtonFlowContext()!=null){
+							popQueObject
+							.getTwoButtonFlowContext()
+							.successfulTwoButtonFlow("challenge created");
+						}
+						
 					} 
 					/*
 					 * if (popQueObject.getType() ==

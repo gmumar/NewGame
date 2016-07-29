@@ -1,7 +1,6 @@
 package com.climber.events.persistence_service;
 
 import java.sql.Date;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +23,32 @@ public class ChallengesTableEventHandler extends
 		com.backendless.servercode.extension.PersistenceExtender<HashMap> {
 
 	@Override
+	public void beforeCreate(RunnerContext context, HashMap challenges)
+			throws Exception {
+		
+		if(challenges.containsKey("targetUser")){
+			
+			String targetUser = ((String) challenges.get("targetUser")).trim();
+			
+			System.out.println("2.before create " + targetUser);
+			
+			String whereClause = "userName = '" + targetUser + "'";
+			BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+			dataQuery.setWhereClause(whereClause);
+			BackendlessCollection<game_users> result = Backendless.Persistence.of(
+					game_users.class).find(dataQuery);
+
+			if(result.getData().isEmpty()){
+				throw new Exception("targetUser does not exist in game_user ");
+			}
+			
+		} else {
+		
+			super.beforeCreate(context, challenges);
+		}
+	}
+
+	@Override
 	public void afterUpdate(RunnerContext context, HashMap challenges,
 			ExecutionResult<HashMap> result) throws Exception {
 
@@ -31,7 +56,8 @@ public class ChallengesTableEventHandler extends
 		String sourceUser = (String) result.getResult().get("sourceUser");
 		Integer winnings = (Integer) result.getResult().get("challengeReward");
 
-		//System.out.println("sourceUser: " + sourceUser + " Winner: " + winner + " prize " + winnings);
+		// System.out.println("sourceUser: " + sourceUser + " Winner: " + winner
+		// + " prize " + winnings);
 
 		// target user has been rewarded
 		if (!winner.isEmpty()) {
@@ -59,7 +85,7 @@ public class ChallengesTableEventHandler extends
 		for (game_users user : listToRemove) {
 			user.setMoneyDelta(user.getMoneyDelta() + money);
 			user.setLastActivity(new Date(System.currentTimeMillis()));
-			
+
 			Backendless.Persistence.save(user);
 			break;
 		}

@@ -8,6 +8,7 @@ import DataMutators.Compress;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.gudesigns.climber.ChallengeLobbyScreen;
+import com.gudesigns.climber.GamePlayScreen;
 
 public class BackendFunctions {
 
@@ -16,7 +17,7 @@ public class BackendFunctions {
 
 		// parameters.put(RESTProperties.OBJECT_ID,"571D352B-71BF-1C95-FF07-C2368B0B0100");
 
-		REST.customFunctionCall("MoneyDelta", "objectId", objectId, listener);
+		REST.customFunctionCallGET("MoneyDelta", "objectId", objectId, listener);
 	}
 
 	public static void updateChallengeWinner(String objectID, String winner) {
@@ -138,7 +139,7 @@ public class BackendFunctions {
 
 	}
 
-	public static void uploadChallenge(String restPath, String challenge,
+	public static void uploadChallenge(final GamePlayScreen gamePlayScreen, String restPath, String challenge,
 			String targetUser, String sourceUser, float mapTime, String reward) {
 		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(RESTProperties.CHALLENGE, Compress.Challenge(challenge));
@@ -146,8 +147,29 @@ public class BackendFunctions {
 		parameters.put(RESTProperties.SOURCE_USER, sourceUser);
 		parameters.put(RESTProperties.TRACK_BEST_TIME, Float.toString(mapTime));
 		parameters.put(RESTProperties.CHALLENGE_REWARD, reward);
+		
+		REST.customFunctionCallPOST("submitChallenge", parameters, new HttpResponseListener() {
 
-		REST.postData(restPath, parameters, new HttpResponseListener() {
+			@Override
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				
+				gamePlayScreen.challengeSubmitted(httpResponse.getResultAsString());
+			}
+
+			@Override
+			public void failed(Throwable t) {
+				t.printStackTrace();
+			}
+
+			@Override
+			public void cancelled() {
+				Globals.toast("Car uploaded cancelled");
+
+			}
+		});
+		
+		
+		/*REST.postData(restPath, parameters, new HttpResponseListener() {
 
 			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
@@ -164,7 +186,7 @@ public class BackendFunctions {
 				Globals.toast("Car uploaded cancelled");
 
 			}
-		});
+		});*/
 
 	}
 

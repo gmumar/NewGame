@@ -28,7 +28,7 @@ public class RESTProperties {
 	public static final String GREATER_THAN = "%3E";
 	public static final String EQUALS = "%3D";
 	public static final String SINGLE_QOUTE = "%27";
-
+	public static final String OR = "%20or%20";
 
 
 	public static String WhereCreatedGreaterThan(Long lastCreatedTime) {

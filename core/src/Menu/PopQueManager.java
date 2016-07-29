@@ -147,12 +147,15 @@ public class PopQueManager {
 
 	private void createSignInDialog(PopQueObject popQueObject) {
 		signInDialog.update(gameLoader, this, popQueObject);
-		stage.addActor(signInDialog.getBase());
+		stage.addActor(signInDialog.getBase().top());
 	}
 
 	private void createFinalizeChallengeDialog(PopQueObject popQueObject) {
 		dialog = FinalizeChallengeDialog.CreateDialog(gameLoader, popQueObject);
+		dialog.top();
 		dialog.show(stage).top();
+		
+		//stage.addActor(FinalizeChallengeDialog.CreateDialog(gameLoader, popQueObject).top());
 	}
 
 	private void createTutorialDialog(PopQueObject popQueObject) {

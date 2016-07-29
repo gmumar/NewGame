@@ -12,6 +12,7 @@ import RESTWrapper.BackendFunctions;
 import RESTWrapper.RESTPaths;
 import UserPackage.TrackMode;
 import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -204,11 +205,16 @@ public class WinDialog extends Table {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				
+				if(User.getInstance().getCurrentGameMode() == GameMode.SET_CHALLENGE){
+					popQueObject.getGamePlayInstance().createChallenge();
+				} else {
 
-				if (trackMode == TrackMode.ADVENTURE) {
-					popQueObject.getGamePlayInstance().nextLevel(playedTrack);
-				} else if (trackMode == TrackMode.INFINTE) {
-					popQueObject.getGamePlayInstance().infiniteTrackSelector();
+					if (trackMode == TrackMode.ADVENTURE) {
+						popQueObject.getGamePlayInstance().nextLevel(playedTrack);
+					} else if (trackMode == TrackMode.INFINTE) {
+						popQueObject.getGamePlayInstance().infiniteTrackSelector();
+					}
 				}
 
 				// base.hide();
@@ -218,10 +224,16 @@ public class WinDialog extends Table {
 		});
 		Label nextLevelText = new Label("Next Level", skin);
 
-		if (trackMode == TrackMode.ADVENTURE) {
-			nextLevelText = new Label("Next Level", skin);
-		} else if (trackMode == TrackMode.INFINTE) {
-			nextLevelText = new Label("Track Selector", skin);
+		
+		if(User.getInstance().getCurrentGameMode() == GameMode.SET_CHALLENGE){
+			nextLevelText = new Label("Send Challenge", skin);
+		} else {
+		
+			if (trackMode == TrackMode.ADVENTURE) {
+				nextLevelText = new Label("Next Level", skin);
+			} else if (trackMode == TrackMode.INFINTE) {
+				nextLevelText = new Label("Track Selector", skin);
+			}
 		}
 
 		nextLevel.add(nextLevelText).pad(20);

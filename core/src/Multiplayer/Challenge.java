@@ -9,6 +9,7 @@ import RESTWrapper.RESTPaths;
 import UserPackage.TrackMode;
 
 import com.google.gson.Gson;
+import com.gudesigns.climber.GamePlayScreen;
 
 public class Challenge {
 
@@ -51,14 +52,14 @@ public class Challenge {
 		return json.toJson(c);
 	}
 
-	public static void submitChallenge(ArrayList<RecorderUnit> recording2,
+	public static void submitChallenge(GamePlayScreen gamePlayScreen, ArrayList<RecorderUnit> recording2,
 			JSONCar car, String trackId, String trackIndex,
 			String trackDifficulty, TrackMode currentTrackMode, TrackType type,
 			String sourceUser, String targetUser, float mapTime, String reward) {
 
-		BackendFunctions.uploadChallenge(
+		BackendFunctions.uploadChallenge(gamePlayScreen,
 				RESTPaths.CHALLENGES,
-				createChallegeJSON(recording2, car, trackId, trackIndex,
+				createChallegeJSON( recording2, car, trackId, trackIndex,
 						trackDifficulty, currentTrackMode, type), sourceUser,
 				targetUser, mapTime, reward);
 

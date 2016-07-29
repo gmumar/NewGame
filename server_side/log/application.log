@@ -1,211 +1,502 @@
-2016-07-25 01:03:38,507 [ERROR] java.net.SocketException: Connection reset
-redis.clients.jedis.exceptions.JedisConnectionException: java.net.SocketException: Connection reset
-	at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:201) ~[CodeRunner.jar:na]
-	at redis.clients.util.RedisInputStream.readByte(RedisInputStream.java:40) ~[CodeRunner.jar:na]
-	at redis.clients.jedis.Protocol.process(Protocol.java:132) ~[CodeRunner.jar:na]
-	at redis.clients.jedis.Protocol.read(Protocol.java:196) ~[CodeRunner.jar:na]
-	at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:288) ~[CodeRunner.jar:na]
-	at redis.clients.jedis.Connection.getBinaryMultiBulkReply(Connection.java:224) ~[CodeRunner.jar:na]
-	at redis.clients.jedis.BinaryJedis.blpop(BinaryJedis.java:1969) ~[CodeRunner.jar:na]
-	at redis.clients.jedis.BinaryJedis.blpop(BinaryJedis.java:1834) ~[CodeRunner.jar:na]
-	at com.backendless.coderunner.processor.impl.MessageProcessor.pollMessage(MessageProcessor.java:41) ~[CodeRunner.jar:na]
-	at com.backendless.coderunner.processor.AbstractMessageProcessor.run(AbstractMessageProcessor.java:44) [CodeRunner.jar:na]
-Caused by: java.net.SocketException: Connection reset
-	at java.net.SocketInputStream.read(SocketInputStream.java:209) ~[na:1.8.0_91]
-	at java.net.SocketInputStream.read(SocketInputStream.java:141) ~[na:1.8.0_91]
-	at java.net.SocketInputStream.read(SocketInputStream.java:127) ~[na:1.8.0_91]
-	at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:195) ~[CodeRunner.jar:na]
-	... 9 common frames omitted
-2016-07-25 01:42:41,382 [INFO] Debugging Utility disconnected successfully
-2016-07-25 01:42:41,385 [INFO] Thank you for using Backendless
-2016-07-25 01:42:51,269 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 01:42:51,276 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 01:42:51,721 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 01:42:51,721 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 01:42:51,721 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 01:42:51,732 [INFO] CodeRunner session is running for 2 hours and will be terminated on 03:42:51.727[UTC]
-2016-07-25 01:42:51,957 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 01:42:51,961 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 01:42:51,961 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 01:42:52,901 [INFO] Runner successfully registered
-2016-07-25 01:42:52,924 [INFO] Parsing event model...
-2016-07-25 01:42:52,990 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 01:42:56,087 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
-2016-07-25 01:42:56,093 [INFO] Deploying model to server, and starting debug...
-2016-07-25 01:42:57,143 [INFO] Model successfully deployed.
-2016-07-25 01:42:57,144 [INFO] Waiting for events...
-2016-07-25 02:00:22,388 [INFO] Debugging Utility disconnected successfully
-2016-07-25 02:00:22,391 [INFO] Thank you for using Backendless
-2016-07-25 02:00:29,038 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 02:00:29,046 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 02:00:29,596 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 02:00:29,596 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 02:00:29,596 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 02:00:29,608 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:00:29.602[UTC]
-2016-07-25 02:00:29,859 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 02:00:29,862 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 02:00:29,862 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 02:00:30,851 [INFO] Runner successfully registered
-2016-07-25 02:00:30,874 [INFO] Parsing event model...
-2016-07-25 02:00:31,009 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 02:00:33,068 [ERROR] null
-java.lang.NullPointerException: null
-	at com.backendless.coderunner.processor.MessageDispatcher.onMessageReceived(MessageDispatcher.java:57) ~[CodeRunner.jar:na]
-	at com.backendless.coderunner.processor.AbstractMessageProcessor.run(AbstractMessageProcessor.java:46) ~[CodeRunner.jar:na]
-2016-07-25 02:00:33,109 [ERROR] null
-java.lang.NullPointerException: null
-	at com.backendless.coderunner.processor.MessageDispatcher.onMessageReceived(MessageDispatcher.java:57) ~[CodeRunner.jar:na]
-	at com.backendless.coderunner.processor.AbstractMessageProcessor.run(AbstractMessageProcessor.java:46) ~[CodeRunner.jar:na]
-2016-07-25 02:00:33,153 [ERROR] null
-java.lang.NullPointerException: null
-	at com.backendless.coderunner.processor.MessageDispatcher.onMessageReceived(MessageDispatcher.java:57) ~[CodeRunner.jar:na]
-	at com.backendless.coderunner.processor.AbstractMessageProcessor.run(AbstractMessageProcessor.java:46) ~[CodeRunner.jar:na]
-2016-07-25 02:00:33,185 [ERROR] null
-java.lang.NullPointerException: null
-	at com.backendless.coderunner.processor.MessageDispatcher.onMessageReceived(MessageDispatcher.java:57) ~[CodeRunner.jar:na]
-	at com.backendless.coderunner.processor.AbstractMessageProcessor.run(AbstractMessageProcessor.java:46) ~[CodeRunner.jar:na]
-2016-07-25 02:00:33,236 [ERROR] null
+2016-07-28 01:56:24,668 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 01:56:24,724 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 01:56:25,171 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 01:56:25,171 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 01:56:25,171 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 01:56:25,182 [INFO] CodeRunner session is running for 2 hours and will be terminated on 03:56:25.177[UTC]
+2016-07-28 01:56:25,393 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 01:56:25,395 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 01:56:25,395 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 01:56:26,690 [INFO] Runner successfully registered
+2016-07-28 01:56:26,730 [INFO] Parsing event model...
+2016-07-28 01:56:26,779 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 01:56:29,884 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 01:56:29,888 [INFO] Deploying model to server, and starting debug...
+2016-07-28 01:56:30,929 [INFO] Model successfully deployed.
+2016-07-28 01:56:30,930 [INFO] Waiting for events...
+2016-07-28 02:05:59,440 [INFO] Debugging Utility disconnected successfully
+2016-07-28 02:05:59,442 [INFO] Thank you for using Backendless
+2016-07-28 02:06:06,795 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 02:06:06,802 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 02:06:07,306 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 02:06:07,306 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 02:06:07,307 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 02:06:07,316 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:06:07.311[UTC]
+2016-07-28 02:06:07,577 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 02:06:07,583 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 02:06:07,583 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 02:06:08,689 [INFO] Runner successfully registered
+2016-07-28 02:06:08,719 [INFO] Parsing event model...
+2016-07-28 02:06:08,784 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 02:06:12,285 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 02:06:12,289 [INFO] Deploying model to server, and starting debug...
+2016-07-28 02:06:12,907 [INFO] Model successfully deployed.
+2016-07-28 02:06:12,908 [INFO] Waiting for events...
+2016-07-28 02:10:53,128 [INFO] Debugging Utility disconnected successfully
+2016-07-28 02:10:53,129 [INFO] Thank you for using Backendless
+2016-07-28 02:11:00,380 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 02:11:00,385 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 02:11:00,829 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 02:11:00,829 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 02:11:00,829 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 02:11:00,835 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:11:00.832[UTC]
+2016-07-28 02:11:01,083 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 02:11:01,088 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 02:11:01,088 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 02:11:02,211 [INFO] Runner successfully registered
+2016-07-28 02:11:02,233 [INFO] Parsing event model...
+2016-07-28 02:11:02,302 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 02:11:05,715 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 02:11:05,720 [INFO] Deploying model to server, and starting debug...
+2016-07-28 02:11:06,231 [INFO] Model successfully deployed.
+2016-07-28 02:11:06,231 [INFO] Waiting for events...
+2016-07-28 02:12:31,773 [INFO] Debugging Utility disconnected successfully
+2016-07-28 02:12:31,773 [INFO] Thank you for using Backendless
+2016-07-28 02:12:39,001 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 02:12:39,007 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 02:12:39,464 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 02:12:39,464 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 02:12:39,465 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 02:12:39,473 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:12:39.468[UTC]
+2016-07-28 02:12:39,718 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 02:12:39,721 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 02:12:39,722 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 02:12:40,630 [INFO] Runner successfully registered
+2016-07-28 02:12:40,653 [INFO] Parsing event model...
+2016-07-28 02:12:40,734 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 02:12:44,068 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 02:12:44,073 [INFO] Deploying model to server, and starting debug...
+2016-07-28 02:12:44,787 [INFO] Model successfully deployed.
+2016-07-28 02:12:44,787 [INFO] Waiting for events...
+2016-07-28 02:17:24,612 [INFO] Debugging Utility disconnected successfully
+2016-07-28 02:17:24,612 [INFO] Thank you for using Backendless
+2016-07-28 02:17:32,764 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 02:17:32,769 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 02:17:33,251 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 02:17:33,252 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 02:17:33,252 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 02:17:33,260 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:17:33.255[UTC]
+2016-07-28 02:17:33,496 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 02:17:33,504 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 02:17:33,504 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 02:17:34,522 [INFO] Runner successfully registered
+2016-07-28 02:17:34,542 [INFO] Parsing event model...
+2016-07-28 02:17:34,603 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 02:17:38,033 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 02:17:38,038 [INFO] Deploying model to server, and starting debug...
+2016-07-28 02:17:38,977 [INFO] Model successfully deployed.
+2016-07-28 02:17:38,977 [INFO] Waiting for events...
+2016-07-28 02:21:51,108 [INFO] Debugging Utility disconnected successfully
+2016-07-28 02:21:51,108 [INFO] Thank you for using Backendless
+2016-07-28 02:21:58,816 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 02:21:58,821 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 02:21:59,284 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 02:21:59,284 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 02:21:59,285 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 02:21:59,291 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:21:59.288[UTC]
+2016-07-28 02:21:59,547 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 02:21:59,550 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 02:21:59,550 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 02:22:00,930 [INFO] Runner successfully registered
+2016-07-28 02:22:00,952 [INFO] Parsing event model...
+2016-07-28 02:22:01,019 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 02:22:04,458 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 02:22:04,464 [INFO] Deploying model to server, and starting debug...
+2016-07-28 02:22:05,478 [INFO] Model successfully deployed.
+2016-07-28 02:22:05,479 [INFO] Waiting for events...
+2016-07-28 02:22:57,681 [INFO] Debugging Utility disconnected successfully
+2016-07-28 02:22:57,682 [INFO] Thank you for using Backendless
+2016-07-28 02:23:05,316 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 02:23:05,321 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 02:23:05,774 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 02:23:05,774 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 02:23:05,775 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 02:23:05,781 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:23:05.777[UTC]
+2016-07-28 02:23:06,006 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 02:23:06,013 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 02:23:06,013 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 02:23:07,101 [INFO] Runner successfully registered
+2016-07-28 02:23:07,123 [INFO] Parsing event model...
+2016-07-28 02:23:07,197 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 02:23:10,530 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 02:23:10,536 [INFO] Deploying model to server, and starting debug...
+2016-07-28 02:23:11,549 [INFO] Model successfully deployed.
+2016-07-28 02:23:11,549 [INFO] Waiting for events...
+2016-07-28 02:32:01,034 [INFO] Debugging Utility disconnected successfully
+2016-07-28 02:32:01,035 [INFO] Thank you for using Backendless
+2016-07-28 02:32:08,275 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 02:32:08,281 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 02:32:08,646 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 02:32:08,647 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 02:32:08,647 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 02:32:08,653 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:32:08.650[UTC]
+2016-07-28 02:32:08,840 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 02:32:08,842 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 02:32:08,843 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 02:32:09,719 [INFO] Runner successfully registered
+2016-07-28 02:32:09,740 [INFO] Parsing event model...
+2016-07-28 02:32:09,811 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 02:32:12,940 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 02:32:12,948 [INFO] Deploying model to server, and starting debug...
+2016-07-28 02:32:13,551 [INFO] Model successfully deployed.
+2016-07-28 02:32:13,552 [INFO] Waiting for events...
+2016-07-28 03:06:13,914 [INFO] Debugging Utility disconnected successfully
+2016-07-28 03:06:13,916 [INFO] Thank you for using Backendless
+2016-07-28 03:06:25,222 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 03:06:25,228 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 03:06:25,715 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 03:06:25,715 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 03:06:25,715 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 03:06:25,726 [INFO] CodeRunner session is running for 2 hours and will be terminated on 05:06:25.722[UTC]
+2016-07-28 03:06:26,004 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 03:06:26,007 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 03:06:26,007 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 03:06:27,419 [INFO] Runner successfully registered
+2016-07-28 03:06:27,456 [INFO] Parsing event model...
+2016-07-28 03:06:27,570 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 03:06:29,827 [ERROR] null
 java.lang.NullPointerException: null
 	at com.backendless.coderunner.processor.MessageDispatcher.onMessageReceived(MessageDispatcher.java:44) ~[CodeRunner.jar:na]
 	at com.backendless.coderunner.processor.AbstractMessageProcessor.run(AbstractMessageProcessor.java:46) ~[CodeRunner.jar:na]
-2016-07-25 02:00:33,301 [ERROR] null
+2016-07-28 03:06:30,382 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 03:06:30,394 [INFO] Deploying model to server, and starting debug...
+2016-07-28 03:06:32,175 [INFO] Model successfully deployed.
+2016-07-28 03:06:32,175 [INFO] Waiting for events...
+2016-07-28 03:06:32,176 [INFO] Publishing 2 event handlers and 1 timer and 1 service to the server… 
+2016-07-28 03:07:08,114 [INFO] Successfully published all event handlers and timers. 
+2016-07-28 03:07:10,683 [INFO] Service published
+2016-07-28 03:07:10,683 [INFO] If you connected to coderunner for debug - please stop debugging
+2016-07-28 03:07:10,683 [INFO] CodeRunner will shutdown now
+2016-07-28 03:07:11,445 [INFO] Debugging Utility disconnected successfully
+2016-07-28 03:07:11,445 [INFO] Thank you for using Backendless
+2016-07-28 03:42:12,204 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 03:42:12,209 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 03:42:12,577 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 03:42:12,578 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 03:42:12,578 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 03:42:12,584 [INFO] CodeRunner session is running for 2 hours and will be terminated on 05:42:12.581[UTC]
+2016-07-28 03:42:12,775 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 03:42:12,778 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 03:42:12,778 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 03:42:13,532 [INFO] Runner successfully registered
+2016-07-28 03:42:13,552 [INFO] Parsing event model...
+2016-07-28 03:42:13,611 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 03:42:16,710 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 03:42:16,714 [INFO] Deploying model to server, and starting debug...
+2016-07-28 03:42:17,342 [INFO] Model successfully deployed.
+2016-07-28 03:42:17,343 [INFO] Waiting for events...
+2016-07-28 04:03:39,118 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:03:39,119 [INFO] Thank you for using Backendless
+2016-07-28 04:03:46,057 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:03:46,075 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:03:46,641 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:03:46,641 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:03:46,642 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:03:46,648 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:03:46.644[UTC]
+2016-07-28 04:03:46,929 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:03:46,940 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:03:46,940 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:03:48,016 [INFO] Runner successfully registered
+2016-07-28 04:03:48,037 [INFO] Parsing event model...
+2016-07-28 04:03:48,121 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:03:51,549 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:03:51,561 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:03:51,970 [INFO] Model successfully deployed.
+2016-07-28 04:03:51,971 [INFO] Waiting for events...
+2016-07-28 04:06:42,221 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:06:42,221 [INFO] Thank you for using Backendless
+2016-07-28 04:06:48,769 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:06:48,775 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:06:49,209 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:06:49,210 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:06:49,210 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:06:49,217 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:06:49.213[UTC]
+2016-07-28 04:06:49,464 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:06:49,472 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:06:49,472 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:06:50,377 [INFO] Runner successfully registered
+2016-07-28 04:06:50,399 [INFO] Parsing event model...
+2016-07-28 04:06:50,462 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:06:53,917 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:06:53,924 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:06:54,286 [INFO] Model successfully deployed.
+2016-07-28 04:06:54,287 [INFO] Waiting for events...
+2016-07-28 04:11:42,604 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:11:42,604 [INFO] Thank you for using Backendless
+2016-07-28 04:11:49,543 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:11:49,549 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:11:49,994 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:11:49,994 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:11:49,995 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:11:50,001 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:11:49.998[UTC]
+2016-07-28 04:11:50,246 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:11:50,249 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:11:50,249 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:11:51,160 [INFO] Runner successfully registered
+2016-07-28 04:11:51,187 [INFO] Parsing event model...
+2016-07-28 04:11:51,276 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:11:54,599 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:11:54,604 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:11:54,989 [INFO] Model successfully deployed.
+2016-07-28 04:11:54,989 [INFO] Waiting for events...
+2016-07-28 04:18:25,089 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:18:25,090 [INFO] Thank you for using Backendless
+2016-07-28 04:18:35,617 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:18:35,623 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:18:36,099 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:18:36,099 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:18:36,099 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:18:36,107 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:18:36.103[UTC]
+2016-07-28 04:18:36,363 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:18:36,368 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:18:36,369 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:18:37,247 [INFO] Runner successfully registered
+2016-07-28 04:18:37,267 [INFO] Parsing event model...
+2016-07-28 04:18:37,328 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:18:40,776 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:18:40,786 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:18:41,236 [INFO] Model successfully deployed.
+2016-07-28 04:18:41,236 [INFO] Waiting for events...
+2016-07-28 04:21:26,337 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:21:26,337 [INFO] Thank you for using Backendless
+2016-07-28 04:21:33,161 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:21:33,166 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:21:33,645 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:21:33,645 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:21:33,646 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:21:33,653 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:21:33.649[UTC]
+2016-07-28 04:21:33,896 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:21:33,899 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:21:33,899 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:21:34,780 [INFO] Runner successfully registered
+2016-07-28 04:21:34,801 [INFO] Parsing event model...
+2016-07-28 04:21:34,874 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:21:38,321 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:21:38,349 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:21:38,759 [INFO] Model successfully deployed.
+2016-07-28 04:21:38,759 [INFO] Waiting for events...
+2016-07-28 04:22:20,707 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:22:20,707 [INFO] Thank you for using Backendless
+2016-07-28 04:22:27,193 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:22:27,208 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:22:27,841 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:22:27,842 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:22:27,843 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:22:27,851 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:22:27.846[UTC]
+2016-07-28 04:22:28,093 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:22:28,096 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:22:28,096 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:22:29,335 [INFO] Runner successfully registered
+2016-07-28 04:22:29,355 [INFO] Parsing event model...
+2016-07-28 04:22:29,417 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:22:33,058 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:22:33,068 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:22:33,442 [INFO] Model successfully deployed.
+2016-07-28 04:22:33,442 [INFO] Waiting for events...
+2016-07-28 04:23:29,410 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:23:29,410 [INFO] Thank you for using Backendless
+2016-07-28 04:23:35,962 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:23:35,968 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:23:36,447 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:23:36,447 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:23:36,447 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:23:36,454 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:23:36.450[UTC]
+2016-07-28 04:23:36,698 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:23:36,701 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:23:36,701 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:23:37,660 [INFO] Runner successfully registered
+2016-07-28 04:23:37,683 [INFO] Parsing event model...
+2016-07-28 04:23:37,747 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:23:41,142 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:23:41,149 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:23:41,492 [INFO] Model successfully deployed.
+2016-07-28 04:23:41,492 [INFO] Waiting for events...
+2016-07-28 04:32:29,586 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:32:29,587 [INFO] Thank you for using Backendless
+2016-07-28 04:32:36,841 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:32:36,846 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:32:37,292 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:32:37,292 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:32:37,293 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:32:37,300 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:32:37.296[UTC]
+2016-07-28 04:32:37,568 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:32:37,571 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:32:37,572 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:32:38,468 [INFO] Runner successfully registered
+2016-07-28 04:32:38,491 [INFO] Parsing event model...
+2016-07-28 04:32:38,553 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:32:41,969 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:32:41,975 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:32:42,354 [INFO] Model successfully deployed.
+2016-07-28 04:32:42,355 [INFO] Waiting for events...
+2016-07-28 04:34:57,450 [INFO] Debugging Utility disconnected successfully
+2016-07-28 04:34:57,451 [INFO] Thank you for using Backendless
+2016-07-28 04:35:04,622 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 04:35:04,628 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 04:35:05,113 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 04:35:05,113 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 04:35:05,113 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 04:35:05,121 [INFO] CodeRunner session is running for 2 hours and will be terminated on 06:35:05.117[UTC]
+2016-07-28 04:35:05,356 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 04:35:05,359 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 04:35:05,359 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 04:35:06,287 [INFO] Runner successfully registered
+2016-07-28 04:35:06,308 [INFO] Parsing event model...
+2016-07-28 04:35:06,367 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 04:35:09,762 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 04:35:09,771 [INFO] Deploying model to server, and starting debug...
+2016-07-28 04:35:10,530 [INFO] Model successfully deployed.
+2016-07-28 04:35:10,531 [INFO] Waiting for events...
+2016-07-28 05:07:03,824 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:07:03,825 [INFO] Thank you for using Backendless
+2016-07-28 05:07:10,787 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 05:07:10,794 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 05:07:11,211 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 05:07:11,211 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 05:07:11,212 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 05:07:11,218 [INFO] CodeRunner session is running for 2 hours and will be terminated on 07:07:11.215[UTC]
+2016-07-28 05:07:11,417 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 05:07:11,420 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 05:07:11,420 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 05:07:12,461 [INFO] Runner successfully registered
+2016-07-28 05:07:12,481 [INFO] Parsing event model...
+2016-07-28 05:07:12,614 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 05:07:14,758 [ERROR] null
 java.lang.NullPointerException: null
-	at com.backendless.coderunner.processor.MessageDispatcher.onMessageReceived(MessageDispatcher.java:44) ~[CodeRunner.jar:na]
+	at com.backendless.coderunner.processor.MessageDispatcher.onMessageReceived(MessageDispatcher.java:57) ~[CodeRunner.jar:na]
 	at com.backendless.coderunner.processor.AbstractMessageProcessor.run(AbstractMessageProcessor.java:46) ~[CodeRunner.jar:na]
-2016-07-25 02:00:33,574 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
-2016-07-25 02:00:33,583 [INFO] Deploying model to server, and starting debug...
-2016-07-25 02:00:34,067 [INFO] Model successfully deployed.
-2016-07-25 02:00:34,067 [INFO] Waiting for events...
-2016-07-25 02:01:19,936 [INFO] Debugging Utility disconnected successfully
-2016-07-25 02:01:19,936 [INFO] Thank you for using Backendless
-2016-07-25 02:04:38,584 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 02:04:38,591 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 02:04:39,041 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 02:04:39,041 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 02:04:39,041 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 02:04:39,049 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:04:39.045[UTC]
-2016-07-25 02:04:39,290 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 02:04:39,293 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 02:04:39,294 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 02:04:40,249 [INFO] Runner successfully registered
-2016-07-25 02:04:40,271 [INFO] Parsing event model...
-2016-07-25 02:04:40,338 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 02:04:43,757 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
-2016-07-25 02:04:43,763 [INFO] Deploying model to server, and starting debug...
-2016-07-25 02:04:44,228 [INFO] Model successfully deployed.
-2016-07-25 02:04:44,229 [INFO] Waiting for events...
-2016-07-25 02:05:19,754 [INFO] Debugging Utility disconnected successfully
-2016-07-25 02:05:19,755 [INFO] Thank you for using Backendless
-2016-07-25 02:05:55,664 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 02:05:55,671 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 02:05:56,026 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 02:05:56,027 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 02:05:56,027 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 02:05:56,033 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:05:56.030[UTC]
-2016-07-25 02:05:56,216 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 02:05:56,219 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 02:05:56,219 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 02:05:57,295 [INFO] Runner successfully registered
-2016-07-25 02:05:57,317 [INFO] Parsing event model...
-2016-07-25 02:05:57,369 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 02:06:00,342 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
-2016-07-25 02:06:00,347 [INFO] Deploying model to server, and starting debug...
-2016-07-25 02:06:00,821 [INFO] Model successfully deployed.
-2016-07-25 02:06:00,821 [INFO] Waiting for events...
-2016-07-25 02:07:20,687 [INFO] Debugging Utility disconnected successfully
-2016-07-25 02:07:20,687 [INFO] Thank you for using Backendless
-2016-07-25 02:07:39,754 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 02:07:39,761 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 02:07:40,127 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 02:07:40,127 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 02:07:40,127 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 02:07:40,133 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:07:40.130[UTC]
-2016-07-25 02:07:40,314 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 02:07:40,317 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 02:07:40,317 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 02:07:41,102 [INFO] Runner successfully registered
-2016-07-25 02:07:41,122 [INFO] Parsing event model...
-2016-07-25 02:07:41,181 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 02:07:44,168 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
-2016-07-25 02:07:44,172 [INFO] Deploying model to server, and starting debug...
-2016-07-25 02:07:44,660 [INFO] Model successfully deployed.
-2016-07-25 02:07:44,660 [INFO] Waiting for events...
-2016-07-25 02:20:26,774 [INFO] Debugging Utility disconnected successfully
-2016-07-25 02:20:26,775 [INFO] Thank you for using Backendless
-2016-07-25 02:20:33,307 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 02:20:33,314 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 02:20:33,723 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 02:20:33,723 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 02:20:33,723 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 02:20:33,730 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:20:33.726[UTC]
-2016-07-25 02:20:33,925 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 02:20:33,936 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 02:20:33,936 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 02:20:34,781 [INFO] Runner successfully registered
-2016-07-25 02:20:34,803 [INFO] Parsing event model...
-2016-07-25 02:20:34,856 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 02:20:37,861 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
-2016-07-25 02:20:37,868 [INFO] Deploying model to server, and starting debug...
-2016-07-25 02:20:38,513 [INFO] Model successfully deployed.
-2016-07-25 02:20:38,514 [INFO] Waiting for events...
-2016-07-25 02:38:06,502 [INFO] Debugging Utility disconnected successfully
-2016-07-25 02:38:06,503 [INFO] Thank you for using Backendless
-2016-07-25 02:38:12,952 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 02:38:12,957 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 02:38:13,341 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 02:38:13,341 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 02:38:13,341 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 02:38:13,349 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:38:13.345[UTC]
-2016-07-25 02:38:13,584 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 02:38:13,587 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 02:38:13,588 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 02:38:14,361 [INFO] Runner successfully registered
-2016-07-25 02:38:14,380 [INFO] Parsing event model...
-2016-07-25 02:38:14,433 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 02:38:17,474 [INFO] Build successfully: 1 handler, 1 timer, 1 service
-2016-07-25 02:38:17,478 [INFO] Deploying model to server, and starting debug...
-2016-07-25 02:38:18,079 [INFO] Model successfully deployed.
-2016-07-25 02:38:18,079 [INFO] Waiting for events...
-2016-07-25 02:52:51,865 [INFO] Debugging Utility disconnected successfully
-2016-07-25 02:52:51,866 [INFO] Thank you for using Backendless
-2016-07-25 02:52:58,767 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 02:52:58,778 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 02:52:59,194 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 02:52:59,195 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 02:52:59,195 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 02:52:59,201 [INFO] CodeRunner session is running for 2 hours and will be terminated on 04:52:59.198[UTC]
-2016-07-25 02:52:59,426 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 02:52:59,430 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 02:52:59,431 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 02:53:00,257 [INFO] Runner successfully registered
-2016-07-25 02:53:00,276 [INFO] Parsing event model...
-2016-07-25 02:53:00,344 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 02:53:03,416 [INFO] Build successfully: 1 handler, 1 timer, 1 service
-2016-07-25 02:53:03,424 [INFO] Deploying model to server, and starting debug...
-2016-07-25 02:53:04,465 [INFO] Model successfully deployed.
-2016-07-25 02:53:04,466 [INFO] Waiting for events...
-2016-07-25 03:02:05,653 [INFO] Debugging Utility disconnected successfully
-2016-07-25 03:02:05,655 [INFO] Thank you for using Backendless
-2016-07-25 03:02:28,616 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
-2016-07-25 03:02:28,621 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
-2016-07-25 03:02:29,044 [INFO] CodeRunner(tm) Backendless Debugging Utility
-2016-07-25 03:02:29,044 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
-2016-07-25 03:02:29,044 [INFO] Version: 3.0.19 Build date: 20160613-1132
-2016-07-25 03:02:29,055 [INFO] CodeRunner session is running for 2 hours and will be terminated on 05:02:29.050[UTC]
-2016-07-25 03:02:29,285 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
-2016-07-25 03:02:29,287 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
-2016-07-25 03:02:29,287 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
-2016-07-25 03:02:30,073 [INFO] Runner successfully registered
-2016-07-25 03:02:30,098 [INFO] Parsing event model...
-2016-07-25 03:02:30,151 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
-2016-07-25 03:02:33,225 [INFO] Build successfully: 1 handler, 1 timer, 1 service
-2016-07-25 03:02:33,229 [INFO] Deploying model to server, and starting debug...
-2016-07-25 03:02:33,664 [INFO] Model successfully deployed.
-2016-07-25 03:02:33,664 [INFO] Waiting for events...
-2016-07-25 03:02:33,665 [INFO] Publishing 1 event handler and 1 timer and 1 service to the server… 
-2016-07-25 03:03:05,556 [INFO] Successfully published all event handlers and timers. 
-2016-07-25 03:03:06,477 [INFO] Service published
-2016-07-25 03:03:06,477 [INFO] If you connected to coderunner for debug - please stop debugging
-2016-07-25 03:03:06,477 [INFO] CodeRunner will shutdown now
-2016-07-25 03:03:06,585 [INFO] Debugging Utility disconnected successfully
-2016-07-25 03:03:06,585 [INFO] Thank you for using Backendless
+2016-07-28 05:07:15,396 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 05:07:15,405 [INFO] Deploying model to server, and starting debug...
+2016-07-28 05:07:15,839 [INFO] Model successfully deployed.
+2016-07-28 05:07:15,839 [INFO] Waiting for events...
+2016-07-28 05:08:47,042 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:08:47,043 [INFO] Thank you for using Backendless
+2016-07-28 05:08:56,012 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 05:08:56,015 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 05:08:56,332 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 05:08:56,333 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 05:08:56,333 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 05:08:56,338 [INFO] CodeRunner session is running for 2 hours and will be terminated on 07:08:56.335[UTC]
+2016-07-28 05:08:56,518 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 05:08:56,520 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 05:08:56,521 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 05:08:57,181 [INFO] Runner successfully registered
+2016-07-28 05:08:57,198 [INFO] Parsing event model...
+2016-07-28 05:08:57,256 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 05:09:00,325 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 05:09:00,331 [INFO] Deploying model to server, and starting debug...
+2016-07-28 05:09:00,667 [INFO] Model successfully deployed.
+2016-07-28 05:09:00,667 [INFO] Waiting for events...
+2016-07-28 05:09:00,668 [INFO] Publishing 2 event handlers and 1 timer and 1 service to the server… 
+2016-07-28 05:09:33,125 [INFO] Successfully published all event handlers and timers. 
+2016-07-28 05:09:35,154 [INFO] Service published
+2016-07-28 05:09:35,154 [INFO] If you connected to coderunner for debug - please stop debugging
+2016-07-28 05:09:35,154 [INFO] CodeRunner will shutdown now
+2016-07-28 05:09:35,459 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:09:35,460 [INFO] Thank you for using Backendless
+2016-07-28 05:13:57,723 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 05:13:57,727 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 05:13:58,143 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 05:13:58,144 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 05:13:58,144 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 05:13:58,150 [INFO] CodeRunner session is running for 2 hours and will be terminated on 07:13:58.147[UTC]
+2016-07-28 05:13:58,368 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 05:13:58,370 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 05:13:58,371 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 05:13:59,466 [INFO] Runner successfully registered
+2016-07-28 05:13:59,487 [INFO] Parsing event model...
+2016-07-28 05:13:59,566 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 05:14:02,764 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 05:14:02,769 [INFO] Deploying model to server, and starting debug...
+2016-07-28 05:14:03,257 [INFO] Model successfully deployed.
+2016-07-28 05:14:03,258 [INFO] Waiting for events...
+2016-07-28 05:14:03,258 [INFO] Publishing 2 event handlers and 1 timer and 1 service to the server… 
+2016-07-28 05:14:36,123 [INFO] Successfully published all event handlers and timers. 
+2016-07-28 05:14:37,559 [INFO] Service published
+2016-07-28 05:14:37,560 [INFO] If you connected to coderunner for debug - please stop debugging
+2016-07-28 05:14:37,560 [INFO] CodeRunner will shutdown now
+2016-07-28 05:14:37,667 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:14:37,668 [INFO] Thank you for using Backendless
+2016-07-28 05:16:23,683 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 05:16:23,687 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 05:16:24,079 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 05:16:24,080 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 05:16:24,080 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 05:16:24,086 [INFO] CodeRunner session is running for 2 hours and will be terminated on 07:16:24.083[UTC]
+2016-07-28 05:16:24,328 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 05:16:24,331 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 05:16:24,331 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 05:16:25,508 [INFO] Runner successfully registered
+2016-07-28 05:16:25,533 [INFO] Parsing event model...
+2016-07-28 05:16:25,603 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 05:16:28,946 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 05:16:28,951 [INFO] Deploying model to server, and starting debug...
+2016-07-28 05:16:29,342 [INFO] Model successfully deployed.
+2016-07-28 05:16:29,342 [INFO] Waiting for events...
+2016-07-28 05:16:29,343 [INFO] Publishing 2 event handlers and 1 timer and 1 service to the server… 
+2016-07-28 05:17:02,148 [INFO] Successfully published all event handlers and timers. 
+2016-07-28 05:17:03,477 [INFO] Service published
+2016-07-28 05:17:03,477 [INFO] If you connected to coderunner for debug - please stop debugging
+2016-07-28 05:17:03,478 [INFO] CodeRunner will shutdown now
+2016-07-28 05:17:03,613 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:17:03,614 [INFO] Thank you for using Backendless
+2016-07-28 05:17:47,053 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 05:17:47,059 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 05:17:47,516 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 05:17:47,517 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 05:17:47,517 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 05:17:47,523 [INFO] CodeRunner session is running for 2 hours and will be terminated on 07:17:47.520[UTC]
+2016-07-28 05:17:47,754 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 05:17:47,757 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 05:17:47,757 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 05:17:48,988 [INFO] Runner successfully registered
+2016-07-28 05:17:49,011 [INFO] Parsing event model...
+2016-07-28 05:17:49,072 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 05:17:49,184 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:17:49,184 [INFO] Thank you for using Backendless
+2016-07-28 05:18:54,370 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 05:18:54,374 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 05:18:54,786 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 05:18:54,786 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 05:18:54,787 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 05:18:54,794 [INFO] CodeRunner session is running for 2 hours and will be terminated on 07:18:54.790[UTC]
+2016-07-28 05:18:55,033 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 05:18:55,037 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 05:18:55,037 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 05:18:56,151 [INFO] Runner successfully registered
+2016-07-28 05:18:56,174 [INFO] Parsing event model...
+2016-07-28 05:18:56,232 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 05:19:00,185 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 05:19:00,191 [INFO] Deploying model to server, and starting debug...
+2016-07-28 05:19:00,732 [INFO] Model successfully deployed.
+2016-07-28 05:19:00,732 [INFO] Waiting for events...
+2016-07-28 05:19:00,733 [INFO] Publishing 2 event handlers and 1 timer and 1 service to the server… 
+2016-07-28 05:19:34,725 [INFO] Successfully published all event handlers and timers. 
+2016-07-28 05:19:36,261 [INFO] Service published
+2016-07-28 05:19:36,262 [INFO] If you connected to coderunner for debug - please stop debugging
+2016-07-28 05:19:36,262 [INFO] CodeRunner will shutdown now
+2016-07-28 05:19:36,388 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:19:36,388 [INFO] Thank you for using Backendless
+2016-07-28 05:20:32,760 [INFO] JDK from "JAVA_HOME" - /usr/lib/jvm/java-8-openjdk-amd64/bin/
+2016-07-28 05:20:32,764 [INFO] JRE from "JRE_HOME"  - /usr/lib/jvm/java-8-openjdk-amd64/jre/
+2016-07-28 05:20:33,143 [INFO] CodeRunner(tm) Backendless Debugging Utility
+2016-07-28 05:20:33,143 [INFO] Copyright(C) 2016 Backendless Corp. All rights reserved. 
+2016-07-28 05:20:33,143 [INFO] Version: 3.0.19 Build date: 20160613-1132
+2016-07-28 05:20:33,149 [INFO] CodeRunner session is running for 2 hours and will be terminated on 07:20:33.146[UTC]
+2016-07-28 05:20:33,376 [INFO] Registering runner on: 'http://api.backendless.com' with version 'v1'
+2016-07-28 05:20:33,386 [INFO] Application ID:  '85B126A8-223C-6F79-FF4B-4C6C4CAACB00'
+2016-07-28 05:20:33,386 [INFO] Secret key:      'A5E3B133-D76E-7ECF-FFD1-344CDB046000'
+2016-07-28 05:20:34,328 [INFO] Runner successfully registered
+2016-07-28 05:20:34,347 [INFO] Parsing event model...
+2016-07-28 05:20:34,413 [WARN] Timer's 'delete_users' start time is in the past. The timer will run accordingly to the schedule.
+2016-07-28 05:20:37,753 [INFO] Build successfully: 2 handlers, 1 timer, 1 service
+2016-07-28 05:20:37,757 [INFO] Deploying model to server, and starting debug...
+2016-07-28 05:20:38,090 [INFO] Model successfully deployed.
+2016-07-28 05:20:38,090 [INFO] Waiting for events...
+2016-07-28 05:20:38,091 [INFO] Publishing 2 event handlers and 1 timer and 1 service to the server… 
+2016-07-28 05:21:10,601 [INFO] Successfully published all event handlers and timers. 
+2016-07-28 05:21:12,440 [INFO] Service published
+2016-07-28 05:21:12,441 [INFO] If you connected to coderunner for debug - please stop debugging
+2016-07-28 05:21:12,441 [INFO] CodeRunner will shutdown now
+2016-07-28 05:21:12,650 [INFO] Debugging Utility disconnected successfully
+2016-07-28 05:21:12,651 [INFO] Thank you for using Backendless

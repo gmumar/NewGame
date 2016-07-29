@@ -6,7 +6,7 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
 import com.backendless.persistence.BackendlessDataQuery;
 import com.backendless.servercode.annotation.BackendlessTimer;
-import com.climber.models.Challenges;
+import com.climber.models.challenges;
 import com.climber.models.game_users;
 
 /**
@@ -43,13 +43,13 @@ public class Delete_usersTimer extends
 		whereClause = "created < " + Long.toString(oneDaysAgo);
 		dataQuery = new BackendlessDataQuery();
 		dataQuery.setWhereClause(whereClause);
-		BackendlessCollection<Challenges> result2 = Backendless.Persistence.of(
-				Challenges.class).find(dataQuery);
+		BackendlessCollection<challenges> result2 = Backendless.Persistence.of(
+				challenges.class).find(dataQuery);
 
-		List<Challenges> listToRemove2 = result2.getData();
+		List<challenges> listToRemove2 = result2.getData();
 
-		for (Challenges challenge : listToRemove2) {
-			Backendless.Persistence.of(Challenges.class).remove(challenge);
+		for (challenges challenge : listToRemove2) {
+			Backendless.Persistence.of(challenges.class).remove(challenge);
 		}
 		
 		
