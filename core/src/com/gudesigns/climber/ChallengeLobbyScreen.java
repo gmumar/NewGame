@@ -43,16 +43,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -78,7 +77,6 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 	private User user;
 
-	protected AsyncExecutor ae = new AsyncExecutor(2);
 	protected HttpRequest downloadRequest;
 	protected Semaphore stallSemaphore = new Semaphore(1);
 	protected volatile boolean killThreads = false;
@@ -257,10 +255,12 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 		base.row();
 
+		
+		stage.addActor(base);
 		initCreateChallengeButton();
 		// Animations.fadeInAndSlideSide(base);
 
-		stage.addActor(base);
+		
 	}
 
 	public void userRegistrationComplete(String userName,
@@ -322,9 +322,21 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 			}
 
 		});
+		
+		Image nextLevelImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/play_black.png"));
+		createChallenge.add(nextLevelImage).width(Globals.baseSize)
+				.height(Globals.baseSize * 1.2f).padLeft(-20).padRight(15);
 
-		base.add(createChallenge).expandX().fillX()
-				.height(Globals.baseSize * 2).pad(10);
+		Table wrapper = new Table();
+		
+		wrapper.setFillParent(true);
+		
+		wrapper.add(createChallenge).width(Globals.baseSize * 10)
+				.height(Globals.baseSize * 3).pad(10).expand().right().bottom();
+		
+		stage.addActor(wrapper);
 	}
 
 	boolean resultsRemaining;
@@ -350,7 +362,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		resultsRemaining = true;
 		currentOffset = 0;
 
-		ae.submit(new AsyncTask<String>() {
+		Globals.globalRunner.submit(new AsyncTask<String>() {
 
 			@Override
 			public String call() {
@@ -366,7 +378,16 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 					}
 
 					while (stallSemaphore.tryAcquire()) {
+						System.out.println(
+								getDownloadRequestString(currentOffset,
+								user.getLocalUserName() == null ? ""
+										: user.getLocalUserName())
+										);
+						
 						downloadRequest = REST.getData(
+								
+
+								
 								getDownloadRequestString(currentOffset,
 										user.getLocalUserName() == null ? ""
 												: user.getLocalUserName()),
@@ -488,7 +509,10 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 				+ RESTProperties.PROP_ARG_SPLITTER
 				+ RESTProperties.WhereTargetUserIs(targetUser)
 				+ RESTProperties.OR
-				+ RESTProperties.WhereTargetUserIs(Globals.OPEN_USER_NAME);
+				+ RESTProperties.TargetUserIs(Globals.OPEN_USER_NAME) 
+				+ RESTProperties.AND
+				+ RESTProperties.SourceUserIsNotEqual(user.getLocalUserName());
+
 	}
 
 	private void initStage() {
@@ -662,15 +686,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 	@Override
 	public void dispose() {
-		Globals.globalRunner.submit(new AsyncTask<String>() {
 
-			@Override
-			public String call() throws Exception {
-				ae.dispose();
-				return null;
-			}
-
-		});
 	}
 
 }

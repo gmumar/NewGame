@@ -22,7 +22,7 @@ import com.gudesigns.climber.GameLoader;
 public class ModeButton {
 
 	public enum ModeButtonTypes {
-		INFINITY, ADVENTURE, CAR_BUILDER, CAR_MY_PICKS, CAR_COMMUNITY_CARS
+		INFINITY, ADVENTURE, CAR_BUILDER, CAR_MY_PICKS, CAR_COMMUNITY_CARS, MULTIPLAYER
 	};
 
 	public static ButtonLockWrapper create(Skin skin, GameLoader gameLoader,
@@ -46,11 +46,20 @@ public class ModeButton {
 			isLocked = user.isLocked(ItemsLookupPrefix.INFINITY_TRACK_MODE);
 			isNew = isLocked ? false : user
 					.isNew(ItemsLookupPrefix.INFINITY_TRACK_MODE);
+		} else if (type == ModeButtonTypes.MULTIPLAYER) {
+			image = new Image(
+					gameLoader.Assets
+							.getFilteredTexture("menu/images/infinity.png"));
+			buttonName = new Label("Head To Head Mode", skin);
+			isLocked = false;
+			isNew = isLocked ? false : user
+					.isNew(ItemsLookupPrefix.MULTIPLAYER_MODE);
+			
 		} else if (type == ModeButtonTypes.ADVENTURE) {
 			image = new Image(
 					gameLoader.Assets
 							.getFilteredTexture("menu/images/adventure.png"));
-			buttonName = new Label("Adventrue Mode", skin);
+			buttonName = new Label("Adventure Mode", skin);
 		} else if (type == ModeButtonTypes.CAR_BUILDER) {
 			image = new Image(
 					gameLoader.Assets

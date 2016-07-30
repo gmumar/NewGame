@@ -16,7 +16,6 @@ import JSONifier.JSONChallenge;
 import JSONifier.JSONComponent;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
-import Menu.ScreenType;
 import Multiplayer.Challenge;
 import Multiplayer.RecorderUnit;
 import RESTWrapper.Backendless_JSONParser;
@@ -27,7 +26,6 @@ import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Preferences;
@@ -57,6 +55,10 @@ public class User {
 
 	}
 
+	public enum CarSetErrors {
+		NONE, PARTS_NOT_UNLOCKED, CAR_NOT_SUTIBLE_FOR_CHALLENGE
+	}
+
 	private UserState userState = new UserState();
 
 	class LookupItemsType {
@@ -66,10 +68,13 @@ public class User {
 	public LookupItemsType lockedItems = null;
 	public LookupItemsType nonNewItems = null;
 
+	private int opponentBarLevel = 0, opponentTireLevel = 0,
+			opponentSpringLevel = 0;
+
 	private String currentCar = null;
 	private String currentTrack = null;
 	private Challenge currentChallenge = null;
-	private JSONChallenge currentJSONChallenge = null; 
+	private JSONChallenge currentJSONChallenge = null;
 	private ArrayList<RecorderUnit> currentChallengeSortedRecording = null;
 	private String currentChallengeCar = null;
 
@@ -79,7 +84,7 @@ public class User {
 	private volatile GameMode currentGameMode = GameMode.NORMAL;
 
 	private String userName = null;
-	
+
 	private Preferences prefs = null;
 
 	private User() {
@@ -163,8 +168,8 @@ public class User {
 	public String getLocalUserName() {
 		// return userName if registered else return null
 		String userName = prefs.getString(ItemsLookupPrefix.USER_NAME, null);
-		
-		if(userName == null) {
+
+		if (userName == null) {
 			return this.userName;
 		}
 
@@ -190,7 +195,7 @@ public class User {
 	public String userRegisterLocally(String userName, String objectId) {
 		System.out.println("User: registed user " + userName + " " + objectId);
 		this.userName = userName;
-		
+
 		prefs.putString(ItemsLookupPrefix.USER_NAME, userName);
 		prefs.putString(ItemsLookupPrefix.getUserObjectIDPrefix(userName),
 				objectId);
@@ -232,40 +237,110 @@ public class User {
 	}
 
 	// return true if all parts are available to user
-	public boolean setCurrentCar(String currentCar, boolean test) {
+	public CarSetErrors setCurrentCar(String currentCar, boolean test) {
 
-		JSONCar car = JSONCar.objectify(currentCar);
-		ArrayList<JSONComponent> parts = car.getComponentList();
+		{
+			JSONCar car = JSONCar.objectify(currentCar);
+			ArrayList<JSONComponent> parts = car.getComponentList();
 
-		Integer barLevel = 0, springLevel = 0, tireLevel = 0;
+			Integer barLevel = 0, springLevel = 0, tireLevel = 0;
 
-		for (JSONComponent part : parts) {
-			if (part.getBaseName().compareTo(ComponentNames.BAR3) == 0) {
-				if (part.getjComponentName().getLevel() > barLevel) {
-					barLevel = part.getjComponentName().getLevel();
+			for (JSONComponent part : parts) {
+				if (part.getBaseName().compareTo(ComponentNames.BAR3) == 0) {
+					if (part.getjComponentName().getLevel() > barLevel) {
+						barLevel = part.getjComponentName().getLevel();
+					}
+				} else if (part.getBaseName().compareTo(
+						ComponentNames.SPRINGJOINT) == 0) {
+					if (part.getjComponentName().getLevel() > springLevel) {
+						springLevel = part.getjComponentName().getLevel();
+					}
+				} else if (part.getBaseName().compareTo(ComponentNames.TIRE) == 0
+						|| part.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
+					if (part.getjComponentName().getLevel() > tireLevel) {
+						tireLevel = part.getjComponentName().getLevel();
+					}
 				}
-			} else if (part.getBaseName().compareTo(ComponentNames.SPRINGJOINT) == 0) {
-				if (part.getjComponentName().getLevel() > springLevel) {
-					springLevel = part.getjComponentName().getLevel();
-				}
-			} else if (part.getBaseName().compareTo(ComponentNames.TIRE) == 0
-					|| part.getBaseName().compareTo(ComponentNames.AXLE) == 0) {
-				if (part.getjComponentName().getLevel() > tireLevel) {
-					tireLevel = part.getjComponentName().getLevel();
-				}
+			}
+
+			if (barLevel > userState.smallBarLevel) {
+				return CarSetErrors.PARTS_NOT_UNLOCKED;
+			}
+
+			if (springLevel > userState.springLevel) {
+				return CarSetErrors.PARTS_NOT_UNLOCKED;
+			}
+
+			if (tireLevel > userState.tireLevel) {
+				return CarSetErrors.PARTS_NOT_UNLOCKED;
 			}
 		}
 
-		if (barLevel > userState.smallBarLevel) {
-			return false;
-		}
+		if (getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
+			JSONCar opponentCar = JSONCar.objectify(getCurrentChallengeCar());
 
-		if (springLevel > userState.springLevel) {
-			return false;
-		}
+			for (JSONComponent opponentPart : opponentCar.getComponentList()) {
+				if (opponentPart.getBaseName().compareTo(ComponentNames.BAR3) == 0) {
+					if (opponentPart.getjComponentName().getLevel() > opponentBarLevel) {
+						opponentBarLevel = opponentPart.getjComponentName()
+								.getLevel();
+					}
+				} else if (opponentPart.getBaseName().compareTo(
+						ComponentNames.SPRINGJOINT) == 0) {
+					if (opponentPart.getjComponentName().getLevel() > opponentSpringLevel) {
+						opponentSpringLevel = opponentPart.getjComponentName()
+								.getLevel();
+					}
+				} else if (opponentPart.getBaseName().compareTo(
+						ComponentNames.TIRE) == 0
+						|| opponentPart.getBaseName().compareTo(
+								ComponentNames.AXLE) == 0) {
+					if (opponentPart.getjComponentName().getLevel() > opponentTireLevel) {
+						opponentTireLevel = opponentPart.getjComponentName()
+								.getLevel();
+					}
+				}
+			}
 
-		if (tireLevel > userState.tireLevel) {
-			return false;
+			JSONCar myCar = JSONCar.objectify(currentCar);
+
+			int currentBarLevel = 0, currentTireLevel = 0, currentSpringLevel = 0;
+
+			for (JSONComponent myCarPart : myCar.getComponentList()) {
+				if (myCarPart.getBaseName().compareTo(ComponentNames.BAR3) == 0) {
+					if (myCarPart.getjComponentName().getLevel() > currentBarLevel) {
+						currentBarLevel = myCarPart.getjComponentName()
+								.getLevel();
+					}
+				} else if (myCarPart.getBaseName().compareTo(
+						ComponentNames.SPRINGJOINT) == 0) {
+					if (myCarPart.getjComponentName().getLevel() > currentSpringLevel) {
+						currentSpringLevel = myCarPart.getjComponentName()
+								.getLevel();
+					}
+				} else if (myCarPart.getBaseName().compareTo(
+						ComponentNames.TIRE) == 0
+						|| myCarPart.getBaseName().compareTo(
+								ComponentNames.AXLE) == 0) {
+					if (myCarPart.getjComponentName().getLevel() > currentTireLevel) {
+						currentTireLevel = myCarPart.getjComponentName()
+								.getLevel();
+					}
+				}
+			}
+
+			if (currentBarLevel > opponentBarLevel) {
+				return CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE;
+			}
+
+			if (currentSpringLevel > opponentSpringLevel) {
+				return CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE;
+			}
+
+			if (currentTireLevel > opponentTireLevel) {
+				return CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE;
+			}
+
 		}
 
 		if (!test) {
@@ -275,7 +350,31 @@ public class User {
 			this.currentCar = currentCar;
 		}
 
-		return true;
+		return CarSetErrors.NONE;
+	}
+
+	public  int getOpponentBarLevel() {
+		if (getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
+			return opponentBarLevel;
+		} else {
+			return 0;
+		}
+	}
+
+	public int getOpponentTireLevel() {
+		if (getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
+			return opponentTireLevel;
+		} else {
+			return 0;
+		}
+	}
+
+	public int getOpponentSpringLevel() {
+		if (getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
+			return opponentSpringLevel;
+		} else {
+			return 0;
+		}
 	}
 
 	public String getCurrentTrack() {
@@ -378,14 +477,13 @@ public class User {
 	public Challenge getCurrentChallenge() {
 		return currentChallenge;
 	}
-	
+
 	public JSONChallenge getCurrentJSONChallenge() {
 		return currentJSONChallenge;
 	}
 
 	boolean resultsRemaining = true;
 	int currentOffset = 0;
-
 
 	public String getCurrentChallengeCar() {
 		String inputString = prefs.getString(GamePreferences.CH_CAR_MAP_STR,
@@ -401,14 +499,15 @@ public class User {
 
 	public void setCurrentChallenge(final JSONChallenge JSONchallenge,
 			final ChallengeLobbyScreen context) {
-		
+
 		this.currentChallenge = null;
 		this.currentJSONChallenge = null;
-		
+
 		if (JSONchallenge == null)
 			return;
-		
-		final Challenge challenge = Challenge.objectify(JSONchallenge.getChallenge());
+
+		final Challenge challenge = Challenge.objectify(JSONchallenge
+				.getChallenge());
 
 		this.currentChallenge = challenge;
 		this.currentJSONChallenge = JSONchallenge;
@@ -429,8 +528,8 @@ public class User {
 
 				});
 
-		prefs.putString(GamePreferences.CH_CAR_MAP_STR, challenge
-				.getCarJson().jsonify());
+		prefs.putString(GamePreferences.CH_CAR_MAP_STR, challenge.getCarJson()
+				.jsonify());
 		prefs.flush();
 
 		this.currentChallengeCar = challenge.getCarJson().jsonify();
@@ -458,9 +557,8 @@ public class User {
 				REST.getData(
 						database
 								+ RESTProperties.URL_ARG_SPLITTER
-								+ RESTProperties
-										.WhereObjectIdIs(challenge
-												.getTrackObjectId()),
+								+ RESTProperties.WhereObjectIdIs(challenge
+										.getTrackObjectId()),
 						new HttpResponseListener() {
 
 							@Override

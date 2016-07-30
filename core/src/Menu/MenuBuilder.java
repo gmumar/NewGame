@@ -35,6 +35,7 @@ import UserPackage.GameErrors;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TwoButtonDialogFlow;
 import UserPackage.User;
+import UserPackage.User.CarSetErrors;
 import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.InputProcessor;
@@ -60,6 +61,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -455,6 +457,44 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 		rightMenu.add(build.button).width(buttonWidth).expandY().fillY();
 		rightMenu.row();
 		// stage.addActor(levelDown);
+		
+		Table keyBar = new Table(skin);
+		keyBar.setBackground("dialogDim-white");
+		Table keyTable = new Table();
+		
+		Image greenJointImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/green_joint.png"));
+		
+		keyTable.add(greenJointImage).padLeft(10).width(Globals.baseSize).height(Globals.baseSize);
+
+		Label greenJointText = new Label("Un-Joined", skin, "defaultWhite");
+		keyTable.add(greenJointText).padLeft(5).padRight(35);
+		
+		
+		Image redJointImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/red_joint.png"));
+		
+		keyTable.add(redJointImage).width(Globals.baseSize).height(Globals.baseSize);
+
+		Label redJointText = new Label("Joined", skin, "defaultWhite");
+		keyTable.add(redJointText).padLeft(5).padRight(35);
+		
+		
+		
+		Image yellowJointImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/yellow_joint.png"));
+		
+		keyTable.add(yellowJointImage).width(Globals.baseSize).height(Globals.baseSize);
+
+		Label yellowJointText = new Label("Flexible Joint", skin, "defaultWhite");
+		keyTable.add(yellowJointText).padLeft(5).padRight(35);
+		
+		
+		
+		
 
 		Button help = SimpleImageButton.create(SimpleImageButtonTypes.HELP,
 				gameLoader);
@@ -469,7 +509,12 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 
 			}
 		});
-		centerMenu.add(help).top().right().expand();
+		
+		keyBar.add(keyTable).expandX().center().padRight(-help.getWidth());
+		
+		keyBar.add(help).right();
+		
+		centerMenu.add(keyBar).top().expand().fillX();
 
 		menuHolders.add(centerMenu).expand().fill();
 
@@ -1027,13 +1072,24 @@ public class MenuBuilder implements InputProcessor, TwoButtonDialogFlow {
 				parts);
 
 		if (buildState == BuildErrors.BUILD_CLEAN) {
-			if (user.setCurrentCar(compiler.compile(world, parts, jointTypes),
-					false)) {
+			
+			CarSetErrors carSetStatus = user.setCurrentCar(compiler.compile(world, parts, jointTypes), false);
+			if (carSetStatus == CarSetErrors.NONE) {
 				return true;
-			} else {
+			} else if (carSetStatus == CarSetErrors.PARTS_NOT_UNLOCKED) {
 				popQueManager.push(new PopQueObject(
 						PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 						GameErrors.PARTS_NOT_UNLOCKED, instance));
+				return false;
+			} else if (carSetStatus == CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE) {
+				popQueManager.push(new PopQueObject(
+						PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
+						GameErrors.CAR_TOO_HIGH_TO_USE, instance));
+				return false;
+			} else {
+				popQueManager.push(new PopQueObject(
+						PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
+						"idono mann something went wrong...", instance));
 				return false;
 			}
 		} else if (buildState == BuildErrors.NOT_ENOUGH_BARS) {

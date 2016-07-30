@@ -27,8 +27,10 @@ public class RESTProperties {
 	public static final String WHERE = "where=";
 	public static final String GREATER_THAN = "%3E";
 	public static final String EQUALS = "%3D";
+	public static final String NOT_EQUALS = "%3C%3E";
 	public static final String SINGLE_QOUTE = "%27";
 	public static final String OR = "%20or%20";
+	public static final String AND = "%20and%20";
 
 
 	public static String WhereCreatedGreaterThan(Long lastCreatedTime) {
@@ -39,6 +41,16 @@ public class RESTProperties {
 	//where=targetUser%3D%27gmumar%27
 	public static String WhereTargetUserIs(String targetUser) {
 		return RESTProperties.WHERE + RESTProperties.TARGET_USER
+				+ RESTProperties.EQUALS + encodeString(targetUser);
+	}
+
+	public static String SourceUserIsNotEqual(String sourceUser) {
+		return RESTProperties.SOURCE_USER
+				+ RESTProperties.NOT_EQUALS + encodeString(sourceUser);
+	}
+	
+	public static String TargetUserIs(String targetUser) {
+		return RESTProperties.TARGET_USER
 				+ RESTProperties.EQUALS + encodeString(targetUser);
 	}
 	

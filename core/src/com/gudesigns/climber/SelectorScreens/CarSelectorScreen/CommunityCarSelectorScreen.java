@@ -20,6 +20,7 @@ import Storage.FileManager;
 import Storage.FileObject;
 import UserPackage.GameErrors;
 import UserPackage.ItemsLookupPrefix;
+import UserPackage.User.CarSetErrors;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
@@ -233,14 +234,20 @@ public class CommunityCarSelectorScreen extends CarSelectorScreen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				if (gameState.getUser().setCurrentCar(itemJson, true)) {
+				CarSetErrors carSetStatus = gameState.getUser().setCurrentCar(itemJson, true);
+				
+				if (carSetStatus == CarSetErrors.NONE) {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.CAR_DISPLAY, itemJson, false));
-				} else {
+				} else  if (carSetStatus == CarSetErrors.PARTS_NOT_UNLOCKED) {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED,
 							instance));
+				} else if (carSetStatus == CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
+							GameErrors.CAR_TOO_HIGH_TO_USE, instance));
 				}
 
 				// gameState.getUser().setCurrentCar(itemJson);

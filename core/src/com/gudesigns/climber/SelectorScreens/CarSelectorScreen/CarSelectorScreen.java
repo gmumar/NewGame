@@ -26,6 +26,7 @@ import Storage.FileObject;
 import UserPackage.GameErrors;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.User;
+import UserPackage.User.CarSetErrors;
 import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.Gdx;
@@ -49,7 +50,7 @@ import com.gudesigns.climber.GamePlayScreen;
 import com.gudesigns.climber.SelectorScreens.SelectorScreen;
 
 public class CarSelectorScreen extends SelectorScreen {
-	
+
 	@Override
 	protected String getFileName() {
 		// TODO Auto-generated method stub
@@ -73,24 +74,19 @@ public class CarSelectorScreen extends SelectorScreen {
 	@Override
 	protected String getDownloadRequestString(int offset, Long lastCreatedTime) {
 		// TODO Auto-generated method stub
-		return RESTPaths.CARS
-				+ RESTProperties.URL_ARG_SPLITTER
+		return RESTPaths.CARS + RESTProperties.URL_ARG_SPLITTER
 				+ RESTProperties.PAGE_SIZE + REST.PAGE_SIZE
-				+ RESTProperties.PROP_ARG_SPLITTER
-				+ RESTProperties.OFFSET + offset
-				+ RESTProperties.PROP_ARG_SPLITTER
+				+ RESTProperties.PROP_ARG_SPLITTER + RESTProperties.OFFSET
+				+ offset + RESTProperties.PROP_ARG_SPLITTER
 				+ RESTProperties.PROPS + RESTProperties.CREATED
-				+ RESTProperties.PROP_PROP_SPLITTER
-				+ RESTProperties.CAR_JSON
-				+ RESTProperties.PROP_PROP_SPLITTER
-				+ RESTProperties.OBJECT_ID
-				+ RESTProperties.PROP_PROP_SPLITTER
-				+ RESTProperties.CAR_INDEX
+				+ RESTProperties.PROP_PROP_SPLITTER + RESTProperties.CAR_JSON
+				+ RESTProperties.PROP_PROP_SPLITTER + RESTProperties.OBJECT_ID
+				+ RESTProperties.PROP_PROP_SPLITTER + RESTProperties.CAR_INDEX
 				+ RESTProperties.PROP_ARG_SPLITTER
 				+ RESTProperties.WhereCreatedGreaterThan(lastCreatedTime);
 	}
 
-	//@Override
+	// @Override
 	protected void downloadItems_old() {
 		resultsRemaining = true;
 		currentOffset = 0;
@@ -250,16 +246,24 @@ public class CarSelectorScreen extends SelectorScreen {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (gameState.getUser().setCurrentCar(itemJson, false)) {
-					if(User.getInstance().getCurrentGameMode()==GameMode.SET_CHALLENGE){
-						gameLoader.setScreen(new ChallengeCreationScreen(gameState));
+				CarSetErrors carSetStatus = gameState.getUser().setCurrentCar(
+						itemJson, false);
+
+				if (carSetStatus == CarSetErrors.NONE) {
+					if (User.getInstance().getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+						gameLoader.setScreen(new ChallengeCreationScreen(
+								gameState));
 					} else {
 						gameLoader.setScreen(new GamePlayScreen(gameState));
 					}
-				} else {
+				} else if (carSetStatus == CarSetErrors.PARTS_NOT_UNLOCKED) {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED, instance));
+				} else if (carSetStatus == CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
+							GameErrors.CAR_TOO_HIGH_TO_USE, instance));
 				}
 				// gameState.getUser().setCurrentCar(itemJson);
 				// gameLoader.setScreen(new GamePlayScreen(gameState));
@@ -297,17 +301,23 @@ public class CarSelectorScreen extends SelectorScreen {
 			public void touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
 
+				CarSetErrors carSetStatus = gameState.getUser().setCurrentCar(itemJson, false);
 				playButton.setBackground("grey");
-				if (gameState.getUser().setCurrentCar(itemJson, false)) {
-					if(User.getInstance().getCurrentGameMode()==GameMode.SET_CHALLENGE){
-						gameLoader.setScreen(new ChallengeCreationScreen(gameState));
+				if (carSetStatus == CarSetErrors.NONE) {
+					if (User.getInstance().getCurrentGameMode() == GameMode.SET_CHALLENGE) {
+						gameLoader.setScreen(new ChallengeCreationScreen(
+								gameState));
 					} else {
 						gameLoader.setScreen(new GamePlayScreen(gameState));
 					}
-				} else {
+				} else if(carSetStatus == CarSetErrors.PARTS_NOT_UNLOCKED) {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED, instance));
+				} else if (carSetStatus == CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
+							GameErrors.CAR_TOO_HIGH_TO_USE, instance));
 				}
 				// gameLoader.setScreen(new GamePlayScreen(gameState));
 				super.touchDown(event, x, y, pointer, button);
@@ -338,13 +348,19 @@ public class CarSelectorScreen extends SelectorScreen {
 			public void touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
 
+				CarSetErrors carSetStatus = gameState.getUser().setCurrentCar(itemJson, false);
+				
 				edit.setBackground("grey");
-				if (gameState.getUser().setCurrentCar(itemJson, false)) {
+				if (carSetStatus == CarSetErrors.NONE) {
 					gameLoader.setScreen(new CarBuilderScreen(gameState));
-				} else {
+				} else if (carSetStatus == CarSetErrors.PARTS_NOT_UNLOCKED) {
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
 							GameErrors.PARTS_NOT_UNLOCKED, instance));
+				} else if (carSetStatus == CarSetErrors.CAR_NOT_SUTIBLE_FOR_CHALLENGE) {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.ERROR_PARTS_NOT_UNLOCKED, "Error",
+							GameErrors.CAR_TOO_HIGH_TO_USE, instance));
 				}
 				// gameLoader.setScreen(new CarBuilderScreen(gameState));
 				super.touchDown(event, x, y, pointer, button);

@@ -193,13 +193,13 @@ public class AssembledObject {
 	public void setAbsPosition(float x, float y, float rot) {
 		
 		Vector2 originalPos = basePart.getPosition();
-		float originalRot = basePart.getAngle();
+		float originalRot =  rot - basePart.getAngle();
 		
 		float deltaX = x - originalPos.x;
 		float deltaY = y - originalPos.y;
 		
 		setPosition(deltaX, deltaY);
-		setRotation(rot);
+		setRotation(originalRot);
 	}
 
 	public void setRotation(float rot) {

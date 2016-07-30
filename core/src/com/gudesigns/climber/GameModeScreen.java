@@ -46,7 +46,7 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 	private GameViewport vp;
 	private PopQueManager popQueManager;
 
-	private ButtonLockWrapper adventrueMode, infinityMode;
+	private ButtonLockWrapper adventrueMode, infinityMode, multiplayerMode;
 
 	private Table buttonHolder, base;
 
@@ -136,10 +136,31 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 				}
 			}
 		});
+		
+		multiplayerMode = ModeButton.create(skin, gameLoader,
+				ModeButtonTypes.MULTIPLAYER, true, false);
+
+		multiplayerMode.button.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (!multiplayerMode.locked) {
+					gameLoader.setScreen(new ChallengeLobbyScreen(
+							gameState));
+				} else {
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.UNLOCK_MODE,
+							ItemsLookupPrefix.INFINITY_TRACK_MODE,
+							"Unlock Mode", "Unlock Infinite tracks for: ",
+							Costs.INFINITY_TRACK_MODE, context));
+				}
+			}
+		});
 
 		ButtonGroup<Button> group = new ButtonGroup<Button>();
 		group.add(infinityMode.button);
 		group.add(adventrueMode.button);
+		group.add(multiplayerMode.button);
 		group.setMaxCheckCount(1);
 		group.setMinCheckCount(1);
 
@@ -149,6 +170,9 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 		buttonHolder.add(infinityMode.button).pad(5)
 				.height(Globals.baseSize * 10).width(Globals.baseSize * 8)
 				.center();
+		buttonHolder.add(multiplayerMode.button).pad(5)
+		.height(Globals.baseSize * 11f).width(Globals.baseSize * 9f)
+		.center();
 	}
 
 	private void initStage() {

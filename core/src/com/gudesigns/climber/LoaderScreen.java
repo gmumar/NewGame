@@ -168,12 +168,17 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/dull_coin.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/white_coin.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/dull_forward.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/forward.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/mute.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/start.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/warning.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/clock_white.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/wrench.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/help.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/red_joint.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/green_joint.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/yellow_joint.png", Texture.class);
+		
 
 		gameLoader.Assets.load("menu/icons/up.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/down.png", Texture.class);

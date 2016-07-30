@@ -11,8 +11,6 @@ public class JSONChallenge {
 	private Integer reward;
 	private String objectId;
 	
-	
-	
 	public String getObjectId() {
 		return objectId;
 	}
@@ -53,9 +51,7 @@ public class JSONChallenge {
 	public void setSourceUser(String sourceUser) {
 		this.sourceUser = sourceUser;
 	}
-	public String getTargetUser() {
-		return targetUser;
-	}
+
 	public void setTargetUser(String targetUser) {
 		this.targetUser = targetUser;
 	}

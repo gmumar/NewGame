@@ -23,34 +23,12 @@ public class ChallengesTableEventHandler extends
 		com.backendless.servercode.extension.PersistenceExtender<HashMap> {
 
 	@Override
-	public void beforeCreate(RunnerContext context, HashMap challenges)
-			throws Exception {
-		
-		if(challenges.containsKey("targetUser")){
-			
-			String targetUser = ((String) challenges.get("targetUser")).trim();
-			
-			System.out.println("2.before create " + targetUser);
-			
-			String whereClause = "userName = '" + targetUser + "'";
-			BackendlessDataQuery dataQuery = new BackendlessDataQuery();
-			dataQuery.setWhereClause(whereClause);
-			BackendlessCollection<game_users> result = Backendless.Persistence.of(
-					game_users.class).find(dataQuery);
-
-			if(result.getData().isEmpty()){
-				throw new Exception("targetUser does not exist in game_user ");
-			}
-			
-		} else {
-		
-			super.beforeCreate(context, challenges);
-		}
-	}
-
-	@Override
 	public void afterUpdate(RunnerContext context, HashMap challenges,
 			ExecutionResult<HashMap> result) throws Exception {
+		
+		if(challenges.containsKey("winner") &&  
+				challenges.containsKey("sourceUser") &&  
+				challenges.containsKey("challengeReward") ){
 
 		String winner = (String) result.getResult().get("winner");
 		String sourceUser = (String) result.getResult().get("sourceUser");
@@ -70,6 +48,7 @@ public class ChallengesTableEventHandler extends
 			} else if (winner.compareTo("NONE") == 0) {
 				updateUser(sourceUser, winnings / 2);
 			}
+		}
 		}
 
 	}

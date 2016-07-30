@@ -50,7 +50,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -803,14 +802,32 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				// player won
 				winner = "TARGET";
 				user.addCoin(JChallenge.getReward());
+				popQueManager
+				.push(new PopQueObject(
+						PopQueObjectType.ERROR_USER_NAME_ENTRY,
+						"Congratulations, you won the challenge",
+						"You won " + JChallenge.getReward() + " coins",
+						null));
 			} else if (mapTime > JChallenge.getBestTime()) {
 				// player lost
 				winner = "SOURCE";
 				user.addCoin(-JChallenge.getReward());
+				popQueManager
+				.push(new PopQueObject(
+						PopQueObjectType.ERROR_USER_NAME_ENTRY,
+						"You lost the challenge",
+						"You lost " + JChallenge.getReward() + " coins",
+						null));
 			} else {
 				// draw
 				user.addCoin(JChallenge.getReward() / 2);
 				winner = "NONE";
+				popQueManager
+				.push(new PopQueObject(
+						PopQueObjectType.ERROR_USER_NAME_ENTRY,
+						"The challenge was a DRAW",
+						"You won " + JChallenge.getReward() + " coins",
+						null));
 			}
 
 			BackendFunctions.updateChallengeWinner(JChallenge.getObjectId(),

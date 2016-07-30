@@ -90,6 +90,9 @@ public class TitleBar {
 					if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
 						gameLoader.setScreen(new ChallengeCreationScreen(
 								gameState));
+					} else if (user.getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
+						gameLoader.setScreen(new ChallengeLobbyScreen(
+								gameState));
 					} else {
 						if (user.getLastPlayedWorld() == TrackType.FORREST) {
 							gameLoader
@@ -102,7 +105,7 @@ public class TitleBar {
 					}
 
 				} else if (type == ScreenType.CHALLENGE_LOBBY) {
-					gameLoader.setScreen(new MainMenuScreen(gameLoader));
+					gameLoader.setScreen(new GameModeScreen(new GameState(gameLoader, user)));
 					user.setCurrentGameMode(GameMode.NORMAL);
 				} else if (type == ScreenType.CHALLENGE_CREATION) {
 					gameLoader.setScreen(new ChallengeLobbyScreen(gameState));
