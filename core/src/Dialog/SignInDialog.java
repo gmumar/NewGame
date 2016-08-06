@@ -1,5 +1,6 @@
 package Dialog;
 
+import wrapper.Globals;
 import Menu.Animations;
 import Menu.PopQueManager;
 import Menu.PopQueObject;
@@ -11,6 +12,7 @@ import Menu.PopQueObject.PopQueObjectType;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -65,10 +67,13 @@ public class SignInDialog extends Table {
 
 		Table userNameInput = new Table();
 
-		Label userNameText = new Label("UserName: ", skin, "dialogTitle");
+		Label userNameText = new Label("UserName", skin, "dialogTitle");
+	
 		userNameInput.add(userNameText);
+		Image userNameImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/user_black.png"));
+		userNameInput.add(userNameImage).width(Globals.baseSize).height(Globals.baseSize).pad(3);
 
-		final TextBox userName = new TextBox("user", skin, "userInput");
+		final TextBox userName = new TextBox("", skin, "userInput");
 		userNameInput.add(userName);
 
 		content.add(userNameInput);

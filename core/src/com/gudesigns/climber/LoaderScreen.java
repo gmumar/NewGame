@@ -51,7 +51,7 @@ public class LoaderScreen implements Screen {
 	private LoaderBar loaderBar;
 
 	private float progress = 0f;
-	private AsyncExecutor ae = new AsyncExecutor(2);
+	//private AsyncExecutor ae = new AsyncExecutor(2);
 	private Semaphore carLoader = new Semaphore(1);
 
 	private class LoaderBar extends Actor {
@@ -178,7 +178,10 @@ public class LoaderScreen implements Screen {
 		gameLoader.Assets.load("menu/icons/red_joint.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/green_joint.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/yellow_joint.png", Texture.class);
-		
+		gameLoader.Assets.load("menu/icons/user.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/user_black.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/opponent_user_black.png", Texture.class);
+		gameLoader.Assets.load("menu/icons/map_black.png", Texture.class);
 
 		gameLoader.Assets.load("menu/icons/up.png", Texture.class);
 		gameLoader.Assets.load("menu/icons/down.png", Texture.class);
@@ -187,6 +190,7 @@ public class LoaderScreen implements Screen {
 
 		gameLoader.Assets.load("menu/images/adventure.png", Texture.class);
 		gameLoader.Assets.load("menu/images/infinity.png", Texture.class);
+		gameLoader.Assets.load("menu/images/multiplayer.png", Texture.class);
 		gameLoader.Assets.load("menu/images/car_builder.png", Texture.class);
 		gameLoader.Assets.load("menu/images/car_my_picks.png", Texture.class);
 		gameLoader.Assets.load("menu/images/car_community.png", Texture.class);
@@ -373,7 +377,7 @@ public class LoaderScreen implements Screen {
 	public void loadLocalCars(final String fileName) {
 		carLoader.tryAcquire();
 
-		ae.submit(new AsyncTask<String>() {
+		Globals.globalRunner.submit(new AsyncTask<String>() {
 
 			@Override
 			public String call() throws Exception {

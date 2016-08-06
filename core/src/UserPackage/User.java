@@ -73,6 +73,7 @@ public class User {
 
 	private String currentCar = null;
 	private String currentTrack = null;
+	private String currentChallengeTrack = null;
 	private Challenge currentChallenge = null;
 	private JSONChallenge currentJSONChallenge = null;
 	private ArrayList<RecorderUnit> currentChallengeSortedRecording = null;
@@ -156,6 +157,7 @@ public class User {
 			lockedItems = new LookupItemsType();
 		}
 
+		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("0"), true);
 		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("1"), false);
 		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("2"), false);
 		lockedItems.items.put(ItemsLookupPrefix.getForrestPrefix("3"), false);
@@ -193,7 +195,6 @@ public class User {
 	}
 
 	public String userRegisterLocally(String userName, String objectId) {
-		System.out.println("User: registed user " + userName + " " + objectId);
 		this.userName = userName;
 
 		prefs.putString(ItemsLookupPrefix.USER_NAME, userName);
@@ -209,7 +210,6 @@ public class User {
 	}
 
 	public void setCurrentGameMode(GameMode currentGameMode) {
-		System.out.println("User: " + currentGameMode.toString());
 		this.currentGameMode = currentGameMode;
 	}
 
@@ -217,8 +217,6 @@ public class User {
 
 		prefs.putString(GamePreferences.RECORDING, recording);
 		prefs.flush();
-
-		System.out.println("Saved: " + recording);
 
 	}
 
@@ -353,7 +351,7 @@ public class User {
 		return CarSetErrors.NONE;
 	}
 
-	public  int getOpponentBarLevel() {
+	public int getOpponentBarLevel() {
 		if (getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
 			return opponentBarLevel;
 		} else {
@@ -378,12 +376,59 @@ public class User {
 	}
 
 	public String getCurrentTrack() {
-		String inputString = prefs.getString(GamePreferences.TRACK_MAP_STR,
-				Globals.default_track);
 
-		currentTrack = inputString;
+		if (getCurrentGameMode() == GameMode.PLAY_CHALLENGE) {
 
-		return currentTrack;
+			String inputString = prefs.getString(
+					GamePreferences.CHALLENGE_TRACK_MAP_STR,
+					Globals.default_track);
+
+			currentChallengeTrack = inputString;
+
+			return currentChallengeTrack;
+
+		} else {
+
+			String inputString = prefs.getString(GamePreferences.TRACK_MAP_STR,
+					Globals.default_track);
+
+			currentTrack = inputString;
+			return currentTrack;
+		}
+
+	}
+
+	public void setCurrentChallengeTrack(String currentTrack, TrackMode mode,
+			boolean lockBypass) {
+
+		// prefs.clear();
+
+		JSONTrack track = JSONTrack.objectify(currentTrack);
+		TrackType type = track.getType();
+
+		if (!lockBypass) {
+			if (type == TrackType.FORREST) {
+				if (isLocked(ItemsLookupPrefix.getForrestPrefix(Integer
+						.toString(track.getItemIndex())))) {
+
+					return;
+				}
+			} else if (type == TrackType.ARTIC) {
+				if (isLocked(ItemsLookupPrefix.getArticPrefix(Integer
+						.toString(track.getItemIndex())))) {
+					return;
+				}
+			} else {
+				return;
+			}
+		}
+
+		prefs.putString(GamePreferences.CHALLENGE_TRACK_MAP_STR, currentTrack);
+		prefs.putString(GamePreferences.CHALLENGE_TRACK_MODE_STR,
+				mode.toString());
+		prefs.flush();
+
+		this.currentChallengeTrack = currentTrack;
 	}
 
 	public void setCurrentTrack(String currentTrack, TrackMode mode,

@@ -38,7 +38,7 @@ import com.google.gson.JsonParser;
 public class Globals {
 
 	public final static boolean ADMIN_MODE = true;
-	final public static int VERSION = 13;
+	final public static int VERSION = 16;
 
 	volatile static public int ScreenHeight;
 	volatile static public int ScreenWidth;
@@ -220,7 +220,7 @@ public class Globals {
 
 	public static JsonObject JSONifyResponses(String input) {
 
-		System.out.println(input);
+		//System.out.println(input);
 		
 		input = input.substring(1, input.length() - 1).replace("\\", "");
 		JsonParser parser = new JsonParser();

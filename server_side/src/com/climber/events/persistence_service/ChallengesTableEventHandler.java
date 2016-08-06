@@ -63,6 +63,7 @@ public class ChallengesTableEventHandler extends
 		List<game_users> listToRemove = result.getData();
 		for (game_users user : listToRemove) {
 			user.setMoneyDelta(user.getMoneyDelta() + money);
+			user.setTotalMoney(user.getTotalMoney() + money);
 			user.setLastActivity(new Date(System.currentTimeMillis()));
 
 			Backendless.Persistence.save(user);

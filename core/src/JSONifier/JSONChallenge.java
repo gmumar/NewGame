@@ -61,6 +61,15 @@ public class JSONChallenge {
 	public void setBestTime(float bestTime) {
 		this.bestTime = bestTime;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		JSONChallenge inChallenge = (JSONChallenge) obj;
+		
+		return inChallenge.getObjectId().equals(this.getObjectId());
+		
+	}
+	
 	
 	
 }

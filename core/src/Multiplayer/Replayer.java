@@ -179,7 +179,7 @@ public class Replayer {
 					recordedY[segmentReplayPointer],
 					recordedRotation[segmentReplayPointer]);
 
-			System.out
+			/*System.out
 					.println(time
 							+ "/"
 							+ recordedTimes[segmentReplayPointer]
@@ -192,7 +192,7 @@ public class Replayer {
 							+ " actual: "
 							+ recordedTypes[segmentReplayPointer].toString()
 							+ " error: "
-							+ (100 * ((float) x / recordedX[segmentReplayPointer]) - 100));
+							+ (100 * ((float) x / recordedX[segmentReplayPointer]) - 100));*/
 
 		}
 

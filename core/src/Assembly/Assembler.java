@@ -462,8 +462,11 @@ public class Assembler {
 
 			if (group == ColliderGroups.OPPONENT_GROUND) {
 				for (Component part : parts.values()) {
-					part.setAlpha(0.5f);
-					partsCollection.add(part);
+					if(part.getBaseName().compareTo(ComponentNames.TRACKCOIN)!=0){
+						part.setAlpha(0.5f);
+						partsCollection.add(part);
+					}
+					
 				}
 			} else {
 				partsCollection.addAll(parts.values());

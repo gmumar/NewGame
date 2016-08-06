@@ -30,7 +30,7 @@ public class BackendFunctions {
 
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
-						System.out.println(httpResponse.getResultAsString());
+						//System.out.println(httpResponse.getResultAsString());
 					}
 
 					@Override

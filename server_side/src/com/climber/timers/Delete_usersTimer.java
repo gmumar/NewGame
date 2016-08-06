@@ -49,7 +49,9 @@ public class Delete_usersTimer extends
 		List<challenges> listToRemove2 = result2.getData();
 
 		for (challenges challenge : listToRemove2) {
-			Backendless.Persistence.of(challenges.class).remove(challenge);
+			if(challenge.getTargetUser().compareTo("--OPEN--")!=0){
+				Backendless.Persistence.of(challenges.class).remove(challenge);
+			}
 		}
 		
 		

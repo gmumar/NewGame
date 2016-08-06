@@ -27,6 +27,7 @@ import RESTWrapper.REST;
 import RESTWrapper.RESTPaths;
 import RESTWrapper.RESTProperties;
 import RESTWrapper.ServerDataUnit;
+import UserPackage.ItemsLookupPrefix;
 import UserPackage.TrackMode;
 import UserPackage.TwoButtonDialogFlow;
 import UserPackage.User;
@@ -86,6 +87,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 	private Semaphore connectedToServer = new Semaphore(1);
 	public Lock uniqueListLock = new ReentrantLock();
 	public volatile boolean downloadCancelled = false;
+	public volatile boolean backendDeleted = false;
 	private ArrayList<JSONChallenge> uniquenessButtonList = new ArrayList<JSONChallenge>();
 
 	Gson json = new Gson();
@@ -123,11 +125,13 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 		String userName = user.getLocalUserName();
 
 		if (userName == null) {
+			// First run or phone reset
 			// please sign in/register
 			signInDialog();
 
 			initDisplay();
 		} else {
+			// User name found locally check backend
 			// update last activity on server
 			if (loadingShowing.tryAcquire()) {
 				popQueManager.push(new PopQueObject(PopQueObjectType.LOADING));
@@ -152,7 +156,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 								public void run() {
 
 									if (fromServer.get("status").getAsInt() == 0) {
-
+										// Valid username foundin backend
 										int moneyDelta = fromServer
 												.get("money").getAsInt();
 
@@ -162,6 +166,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 										initDisplay();
 
+										// Give user the money
 										if (moneyDelta == 0) {
 											;
 										} else if (moneyDelta < 0) {
@@ -197,7 +202,14 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 										}
 
 									} else {
+										// User logged in locally
+										// but has been deleted in the backend
+										
+										backendDeleted = true;
 										signInDialog();
+										initDisplay();
+										connectedToServer.release();
+										
 									}
 
 								}
@@ -226,6 +238,10 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 				PopQueObjectType.USER_SIGN_IN, this));
 		popQueManager
 				.push(new PopQueObject(PopQueObjectType.USER_SIGN_IN, this));
+		
+		popQueManager.push(new PopQueObject(
+				PopQueObjectType.ERROR_USER_NAME_ENTRY,
+				"Username not found", "Usernames are deleted after 3 days of inactivity.", null));
 
 	}
 
@@ -277,9 +293,20 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 						"Sign Up Error", "User name already taken", null));
 			}
 		} else {
+			uniqueListLock.lock();
+			uniquenessButtonList.clear();
+			uniqueListLock.unlock();
+			
 			user.userRegisterLocally(userName, obj
 					.get(RESTProperties.OBJECT_ID).getAsString());
+			popQueManager.push(new PopQueObject(PopQueObjectType.DELETE_SIGN_IN));
+			
+			if(backendDeleted){
+				popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+			}
 			popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
+			loadingShowing.release();
+
 			resetDisplayCounter = 100;
 			resetDisplay = true;
 
@@ -343,6 +370,10 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 	int currentOffset;
 
 	private void initChallengesTable() {
+		
+		Label instructions = new Label("Click on one of the challenges below OR click the Create Challenge to create your own challenge", skin, "defaultWhite");
+		base.add(instructions);
+		base.row();
 
 		challengesTable = new Table(skin);
 		challengesTable.setBackground("dialogDim-white");
@@ -378,12 +409,6 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 					}
 
 					while (stallSemaphore.tryAcquire()) {
-						System.out.println(
-								getDownloadRequestString(currentOffset,
-								user.getLocalUserName() == null ? ""
-										: user.getLocalUserName())
-										);
-						
 						downloadRequest = REST.getData(
 								
 
@@ -404,7 +429,6 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 										for (ServerDataUnit fromServer : obj
 												.getData()) {
 
-											System.out.println("got challenge");
 											downloadedCounter.release();
 											JSONChallenge challenge = new JSONChallenge();
 											challenge.setChallenge(fromServer
@@ -484,7 +508,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 		uniqueListLock.lock();
 
-		uniquenessButtonList.add(string);
+		uniquenessButtonList.add(string);			
 
 		uniqueListLock.unlock();
 
@@ -610,8 +634,12 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
+					if(loadingShowing.tryAcquire()){
 					popQueManager.push(new PopQueObject(
 							PopQueObjectType.LOADING));
+					}
+					user.setNonNew(ItemsLookupPrefix.getChallengePrefix(challenge.getObjectId()), false);
+					
 					user.setCurrentGameMode(GameMode.PLAY_CHALLENGE);
 
 					user.setCurrentChallenge(challenge, context);
@@ -636,8 +664,7 @@ public class ChallengeLobbyScreen implements Screen, TwoButtonDialogFlow {
 
 	public void challengeMapLoaded(JSONTrack trackJson, TrackMode trackMode) {
 		popQueManager.push(new PopQueObject(PopQueObjectType.DELETE));
-		user.setCurrentTrack(trackJson.jsonify(), trackMode, true);
-		System.out.println("maploaded");
+		user.setCurrentChallengeTrack(trackJson.jsonify(), trackMode, true);
 		Globals.runOnUIThread(new Runnable() {
 
 			@Override

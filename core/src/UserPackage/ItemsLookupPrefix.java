@@ -33,5 +33,9 @@ public class ItemsLookupPrefix {
 	
 	public final static String getUserObjectIDPrefix(String userName){
 		return USER_OBJ_ID + SPLITTER + userName;
+	}
+
+	public static String getChallengePrefix(String objectId) {
+		return "_challenge_" + SPLITTER + objectId;
 	}	
 }

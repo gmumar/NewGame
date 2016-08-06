@@ -199,7 +199,7 @@ public class AssembledObject {
 		float deltaY = y - originalPos.y;
 		
 		setPosition(deltaX, deltaY);
-		setRotation(originalRot);
+		//setRotation(0);
 	}
 
 	public void setRotation(float rot) {

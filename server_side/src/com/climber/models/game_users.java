@@ -9,6 +9,7 @@ public class game_users
   private java.util.Date created;
   private java.util.Date updated;
   private java.util.Date lastActivity;
+  private Integer totalMoney;
   private String ownerId;
   private String objectId;
 
@@ -35,6 +36,11 @@ public class game_users
   public java.util.Date getLastActivity()
   {
     return this.lastActivity;
+  }
+
+  public Integer getTotalMoney()
+  {
+    return this.totalMoney;
   }
 
   public String getOwnerId()
@@ -71,6 +77,11 @@ public class game_users
   public void setLastActivity( java.util.Date lastActivity )
   {
     this.lastActivity = lastActivity;
+  }
+
+  public void setTotalMoney( Integer totalMoney )
+  {
+    this.totalMoney = totalMoney;
   }
 
   public void setOwnerId( String ownerId )

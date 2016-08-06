@@ -29,17 +29,17 @@ public class Recorder {
 	}*/
 
 	public void addEndTypeUnit(int time, float difference, float x, float y, float rot) {
-		System.out.println("Recorder: added " + RecoderTouchType.END.toString() + " at " + time + " x: " + x);
+		//System.out.println("Recorder: added " + RecoderTouchType.END.toString() + " at " + time + " x: " + x);
 		recording.add(new RecorderUnit(time, difference, x, y, rot, RecoderTouchType.END));
 	}
 	
 	public void addJointBreakUnit(int time, float difference, float x, float y, float rot, ArrayList<Integer> jointNumber) {
-		System.out.println("Recorder: added " + RecoderTouchType.JOINT_BREAK.toString() + " at " + time + " x: " + x);
+		//System.out.println("Recorder: added " + RecoderTouchType.JOINT_BREAK.toString() + " at " + time + " x: " + x);
 		recording.add(new RecorderUnit(time, difference, x, y, rot, jointNumber, RecoderTouchType.JOINT_BREAK));
 	}
 	
 	public void addPositionUnit(int time, float difference, float x, float y, float rot) {
-		System.out.println("Recorder: added " + RecoderTouchType.POSITION.toString() + " at " + time + " x: " + x);
+		//System.out.println("Recorder: added " + RecoderTouchType.POSITION.toString() + " at " + time + " x: " + x);
 		recording.add(new RecorderUnit(time, difference, x, y, rot, RecoderTouchType.POSITION));
 	}
 
@@ -70,13 +70,13 @@ public class Recorder {
 		if (firstUnit) {
 			lastUnit = new RecorderUnit(time, difference, x, y, rot, currentType);
 			recording.add(lastUnit);
-			System.out.println("Recorder: added " + currentType.toString() + " at " + time + " x: " + x);
+			//System.out.println("Recorder: added " + currentType.toString() + " at " + time + " x: " + x);
 			firstUnit = false;
 		} else {
 			if (lastUnit.getTouchType() != currentType) {
 				lastUnit = new RecorderUnit(time, difference, x, y, rot, currentType);
 				recording.add(lastUnit);
-				System.out.println("Recorder: added " + currentType.toString() + " at " + time + " x: " + x);
+				//System.out.println("Recorder: added " + currentType.toString() + " at " + time + " x: " + x);
 			}
 		}
 

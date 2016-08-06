@@ -1,6 +1,7 @@
 package Menu.Buttons;
 
 import wrapper.Globals;
+import UserPackage.Costs;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.User;
 
@@ -31,6 +32,8 @@ public class ModeButton {
 		Button button = new Button(skin, "modeButton");//
 		Image image = null;
 		Label buttonName = null;
+		
+		Integer unlockCost = 0;
 
 		User user = User.getInstance();
 
@@ -46,10 +49,11 @@ public class ModeButton {
 			isLocked = user.isLocked(ItemsLookupPrefix.INFINITY_TRACK_MODE);
 			isNew = isLocked ? false : user
 					.isNew(ItemsLookupPrefix.INFINITY_TRACK_MODE);
+			unlockCost = Costs.INFINITY_TRACK_MODE;
 		} else if (type == ModeButtonTypes.MULTIPLAYER) {
 			image = new Image(
 					gameLoader.Assets
-							.getFilteredTexture("menu/images/infinity.png"));
+							.getFilteredTexture("menu/images/multiplayer.png"));
 			buttonName = new Label("Head To Head Mode", skin);
 			isLocked = false;
 			isNew = isLocked ? false : user
@@ -73,6 +77,7 @@ public class ModeButton {
 			isLocked = user.isLocked(ItemsLookupPrefix.COMMUNITY_CARS_MODE);
 			isNew = isLocked ? false : user
 					.isNew(ItemsLookupPrefix.COMMUNITY_CARS_MODE);
+			unlockCost = Costs.COMMUNITY_CARS_MODE;
 		} else if (type == ModeButtonTypes.CAR_MY_PICKS) {
 			image = new Image(
 					gameLoader.Assets
@@ -122,11 +127,28 @@ public class ModeButton {
 		lockTextureRegionDrawable.setMinHeight(Globals.baseSize * 1.2f);
 
 		ImageButton lock = new ImageButton(lockTextureRegionDrawable);
-		lock.align(Align.center | Align.top);
-		lock.pad(15);
+		//lock.align(Align.center | Align.top);
+		//lock.pad(15);
+		
+		Table lockTable = new Table();
+		lockTable.align(Align.center | Align.top);
+		
+		
+		Table coinLockPrice = new Table();
+		Image coinImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/dull_coin.png"));
+		
+		Label lockPrice = new Label(unlockCost.toString(), skin);
+		coinLockPrice.add(coinImage).width(Globals.baseSize).height(Globals.baseSize).pad(5);
+		coinLockPrice.add(lockPrice);
+
+		lockTable.add(lock).pad(10).center();
+		lockTable.row();
+		lockTable.add(coinLockPrice);
 
 		if (isLocked) {
-			stack.add(lock);
+			stack.add(lockTable);
 		}
 
 		// infinityMode.add(infinityImage).pad(8).expand();

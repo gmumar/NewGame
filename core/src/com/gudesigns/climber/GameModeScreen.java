@@ -22,6 +22,7 @@ import UserPackage.Costs;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.TwoButtonDialogFlow;
 import UserPackage.User;
+import UserPackage.User.GameMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -170,9 +171,12 @@ public class GameModeScreen implements Screen, TwoButtonDialogFlow {
 		buttonHolder.add(infinityMode.button).pad(5)
 				.height(Globals.baseSize * 10).width(Globals.baseSize * 8)
 				.center();
-		buttonHolder.add(multiplayerMode.button).pad(5)
-		.height(Globals.baseSize * 11f).width(Globals.baseSize * 9f)
-		.center();
+		
+		if(User.getInstance().getCurrentGameMode() != GameMode.SET_CHALLENGE){
+			buttonHolder.add(multiplayerMode.button).pad(5)
+			.height(Globals.baseSize * 11f).width(Globals.baseSize * 9f)
+			.center();
+		}
 	}
 
 	private void initStage() {

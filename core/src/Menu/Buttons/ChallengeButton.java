@@ -6,6 +6,7 @@ import Dialog.Skins;
 import JSONifier.JSONChallenge;
 import JSONifier.JSONTrack.TrackType;
 import Multiplayer.Challenge;
+import UserPackage.ItemsLookupPrefix;
 import UserPackage.TrackMode;
 import UserPackage.User;
 
@@ -32,7 +33,8 @@ public class ChallengeButton {
 
 		Challenge challenge = Challenge.objectify(challengeJSON.getChallenge());
 
-		boolean isNew = true;
+		boolean isNew = user.isNew(ItemsLookupPrefix
+				.getChallengePrefix(challengeJSON.getObjectId()));
 
 		Table stackInlay = new Table();
 
@@ -65,17 +67,27 @@ public class ChallengeButton {
 		Table content = new Table(skin);
 		content.setBackground("white");
 
+		Table userNameTable = new Table();
+
+		Image fromImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/opponent_user_black.png"));
+		userNameTable.add(fromImage).width(Globals.baseSize * 3 / 4)
+				.height(Globals.baseSize * 3 / 4).left();
+
 		Label index = new Label("index", skin, "dialogTitle");
-
 		index.setText(challengeJSON.getSourceUser().toUpperCase());
+		userNameTable.add(index).right();
 
-		content.add(index);
+		content.add(userNameTable).expandX().fill();
 		content.row();
 
+		Table trackNameTable = new Table();
+
 		Label trackName = new Label("index", skin, "dialogTitle");
-		
+
 		String name = null;
-		
+
 		if (challenge.getTrackMode() == TrackMode.INFINTE) {
 			name = "INFINITY";
 		} else {
@@ -86,50 +98,60 @@ public class ChallengeButton {
 			}
 		}
 
-		trackName.setText(name + " "
-				+ challenge.getTrackIndex());
+		trackName.setText(name + " " + challenge.getTrackIndex());
+		Image trackNameImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/map_black.png"));
+		trackNameTable.add(trackNameImage).width(Globals.baseSize * 3 / 4)
+				.height(Globals.baseSize * 3 / 4);
 
-		content.add(trackName);
+		trackNameTable.add(trackName);
+
+		content.add(trackNameTable);
 
 		content.row();
-		
-		TextureRegion Cartr = Assembler.assembleCarImage(gameLoader, challenge.getCarJson().jsonify(),
-				false, false);
+
+		TextureRegion Cartr = Assembler.assembleCarImage(gameLoader, challenge
+				.getCarJson().jsonify(), false, false);
 		TextureRegionDrawable Cartrd = new TextureRegionDrawable(Cartr);
-		Cartrd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH*3/4f);
+		Cartrd.setMinWidth(Globals.CAR_DISPLAY_BUTTON_WIDTH * 3 / 4f);
 		Cartrd.setMinHeight(Globals.CAR_DISPLAY_BUTTON_HEIGHT);
-		
+
 		Image carImage = new Image(Cartrd);
 		content.add(carImage).pad(10);
 		content.row();
-		
+
 		Table stats = new Table();
-		
+
 		Table timeTable = new Table();
-		Image clock = new Image(gameLoader.Assets.getFilteredTexture("worlds/hud/clock.png"));
-		timeTable.add(clock).width(Globals.baseSize).height(Globals.baseSize).pad(5);
-		
+		Image clock = new Image(
+				gameLoader.Assets.getFilteredTexture("worlds/hud/clock.png"));
+		timeTable.add(clock).width(Globals.baseSize).height(Globals.baseSize)
+				.pad(5);
+
 		Label userTime = new Label("index", skin, "default");
 
 		userTime.setText(Globals.makeTimeStr(challengeJSON.getBestTime()));
-		
+
 		timeTable.add(userTime);
 
 		stats.add(timeTable).expandX().fillX().left();
-		
-		
+
 		Table rewardTable = new Table();
-		Image coin = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/dull_coin.png"));
-		rewardTable.add(coin).width(Globals.baseSize).height(Globals.baseSize).pad(5);
-		
+		Image coin = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/dull_coin.png"));
+		rewardTable.add(coin).width(Globals.baseSize).height(Globals.baseSize)
+				.pad(5);
+
 		Label reward = new Label("index", skin, "default");
 
 		reward.setText(challengeJSON.getReward().toString());
-		
+
 		rewardTable.add(reward);
 
 		stats.add(rewardTable).expandX().fillX().right();
-		
+
 		content.add(stats).expandX().fillX().pad(5);
 		content.row();
 

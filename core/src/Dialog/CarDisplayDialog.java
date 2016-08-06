@@ -127,7 +127,7 @@ public class CarDisplayDialog {
 		playButton.add(chooseCarText).pad(5);
 
 		Image playImage = new Image(
-				gameLoader.Assets.getFilteredTexture("menu/icons/play.png"));
+				gameLoader.Assets.getFilteredTexture("menu/icons/play_black.png"));
 		playButton.add(playImage).width(Globals.baseSize)
 				.height(Globals.baseSize).pad(5);
 

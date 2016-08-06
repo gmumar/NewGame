@@ -102,6 +102,7 @@ public class PopQueManager {
 			createLoadingDialog(popQueObject);
 		} else if (popQueObject.getType() == PopQueObjectType.DELETE) {
 			if(dialog!=null) Animations.fadeAndHide(dialog);
+		} else if (popQueObject.getType() == PopQueObjectType.DELETE_SIGN_IN) {
 			if(signInDialog!=null) signInDialog.getBase().remove();
 		} else if (popQueObject.getType() == PopQueObjectType.BUY) {
 			createBuyDialog(popQueObject);

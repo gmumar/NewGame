@@ -506,7 +506,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 		progress = (builtCar.getPosition().x / currentTrackLen) * 100;
 
 		if (recordPlayer && progress > 80 && !isGameOver()) {
-			if (Math.abs((int) progress - lastPositionUnit) > 4) {
+			if (Math.abs((int) progress - lastPositionUnit) > 2) {
 				recorder.addPositionUnit(frameCounter, difference,
 						builtCar.getPosition().x, builtCar.getPosition().y,
 						builtCar.getRotation());
@@ -538,8 +538,8 @@ public class GamePlayScreen implements Screen, InputProcessor {
 	}
 
 	private void gameEnded() {
-		System.out.println("Game ended");
-		System.out.println("Difference: " + difference);
+		//System.out.println("Game ended");
+		//System.out.println("Difference: " + difference);
 
 		if (recordPlayer) {
 			/*
@@ -641,7 +641,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 
 	public void createChallenge() {
 		if (user.getCurrentGameMode() == GameMode.SET_CHALLENGE) {
-			System.out.println("GamePlayScreen: challege created ");
 			popQueManager.push(new PopQueObject(
 					PopQueObjectType.CHALLENGE_FINALIZATION, this));
 		}
@@ -706,7 +705,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 								"Enter valid username or leave blank for open challenge",
 								null));
 			} else if(!targetUser.isEmpty()){
-				System.out.println("GamePlayScreen: challege SUBMITTED ");
 				challengeSubmitButtonEnabled.tryAcquire();
 				JSONTrack playedTrack = JSONTrack.objectify(user
 						.getCurrentTrack());
@@ -721,7 +719,6 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				return true;
 			} else {
 				if(targetUser.isEmpty()){
-					System.out.println("GamePlayScreen: OPEN challege SUBMITTED ");
 					challengeSubmitButtonEnabled.tryAcquire();
 					JSONTrack playedTrack = JSONTrack.objectify(user
 							.getCurrentTrack());
@@ -826,7 +823,7 @@ public class GamePlayScreen implements Screen, InputProcessor {
 				.push(new PopQueObject(
 						PopQueObjectType.ERROR_USER_NAME_ENTRY,
 						"The challenge was a DRAW",
-						"You won " + JChallenge.getReward() + " coins",
+						"You won " + JChallenge.getReward()/2 + " coins",
 						null));
 			}
 

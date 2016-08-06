@@ -5,6 +5,7 @@ import Dialog.Skins;
 import JSONifier.JSONTrack;
 import JSONifier.JSONTrack.TrackType;
 import Menu.ScreenType;
+import UserPackage.Costs;
 import UserPackage.ItemsLookupPrefix;
 import UserPackage.User;
 import UserPackage.User.STARS;
@@ -32,6 +33,7 @@ public class AdventureTrackButton {
 		Skin skin = Skins.loadDefault(gameLoader, 1);
 		String indexTxt = "";
 		User user = User.getInstance();
+		Integer unlockCost = 0;
 
 		boolean isLocked = true;
 		boolean isNew = true;
@@ -63,15 +65,18 @@ public class AdventureTrackButton {
 					base = new Button(skin, "adventureTrack_forrest");
 					isLocked = user.isLocked(ItemsLookupPrefix
 							.getForrestPrefix(indexTxt));
+					unlockCost = Costs.ADVENTURE_TRACK*track.getItemIndex();
 				} else if (track.getType() == TrackType.ARTIC) {
 					base = new Button(skin, "adventureTrack_artic");
 					isLocked = user.isLocked(ItemsLookupPrefix
 							.getArticPrefix(indexTxt));
+					unlockCost = Costs.ADVENTURE_TRACK*track.getItemIndex()*2;
 				}
 			}
 		} else if (screenType == ScreenType.FORREST_TRACK_SELECTOR) {
 			base = new Button(skin, "adventureTrack_artic");
 			isLocked = user.isLocked(ItemsLookupPrefix.ARCTIC_WORLD);
+			unlockCost = Costs.ARCTIC_WORLD;
 		} else if (screenType == ScreenType.ARCTIC_TRACK_SELECTOR) {
 			base = new Button(skin, "adventureTrack_forrest");
 			isLocked = false;
@@ -177,12 +182,27 @@ public class AdventureTrackButton {
 		lockTextureRegionDrawable.setMinWidth(Globals.baseSize);
 		lockTextureRegionDrawable.setMinHeight(Globals.baseSize * 1.2f);
 
+		Table lockTable = new Table();
+		
 		ImageButton lock = new ImageButton(lockTextureRegionDrawable);
 		lock.align(Align.center);
-		lock.padBottom(30);
+		//lock.padBottom(30);
+		
+		Table coinLockPrice = new Table();
+		Image coinImage = new Image(
+				gameLoader.Assets
+						.getFilteredTexture("menu/icons/dull_coin.png"));
+		
+		Label lockPrice = new Label(unlockCost.toString(), skin);
+		coinLockPrice.add(coinImage).width(Globals.baseSize).height(Globals.baseSize).pad(5);
+		coinLockPrice.add(lockPrice);
+
+		lockTable.add(lock).pad(10).center();
+		lockTable.row();
+		lockTable.add(coinLockPrice);
 
 		if (isLocked) {
-			stack.add(lock);
+			stack.add(lockTable);
 		}
 
 		base.add(stack).fill().expand();

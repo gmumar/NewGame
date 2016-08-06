@@ -52,15 +52,20 @@ public class FinalizeChallengeDialog {
 		whiteBg.row();
 		
 		// Text Feilds
-		Label rewardMoneyLable = new Label("Reward: ", skin, "default");
+		Label rewardMoneyLable = new Label("Reward ", skin, "default");
 		textFeilds.add(rewardMoneyLable).padLeft(10).padBottom(5);
+		Image rewardMeneyImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/dull_coin.png"));
+		textFeilds.add(rewardMeneyImage).width(Globals.baseSize).height(Globals.baseSize).pad(3);
 		final TextBox rewardMoney = new TextBox("1000", skin, "userInput");//("MONEY", skin, "dialogTitle");
 		rewardMoney.setTextFieldFilter(new DigitsOnlyFilter());
 		textFeilds.add(rewardMoney).padRight(10).padBottom(5);
+		
 		textFeilds.row();
 
-		Label targetUserLable = new Label("Challenger: ", skin, "default");
+		Label targetUserLable = new Label("Challenger ", skin, "default");
 		textFeilds.add(targetUserLable).padLeft(10).padBottom(5);
+		Image targetUserImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/opponent_user_black.png"));
+		textFeilds.add(targetUserImage).width(Globals.baseSize).height(Globals.baseSize).pad(3);
 		final TextBox targetUser = new TextBox("" , skin, "userInput");//("MONEY", skin, "dialogTitle");
 		textFeilds.add(targetUser).padRight(10).padBottom(5);
 		whiteBg.add(textFeilds);

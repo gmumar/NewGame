@@ -75,7 +75,7 @@ public class SplashScreen implements Screen {
 
 		stage.addActor(splashActor);
 		
-		Label version = new Label("v:786_" + Globals.VERSION,
+		Label version = new Label("v:786_" + Globals.VERSION + "m",
 				Skins.loadDefault(gameLoader, 1), "default");
 		version.setScale(0.1f);
 		

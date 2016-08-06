@@ -11,6 +11,8 @@ public class GamePreferences {
 	public final static String USR_LOCKED = "dontLoOooOooOoOoOokHerev1";
 	public final static String USR_NON_NEW = "dontLooooOooOoOoOokHerev1";
 	public final static String TRACK_MAP_STR = "track";
+	public final static String CHALLENGE_TRACK_MAP_STR = "challenge_track";
+	public static final String CHALLENGE_TRACK_MODE_STR = "challenge_track_mode";
 	public final static String TRACK_MODE_STR = "track_mode";
 	//public final static String ADS_STATE = "ads_state";
 	

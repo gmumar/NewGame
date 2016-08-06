@@ -105,8 +105,9 @@ public class TitleBar {
 					}
 
 				} else if (type == ScreenType.CHALLENGE_LOBBY) {
-					gameLoader.setScreen(new GameModeScreen(new GameState(gameLoader, user)));
 					user.setCurrentGameMode(GameMode.NORMAL);
+					gameLoader.setScreen(new GameModeScreen(new GameState(gameLoader, user)));
+					
 				} else if (type == ScreenType.CHALLENGE_CREATION) {
 					gameLoader.setScreen(new ChallengeLobbyScreen(gameState));
 				}
@@ -234,6 +235,10 @@ public class TitleBar {
 			titleBar.add(upload).right();
 		} else if (type == ScreenType.CHALLENGE_CREATION || type == ScreenType.CHALLENGE_LOBBY) {
 			titleBar.add(titleLabel).expand().right().padRight(260 - userNamePadding);
+			
+			Image userNameImage = new Image(gameLoader.Assets.getFilteredTexture("menu/icons/user.png"));
+			titleBar.add(userNameImage).width(Globals.baseSize).height(Globals.baseSize).right().padTop(2).padRight(3);
+			
 			titleBar.add(userNameLabel).right();
 		} else {
 			titleBar.add(titleLabel).expand().right().padRight(260);

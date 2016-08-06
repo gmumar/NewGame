@@ -114,8 +114,8 @@ public class ChallengeCreationScreen implements Screen, TwoButtonDialogFlow {
 
 		Table trackHolder = new Table(skin);
 
-		JSONTrack currentTrack = JSONTrack.objectify(user.getCurrentTrack());
-
+		final JSONTrack currentTrack = JSONTrack.objectify(user.getCurrentTrack());
+		
 		final ButtonLockWrapper currentTrackButton = AdventureTrackButton
 				.create(gameLoader, currentTrack,
 						user.getCurrentTrackMode() == TrackMode.INFINTE,
@@ -202,7 +202,14 @@ public class ChallengeCreationScreen implements Screen, TwoButtonDialogFlow {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				gameLoader.setScreen(new GamePlayScreen(gameState));
+				
+				if(currentTrack.getItemIndex()==0){
+					popQueManager.push(new PopQueObject(
+							PopQueObjectType.ERROR_USER_NAME_ENTRY,
+							"Invalid Track", "Please click on the track to select a correct track", null));
+				} else {
+					gameLoader.setScreen(new GamePlayScreen(gameState));
+				}
 				super.clicked(event, x, y);
 			}
 
